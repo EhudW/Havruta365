@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import './Login2.dart';
+import './Login4.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/size_extension.dart';
@@ -141,6 +142,16 @@ class Login3 extends StatefulWidget {
                   size: Size(327.w, 48.h),
                   fixedWidth: true,
                   fixedHeight: true,
+                  child:
+                    PageLink(
+                    links: [
+                      PageLinkInfo(
+                      transition: LinkTransition.SlideLeft,
+                      ease: Curves.linear,
+                      duration: 0.3,
+                      pageBuilder: () => Login4(),
+                      ),
+                      ],
                   child: Stack(
                     children: <Widget>[
                       Pinned.fromSize(
@@ -158,6 +169,7 @@ class Login3 extends StatefulWidget {
                       ),
                     ],
                   ),
+                ),
                 ),
               ],
             ),
