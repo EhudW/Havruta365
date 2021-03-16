@@ -26,11 +26,20 @@ class _Login4CreateState extends State<Login4> {
   String selectedTopic;
   String selectedBook;
   List<DropdownMenuItem<String>> booksDrop = [];
-  List<String> books = [
+  List<String> humashBooks = [
     "בראשית",
-    "שמואל א",
-     "ירמיהו",
-    "so done with this"
+     "שמות",
+    "ויקרא",
+    "במדבר",
+    "דברים",
+  ];
+
+  List<String> nachBooks = [
+    "יהושוע",
+    "שופטים",
+    "שמואל א ",
+    "שמואל ב",
+    "מלכים",
   ];
 
 
@@ -44,21 +53,28 @@ class _Login4CreateState extends State<Login4> {
             ))
         .toList();
   }
-
-  void loadBooksData() {
+  /// Function to load the data for the dropdown list
+  void loadTorahBooksData() {
     booksDrop = [];
-    booksDrop = books
+    booksDrop = humashBooks
+        .map((val) => DropdownMenuItem<String>(
+            child: Text(val),
+            value: val,
+    )).toList();
+  }
+  /// Function to load the data for the dropdown list
+  void loadNachBooksData() {
+    booksDrop = [];
+    booksDrop = nachBooks
         .map((val) => DropdownMenuItem<String>(
       child: Text(val),
       value: val,
-    ))
-        .toList();
+    )).toList();
   }
 
   final name = TextEditingController();
   String name_str = "";
 
-  //final mail = TextEditingController();
   String mail_str = "";
   final password = TextEditingController();
   String password_str = "";
@@ -131,12 +147,6 @@ class _Login4CreateState extends State<Login4> {
                       duration: 0.3,
                       pageBuilder: () => Login3(),
                     ),
-                    // PageLinkInfo(
-                    //   transition: LinkTransition.SlideLeft,
-                    //   ease: Curves.easeOut,
-                    //   duration: 0.1,
-                    //   pageBuilder: () => Login3(),
-                    // ),
                   ],
                   child: Stack(
                     children: <Widget>[
@@ -245,7 +255,7 @@ class _Login4CreateState extends State<Login4> {
                 //==============FIRST DROPDOWN LIST=================
                 DropdownButtonHideUnderline(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 150, 20, 100),
+                        padding: EdgeInsets.fromLTRB(20, 150, 20, 20),
                         child: Stack(
                           children: [
                             Container(
@@ -269,10 +279,18 @@ class _Login4CreateState extends State<Login4> {
                                     hint: Text("בחרו תחום"),
                                     items: topicsDrop,
                                     onChanged: (value) {
-                                      loadBooksData();
+                                      if (value == "תורה") {
+                                        loadTorahBooksData();
+                                      }
+                                      else if (value == "נ״ך") {
+                                        loadNachBooksData();
+                                        }
                                       selectedTopic = value;
                                       setState(() {});
-                                    }),
+                                    }
+
+                                    ),
+
 
                               ),
                             ),
@@ -280,9 +298,9 @@ class _Login4CreateState extends State<Login4> {
                         )
                     )
                 ),
+                //==============SECOND DROPDOWN LIST=================
                 DropdownButtonHideUnderline(
                     child: Container(
-
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                         child: Stack(
                           children: [
@@ -307,6 +325,7 @@ class _Login4CreateState extends State<Login4> {
                                     hint: Text("בחרו ספר"),
                                     items: booksDrop,
                                     onChanged: (value) {
+                                      if (value == "תורה")
                                       //loadBooksData();
                                       selectedBook = value;
                                       setState(() {});
