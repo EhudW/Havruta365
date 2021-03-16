@@ -3,6 +3,7 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import './Login1.dart';
+import './Login3.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/size_extension.dart';
@@ -24,6 +25,7 @@ class Login2 extends StatelessWidget {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width:375, height: 667,);
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: const Color(0xfff1f9ff),
       body: Stack(
           children: <Widget>[
@@ -240,6 +242,16 @@ class Login2 extends StatelessWidget {
                       size: Size(327.w, 48.h),
                       fixedWidth: true,
                       fixedHeight: true,
+                      child:
+                      PageLink(
+                        links: [
+                          PageLinkInfo(
+                          transition: LinkTransition.SlideLeft,
+                          ease: Curves.linear,
+                          duration: 0.3,
+                          pageBuilder: () => Login3(),
+                          ),
+                          ],
                       child: Stack(
                         children: <Widget>[
                           Pinned.fromSize(
@@ -257,6 +269,7 @@ class Login2 extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ),
                     ),
                   ],
                 ),
