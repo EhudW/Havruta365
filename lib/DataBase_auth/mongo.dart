@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/main.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
@@ -23,43 +24,44 @@ class Mongo {
 
   var db;
 
-  // get mail and password and check if the user is exist.
-// if exist - return the user object and go to the home page.
-// if not - throw error
-  Future<String> isCorrect(String mail, String password) async {
-    print("Try to connect...");
-    // Connect to the DB
+  // Connect to the DB.
+  void connect() async{
     db = await Db.create(CONNECT_TO_DB);
     await db.open();
-    var collection = db.collection('Users');
+    print('Connected to database');
+    Globals.isDbConnect = true;
+  }
+
+  // Check if user exist
+  Future<bool> isUserExist(String mail) async{
+    // Get the Users Collection
+    var collection = await db.collection('Users');
     // Check if the user exist
-    var user = await collection.findOne(where.eq('email', mail));
-    print(user);
+    var user = await collection.findOne(where.eq('email', '$mail'));
     if (user == null) {
-      return Future<String>(() => "User not exist!");
+      return false;
     }
-    // Check the password
-    if (user['password'] != password) {
-      return Future<String>(() => "Password incorrect!");
+    return true;
+  }
+  // Check if the user is exist.
+  // If not - throw error. O.W - return the user object.
+  checkNewUser(String mail) async{
+    // Get the Users Collection
+    var collection = await db.collection('Users');
+    // Check if the user exist
+    var user = await collection.findOne(where.eq('email', '$mail'));
+    if (user == null) {
+      return "User not exist!";
     }
-    print("Connection Successful");
-    db.close();
+    // OK
+    return User.fromJson(user);
   }
 
   // insert new user details
-  Future<String> insertNewUser(User user) async {
-    // Connect to the DB
-    db = await Db.create(CONNECT_TO_DB);
-    await db.open();
+  insertNewUser(User user) async {
     var collection = db.collection('Users');
-    // Check if the user exist
-    int exist = await collection.findOne(where.eq('email', user.email));
-    if (exist != null) {
-      return Future<String>(() => "User is already exist!");
-    }
     // insert a new User
     await collection.save(user.toJson());
-    await db.close();
   }
 
   /*
@@ -77,7 +79,7 @@ class Mongo {
   // insert new event
   // update new event
 
-  void connect(name, age, mail, user, password) async {
+  void insert2(name, age, mail, user, password) async {
     db = await Db.create(
         "mongodb+srv://yanivm93:kr2yptso@Cluster0.imwti.mongodb.net/test?tls=true&retryWrites=true&w=majority");
     await db.open();

@@ -1,8 +1,11 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
+import 'package:havruta_project/Globals.dart';
 import './Login1.dart';
+import './Login3.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/size_extension.dart';
@@ -24,6 +27,7 @@ class Login2 extends StatelessWidget {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width:375, height: 667,);
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: const Color(0xfff1f9ff),
       body: Stack(
           children: <Widget>[
@@ -203,34 +207,44 @@ class Login2 extends StatelessWidget {
                       pinRight: true,
                       pinTop: true,
                       pinBottom: true,
-                      child: GestureDetector(
-                        onTap: ()async{
-                          Mongo mongo = new Mongo();
-                          User user = new User();
-                          user.email = mail_str;
-                          user.name = name_str;
-                          user.password = password_str;
-                          if (password_str != password_con_str){
-                            //final snackBar = new SnackBar(content: new Text("Password not match"));
-                            //Scaffold.of(context).showSnackBar(snackBar);
-                            print ("Password not match");
-                            return;
-                          }
-                          String res = await mongo.insertNewUser(user);
-                          print(res);
-                          if (res != null){
-                            // final snackBar = new SnackBar(content: new Text(res.toString()));
-                            // Scaffold.of(context).showSnackBar(snackBar);
-                          } else {
-                            // connect and go to homePage
-                            // Navigator.of(context).pushNamed('/Login3');
+                      child: Scaffold(
+                        body: GestureDetector(
+                          onTap: ()async{
+                            // Check if the passwords are equals
+                            if (password_str != password_con_str){
+                              Flushbar(
+                                title: 'שגיאה בהרשמה',
+                                message: 'סיסמאות לא תואמות',
+                                duration: Duration(seconds: 3),
+                              )..show(context);
+                              return;
+                            }
+                            Future<bool> userExist = Globals.db.isUserExist(mail_str);
+                            if (userExist == true){
+                              Flushbar(
+                                title: 'שגיאה בהרשמה',
+                                message: 'קיים חשבון עבור מייל זה',
+                                duration: Duration(seconds: 3),
+                              )..show(context);
+                              return;
+                            }
+                            User user = new User();
+                            Globals.currentUser = user;
+                            user.email = mail_str;
+                            user.name = name_str;
+                            user.password = password_str;
+                            String res = await Globals.db.insertNewUser(user);
                             print("Connection Succeeded");
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24.w),
-                            color: const Color(0xff2699fb),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Login3()),
+                            );
+                            },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24.w),
+                              color: const Color(0xff2699fb),
+                            ),
                           ),
                         ),
                       ),
@@ -240,6 +254,16 @@ class Login2 extends StatelessWidget {
                       size: Size(327.w, 48.h),
                       fixedWidth: true,
                       fixedHeight: true,
+                      child:
+                      PageLink(
+                        links: [
+                          PageLinkInfo(
+                          transition: LinkTransition.SlideLeft,
+                          ease: Curves.linear,
+                          duration: 0.3,
+                          pageBuilder: () => Login3(),
+                          ),
+                          ],
                       child: Stack(
                         children: <Widget>[
                           Pinned.fromSize(
@@ -257,6 +281,7 @@ class Login2 extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ),
                     ),
                   ],
                 ),
@@ -288,7 +313,7 @@ class Login2 extends StatelessWidget {
                           child: TextField(
                               textAlign: TextAlign.center,
                               controller: password_con,
-                              obscureText: false,
+                              obscureText: true,
                               decoration: InputDecoration(
                                   hintText: "אישור סיסמא",
                                   hintStyle: TextStyle(color: Colors.grey),
@@ -338,7 +363,7 @@ class Login2 extends StatelessWidget {
                           child: TextField(
                               textAlign: TextAlign.center,
                               controller: password,
-                              obscureText: false,
+                              obscureText: true,
                               decoration: InputDecoration(
                                   hintText: "סיסמא חדשה",
                                   hintStyle: TextStyle(color: Colors.grey),
