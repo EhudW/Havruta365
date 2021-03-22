@@ -220,7 +220,7 @@ class Login1 extends StatelessWidget {
                 TextField(
                     textAlign: TextAlign.center,
                     controller: password,
-                    obscureText: false,
+                    obscureText: true,
                     decoration: InputDecoration(
                       hintText: "סיסמא",
                       hintStyle: TextStyle(color: Colors.grey),

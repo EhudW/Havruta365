@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:adobe_xd/pinned.dart';
+import './Login5.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
@@ -27,10 +27,20 @@ class _Login4CreateState extends State<Login4> {
   String selectedTopic;
   String selectedBook;
   List<DropdownMenuItem<String>> booksDrop = [];
-  List<String> books = [
+  List<String> humashBooks = [
     "בראשית",
-    "שמואל א",
-    "ירמיהו"
+    "שמות",
+    "ויקרא",
+    "במדבר",
+    "דברים",
+  ];
+
+  List<String> nachBooks = [
+    "יהושוע",
+    "שופטים",
+    "שמואל א ",
+    "שמואל ב",
+    "מלכים",
   ];
 
 
@@ -44,21 +54,28 @@ class _Login4CreateState extends State<Login4> {
     ))
         .toList();
   }
-
-  void loadBooksData() {
+  /// Function to load the data for the dropdown list
+  void loadTorahBooksData() {
     booksDrop = [];
-    booksDrop = books
+    booksDrop = humashBooks
         .map((val) => DropdownMenuItem<String>(
       child: Text(val),
       value: val,
-    ))
-        .toList();
+    )).toList();
+  }
+  /// Function to load the data for the dropdown list
+  void loadNachBooksData() {
+    booksDrop = [];
+    booksDrop = nachBooks
+        .map((val) => DropdownMenuItem<String>(
+      child: Text(val),
+      value: val,
+    )).toList();
   }
 
   final name = TextEditingController();
   String name_str = "";
 
-  //final mail = TextEditingController();
   String mail_str = "";
   final password = TextEditingController();
   String password_str = "";
@@ -131,12 +148,6 @@ class _Login4CreateState extends State<Login4> {
                       duration: 0.3,
                       pageBuilder: () => Login3(),
                     ),
-                    // PageLinkInfo(
-                    //   transition: LinkTransition.SlideLeft,
-                    //   ease: Curves.easeOut,
-                    //   duration: 0.1,
-                    //   pageBuilder: () => Login3(),
-                    // ),
                   ],
                   child: Stack(
                     children: <Widget>[
@@ -214,7 +225,16 @@ class _Login4CreateState extends State<Login4> {
                   size: Size(327.w, 48.h),
                   fixedWidth: true,
                   fixedHeight: true,
-                  child: Stack(
+                  child: PageLink(
+                    links: [
+                      PageLinkInfo(
+                        transition: LinkTransition.SlideLeft,
+                        ease: Curves.linear,
+                        duration: 0.3,
+                        pageBuilder: () => Login5(),
+                      ),
+                    ],
+                  child:Stack(
                     children: <Widget>[
                       Pinned.fromSize(
                         bounds: Rect.fromLTWH(0.0, 0.0, 16.w, 16.h),
@@ -231,6 +251,7 @@ class _Login4CreateState extends State<Login4> {
                       ),
                     ],
                   ),
+                  ),
                 ),
               ],
             ),
@@ -238,7 +259,7 @@ class _Login4CreateState extends State<Login4> {
         ),
         //FIRST DROPDOWN BOX
         Transform.translate(
-          offset: Offset(5.w, 0.h),
+          offset: Offset(5.w, -10.h),
           child: Center(
             child: Column(
               children: <Widget>[
@@ -269,20 +290,27 @@ class _Login4CreateState extends State<Login4> {
                                     hint: Text("בחרו תחום"),
                                     items: topicsDrop,
                                     onChanged: (value) {
-                                      loadBooksData();
-                                      selectedTopic = value;
-                                      setState(() {});
-                                    }),
+                                      if (value == "תורה") {
+                                        loadTorahBooksData();
+                                        setState(() { selectedTopic = value;});
+                                      }
+                                      else if (value == "נ״ך") {
+                                        loadNachBooksData();
+                                        selectedTopic = value;
+                                        setState(() {});
+                                      }
 
+                                    }
+                                ),
                               ),
                             ),
                           ],
                         )
                     )
                 ),
+                //==============SECOND DROPDOWN LIST=================
                 DropdownButtonHideUnderline(
                     child: Container(
-
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                         child: Stack(
                           children: [
@@ -307,10 +335,9 @@ class _Login4CreateState extends State<Login4> {
                                     hint: Text("בחרו ספר"),
                                     items: booksDrop,
                                     onChanged: (value) {
-                                      //loadBooksData();
-                                      selectedBook = value;
-                                      setState(() {});
-                                    }
+                                        selectedBook = value;
+                                        setState(() {});}
+
                                 ),
                               ),
                             ),

@@ -27,7 +27,9 @@ class Login2 extends StatelessWidget {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width:375, height: 667,);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+
+      resizeToAvoidBottomInset: false,
+
       backgroundColor: const Color(0xfff1f9ff),
       body: Stack(
           children: <Widget>[
@@ -314,6 +316,7 @@ class Login2 extends StatelessWidget {
                               textAlign: TextAlign.center,
                               controller: password_con,
                               obscureText: true,
+                              showCursor: true,
                               decoration: InputDecoration(
                                   hintText: "אישור סיסמא",
                                   hintStyle: TextStyle(color: Colors.grey),
