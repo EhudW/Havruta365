@@ -4,9 +4,9 @@ import 'package:havruta_project/Screens/Login1.dart';
 import 'Screens/SignupScreen.dart';
 
 void main() {
+  runApp(MyApp());
   // Initial the connection to the db
   Globals.db.connect();
-  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {

@@ -211,21 +211,47 @@ class Login2 extends StatelessWidget {
                       pinBottom: true,
                       child: Scaffold(
                         body: GestureDetector(
-                          onTap: ()async{
-                            // Check if the passwords are equals
-                            if (password_str != password_con_str){
+                          onTap: () async{
+                            if (password_con_str.isEmpty || password_con_str == null
+                            || password_str.isEmpty || password_str == null ||
+                                mail_str.isEmpty || mail_str == null ||
+                                name_str.isEmpty || name_str == null){
                               Flushbar(
                                 title: 'שגיאה בהרשמה',
-                                message: 'סיסמאות לא תואמות',
+                                messageText: Text(
+                                  'ודא שמילאת את כל השדות',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.lightBlue,
+                                  fontSize: 20)
+                                ),
                                 duration: Duration(seconds: 3),
                               )..show(context);
                               return;
                             }
-                            Future<bool> userExist = Globals.db.isUserExist(mail_str);
-                            if (userExist == true){
+                            // Check if the passwords are equals
+                            if (password_str != password_con_str){
                               Flushbar(
                                 title: 'שגיאה בהרשמה',
-                                message: 'קיים חשבון עבור מייל זה',
+                                messageText: Text(
+                                  'סיסמאות לא תואמות',
+                                  textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.lightBlue,
+                                        fontSize: 20)
+                                ),
+                                duration: Duration(seconds: 3),
+                              )..show(context);
+                              return;
+                            }
+                            bool userExist = await Globals.db.isUserExist(mail_str);
+                            if (userExist){
+                              Flushbar(
+                                title: 'שגיאה בהרשמה',
+                                messageText: Text(
+                                  'קיים חשבון עבור מייל זה',
+                                  textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.lightBlue,
+                                        fontSize: 20)
+                                ),
                                 duration: Duration(seconds: 3),
                               )..show(context);
                               return;
@@ -235,8 +261,8 @@ class Login2 extends StatelessWidget {
                             user.email = mail_str;
                             user.name = name_str;
                             user.password = password_str;
-                            String res = await Globals.db.insertNewUser(user);
-                            print("Connection Succeeded");
+                            var res = Globals.db.insertNewUser(user);
+                            print("Registration Succeeded");
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => Login3()),

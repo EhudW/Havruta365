@@ -130,10 +130,23 @@ class Login3 extends StatefulWidget {
                   pinRight: true,
                   pinTop: true,
                   pinBottom: true,
-                  child: Container(
+                  child: Scaffold(
+                    body: GestureDetector(
+                    onTap: () {
+                      // Update user details
+
+                      // go to login4
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Login4()),
+                      );
+                    },
+                    child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24.w),
-                      color: const Color(0xff2699fb),
+                    borderRadius: BorderRadius.circular(24.w),
+                    color: const Color(0xff2699fb),
+                    ),
+                    ),
                     ),
                   ),
                 ),
