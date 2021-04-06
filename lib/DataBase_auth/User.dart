@@ -59,8 +59,8 @@ class User {
         _birthDate = json['birthDate'],
         _address = json['address'],
         _gender = json['gender'],
-        _status = json['status'],
-        _interestList = json['interest'];
+        _status = json['status'];
+        // _interestList = json['interest'];
 
   get email => _email;
 

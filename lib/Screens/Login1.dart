@@ -1,7 +1,10 @@
 import 'package:adobe_xd/pinned.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
+import 'package:havruta_project/Screens/HomeScreen.dart';
+import '../Globals.dart';
 import './Login2.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,7 +30,7 @@ class Login1 extends StatelessWidget {
     );
 
     return Scaffold(
-      //resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xffffffff),
       body: Stack(
         children: <Widget>[
@@ -50,19 +53,23 @@ class Login1 extends StatelessWidget {
                   pinBottom: true,
                   child: GestureDetector(
                     onTap: () async {
-                      Mongo mongo = new Mongo();
-                      String res =
-                      await mongo.isCorrect(mail_str, password_str);
+                      var res = await Globals.db.checkNewUser(mail_str);
                       print(res);
-                      // Chech if there is a problem
-                      // User not exist OR password is not correct
-                      if (res != null) {
-                        final snackBar =
-                        new SnackBar(content: new Text(res.toString()));
-                        Scaffold.of(context).showSnackBar(snackBar);
+                      // User not exist
+                      if (res == 'User not exist!') {
+                        Flushbar(
+                          title: 'שגיאה בהתחברות',
+                          message: 'משתמש לא קיים',
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       } else {
-                        // connect and go to homePage
-                        Navigator.of(context).pushNamed('/homeScreen');
+                        // Update current user
+                        Globals.currentUser = res;
+                        // Go to HomePage
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
                       }
                     },
                     child: Container(
@@ -213,7 +220,7 @@ class Login1 extends StatelessWidget {
                 TextField(
                     textAlign: TextAlign.center,
                     controller: password,
-                    obscureText: false,
+                    obscureText: true,
                     decoration: InputDecoration(
                       hintText: "סיסמא",
                       hintStyle: TextStyle(color: Colors.grey),
