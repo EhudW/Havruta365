@@ -289,7 +289,6 @@ class Login2 extends StatelessWidget {
                           transition: LinkTransition.SlideLeft,
                           ease: Curves.linear,
                           duration: 0.3,
-                          pageBuilder: () => Login3(),
                           ),
                           ],
                       child: Stack(

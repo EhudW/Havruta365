@@ -7,6 +7,8 @@ import 'User.dart';
 
 String CONNECT_TO_DB = "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havruta?retryWrites=true&w=majority";
 
+
+
 /*
   Class Mongo
   Tips:
@@ -19,7 +21,6 @@ String CONNECT_TO_DB = "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havr
         for example: return this.name("tani") && this.age > 25;
  */
 class Mongo {
-
 
   var db;
 
@@ -42,15 +43,6 @@ class Mongo {
     }
     return true;
   }
-
-  // Update exist User
-  updateUser(String mail, Map<String, dynamic> details) async{
-    var coll = await db.collection('Users');
-    details.forEach((key, value) {
-      coll.update(where.eq('mail', '$mail'), modify.set(key, value));
-    });
-  }
-
   // Check if the user is exist.
   // If not - throw error. O.W - return the user object.
   checkNewUser(String mail) async{
@@ -76,12 +68,35 @@ class Mongo {
   Remove user from the DB according to the mail.
    */
   void removeUser(mail) async {
+    db = await Db.create(CONNECT_TO_DB);
+    await db.open();
     var collection = db.collection('Users');
     collection.remove(where.eq('mail', mail));
     await db.close();
   }
 
-  //
+  // update user details
+  // insert new event
+  // update new event
+
+  void insert2(name, age, mail, user, password) async {
+    db = await Db.create(
+        "mongodb+srv://yanivm93:kr2yptso@Cluster0.imwti.mongodb.net/test?tls=true&retryWrites=true&w=majority");
+    await db.open();
+    print('Connected to database');
+    var coll = db.collection('test');
+    await coll.insertAll([
+      // info!!
+      {
+        'login': user,
+        'name': name,
+        'email': mail,
+        'age': age,
+        'password': password
+      },
+    ]);
+  }
+
   void connectGoogle(name, email) async {
     db = await Db.create(
         "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/test?retryWrites=true&w=majority");

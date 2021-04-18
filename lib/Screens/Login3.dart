@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
-import 'package:havruta_project/Globals.dart';
 import './Login2.dart';
 import './Login4.dart';
 import 'package:adobe_xd/page_link.dart';
@@ -134,11 +133,13 @@ class Login3 extends StatefulWidget {
                   child: Scaffold(
                     body: GestureDetector(
                     onTap: () {
-                      // // Update user details
-                      //
-                      // Globals.db.updateUser(mail, {user_name});
-                      // // go to login4
+                      // Update user details
 
+                      // go to login4
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Login4()),
+                      );
                     },
                     child: Container(
                     decoration: BoxDecoration(

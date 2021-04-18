@@ -43,6 +43,32 @@ class _Login4CreateState extends State<Login4> {
     "מלכים",
   ];
 
+  List<String> talmudBavliBooks = [
+    "ברכות",
+    "שבת",
+    "עירובין ",
+    "פסחים",
+    "שקלים",
+  ];
+
+  List<String> talmudYerushalmiBooks = [
+    "ברכות",
+    "פאה",
+    "דמאי",
+    "כלאים",
+    "שביעית",
+  ];
+
+  List<String> halachaBooks = [
+    "שולחן ערוך",
+    "משנה ברורה",
+    "קיצור שלחן ערוך",
+    "רמב״ם",
+    "פניני הלכה",
+  ];
+
+
+
 
   /// Function to load the data for the dropdown list
   void loadTopicsData() {
@@ -72,6 +98,34 @@ class _Login4CreateState extends State<Login4> {
       value: val,
     )).toList();
   }
+
+  void loadBavliBooksData() {
+    booksDrop = [];
+    booksDrop = talmudBavliBooks
+        .map((val) => DropdownMenuItem<String>(
+      child: Text(val),
+      value: val,
+    )).toList();
+  }
+
+  void loadYerushalmiBooksData() {
+    booksDrop = [];
+    booksDrop = talmudYerushalmiBooks
+        .map((val) => DropdownMenuItem<String>(
+      child: Text(val),
+      value: val,
+    )).toList();
+  }
+
+  void loadHalachaBooksData() {
+    booksDrop = [];
+    booksDrop = halachaBooks
+        .map((val) => DropdownMenuItem<String>(
+      child: Text(val),
+      value: val,
+    )).toList();
+  }
+
 
   final name = TextEditingController();
   String name_str = "";
@@ -123,7 +177,7 @@ class _Login4CreateState extends State<Login4> {
                 fixedWidth: false,
                 fixedHeight: true,
                 child: Text(
-                  'מה תרצו ללמוד?',
+                  'תחומי עניין',
                   style: TextStyle(
                     fontFamily: 'Bauhaus 93',
                     fontSize: 18.0.sp,
@@ -188,6 +242,7 @@ class _Login4CreateState extends State<Login4> {
                   pinRight: true,
                   pinTop: true,
                   pinBottom: true,
+
                   child: GestureDetector(
                     onTap: () async {
                       Mongo mongo = new Mongo();
@@ -212,11 +267,13 @@ class _Login4CreateState extends State<Login4> {
                         print("Connection Succeeded");
                       }
                     },
+
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24.w),
                         color: const Color(0xff2699fb),
                       ),
+
                     ),
                   ),
                 ),
@@ -225,16 +282,18 @@ class _Login4CreateState extends State<Login4> {
                   size: Size(327.w, 48.h),
                   fixedWidth: true,
                   fixedHeight: true,
-                  child: PageLink(
+                  child:
+                  // Adobe XD layer: 'Backward arrow' (group)
+                  PageLink(
                     links: [
                       PageLinkInfo(
-                        transition: LinkTransition.SlideLeft,
-                        ease: Curves.linear,
+                        transition: LinkTransition.Fade,
+                        ease: Curves.easeOut,
                         duration: 0.3,
                         pageBuilder: () => Login5(),
                       ),
                     ],
-                  child:Stack(
+                  child: Stack(
                     children: <Widget>[
                       Pinned.fromSize(
                         bounds: Rect.fromLTWH(0.0, 0.0, 16.w, 16.h),
@@ -251,7 +310,7 @@ class _Login4CreateState extends State<Login4> {
                       ),
                     ],
                   ),
-                  ),
+                ),
                 ),
               ],
             ),
@@ -292,16 +351,29 @@ class _Login4CreateState extends State<Login4> {
                                     onChanged: (value) {
                                       if (value == "תורה") {
                                         loadTorahBooksData();
-                                        setState(() { selectedTopic = value;});
                                       }
                                       else if (value == "נ״ך") {
                                         loadNachBooksData();
-                                        selectedTopic = value;
-                                        setState(() {});
                                       }
+                                      else if (value == "תלמוד בבלי") {
+                                        loadBavliBooksData();
+                                      }
+                                      else if (value == "תלמוד ירושלמי") {
+                                        loadYerushalmiBooksData();
+                                      }
+                                      else if (value == "הלכה") {
+                                        loadHalachaBooksData();
+                                      }
+                                      selectedTopic = value;
+                                      setState(() {
+                                        selectedBook = null;
+                                      });
+
 
                                     }
                                 ),
+
+
                               ),
                             ),
                           ],
@@ -335,9 +407,11 @@ class _Login4CreateState extends State<Login4> {
                                     hint: Text("בחרו ספר"),
                                     items: booksDrop,
                                     onChanged: (value) {
-                                        selectedBook = value;
-                                        setState(() {});}
-
+                                      //loadBooksData();
+                                      selectedBook = value;
+                                      print(selectedBook);
+                                      setState(() {});
+                                    }
                                 ),
                               ),
                             ),
