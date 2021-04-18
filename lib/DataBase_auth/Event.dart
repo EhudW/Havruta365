@@ -3,45 +3,65 @@
 import 'package:havruta_project/DataBase_auth/User.dart';
 
 class Event {
-  String _email,
-      _type,
-      _topic,
-      _book,
-      _frequency,
-      _date,
-      _link,
-      _description;
+
+  Event({
+    this.eventImage,
+    this.creatorUser,
+    this.type,
+    this.topic,
+    this.book,
+    this.lecturer,
+    this.starRating,
+    this.date,
+    this.frequency,
+    this.participants,
+    this.link,
+    this.description
+  });
+
+  User creatorUser;
+  String type,
+      topic,
+      book,
+      frequency,
+      date,
+      link,
+      description;
   String eventImage;
+  String lecturer;
   int starRating;
-  final List<User> _participants;
+  List<User> participants;
 
-  String get topic => _topic;
-  String get book => _book;
-
-  Event( this._email, this._type, this._topic, this._book, this._date,
-      this._participants, this._link, this._description);
 
   // Return JSON of the event
-  Map<String, dynamic> toJson() => {
-    'email': _email,
-    'type': _type,
-    'topic': _topic,
-    'book': _book,
-    'frequency': _frequency,
-    'date': _date,
-    'participants': _participants,
-    'link': _link,
-    'description': _description
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        'creatorUser': creatorUser,
+        'type': type,
+        'topic': topic,
+        'book': book,
+        'frequency': frequency,
+        'date': date,
+        'participants': participants,
+        'link': link,
+        'description': description,
+        'eventImage': eventImage,
+        'lecturer': lecturer,
+        'starRating': starRating
+      };
 
   Event.fromJson(Map<String, dynamic> json)
       :
-        _email = json['email'],
-        _type = json['type'],
-        _topic = json['topic'],
-        _book = json['book'],
-        _frequency = json['frequency'],
-        _date = json['date'],
-        _participants = json['participants'],
-        _description = json['description'];
+        creatorUser = json['creatorUser'],
+        type = json['type'],
+        topic = json['topic'],
+        book = json['book'],
+        frequency = json['frequency'],
+        date = json['date'],
+        participants = json['participants'],
+        description = json['description'],
+        link = json['link'],
+        eventImage = json['eventImage'],
+        lecturer = json['lecturer'],
+        starRating = json['starRating'];
 }
