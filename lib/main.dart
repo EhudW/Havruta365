@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:havruta_project/Screens/Login1.dart';
-import 'package:havruta_project/Screens/HomePage.dart';
 
 import 'Screens/SignupScreen.dart';
 
@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     // Otherwise, return Login1()
     return MaterialApp(
       home: Scaffold(
-        body: HomePage(),
+        body: EventScreen(),
       ),
       debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder>{
