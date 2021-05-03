@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/main.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -73,6 +74,12 @@ class Mongo {
     var collection = db.collection('Users');
     collection.remove(where.eq('mail', mail));
     await db.close();
+  }
+
+  getEvent (String _id) async{
+    var collection = db.collection('Events');
+    var event = await collection.findOne(where.eq('_id', _id));
+    return event;
   }
 
   // update user details

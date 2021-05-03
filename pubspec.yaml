@@ -40,6 +40,8 @@ dependencies:
   # top_snackbar_flutter: ^1.0.0
   flushbar: ^1.5.0
   progress_state_button: ^1.0.3
+  datetime_picker_formfield: ^2.0.0
+  loading_animations: ^2.1.0
   # flutter_svg: ^0.21.0+1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -62,22 +64,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   # assets:
-  assets:
-    - images/banner.png
-    - images/banner1.jpg
-    - images/banner2.png
-    - images/banner3.gif
-    - images/poster.png
-    - images/1.png
-    - images/2.png
-    - images/3.png
-    - images/4.png
-    - images/ellie.png
-    - images/eric.png
-    - images/jenny.png
-    - images/kevin.png
-    - images/louis.png
-    - images/User-Icon.jpg
+  # assets:
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -90,19 +77,19 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-   - family: Alef
-     fonts:
-       - asset: assets/fonts/Alef-Bold.ttf
-   - family: Amatic
-     fonts:
-         - asset: assets/fonts/AmaticSC-Bold.ttf
-   - family: Karantina
-     fonts:
-         - asset: assets/fonts/Karantina-Bold.ttf
-   - family: Rubik
-     fonts:
-         - asset: assets/fonts/Rubik-Bold.ttf
+#  fonts:
+#   - family: Alef
+#     fonts:
+#       - asset: assets/fonts/Alef-Bold.ttf
+#   - family: Amatic
+#     fonts:
+#         - asset: assets/fonts/AmaticSC-Bold.ttf
+#   - family: Karantina
+#     fonts:
+#         - asset: assets/fonts/Karantina-Bold.ttf
+#   - family: Rubik
+#     fonts:
+#         - asset: assets/fonts/Rubik-Bold.ttf
 
 
   # For details regarding fonts from package dependencies,
