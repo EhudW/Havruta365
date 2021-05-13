@@ -7,8 +7,6 @@ class Interest {
   String topic, book;
 }
 
-
-
 class User {
   User();
 

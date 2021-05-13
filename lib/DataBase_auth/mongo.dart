@@ -26,17 +26,39 @@ class Mongo {
   var db;
 
   // Connect to the DB.
-  void connect() async{
+  Future<void> connect() async{
     db = await Db.create(CONNECT_TO_DB);
     await db.open();
     print('Connected to database');
     Globals.isDbConnect = true;
   }
 
+
+  Future<void> insertEvent(Event event) async{
+    var collection = db.collection('Events');
+    var e = event.toJson();
+    await collection.insertOne(e);
+  }
+
+  Future<User> getUser(String mail) async{
+    // Get the Users Collection
+    var collection = db.collection('Users');
+    // Check if the user exist
+    var user = await collection.findOne(where.eq('email', '$mail'));
+    print("!!DB!!!$user");
+    if (user == null) {
+      return null;
+    }
+    user = User.fromJson(user);
+    print("!!JSON!!!$user");
+    return user;
+  }
+
+
   // Check if user exist
   Future<bool> isUserExist(String mail) async{
     // Get the Users Collection
-    var collection = await db.collection('Users');
+    var collection = db.collection('Users');
     // Check if the user exist
     var user = await collection.findOne(where.eq('email', '$mail'));
     if (user == null) {
@@ -78,7 +100,7 @@ class Mongo {
 
   getEvent (String _id) async{
     var collection = db.collection('Events');
-    var event = await collection.findOne(where.eq('_id', _id));
+    var event = await collection.find(keyLimit: 10);
     return event;
   }
 

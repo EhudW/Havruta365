@@ -5,63 +5,74 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 class Event {
 
   Event({
-    this.eventImage,
-    this.creatorUser,
-    this.type,
-    this.topic,
-    this.book,
-    this.lecturer,
-    this.starRating,
-    this.date,
-    this.frequency,
-    this.participants,
-    this.link,
-    this.description
-  });
+      this.id,
+      this.creatorUser,
+      this.creationDate,
+      this.type,
+      this.topic,
+      this.book,
+      this.link,
+      this.description,
+      this.eventImage,
+      this.lecturer,
+      this.participants,
+      this.dates,
+      this.starRating,
+      this.maxParticipants});
 
-  User creatorUser;
-  String type,
-      topic,
-      book,
-      frequency,
-      date,
-      link,
-      description;
-  String eventImage;
-  String lecturer;
+  String id, creatorUser, type, topic, book, link, description,
+      eventImage, lecturer;
+  int maxParticipants;
   int starRating;
-  List<User> participants;
+  DateTime creationDate;
+  List<String> participants ;
+  List<DateTime> dates;
 
-
+  factory Event.fromServerMap(Map data) {
+    return Event(
+        id: data['id'],
+        creatorUser: data['creatorUser'],
+        creationDate: data['creationDate'],
+        topic: data['topic'],
+        book: data['book'],
+        link: data['link'],
+        description: data['description'],
+        eventImage: data['eventImage'],
+        lecturer: data['lecturer'],
+        participants: data['participants'],
+        starRating: data['starRating'],
+        maxParticipants: data['maxParticipants']
+    );
+  }
   // Return JSON of the event
   Map<String, dynamic> toJson() =>
       {
+        'id': 'id',
         'creatorUser': creatorUser,
-        'type': type,
+        'creationDate': creationDate,
         'topic': topic,
         'book': book,
-        'frequency': frequency,
-        'date': date,
-        'participants': participants,
         'link': link,
         'description': description,
         'eventImage': eventImage,
         'lecturer': lecturer,
-        'starRating': starRating
+        'participants': participants,
+        'starRating': starRating,
+        'maxParticipants': maxParticipants
       };
 
   Event.fromJson(Map<String, dynamic> json)
-      :
-        creatorUser = json['creatorUser'],
-        type = json['type'],
-        topic = json['topic'],
-        book = json['book'],
-        frequency = json['frequency'],
-        date = json['date'],
-        participants = json['participants'],
-        description = json['description'],
-        link = json['link'],
-        eventImage = json['eventImage'],
-        lecturer = json['lecturer'],
-        starRating = json['starRating'];
+    :id = json['id'],
+    creatorUser = json['creatorUser'],
+    creationDate = json['creationDate'],
+    topic = json['topic'],
+    book = json['book'],
+    link = json['link'],
+    description = json['description'],
+    eventImage = json['eventImage'],
+    lecturer = json['lecturer'],
+    participants = json['participants'],
+    starRating = json['starRating'],
+    maxParticipants = json['maxParticipants'];
+
 }
