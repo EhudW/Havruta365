@@ -8,8 +8,7 @@ import '../Globals.dart';
 import './Login2.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Login1 extends StatelessWidget {
   final mail = TextEditingController();
@@ -23,11 +22,11 @@ class Login1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(
-      context,
-      width: 375,
-      height: 667,
-    );
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 667),
+        orientation: Orientation.portrait);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

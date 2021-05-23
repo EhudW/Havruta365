@@ -6,8 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Screens/Login3.dart';
-import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Login4 extends StatefulWidget {
   @override
@@ -142,9 +141,11 @@ class _Login4CreateState extends State<Login4> {
   Widget build(BuildContext context) {
     loadTopicsData();
     ScreenUtil.init(
-      context,
-      width: 375,
-      height: 667,
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 667),
+        orientation: Orientation.portrait
     );
     return Scaffold(
       backgroundColor: const Color(0xfff1f9ff),

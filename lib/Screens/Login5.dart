@@ -3,9 +3,7 @@ import 'package:adobe_xd/pinned.dart';
 import './Login4.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_screenutil/screenutil.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -50,9 +48,11 @@ class Login5_state extends State<Login5> {
 
   Widget build(BuildContext context) {
     ScreenUtil.init(
-      context,
-      width: 375,
-      height: 667,
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 667),
+        orientation: Orientation.portrait
     );
     return Scaffold(
       backgroundColor: const Color(0xfff1f9ff),
