@@ -1,7 +1,10 @@
 import 'package:adobe_xd/pinned.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
+import 'package:havruta_project/Screens/HomeScreen.dart';
+import '../Globals.dart';
 import './Login2.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,7 +30,7 @@ class Login1 extends StatelessWidget {
     );
 
     return Scaffold(
-      //resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xffffffff),
       body: Stack(
         children: <Widget>[
@@ -38,8 +41,8 @@ class Login1 extends StatelessWidget {
             pinRight: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'old user' (group)
-            Stack(
+                // Adobe XD layer: 'old user' (group)
+                Stack(
               children: <Widget>[
                 Pinned.fromSize(
                   bounds: Rect.fromLTWH(0.0, 0.0, 295.w, 48.h),
@@ -50,19 +53,23 @@ class Login1 extends StatelessWidget {
                   pinBottom: true,
                   child: GestureDetector(
                     onTap: () async {
-                      Mongo mongo = new Mongo();
-                      String res =
-                      await mongo.isCorrect(mail_str, password_str);
+                      var res = await Globals.db.checkNewUser(mail_str);
                       print(res);
-                      // Chech if there is a problem
-                      // User not exist OR password is not correct
-                      if (res != null) {
-                        final snackBar =
-                        new SnackBar(content: new Text(res.toString()));
-                        Scaffold.of(context).showSnackBar(snackBar);
+                      // User not exist
+                      if (res == 'User not exist!') {
+                        Flushbar(
+                          title: 'שגיאה בהתחברות',
+                          message: 'משתמש לא קיים',
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       } else {
-                        // connect and go to homePage
-                        Navigator.of(context).pushNamed('/homeScreen');
+                        // Update current user
+                        Globals.currentUser = res;
+                        // Go to HomePage
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
                       }
                     },
                     child: Container(
@@ -99,8 +106,8 @@ class Login1 extends StatelessWidget {
             pinTop: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'Header' (group)
-            Stack(
+                // Adobe XD layer: 'Header' (group)
+                Stack(
               children: <Widget>[
                 Pinned.fromSize(
                   bounds: Rect.fromLTWH(0.0, 0.0, 375.w, 172.h),
@@ -139,8 +146,8 @@ class Login1 extends StatelessWidget {
             fixedWidth: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'Divider' (shape)
-            Container(
+                // Adobe XD layer: 'Divider' (shape)
+                Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2.w),
                 color: const Color(0xffbce0fd),
@@ -154,8 +161,8 @@ class Login1 extends StatelessWidget {
             fixedWidth: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'Name' (group)
-            Stack(
+                // Adobe XD layer: 'Name' (group)
+                Stack(
               children: <Widget>[
                 TextField(
                     textAlign: TextAlign.center,
@@ -190,8 +197,8 @@ class Login1 extends StatelessWidget {
                   fixedWidth: true,
                   fixedHeight: true,
                   child:
-                  // Adobe XD layer: 'Icon' (shape)
-                  SvgPicture.string(
+                      // Adobe XD layer: 'Icon' (shape)
+                      SvgPicture.string(
                     _svg_sjnak0,
                     allowDrawingOutsideViewBox: true,
                     fit: BoxFit.fill,
@@ -207,13 +214,13 @@ class Login1 extends StatelessWidget {
             fixedWidth: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'Password' (group)
-            Stack(
+                // Adobe XD layer: 'Password' (group)
+                Stack(
               children: <Widget>[
                 TextField(
                     textAlign: TextAlign.center,
                     controller: password,
-                    obscureText: false,
+                    obscureText: true,
                     decoration: InputDecoration(
                       hintText: "סיסמא",
                       hintStyle: TextStyle(color: Colors.grey),
@@ -243,8 +250,8 @@ class Login1 extends StatelessWidget {
                   fixedWidth: true,
                   fixedHeight: true,
                   child:
-                  // Adobe XD layer: 'Lock' (group)
-                  Stack(
+                      // Adobe XD layer: 'Lock' (group)
+                      Stack(
                     children: <Widget>[
                       Pinned.fromSize(
                         bounds: Rect.fromLTWH(0.0, 0.0, 16.w, 16.h),
@@ -283,8 +290,8 @@ class Login1 extends StatelessWidget {
             pinRight: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'new user' (group)
-            PageLink(
+                // Adobe XD layer: 'new user' (group)
+                PageLink(
               links: [
                 PageLinkInfo(
                   transition: LinkTransition.SlideLeft,
@@ -334,8 +341,8 @@ class Login1 extends StatelessWidget {
             fixedWidth: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'g+' (group)
-            Stack(
+                // Adobe XD layer: 'g+' (group)
+                Stack(
               children: <Widget>[
                 Pinned.fromSize(
                   bounds: Rect.fromLTWH(0.0, 0.0, 56.w, 56.h),
@@ -353,7 +360,7 @@ class Login1 extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius:
-                        BorderRadius.all(Radius.elliptical(9999.w, 9999.h)),
+                            BorderRadius.all(Radius.elliptical(9999.w, 9999.h)),
                         border: Border.all(
                             width: 1.0, color: const Color(0xffbce0fd)),
                       ),
@@ -366,8 +373,8 @@ class Login1 extends StatelessWidget {
                   fixedWidth: true,
                   fixedHeight: true,
                   child:
-                  // Adobe XD layer: 'g+' (group)
-                  Stack(
+                      // Adobe XD layer: 'g+' (group)
+                      Stack(
                     children: <Widget>[
                       Pinned.fromSize(
                         bounds: Rect.fromLTWH(0.0, 0.0, 16.w, 16.h),
@@ -406,8 +413,8 @@ class Login1 extends StatelessWidget {
             fixedWidth: true,
             fixedHeight: true,
             child:
-            // Adobe XD layer: 'facebook' (group)
-            Stack(
+                // Adobe XD layer: 'facebook' (group)
+                Stack(
               children: <Widget>[
                 Pinned.fromSize(
                   bounds: Rect.fromLTWH(20.w, 20.h, 16.w, 16.h),
@@ -452,7 +459,7 @@ class Login1 extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius:
-                      BorderRadius.all(Radius.elliptical(9999.w, 9999.h)),
+                          BorderRadius.all(Radius.elliptical(9999.w, 9999.h)),
                       border: Border.all(
                           width: 1.0, color: const Color(0xffbce0fd)),
                     ),
