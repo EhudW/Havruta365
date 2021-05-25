@@ -2,10 +2,8 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
-import 'package:havruta_project/DataBase_auth/mongo.dart';
-import 'package:havruta_project/Screens/HomeScreen.dart';
-import '../Globals.dart';
-import './Login2.dart';
+import '../../Globals.dart';
+import 'Login2.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,10 +63,10 @@ class Login1 extends StatelessWidget {
                         // Update current user
                         Globals.currentUser = res;
                         // Go to HomePage
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => HomeScreen()),
+                        // );
                       }
                     },
                     child: Container(

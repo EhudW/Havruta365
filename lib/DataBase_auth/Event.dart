@@ -17,16 +17,14 @@ class Event {
       this.lecturer,
       this.participants,
       this.dates,
-      this.starRating,
       this.maxParticipants});
 
   String id, creatorUser, type, topic, book, link, description,
       eventImage, lecturer;
   int maxParticipants;
-  int starRating;
   DateTime creationDate;
   List<String> participants ;
-  List<DateTime> dates;
+  List<String> dates;
 
   factory Event.fromServerMap(Map data) {
     return Event(
@@ -40,7 +38,6 @@ class Event {
         eventImage: data['eventImage'],
         lecturer: data['lecturer'],
         participants: data['participants'],
-        starRating: data['starRating'],
         maxParticipants: data['maxParticipants']
     );
   }
@@ -57,7 +54,6 @@ class Event {
         'eventImage': eventImage,
         'lecturer': lecturer,
         'participants': participants,
-        'starRating': starRating,
         'maxParticipants': maxParticipants
       };
 
@@ -72,7 +68,6 @@ class Event {
     eventImage = json['eventImage'],
     lecturer = json['lecturer'],
     participants = json['participants'],
-    starRating = json['starRating'],
-    maxParticipants = json['maxParticipants'];
-
+    maxParticipants = json['maxParticipants'],
+    dates = json['dates'];
 }

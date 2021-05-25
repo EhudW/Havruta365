@@ -32,11 +32,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               padding: const EdgeInsets.all(20.0),
               child: Storyline(widget.event.description),
             ),
-            // Frequency
-            SizedBox(height: 20.0),
-            // TODO INSERT DATES FOR THE EVENT
-            // DatesList(widget.event.dates),
-            SizedBox(height: 20.0),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 40.0, 20),
+              child: DatesList(widget.event.dates),
+            ),
             MyProgressButton(title: 'tani', link: widget.event.link),
             SizedBox(height: 20.0),
             ParticipentsScroller(widget.event.participants),

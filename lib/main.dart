@@ -3,10 +3,12 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
-import 'package:havruta_project/Screens/Login1.dart';
+import 'package:havruta_project/Screens/Login/Login1.dart';
 import 'package:loading_animations/loading_animations.dart';
 
-import 'Screens/SignupScreen.dart';
+import 'DataBase_auth/User.dart';
+import 'Screens/HomePageScreen/home_page.dart';
+import 'Screens/Login/SignupScreen.dart';
 
 void main() async{
   runApp(MyApp());
@@ -36,19 +38,20 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-  Event event = Event.fromJson({'id': '123', 'creatorUser': "michal@gmail.com",
-    'creationDate': DateTime.now(),
-    'type': 'lesson', 'topic':"תלמוד בבלי", 'book':"הדף היומי",
-    'link':"https://www.dirshu.co.il/31469-2/",
-    'description':'דרשו מגיש:\nשיעורי הדף היומי בגמרא בצורה פשוטה ובהירה,\nמפי הרב אליהו אורנשטיין שליט"א',
-    'eventImage':"https://moreshet-maran.com/wp-content/uploads/2020/04/%D7%94%D7%93%D7%A3-%D7%94%D7%99%D7%95%D7%9E%D7%99.jpg",
-    'lecturer':"הרב אליהו אורנשטיין",
-    'participants':["4yona@gmail.com", "4yona4@gmail.com", "michal@gmail.com"],
-    'dates':[]});
-
-
   @override
   Widget build(BuildContext context) {
+    DateTime a = DateTime.now();
+    Event e1 = Event.fromJson({'id': '123', 'creatorUser': "michal@gmail.com",
+      'creationDate': DateTime.now(),
+      'type': 'lesson', 'topic':"תלמוד בבלי", 'book':"הדף היומי",
+      'link':"https://www.dirshu.co.il/31469-2/",
+      'description':'דרשו מגיש:\nשיעורי הדף היומי בגמרא בצורה פשוטה ובהירה,\nמפי הרב אליהו אורנשטיין שליט"א',
+      'eventImage':"https://moreshet-maran.com/wp-content/uploads/2020/04/%D7%94%D7%93%D7%A3-%D7%94%D7%99%D7%95%D7%9E%D7%99.jpg",
+      'lecturer':"הרב אליהו אורנשטיין",
+      'participants':["4yonatan4@gmail.com", "michal@gmail.com"],
+      'dates':<String>["05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20"]});
+
+    // Globals.currentUser = User.fromUser(name, email, gender);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -69,7 +72,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                   );
                 case ConnectionState.done:
-                  return EventScreen(event);
+                  return HomePage();
                 default:
                   return Text('default');
               }
