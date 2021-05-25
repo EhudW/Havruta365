@@ -1,19 +1,57 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:date_time_format/date_time_format.dart';
 
-class DatesList extends StatelessWidget{
+class DatesList extends StatelessWidget {
+  List<String> dates;
 
-  List<DateTime> dates;
   DatesList(this.dates);
-  DateTime a = DateTime.now();
+
+  // String b = a.format('d.m.Y, H:i');
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return ListView(
-      children: [Text(a.toString()),Text(a.toString()),Text(a.toString())]
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          'זמני לימוד',
+          style: TextStyle(fontSize: 18.0),
+        ),
+        SizedBox(height: 5),
+        ConstrainedBox(
+          constraints: new BoxConstraints(
+            maxHeight: 90,
+          ),
+          child: Scrollbar(
+            showTrackOnHover: true,
+            child: ListView.builder(
+              physics: ClampingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: dates.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  children: [
+                    new Row(children:
+                    <Widget>[Text(dates[index] + " ",
+                        style: new TextStyle(
+                            fontSize: 20.0, color: Colors.grey[600])),
+                      Icon(Icons.date_range, color: Colors.teal[200],),
+                    ],
+                        mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                    SizedBox(height: 7,)
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
-
 }
 
-// a.format('d.m.Y, H:i')
+// OLD VERSION - WITH DATETIME
+// Text(dates[index].format('d.m.Y, H:i')
