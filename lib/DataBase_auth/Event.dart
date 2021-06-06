@@ -44,7 +44,7 @@ class Event {
   // Return JSON of the event
   Map<String, dynamic> toJson() =>
       {
-        'id': 'id',
+        'id': id,
         'creatorUser': creatorUser,
         'creationDate': creationDate,
         'topic': topic,

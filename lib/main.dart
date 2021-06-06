@@ -51,7 +51,8 @@ class _MyAppState extends State<MyApp> {
       'participants':["4yonatan4@gmail.com", "michal@gmail.com"],
       'dates':<String>["05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20"]});
 
-    // Globals.currentUser = User.fromUser(name, email, gender);
+    User u1 = User.fromUser('Yonatan', '4yonatan4@gmail.com','male');
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -72,7 +73,8 @@ class _MyAppState extends State<MyApp> {
                     ),
                   );
                 case ConnectionState.done:
-                  return HomePage();
+                  Globals.currentUser = u1;
+                  return EventScreen(e1);
                 default:
                   return Text('default');
               }
