@@ -23,8 +23,8 @@ class Event {
       eventImage, lecturer;
   int maxParticipants;
   DateTime creationDate;
-  List<String> participants ;
-  List<String> dates;
+  List<dynamic> participants ;
+  List<dynamic> dates;
 
   factory Event.fromServerMap(Map data) {
     return Event(
@@ -54,7 +54,8 @@ class Event {
         'eventImage': eventImage,
         'lecturer': lecturer,
         'participants': participants,
-        'maxParticipants': maxParticipants
+        'maxParticipants': maxParticipants,
+        'dates': dates
       };
 
   Event.fromJson(Map<String, dynamic> json)

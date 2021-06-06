@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
       'eventImage':"https://moreshet-maran.com/wp-content/uploads/2020/04/%D7%94%D7%93%D7%A3-%D7%94%D7%99%D7%95%D7%9E%D7%99.jpg",
       'lecturer':"הרב אליהו אורנשטיין",
       'participants':["4yonatan4@gmail.com", "michal@gmail.com"],
-      'dates':<String>["05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20"]});
+      'dates':<dynamic>["05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20", "05-25-2021: 06:22 - 05:20"]});
 
     User u1 = User.fromUser('Yonatan', '4yonatan4@gmail.com','male');
 
@@ -73,7 +73,9 @@ class _MyAppState extends State<MyApp> {
                     ),
                   );
                 case ConnectionState.done:
+                  Globals.db.insertEvent(e1);
                   Globals.currentUser = u1;
+
                   return EventScreen(e1);
                 default:
                   return Text('default');
