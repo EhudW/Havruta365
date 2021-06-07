@@ -1,6 +1,8 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:havruta_project/Globals.dart';
+import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'dart:async';
@@ -8,9 +10,9 @@ import 'dart:math';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyProgressButton extends StatefulWidget {
-  MyProgressButton({Key key, this.title, this.link}) : super(key: key);
+  MyProgressButton({Key key, this.id, this.link}) : super(key: key);
 
-  final String title;
+  final String id;
   final String link;
 
   @override
@@ -19,10 +21,11 @@ class MyProgressButton extends StatefulWidget {
 
 class _MyProgressButtonState extends State<MyProgressButton> {
   ButtonState stateOnlyText = ButtonState.idle;
+
   //Widget linkText = Text('');
   Widget buildCustomButton() {
-    TextStyle textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
-        fontSize: 20);
+    TextStyle textStyle = TextStyle(
+        color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20);
     var progressTextButton = ProgressButton(
       stateWidgets: {
         ButtonState.idle: Text(
@@ -73,28 +76,34 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     }
   }
 
+  Future<void> addParticipant(String mail, String id) async {
+    var collection = Globals.db.db.collection('Events');
+    // Get event by id and Add mail to participants array
+    var res = await collection.updateOne(
+        where.eq('id', id), ModifierBuilder().push('participants', mail));
+  }
+
   void onPressedCustomButton() {
     setState(() {
       switch (stateOnlyText) {
         case ButtonState.idle:
-          // TODO: Add user to the event participant
-          stateOnlyText = ButtonState.loading;
-          Future.delayed(Duration(seconds: 2), () {
+          var add_future = addParticipant(Globals.currentUser.email, widget.id);
+          add_future.then((value) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+              'האירוע נוסף בהצלחה לפרופיל האישי',
+              textAlign: TextAlign.center,
+            )));
             setState(() {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('האירוע נוסף בהצלחה לפרופיל האישי',
-                  textAlign: TextAlign.center,))
-              );
               stateOnlyText = ButtonState.success;
             });
           });
+          stateOnlyText = ButtonState.loading;
           break;
         case ButtonState.loading:
           // stateOnlyText = ButtonState.fail;
           break;
         case ButtonState.success:
-          // TODO: Link to the event
-          stateOnlyText = ButtonState.success;
           break;
         case ButtonState.fail:
           // stateOnlyText = ButtonState.success;

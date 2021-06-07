@@ -13,6 +13,7 @@ class Event {
       this.link,
       this.description,
       this.eventImage,
+      this.targetGender,
       this.lecturer,
       this.participants,
       this.dates,
@@ -26,10 +27,12 @@ class Event {
       link,
       description,
       eventImage,
-      lecturer;
+      lecturer,
+      targetGender;
   int maxParticipants;
   DateTime creationDate;
   List<dynamic> participants;
+
   List<dynamic> dates;
 
   factory Event.fromServerMap(Map data) {
@@ -44,7 +47,8 @@ class Event {
         eventImage: data['eventImage'],
         lecturer: data['lecturer'],
         participants: data['participants'],
-        maxParticipants: data['maxParticipants']);
+        maxParticipants: data['maxParticipants'],
+        targetGender: data['targetGender']);
   }
 
   // Return JSON of the event
@@ -60,7 +64,8 @@ class Event {
         'lecturer': lecturer,
         'participants': participants,
         'maxParticipants': maxParticipants,
-        'dates' : dates
+        'dates': dates,
+        'targetGender': targetGender
       };
 
   Event.fromJson(Map<String, dynamic> json)
@@ -75,5 +80,6 @@ class Event {
         lecturer = json['lecturer'],
         participants = json['participants'],
         maxParticipants = json['maxParticipants'],
-        dates = json['dates'];
+        dates = json['dates'],
+        targetGender = json['targetGender'];
 }
