@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:date_time_format/date_time_format.dart';
 
 class DatesList extends StatelessWidget {
-  List<String> dates;
+  List<dynamic> dates;
 
   DatesList(this.dates);
 

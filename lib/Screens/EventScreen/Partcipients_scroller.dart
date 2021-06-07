@@ -5,7 +5,7 @@ import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 
 class ParticipentsScroller extends StatelessWidget {
-  ParticipentsScroller(List<String> usersMail){
+  ParticipentsScroller(List<dynamic> usersMail){
     this.usersMail = usersMail;
     this.userColl = Globals.db.db.collection('Users');
   }
