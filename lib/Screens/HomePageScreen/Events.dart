@@ -23,7 +23,6 @@ class _EventsState extends State<Events> {
   EventsModel events;
   EventsModel eventsOnline;
 
-
   @override
   void initState() {
     events = EventsModel(false);
@@ -50,7 +49,7 @@ class _EventsState extends State<Events> {
     return Scaffold(
         resizeToAvoidBottomInset: true,
         body: Column(children: <Widget>[
-          Expanded(flex: 3, child: eventsOnlineScroll()),
+          Expanded(flex: 2, child: eventsOnlineScroll()),
           searchBar(),
           Expanded(flex: 7, child: eventsScroll())
         ]));
@@ -122,8 +121,7 @@ class _EventsState extends State<Events> {
                       padding: EdgeInsets.symmetric(vertical: 32.0),
                       child: Center(child: CircularProgressIndicator()),
                     );
-                  }
-                  else{
+                  } else {
                     return null;
                   }
                 },
@@ -160,75 +158,75 @@ class _EventsState extends State<Events> {
 
   searchBar() {
     String searchBarString;
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 10),
-      child: Row(
+    return Center(
+        //padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 20),
+        child: Column(children: <Widget>[          SizedBox(height: Globals.scaler.getHeight(1))
+,
+          Row(
         children: <Widget>[
-      Material(child:InkWell(
-              splashColor: Colors.red,
-              customBorder: CircleBorder(
-              ),
-              onTap: () {
-                print(1);
-                events.searchData = searchBarString;
-                events.refresh();
-              },
-              child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(38.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: Colors.red,
-                          offset: const Offset(0, 2),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: (Icon(FontAwesomeIcons.search,
-                      size: 22, color: Colors.grey[50]))))),
+          SizedBox(width: Globals.scaler.getWidth(1)),
+          Material(
+              child: InkWell(
+                  splashColor: Colors.red,
+                  customBorder: CircleBorder(),
+                  onTap: () {
+                    events.searchData = searchBarString;
+                    events.refresh();
+                  },
+                  child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(40.0),
+                        ),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                              color: Colors.red,
+                              offset: const Offset(0, 2),
+                              blurRadius: 10.0),
+                        ],
+                      ),
+                      child: (Icon(FontAwesomeIcons.search,
+                          size: 22, color: Colors.grey[50]))))),
+          SizedBox(width: Globals.scaler.getWidth(1)),
           Expanded(
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 15, right: 20, top: 8, bottom: 0),
-              child: Container(
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(38.0),
-                  ),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(1),
-                        offset: const Offset(0, 2),
-                        blurRadius: 8.0),
-                  ],
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(38.0),
                 ),
-                child: TextField(
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.only(
-                            left: 15, bottom: 11, top: 11, right: 15),
-                        hintText: 'חפש חברותא'),
-                    onChanged: (text) {
-                      if (text.toLowerCase() == ""){
-                        searchBarString = null;
-                      }
-                      else{searchBarString = text.toLowerCase();}
-                    }),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.grey.withOpacity(1),
+                      offset: const Offset(0, 2),
+                      blurRadius: 8.0),
+                ],
               ),
+              child: TextField(
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      hintText: 'חפש חברותא'),
+                  onChanged: (text) {
+                    if (text.toLowerCase() == "") {
+                      searchBarString = null;
+                    } else {
+                      searchBarString = text.toLowerCase();
+                    }
+                  }),
             ),
           ),
+          SizedBox(width: Globals.scaler.getWidth(1)),
         ],
       ),
-    );
+          SizedBox(height: Globals.scaler.getHeight(1))
+    ]));
   }
 }

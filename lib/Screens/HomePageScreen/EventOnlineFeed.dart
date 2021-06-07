@@ -16,8 +16,8 @@ class EventOnlineFeed extends StatelessWidget {
       children: <Widget>[
         Stack(children: <Widget>[
           Container(
-            width: 150.0,
-            height: 150.0,
+            width: 120.0,
+            height: 120.0,
             decoration: BoxDecoration(
               image: DecorationImage(
                   fit: BoxFit.cover, image: NetworkImage(event.eventImage)),
@@ -30,7 +30,7 @@ class EventOnlineFeed extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 15,
                         color: Colors.white)))
           ),
         ]),
