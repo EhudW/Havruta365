@@ -3,9 +3,8 @@
 import 'package:havruta_project/DataBase_auth/User.dart';
 
 class Event {
-
-  Event({
-      this.id,
+  Event(
+      {this.id,
       this.creatorUser,
       this.creationDate,
       this.type,
@@ -14,16 +13,26 @@ class Event {
       this.link,
       this.description,
       this.eventImage,
+      this.targetGender,
       this.lecturer,
       this.participants,
       this.dates,
       this.maxParticipants});
 
-  String id, creatorUser, type, topic, book, link, description,
-      eventImage, lecturer;
+  String id,
+      creatorUser,
+      type,
+      topic,
+      book,
+      link,
+      description,
+      eventImage,
+      lecturer,
+      targetGender;
   int maxParticipants;
   DateTime creationDate;
-  List<dynamic> participants ;
+  List<dynamic> participants;
+
   List<dynamic> dates;
 
   factory Event.fromServerMap(Map data) {
@@ -38,12 +47,12 @@ class Event {
         eventImage: data['eventImage'],
         lecturer: data['lecturer'],
         participants: data['participants'],
-        maxParticipants: data['maxParticipants']
-    );
+        maxParticipants: data['maxParticipants'],
+        targetGender: data['targetGender']);
   }
+
   // Return JSON of the event
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'creatorUser': creatorUser,
         'creationDate': creationDate,
@@ -55,20 +64,22 @@ class Event {
         'lecturer': lecturer,
         'participants': participants,
         'maxParticipants': maxParticipants,
-        'dates': dates
+        'dates': dates,
+        'targetGender': targetGender
       };
 
   Event.fromJson(Map<String, dynamic> json)
-    :id = json['id'],
-    creatorUser = json['creatorUser'],
-    creationDate = json['creationDate'],
-    topic = json['topic'],
-    book = json['book'],
-    link = json['link'],
-    description = json['description'],
-    eventImage = json['eventImage'],
-    lecturer = json['lecturer'],
-    participants = json['participants'],
-    maxParticipants = json['maxParticipants'],
-    dates = json['dates'];
+      : id = json['id'],
+        creatorUser = json['creatorUser'],
+        creationDate = json['creationDate'],
+        topic = json['topic'],
+        book = json['book'],
+        link = json['link'],
+        description = json['description'],
+        eventImage = json['eventImage'],
+        lecturer = json['lecturer'],
+        participants = json['participants'],
+        maxParticipants = json['maxParticipants'],
+        dates = json['dates'],
+        targetGender = json['targetGender'];
 }
