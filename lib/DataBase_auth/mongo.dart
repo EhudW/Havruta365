@@ -1,3 +1,6 @@
+import 'dart:core';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
@@ -54,6 +57,34 @@ class Mongo {
     return user;
   }
 
+  Future<List<Event>> searchEvents(String s) async{
+    List<Event> data = List<Event>();
+    var collection = db.collection('Events');
+    final events = await collection.find(where.eq('book',s).sortBy('id').skip(0).limit(10)).toList();
+    for (var  i in events){
+      data.add(new Event.fromJson(i));
+    }
+    return data;
+  }
+  Future<List<Event>> getSomeEvents() async{
+    List<Event> data = List<Event>();
+    var collection = db.collection('Events');
+    final events = await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+    for (var  i in events){
+      data.add(new Event.fromJson(i));
+    }
+    return data;
+  }
+
+  Future<List<Event>> getSomeEventsOnline() async{
+    List<Event> data = List<Event>();
+    var collection = db.collection('Events');
+    final events = await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+    for (var  i in events){
+      data.add(new Event.fromJson(i));
+    }
+    return data;
+  }
 
   // Check if user exist
   Future<bool> isUserExist(String mail) async{
@@ -104,15 +135,27 @@ class Mongo {
     return event;
   }
 
-  getEvents (int len) async{
-    var collection = db.collection('Events');
-    var event = await collection.find(keyLimit: len);
-    return event;
-  }
-
   // update user details
   // insert new event
   // update new event
+
+  void insert2(name, age, mail, user, password) async {
+    db = await Db.create(
+        "mongodb+srv://yanivm93:kr2yptso@Cluster0.imwti.mongodb.net/test?tls=true&retryWrites=true&w=majority");
+    await db.open();
+    print('Connected to database');
+    var coll = db.collection('test');
+    await coll.insertAll([
+      // info!!
+      {
+        'login': user,
+        'name': name,
+        'email': mail,
+        'age': age,
+        'password': password
+      },
+    ]);
+  }
 
   void connectGoogle(name, email) async {
     db = await Db.create(

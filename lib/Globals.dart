@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'DataBase_auth/User.dart';
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
 class Globals {
   static Mongo db;
   static bool isDbConnect = false;
   static User currentUser;
   static BuildContext context;
+  static ScreenScaler scaler = new ScreenScaler();
   static CustomAppBar customAppBar = new CustomAppBar();
   static String maleAvatar =
       'https://mpng.subpng.com/20180418/whw/kisspng-computer-icons-professional-clipart-5ad7f6c3aafc17.2777946215241028517004.jpg';

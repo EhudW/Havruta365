@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  date_time_format:
+    dependency: "direct main"
+    description:
+      name: date_time_format
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   datetime_picker_formfield:
     dependency: "direct main"
     description:
@@ -188,6 +195,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_screen_scaler:
+    dependency: "direct main"
+    description:
+      name: flutter_screen_scaler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   flutter_screenutil:
     dependency: "direct main"
     description:

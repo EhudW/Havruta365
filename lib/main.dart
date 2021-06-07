@@ -36,15 +36,15 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-  Event event = Event.fromJson({'id': '123', 'creatorUser': "michal@gmail.com",
-    'creationDate': '123',
-    'type': 'lesson', 'topic':"תלמוד בבלי", 'book':"הדף היומי",
-    'link':"https://www.dirshu.co.il/31469-2/",
-    'description':'דרשו מגיש:\nשיעורי הדף היומי בגמרא בצורה פשוטה ובהירה,\nמפי הרב אליהו אורנשטיין שליט"א',
-    'eventImage':"https://moreshet-maran.com/wp-content/uploads/2020/04/%D7%94%D7%93%D7%A3-%D7%94%D7%99%D7%95%D7%9E%D7%99.jpg",
-    'lecturer':"הרב אליהו אורנשטיין",
-    'participants':["4yona@gmail.com", "4yona4@gmail.com", "michal@gmail.com"],
-    'dates':[]});
+  // Event event = Event.fromJson({'id': '123', 'creatorUser': "michal@gmail.com",
+  //   'creationDate': '123',
+  //   'type': 'lesson', 'topic':"תלמוד בבלי", 'book':"הדף היומי",
+  //   'link':"https://www.dirshu.co.il/31469-2/",
+  //   'description':'דרשו מגיש:\nשיעורי הדף היומי בגמרא בצורה פשוטה ובהירה,\nמפי הרב אליהו אורנשטיין שליט"א',
+  //   'eventImage':"https://moreshet-maran.com/wp-content/uploads/2020/04/%D7%94%D7%93%D7%A3-%D7%94%D7%99%D7%95%D7%9E%D7%99.jpg",
+  //   'lecturer':"הרב אליהו אורנשטיין",
+  //   'participants':["4yona@gmail.com", "4yona4@gmail.com", "michal@gmail.com"],
+  //   'dates':[]});
 
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'modelsHomePages.dart';
-import 'EventViewFeed.dart';
+import 'package:havruta_project/Screens/HomePageScreen/EventViewFeed.dart';
 import 'EventOnlineFeed.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,12 +31,14 @@ class _EventsState extends State<Events> {
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
+        print(events);
         events.loadMore();
       }
     });
     scrollControllerOnline.addListener(() {
       if (scrollControllerOnline.position.maxScrollExtent ==
           scrollControllerOnline.offset) {
+        print(eventsOnline.runtimeType);
         eventsOnline.loadMore();
       }
     });
@@ -162,28 +164,31 @@ class _EventsState extends State<Events> {
       padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 10),
       child: Row(
         children: <Widget>[
-          GestureDetector(
+      Material(child:InkWell(
+              splashColor: Colors.red,
+              customBorder: CircleBorder(
+              ),
               onTap: () {
+                print(1);
                 events.searchData = searchBarString;
-                 events.refresh();
+                events.refresh();
               },
               child: Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.red,
                     borderRadius: const BorderRadius.all(
                       Radius.circular(38.0),
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                          color: Colors.teal[400],
+                          color: Colors.red,
                           offset: const Offset(0, 2),
-                          blurRadius: 8.0),
+                          blurRadius: 10.0),
                     ],
                   ),
                   child: (Icon(FontAwesomeIcons.search,
-                      size: 22, color: Colors.grey[50])))),
+                      size: 22, color: Colors.grey[50]))))),
           Expanded(
             child: Padding(
               padding:
