@@ -28,7 +28,7 @@ class User {
       gender,
       status;
   DateTime birthDate;
-  List<List<String>> interestList;
+  List<dynamic> interestList;
 
   // Constructor
   User.fromUser(String name, String email, String gender) {

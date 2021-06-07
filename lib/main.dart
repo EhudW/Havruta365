@@ -9,6 +9,7 @@ import 'package:loading_animations/loading_animations.dart';
 import 'DataBase_auth/User.dart';
 import 'Screens/HomePageScreen/home_page.dart';
 import 'Screens/Login/SignupScreen.dart';
+import 'Screens/UserScreen/UserScreen.dart';
 
 void main() async{
   runApp(MyApp());
@@ -74,7 +75,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 case ConnectionState.done:
                   Globals.currentUser = u1;
-                  return EventScreen(e1);
+                  return UserScreen("4yonatan4@gmail.com");
                 default:
                   return Text('default');
               }
