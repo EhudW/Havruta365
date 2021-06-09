@@ -6,10 +6,10 @@ import 'package:havruta_project/Screens/UserScreen/user_details_column.dart';
 import 'User_detail_header.dart';
 import 'interestsList.dart';
 
-
 class UserDetailsPage extends StatefulWidget {
   User user;
-  UserDetailsPage(User user){
+
+  UserDetailsPage(User user) {
     this.user = user;
   }
 
@@ -18,7 +18,6 @@ class UserDetailsPage extends StatefulWidget {
 }
 
 class _UserDetailsPageState extends State<UserDetailsPage> {
-
   @override
   Widget build(BuildContext context) {
     print(widget.user);
@@ -30,7 +29,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
             SizedBox(height: 5),
             // Contact buttons
             Center(
-                child: ContactButtons(widget.user),
+              child: ContactButtons(widget.user),
             ),
             SizedBox(height: 10),
             Divider(
@@ -43,10 +42,15 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
               child: UserDetailsColumn(widget.user),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.fromLTRB(20, 0, 40.0, 20),
-            //   child: InterestsList(widget.user.interestList),
-            // ),
+            Divider(
+              thickness: 2.0,
+              indent: 10,
+              endIndent: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20),
+              child: InterestsList(widget.user.interestList),
+            ),
             // MyProgressButton(id: widget.event.id, link: widget.event.link),
             // SizedBox(height: 20.0),
             // ParticipentsScroller(widget.event.participants),

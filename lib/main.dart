@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 case ConnectionState.done:
                   Globals.currentUser = u1;
-                  return HomePage();
+                  return UserScreen("4yonatan4@gmail.com");
                 default:
                   return Text('default');
               }
