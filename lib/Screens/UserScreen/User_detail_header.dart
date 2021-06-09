@@ -54,9 +54,6 @@ class UserDetailHeader extends StatelessWidget {
               Column(
                 children: [
                   userInformation,
-                  Text(user.description,
-                      style: GoogleFonts.alef(fontSize: 20),
-                      textDirection: TextDirection.rtl)
                 ],
               ),
             ],

@@ -78,6 +78,19 @@ class UserDetailsColumn extends StatelessWidget {
               color: Colors.grey[600],
             ),
           ]),
+          SizedBox(height: 15.0),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+            Text(user.description,
+                style: GoogleFonts.alef(fontSize: size_field,
+                    fontWeight: FontWeight.bold),
+                textDirection: TextDirection.rtl),
+            SizedBox(width: 10.0),
+            Icon(
+              FontAwesomeIcons.infoCircle,
+              size: 26.0,
+              color: Colors.grey[600],
+            ),
+          ])
 
         ],
       ),

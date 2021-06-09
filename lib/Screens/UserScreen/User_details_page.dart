@@ -39,7 +39,10 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
               endIndent: 10,
             ),
             SizedBox(height: 15),
-            UserDetailsColumn(widget.user),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
+              child: UserDetailsColumn(widget.user),
+            ),
             // Padding(
             //   padding: const EdgeInsets.fromLTRB(20, 0, 40.0, 20),
             //   child: InterestsList(widget.user.interestList),
