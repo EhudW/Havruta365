@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 
 class ParticipentsScroller extends StatelessWidget {
-  ParticipentsScroller(List<dynamic> usersMail){
+  ParticipentsScroller(List<dynamic> usersMail) {
     this.usersMail = usersMail;
     this.userColl = Globals.db.db.collection('Users');
   }
+
   var usersMail;
   var userColl;
 
-  Future getUser(String userMail) async{
+  Future getUser(String userMail) async {
     var user = await userColl.findOne(where.eq('email', '$userMail'));
     return user;
   }
@@ -24,43 +27,54 @@ class ParticipentsScroller extends StatelessWidget {
     //Future<User> user = Globals.db.getUser(userMail);
     // var user = await collection.findOne(where.eq('email', '$mail'));
     Future user = getUser(userMail);
-      return FutureBuilder(
-        future: user,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Text('none');
-            case ConnectionState.active:
-            case ConnectionState.waiting:
-              return Center(
-                child: LoadingBouncingGrid.square(
-                  borderColor: Colors.teal[400],
-                  backgroundColor: Colors.teal[400],
-                  size: 20.0,
-                ),
-              );
-            case ConnectionState.done:
-              return Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(snapshot.data['avatar']),
-                      radius: 40.0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(snapshot.data['name']),
-                    ),
-                  ],
-                ),
-              );
-            default:
-              return Text('default');
-          }
-        },
-      );
-    }
+    return FutureBuilder(
+      future: user,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Text('none');
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(
+              child: LoadingBouncingGrid.square(
+                borderColor: Colors.teal[400],
+                backgroundColor: Colors.teal[400],
+                size: 20.0,
+              ),
+            );
+          case ConnectionState.done:
+            return Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(snapshot.data['avatar']),
+                    radius: 40.0,
+                    child: IconButton(
+                        icon: Icon(FontAwesomeIcons.houseUser),
+                        iconSize: 40.0,
+                        color: Colors.white.withOpacity(0),
+                        onPressed: () {
+                          print("check");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => UserScreen(snapshot.data['email'])),
+                          );
+                        }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(snapshot.data['name']),
+                  ),
+                ],
+              ),
+            );
+          default:
+            return Text('default');
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

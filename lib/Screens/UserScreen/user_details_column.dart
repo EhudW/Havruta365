@@ -35,7 +35,7 @@ class UserDetailsColumn extends StatelessWidget {
               color: Colors.grey[600],
             ),
           ]),
-          SizedBox(height: 10.0),
+          SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
             Text(user.address,
                 style: GoogleFonts.alef(fontSize: size_field,
@@ -52,7 +52,7 @@ class UserDetailsColumn extends StatelessWidget {
               color: Colors.grey[600],
             ),
           ]),
-          SizedBox(height: 10.0),
+          SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
             Text(user.gender,
                 style: GoogleFonts.alef(fontSize: size_field,
@@ -65,7 +65,7 @@ class UserDetailsColumn extends StatelessWidget {
               color: Colors.grey[600],
             ),
           ]),
-          SizedBox(height: 10.0),
+          SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
             Text(user.status,
                 style: GoogleFonts.alef(fontSize: size_field,

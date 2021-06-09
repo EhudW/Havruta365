@@ -1,12 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
-import 'package:havruta_project/Globals.dart';
-import 'package:loading_animations/loading_animations.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 import 'arc_banner_image.dart';
-import 'poster.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class UserDetailHeader extends StatelessWidget {
@@ -16,22 +11,18 @@ class UserDetailHeader extends StatelessWidget {
 
   User user;
 
-
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme
-        .of(context)
-        .textTheme;
+    var textTheme = Theme.of(context).textTheme;
 
     var userInformation = Align(
       alignment: AlignmentDirectional.center,
-      child: Text(
-        user.name,
-        style: GoogleFonts.alef(fontSize: 32,
-            textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
-        fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center
-      ),
+      child: Text(user.name,
+          style: GoogleFonts.alef(
+              fontSize: 32,
+              textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center),
     );
 
     return Stack(
