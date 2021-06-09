@@ -1,6 +1,7 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -10,17 +11,29 @@ import 'dart:math';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyProgressButton extends StatefulWidget {
-  MyProgressButton({Key key, this.id, this.link}) : super(key: key);
+  MyProgressButton({Key key, this.event}) : super(key: key);
 
-  final String id;
-  final String link;
+  final Event event;
 
   @override
   _MyProgressButtonState createState() => _MyProgressButtonState();
 }
 
 class _MyProgressButtonState extends State<MyProgressButton> {
+  // Check if current user already sign to the event
+  // if user is signed --> stateOnlyText = ButtonState.success;
+
   ButtonState stateOnlyText = ButtonState.idle;
+
+  @override
+  void initState(){
+    super.initState();
+    if (widget.event.participants.contains(Globals.currentUser.email)){
+      stateOnlyText = ButtonState.success;
+    }
+  }
+
+
   //Widget linkText = Text('');
   Widget buildCustomButton() {
     TextStyle textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
@@ -87,7 +100,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     setState(() {
       switch (stateOnlyText) {
         case ButtonState.idle:
-          var add_future = addParticipant(Globals.currentUser.email, widget.id);
+          var add_future = addParticipant(Globals.currentUser.email, widget.event.id);
           add_future.then((value) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('האירוע נוסף בהצלחה לפרופיל האישי',
