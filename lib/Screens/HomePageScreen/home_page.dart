@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:havruta_project/Screens/HomePageScreen/notifications.dart';
 import 'Events.dart';
-import 'Notifications.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';

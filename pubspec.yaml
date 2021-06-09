@@ -44,6 +44,7 @@ dependencies:
   loading_animations: ^2.1.0
   url_launcher: ^6.0.3
   flutter_screen_scaler: ^0.0.1
+  google_fonts: ^2.1.0
 
   # flutter_svg: ^0.21.0+1
   # The following adds the Cupertino Icons font to your application.

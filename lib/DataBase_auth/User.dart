@@ -9,6 +9,7 @@ class User {
       this.email,
       this.password,
       this.userName,
+      this.phone,
       this.avatar,
       this.birthDate,
       this.address,
@@ -20,6 +21,7 @@ class User {
   String name,
       email,
       password,
+      phone,
       userName,
       avatar,
       address,
@@ -28,7 +30,7 @@ class User {
       gender,
       status;
   DateTime birthDate;
-  List<List<String>> interestList;
+  List<dynamic> interestList;
 
   // Constructor
   User.fromUser(String name, String email, String gender) {
@@ -59,6 +61,7 @@ class User {
         'status': status,
         'avatar': avatar,
         'interest': interestList,
+        'phone': phone,
       };
 
   User.fromJson(Map<String, dynamic> json)
@@ -73,6 +76,6 @@ class User {
         gender = json['gender'],
         status = json['status'],
         avatar = json['avatar'],
-        interestList = json['interest'];
-
+        interestList = json['interest'],
+        phone = json['phone'];
 }
