@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
-import './Login2.dart';
-import './Login4.dart';
+import 'Login2.dart';
+import 'Login4.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class Login3 extends StatefulWidget {
@@ -27,12 +26,12 @@ class Login3_state extends State<Login3> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(
-      context,
-      width: 375,
-      height: 667,
-    );
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 667),
+        orientation: Orientation.portrait);
     return Scaffold(
-      //resizeToAvoidBottomPadding: false,
       backgroundColor: const Color(0xfff1f9ff),
       body: Stack(
         children: <Widget>[

@@ -30,9 +30,9 @@ class _HomePageState extends State<HomePage> {
   List<Event> _eventsForDisplay = List<Event>();
 
   Future<List<Event>> fetchNotes() async {
-    var url =
-        'https://raw.githubusercontent.com/boriszv/json/master/random_example.json';
-    var response = await http.get(url);
+    // var url =
+    //     'https://raw.githubusercontent.com/boriszv/json/master/random_example.json';
+    // var response = await http.get(url);
 
     var events = List<Event>();
     // Event n = new Event('_user', '_type', '_topic', '_book', '_times', '_hour',

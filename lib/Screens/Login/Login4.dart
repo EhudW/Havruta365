@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:adobe_xd/pinned.dart';
+import 'Login5.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:havruta_project/Screens/Login3.dart';
-import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_screenutil/screenutil.dart';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
-import 'package:mongo_dart_query/mongo_dart_query.dart';
-import '../Globals.dart';
-import 'MyData.dart';
-
-String CONNECT_TO_DB =
-    "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havruta?retryWrites=true&w=majority";
+import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/DataBase_auth/mongo.dart';
+import 'package:havruta_project/Screens/Login/Login3.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Login4 extends StatefulWidget {
   @override
@@ -20,42 +14,79 @@ class Login4 extends StatefulWidget {
 }
 
 class _Login4CreateState extends State<Login4> {
-  var db = Globals.db;
-
   List<DropdownMenuItem<String>> topicsDrop = [];
+
+  List<String> topics = [
+    "תורה",
+    "נ״ך",
+    "תלמוד בבלי",
+    "תלמוד ירושלמי",
+    " הלכה",
+    " מחשבה"
+  ];
   String selectedTopic;
   String selectedBook;
   List<DropdownMenuItem<String>> booksDrop = [];
-  List<String> topics = MyData().topics;
-  List<String> humashBooks = MyData().humashBooks;
-  List<String> nachBooks = MyData().nachBooks;
-  List<String> talmudBavliBooks = MyData().talmudBavliBooks;
-  List<String> talmudYerushalmiBooks = MyData().talmudYerushalmiBooks;
-  List<String> halachaBooks = MyData().halachaBooks;
+  List<String> humashBooks = [
+    "בראשית",
+    "שמות",
+    "ויקרא",
+    "במדבר",
+    "דברים",
+  ];
 
-  // /// Function to load the data for the dropdown list
-  //void loadTopicsData() async {
-  //   print("Try to connect...");
-  //   var collection = db.collection('Topics');
-  //   topicsDrop = collection=>DropdownMenuItem<String>(
-  //             child: Text(val),
-  //             value: val,
-  //           ))
-  //       .toList();
-  //}
-  // /// Function to load the data for the dropdown list
-  void loadTorahBooksData(String torah) async {
-    //   print("Try to connect...");
-    //   db = await mongo.Db.create(CONNECT_TO_DB);
-    //   await db.open();
-    //   var collection = db.collection('Topics');
-    //   var humashBooks = await collection.findOne(where.eq('תורה', torah));
-    //   booksDrop = [];
-    //   booksDrop = humashBooks
-    //       .map((val) => DropdownMenuItem<String>(
-    //           child: Text(val),
-    //           value: val,
-    //   )).toList();
+  List<String> nachBooks = [
+    "יהושוע",
+    "שופטים",
+    "שמואל א ",
+    "שמואל ב",
+    "מלכים",
+  ];
+
+  List<String> talmudBavliBooks = [
+    "ברכות",
+    "שבת",
+    "עירובין ",
+    "פסחים",
+    "שקלים",
+  ];
+
+  List<String> talmudYerushalmiBooks = [
+    "ברכות",
+    "פאה",
+    "דמאי",
+    "כלאים",
+    "שביעית",
+  ];
+
+  List<String> halachaBooks = [
+    "שולחן ערוך",
+    "משנה ברורה",
+    "קיצור שלחן ערוך",
+    "רמב״ם",
+    "פניני הלכה",
+  ];
+
+  /// Function to load the data for the dropdown list
+  void loadTopicsData() {
+    topicsDrop = [];
+    topicsDrop = topics
+        .map((val) => DropdownMenuItem<String>(
+              child: Text(val),
+              value: val,
+            ))
+        .toList();
+  }
+
+  /// Function to load the data for the dropdown list
+  void loadTorahBooksData() {
+    booksDrop = [];
+    booksDrop = humashBooks
+        .map((val) => DropdownMenuItem<String>(
+              child: Text(val),
+              value: val,
+            ))
+        .toList();
   }
 
   /// Function to load the data for the dropdown list
@@ -99,34 +130,28 @@ class _Login4CreateState extends State<Login4> {
         .toList();
   }
 
-  void loadTopicssData() {
-    topicsDrop = [];
-    topicsDrop = topics
-        .map((val) => DropdownMenuItem<String>(
-              child: Text(val),
-              value: val,
-            ))
-        .toList();
-  }
+  final name = TextEditingController();
+  String name_str = "";
+
+  String mail_str = "";
+  final password = TextEditingController();
+  String password_str = "";
+  final password_con = TextEditingController();
+  String password_con_str = "";
+  String _value1 = "";
 
   //Login4({Key key,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    db.loadTopics("Array");
-    loadTopicssData();
-    //db.isUserExist("mail");
+    loadTopicsData();
     ScreenUtil.init(
-      context,
-      width: 375,
-      height: 667,
-    );
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 667),
+        orientation: Orientation.portrait);
     return Scaffold(
       backgroundColor: const Color(0xfff1f9ff),
-      appBar: CustomAppBar(
-        title: "?מה תרצו ללמוד",
-        gradientBegin: Colors.blue,
-        gradientEnd: Colors.greenAccent,
-      ),
       body: Stack(children: <Widget>[
         //==============NAVIGATION BAR===================
         SizedBox(
@@ -134,106 +159,54 @@ class _Login4CreateState extends State<Login4> {
           height: 68.h,
           child: Stack(
             children: <Widget>[
-              // Pinned.fromSize(
-              //   bounds: Rect.fromLTWH(0.0, 0.0, 375.w, 68.h),
-              //   size: Size(375.w, 68.h),
-              //   pinLeft: true,
-              //   pinRight: true,
-              //   pinTop: true,
-              //   pinBottom: true,
-              //   child:
-              //       //==============MERGED BAR===================
-              //       SvgPicture.string(
-              //     _svg_y73tjv,
-              //     allowDrawingOutsideViewBox: true,
-              //     fit: BoxFit.fill,
-              //   ),
-              // ),
-              //==============TOP BAR===================
-              // Pinned.fromSize(
-              //   bounds: Rect.fromLTWH(130.w, 30.h, 120.w, 22.h),
-              //   size: Size(363.w, 68.h),
-              //   fixedWidth: false,
-              //   fixedHeight: true,
-              //   child: Text(
-              //     'מה תרצו ללמוד?',
-              //     style: TextStyle(
-              //       fontFamily: 'Bauhaus 93',
-              //       fontSize: 18.0.sp,
-              //       color: const Color(0xffffffff),
-              //     ),
-              //     textAlign: TextAlign.start,
-              //   ),
-              // ),
-              // Pinned.fromSize(
-              //   bounds: Rect.fromLTWH(16.w, 36.h, 16.w, 16.h),
-              //   size: Size(400.w, 68.h),
-              //   pinLeft: true,
-              //   fixedWidth: true,
-              //   fixedHeight: true,
-              //   child:
-              //       // Adobe XD layer: 'Backward arrow' (group)
-              //       PageLink(
-              //     links: [
-              //       PageLinkInfo(
-              //         transition: LinkTransition.SlideRight,
-              //         ease: Curves.easeOut,
-              //         duration: 0.3,
-              //         pageBuilder: () => Login3(),
-              //       ),
-              //     ],
-              //     child: Stack(
-              //       children: <Widget>[
-              //         Pinned.fromSize(
-              //           bounds: Rect.fromLTWH(0.0, 0.0, 16.w, 16.h),
-              //           size: Size(16.w, 16.h),
-              //           pinLeft: true,
-              //           pinRight: true,
-              //           pinTop: true,
-              //           pinBottom: true,
-              //           child: SvgPicture.string(
-              //             _svg_pkfj6b,
-              //             allowDrawingOutsideViewBox: true,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
-        ),
-        //==============BOTTOM ARROW=================
-        Transform.translate(
-          offset: Offset(24.w, 484.h),
-          child:
-              // Adobe XD layer: 'Next' (group)
-              SizedBox(
-            width: 320.w,
-            height: 45.h,
-            child: Stack(
-              children: <Widget>[
-                Pinned.fromSize(
-                  bounds: Rect.fromLTWH(0.0, 0.0, 327.w, 48.h),
-                  size: Size(327.w, 48.h),
-                  pinLeft: true,
-                  pinRight: true,
-                  pinTop: true,
-                  pinBottom: true,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24.w),
-                      color: const Color(0xff2699fb),
-                    ),
-                  ),
+              Pinned.fromSize(
+                bounds: Rect.fromLTWH(0.0, 0.0, 375.w, 68.h),
+                size: Size(375.w, 68.h),
+                pinLeft: true,
+                pinRight: true,
+                pinTop: true,
+                pinBottom: true,
+                child:
+                    //==============MERGED BAR===================
+                    SvgPicture.string(
+                  _svg_y73tjv,
+                  allowDrawingOutsideViewBox: true,
+                  fit: BoxFit.fill,
                 ),
-                //),
-                Pinned.fromSize(
-                  bounds: Rect.fromLTWH(156.w, 16.h, 16.w, 16.h),
-                  size: Size(327.w, 48.h),
-                  fixedWidth: true,
-                  fixedHeight: true,
+              ),
+              //==============TOP BAR===================
+              Pinned.fromSize(
+                bounds: Rect.fromLTWH(130.w, 30.h, 120.w, 22.h),
+                size: Size(363.w, 68.h),
+                fixedWidth: false,
+                fixedHeight: true,
+                child: Text(
+                  'תחומי עניין',
+                  style: TextStyle(
+                    fontFamily: 'Bauhaus 93',
+                    fontSize: 18.0.sp,
+                    color: const Color(0xffffffff),
+                  ),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              Pinned.fromSize(
+                bounds: Rect.fromLTWH(16.w, 36.h, 16.w, 16.h),
+                size: Size(400.w, 68.h),
+                pinLeft: true,
+                fixedWidth: true,
+                fixedHeight: true,
+                child:
+                    // Adobe XD layer: 'Backward arrow' (group)
+                    PageLink(
+                  links: [
+                    PageLinkInfo(
+                      transition: LinkTransition.SlideRight,
+                      ease: Curves.easeOut,
+                      duration: 0.3,
+                      pageBuilder: () => Login3(),
+                    ),
+                  ],
                   child: Stack(
                     children: <Widget>[
                       Pinned.fromSize(
@@ -244,12 +217,100 @@ class _Login4CreateState extends State<Login4> {
                         pinTop: true,
                         pinBottom: true,
                         child: SvgPicture.string(
-                          _svg_ru0g9a,
+                          _svg_pkfj6b,
                           allowDrawingOutsideViewBox: true,
                           fit: BoxFit.fill,
                         ),
                       ),
                     ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        //==============BOTTOM ARROW=================
+        Transform.translate(
+          offset: Offset(24.w, 484.h),
+          child:
+              // Adobe XD layer: 'Next' (group)
+              SizedBox(
+            width: 327.w,
+            height: 48.h,
+            child: Stack(
+              children: <Widget>[
+                Pinned.fromSize(
+                  bounds: Rect.fromLTWH(0.0, 0.0, 327.w, 48.h),
+                  size: Size(327.w, 48.h),
+                  pinLeft: true,
+                  pinRight: true,
+                  pinTop: true,
+                  pinBottom: true,
+                  child: GestureDetector(
+                    onTap: () async {
+                      Mongo mongo = new Mongo();
+                      User user = new User();
+                      user.email = mail_str;
+                      user.name = name_str;
+                      user.password = password_str;
+                      if (password_str != password_con_str) {
+                        //final snackBar = new SnackBar(content: new Text("Password not match"));
+                        //Scaffold.of(context).showSnackBar(snackBar);
+                        print("Password not match");
+                        return;
+                      }
+                      String res = await mongo.insertNewUser(user);
+                      print(res);
+                      if (res != null) {
+                        // final snackBar = new SnackBar(content: new Text(res.toString()));
+                        // Scaffold.of(context).showSnackBar(snackBar);
+                      } else {
+                        // connect and go to homePage
+                        // Navigator.of(context).pushNamed('/Login3');
+                        print("Connection Succeeded");
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24.w),
+                        color: const Color(0xff2699fb),
+                      ),
+                    ),
+                  ),
+                ),
+                Pinned.fromSize(
+                  bounds: Rect.fromLTWH(156.w, 16.h, 16.w, 16.h),
+                  size: Size(327.w, 48.h),
+                  fixedWidth: true,
+                  fixedHeight: true,
+                  child:
+                      // Adobe XD layer: 'Backward arrow' (group)
+                      PageLink(
+                    links: [
+                      PageLinkInfo(
+                        transition: LinkTransition.Fade,
+                        ease: Curves.easeOut,
+                        duration: 0.3,
+                        pageBuilder: () => Login5(),
+                      ),
+                    ],
+                    child: Stack(
+                      children: <Widget>[
+                        Pinned.fromSize(
+                          bounds: Rect.fromLTWH(0.0, 0.0, 16.w, 16.h),
+                          size: Size(16.w, 16.h),
+                          pinLeft: true,
+                          pinRight: true,
+                          pinTop: true,
+                          pinBottom: true,
+                          child: SvgPicture.string(
+                            _svg_ru0g9a,
+                            allowDrawingOutsideViewBox: true,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -258,7 +319,7 @@ class _Login4CreateState extends State<Login4> {
         ),
         //FIRST DROPDOWN BOX
         Transform.translate(
-          offset: Offset(5.w, -100.h),
+          offset: Offset(5.w, -10.h),
           child: Center(
             child: Column(
               children: <Widget>[
@@ -290,7 +351,7 @@ class _Login4CreateState extends State<Login4> {
                                     items: topicsDrop,
                                     onChanged: (value) {
                                       if (value == "תורה") {
-                                        loadTorahBooksData("תורה");
+                                        loadTorahBooksData();
                                       } else if (value == "נ״ך") {
                                         loadNachBooksData();
                                       } else if (value == "תלמוד בבלי") {
@@ -309,14 +370,10 @@ class _Login4CreateState extends State<Login4> {
                             ),
                           ],
                         ))),
-
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 20, 20),
-                ),
                 //==============SECOND DROPDOWN LIST=================
                 DropdownButtonHideUnderline(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(0.h, 0.h, 0.h, 0.h),
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                         child: Stack(
                           children: [
                             Container(
@@ -355,12 +412,12 @@ class _Login4CreateState extends State<Login4> {
         ),
 
         Transform.translate(
-          offset: Offset(161.w, 450.h),
+          offset: Offset(161.0, 576.0),
           child:
               // Adobe XD layer: 'points' (group)
               SizedBox(
-            width: 54.w,
-            height: 6.h,
+            width: 54.0,
+            height: 6.0,
             child: Stack(
               children: <Widget>[
                 Pinned.fromSize(
@@ -424,12 +481,12 @@ class _Login4CreateState extends State<Login4> {
           ),
         ),
         Transform.translate(
-          offset: Offset(300.0, 350.0),
+          offset: Offset(325.0, 425.0),
           child:
               // Adobe XD layer: 'plus' (group)
               SizedBox(
-            width: 60.0,
-            height: 60.0,
+            width: 40.0,
+            height: 40.0,
             child: Stack(
               children: <Widget>[
                 Pinned.fromSize(

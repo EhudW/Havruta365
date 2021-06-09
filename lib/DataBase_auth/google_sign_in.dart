@@ -12,7 +12,8 @@ class GoogleLogIn {
       await _googleSignIn.signIn();
       _isLoggedIn = true;
       Mongo m = new Mongo();
-      m.connectGoogle(_googleSignIn.currentUser.displayName, _googleSignIn.currentUser.email);
+      m.connectGoogle(_googleSignIn.currentUser.displayName,
+          _googleSignIn.currentUser.email);
     } catch (err) {
       print(err);
     }

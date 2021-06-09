@@ -1,4 +1,8 @@
+import 'dart:core';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/main.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -23,33 +27,77 @@ class Mongo {
   var db;
 
   // Connect to the DB.
-  void connect() async {
+  Future<void> connect() async {
     db = await Db.create(CONNECT_TO_DB);
     await db.open();
     print('Connected to database');
     Globals.isDbConnect = true;
   }
 
+  Future<void> insertEvent(Event event) async {
+    var collection = db.collection('Events');
+    var e = event.toJson();
+    await collection.insertOne(e);
+  }
+
+  Future<User> getUser(String mail) async {
+    // Get the Users Collection
+    var collection = db.collection('Users');
+    // Check if the user exist
+    var user = await collection.findOne(where.eq('email', '$mail'));
+    print("!!DB!!!$user");
+    if (user == null) {
+      return null;
+    }
+    user = User.fromJson(user);
+    print("!!JSON!!!$user");
+    return user;
+  }
+
+  Future<List<Event>> searchEvents(String s) async {
+    List<Event> data = List<Event>();
+    var collection = db.collection('Events');
+    final events = await collection
+        .find(where.eq('book', s).sortBy('id').skip(0).limit(10))
+        .toList();
+    for (var i in events) {
+      data.add(new Event.fromJson(i));
+    }
+    return data;
+  }
+
+  Future<List<Event>> getSomeEvents() async {
+    List<Event> data = List<Event>();
+    var collection = db.collection('Events');
+    final events =
+        await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+    for (var i in events) {
+      data.add(new Event.fromJson(i));
+    }
+    return data;
+  }
+
+  Future<List<Event>> getSomeEventsOnline() async {
+    List<Event> data = List<Event>();
+    var collection = db.collection('Events');
+    final events =
+        await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+    for (var i in events) {
+      data.add(new Event.fromJson(i));
+    }
+    return data;
+  }
+
   // Check if user exist
   Future<bool> isUserExist(String mail) async {
     // Get the Users Collection
-    var collection = await db.collection('Users');
+    var collection = db.collection('Users');
     // Check if the user exist
     var user = await collection.findOne(where.eq('email', '$mail'));
     if (user == null) {
       return false;
     }
     return true;
-  }
-
-  ///Load topics list
-  loadTopics(String topics) async {
-    var collection = await db.collection('Topics');
-    var topicsList = await collection.findOne(where.eq('tags', topics));
-    print("topics list:");
-    print(topicsList);
-    print(collection);
-    return User.fromJson(topicsList);
   }
 
   // Check if the user is exist.
@@ -82,6 +130,12 @@ class Mongo {
     var collection = db.collection('Users');
     collection.remove(where.eq('mail', mail));
     await db.close();
+  }
+
+  getEvent(String _id) async {
+    var collection = db.collection('Events');
+    var event = await collection.find(keyLimit: 10);
+    return event;
   }
 
   // update user details

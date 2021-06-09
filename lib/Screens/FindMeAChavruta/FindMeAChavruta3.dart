@@ -1,38 +1,78 @@
 import 'package:flutter/material.dart';
-import '../Globals.dart';
+import 'package:havruta_project/Globals.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:adobe_xd/pinned.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/rendering.dart';
-import 'package:adobe_xd/page_link.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:intl/intl.dart';
+import 'package:loading_animations/loading_animations.dart';
 
-class FindMeAChavruta2 extends StatefulWidget {
+class FindMeAChavruta3 extends StatefulWidget {
+  final Event event;
+
+  FindMeAChavruta3({Key key, @required this.event}) : super(key: key);
+
   @override
-  _FindMeAChavruta2CreateState createState() => _FindMeAChavruta2CreateState();
+  _FindMeAChavruta3CreateState createState() => _FindMeAChavruta3CreateState();
 }
 
-class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
+class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
+  var mongoDB = Globals.db;
   PickedFile _imageFile;
   final ImagePicker _picker = ImagePicker();
   final yeshiva = TextEditingController();
   String yeshiva_str = "";
   final details = TextEditingController();
   String details_str = "";
+  String link;
+
+  Widget checkIfShiur() {
+    print(widget.event.type);
+    if (widget.event.type == 'שיעור') {
+      return Container(
+        height: 42,
+        width: 380,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.teal[400], width: 1.0),
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: new TextField(
+          textAlign: TextAlign.center,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "פרטי מעביר השיעור",
+            focusColor: Colors.teal,
+            contentPadding: EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
+            // border: OutlineInputBorder(
+            //     borderRadius: BorderRadius.circular(20.0),
+            //     borderSide: const BorderSide(
+            //         color: Colors.blue, width: 2.0))),
+          ),
+          onChanged: (link) {
+            widget.event.link = link;
+            print(widget.event.link);
+          },
+        ),
+      );
+    }
+    return Container(height: 0);
+  }
 
   Widget build(BuildContext context) {
-    ScreenUtil.init(
-      context,
-      width: 375,
-      height: 667,
-    );
+    //checkIfShiur();
     return Scaffold(
-      appBar: CustomAppBar(
-        title: "חברותא חדשה",
-        gradientBegin: Colors.blue,
-        gradientEnd: Colors.greenAccent,
-      ),
+      // appBar: CustomAppBar(
+      //   title: "חברותא חדשה",
+      //   gradientBegin: Colors.blue,
+      //   gradientEnd: Colors.greenAccent,
+      // ),
+      appBar: appBar(),
+
       body: Center(
         child: Column(
           children: [
@@ -46,10 +86,19 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
               child: imageProfile(),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(30, 30, 20, 20),
+              padding: EdgeInsets.fromLTRB(30, 10, 20, 20),
+            ),
+            Container(
+              child: checkIfShiur(),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(30, 10, 20, 20),
             ),
             Stack(
               children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 20, 20),
+                ),
                 Container(
                     height: 42,
                     width: 380,
@@ -59,20 +108,24 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: new TextField(
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-
-                          hintText: "קישור לזום",
-                          focusColor: Colors.teal,
-                          contentPadding:
-                              EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
-                          // border: OutlineInputBorder(
-                          //     borderRadius: BorderRadius.circular(20.0),
-                          //     borderSide: const BorderSide(
-                          //         color: Colors.blue, width: 2.0))),
-                        ),
-                        maxLines: 1)),
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "קישור לזום",
+                        focusColor: Colors.teal,
+                        contentPadding:
+                            EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
+                        // border: OutlineInputBorder(
+                        //     borderRadius: BorderRadius.circular(20.0),
+                        //     borderSide: const BorderSide(
+                        //         color: Colors.blue, width: 2.0))),
+                      ),
+                      maxLines: 1,
+                      onChanged: (link) {
+                        widget.event.link = link;
+                        print(widget.event.link);
+                      },
+                    )),
               ],
             ),
             Padding(
@@ -81,28 +134,34 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
             Stack(
               children: [
                 Container(
-                    height: 180,
+                    height: 130,
                     width: 380,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(color: Colors.teal[400], width: 1.0),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: new TextField(
-                        textAlign: TextAlign.center,
-                        textAlignVertical: TextAlignVertical.bottom,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "פרטים נוספים",
-                          focusColor: Colors.blue,
-                          contentPadding:
-                              EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
-                          // border: OutlineInputBorder(
-                          //     borderRadius: BorderRadius.circular(20.0),
-                          //     borderSide: const BorderSide(
-                          //         color: Colors.blue, width: 2.0))),
-                        ),
-                        maxLines: 1)),
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      textAlignVertical: TextAlignVertical.bottom,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "פרטים נוספים",
+                        focusColor: Colors.blue,
+                        contentPadding:
+                            EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
+                        // border: OutlineInputBorder(
+                        //     borderRadius: BorderRadius.circular(20.0),
+                        //     borderSide: const BorderSide(
+                        //         color: Colors.blue, width: 2.0))),
+                      ),
+                      onChanged: (description) {
+                        widget.event.description = description;
+                        print(widget.event.description);
+                        print(widget.event.dates);
+                        //this.mongoDB.db.
+                      },
+                    )),
               ],
             ),
             Padding(
@@ -175,7 +234,19 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                         color: Colors.teal[400],
                       ),
                       child: ElevatedButton(
-                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(primary: Colors.teal),
+                          onPressed: () {
+                            widget.event.creationDate = DateTime.now();
+                            widget.event.participants = [];
+                            widget.event.eventImage =
+                                'https://romancebooks.co.il/wp-content/uploads/2019/06/default-user-image.png';
+                            print(widget.event.creationDate);
+                            mongoDB.insertEvent(widget.event).then((value) =>
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomePage())));
+                          },
                           child: new Text(
                             "מצא לי חברותא",
                             style:
@@ -195,6 +266,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
       child: Stack(children: <Widget>[
         CircleAvatar(
           radius: 60.0,
+          backgroundColor: Colors.teal,
 
           // backgroundImage: _imageFile == null
           //     ? AssetImage("assets/profile.jpg")
@@ -241,14 +313,14 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
             height: 20,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            FlatButton.icon(
+            TextButton.icon(
               icon: Icon(Icons.camera),
               onPressed: () {
                 takePhoto(ImageSource.camera);
               },
               label: Text("Camera"),
             ),
-            FlatButton.icon(
+            TextButton.icon(
               icon: Icon(Icons.image),
               onPressed: () {
                 takePhoto(ImageSource.gallery);
@@ -269,6 +341,31 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
       _imageFile = pickedFile;
     });
   }
+}
+
+appBar() {
+  return AppBar(
+    toolbarHeight: 40,
+    elevation: 20,
+    shadowColor: Colors.teal[400],
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+      bottom: Radius.circular(40),
+    )),
+    backgroundColor: Colors.white,
+    title: Center(
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+          Text(
+            'New Havruta',
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
+          ),
+          Icon(FontAwesomeIcons.book, size: 25, color: Colors.teal[400])
+        ])),
+  );
 }
 
 const String _svg_h36wzl =

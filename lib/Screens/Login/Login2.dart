@@ -4,12 +4,11 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Globals.dart';
-import './Login1.dart';
-import './Login3.dart';
+import 'Login1.dart';
+import 'Login3.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Login2 extends StatelessWidget {
   final name = TextEditingController();
@@ -26,10 +25,11 @@ class Login2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(
-      context,
-      width: 375,
-      height: 667,
-    );
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 667),
+        orientation: Orientation.portrait);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xfff1f9ff),
