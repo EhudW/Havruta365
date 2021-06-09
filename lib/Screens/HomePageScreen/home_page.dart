@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
-import 'package:havruta_project/Widgets/appBar.dart';
 import 'Events.dart';
+import 'Notifications.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
@@ -15,32 +14,53 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentState = 0;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  int currentStateAppBar = 0;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   ScreenScaler scaler = new ScreenScaler();
+
+  //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        body: Scaffold(
+            body: Column(children: <Widget>[Expanded(child: Events())]),
+            key: _scaffoldKey,
+            drawer: Drawer(
+                child: Container(
+                    color: Colors.white,
+                    child: Column(children: <Widget>[Expanded(child: Notifications())])))),
         backgroundColor: Colors.white,
-        appBar: appBar(),
+        appBar: appBar(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: floatingActionButton(),
-        bottomNavigationBar: bottomAppBar(),
-        body: Column(children: <Widget>[Expanded(child: Events())]));
+        bottomNavigationBar: bottomAppBar());
   }
 
-  appBar() {
-    return AppBar(
+  appBar(BuildContext context) {
+    return new AppBar(
         leadingWidth: 20,
         toolbarHeight: 40,
         elevation: 10,
-        leading: new IconButton(
-          icon: new Icon(Icons.add_alert, size: 25, color: Colors.teal[400]),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-          tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-        ),
+        leading: Builder(
+            builder: (context) => new IconButton(
+                  icon: currentStateAppBar == 0
+                      ? Icon(Icons.notifications, color: Colors.teal[400])
+                      : Icon(Icons.notifications_none, color: Colors.teal[400]),
+                  tooltip:
+                      MaterialLocalizations.of(context).openAppDrawerTooltip,
+                  onPressed: () {
+                    if (_scaffoldKey.currentState.isDrawerOpen == false) {
+                      _scaffoldKey.currentState.openDrawer();
+                    } else {
+                      _scaffoldKey.currentState.openEndDrawer();
+                    }
+                    setState(() {
+                      currentStateAppBar = 1;
+                    });
+                  },
+                )),
         shadowColor: Colors.teal[400],
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
@@ -62,8 +82,8 @@ class _HomePageState extends State<HomePage> {
     return FloatingActionButton(
       backgroundColor: Colors.red,
       onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => FindMeAChavruta1()));
+         Navigator.push(context,
+             MaterialPageRoute(builder: (context) => FindMeAChavruta1()));
       },
       child: Text(
         "+",

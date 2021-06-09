@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Screens/HomeScreen.dart';
-import '../Globals.dart';
+import 'package:havruta_project/Globals.dart';
 import './Login2.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';

@@ -32,7 +32,7 @@ class MyData {
   List<String> talmudBavliBooks = [
     "ברכות",
     "שבת",
-    "עירובין ",
+    "עירובין",
     "פסחים",
     "שקלים",
   ];
@@ -61,8 +61,10 @@ class MyData {
   ];
 
   List<String> gender = [
-    "גבר",
-    "אישה",
+    "גברים",
+    "נשים",
     "לא משנה",
   ];
+
+  List<String> choice = ["שיעור", "חברותא"];
 }

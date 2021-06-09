@@ -1,8 +1,9 @@
 import 'dart:core';
 import 'dart:convert';
-
+import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/main.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -85,6 +86,17 @@ class Mongo {
     }
     return data;
   }
+
+  Future<List<NotificationUser>> getNotifications() async{
+  List<NotificationUser> data = List<NotificationUser>();
+  var collection = db.collection('Events');
+  final notifications = await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+  for (var  i in notifications){
+    data.add(new NotificationUser.fromJson(i));
+  }
+  return data;
+}
+
 
   // Check if user exist
   Future<bool> isUserExist(String mail) async{

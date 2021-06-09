@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'modelsHomePages.dart';
 import 'package:havruta_project/Screens/HomePageScreen/EventViewFeed.dart';
 import 'EventOnlineFeed.dart';
-import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 
@@ -130,10 +129,11 @@ class _EventsState extends State<Events> {
           }
         },
       )),
-      Container(
-        margin: new EdgeInsets.symmetric(horizontal: 150),
+    Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[Container(
         height: 20,
-        width: 150,
+        width: Globals.scaler.getWidth(10),
         decoration: BoxDecoration(
           color: Colors.red,
           borderRadius: const BorderRadius.all(
@@ -150,9 +150,9 @@ class _EventsState extends State<Events> {
         child: Text('Live שיעורים',
             style: TextStyle(
                 color: Colors.white,
-                fontSize: 14,
+                fontSize: Globals.scaler.getTextSize(6),
                 fontWeight: FontWeight.bold)),
-      ),
+      )]),
     ]);
   }
 

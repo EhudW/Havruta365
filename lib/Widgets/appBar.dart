@@ -11,6 +11,7 @@ class CustomAppBar extends AppBar {
             borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(40),
         )),
+
         backgroundColor: Colors.white,
         title: Center(
             child: Row(

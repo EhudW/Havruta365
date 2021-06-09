@@ -1,22 +1,18 @@
-// ------------------------------ Event CLASS ------------------------------
-
-import 'package:havruta_project/DataBase_auth/User.dart';
-
-class Event {
-  Event(
+class NotificationUser {
+  NotificationUser(
       {this.id,
-      this.creatorUser,
-      this.creationDate,
-      this.type,
-      this.topic,
-      this.book,
-      this.link,
-      this.description,
-      this.eventImage,
-      this.lecturer,
-      this.participants,
-      this.dates,
-      this.maxParticipants});
+        this.creatorUser,
+        this.creationDate,
+        this.type,
+        this.topic,
+        this.book,
+        this.link,
+        this.description,
+        this.eventImage,
+        this.lecturer,
+        this.participants,
+        this.dates,
+        this.maxParticipants});
 
   String id,
       creatorUser,
@@ -26,15 +22,14 @@ class Event {
       link,
       description,
       eventImage,
-      targetGender,
       lecturer;
   int maxParticipants;
   DateTime creationDate;
   List<dynamic> participants;
   List<dynamic> dates;
 
-  factory Event.fromServerMap(Map data) {
-    return Event(
+  factory NotificationUser.fromServerMap(Map data) {
+    return NotificationUser(
         id: data['id'],
         creatorUser: data['creatorUser'],
         creationDate: data['creationDate'],
@@ -48,23 +43,22 @@ class Event {
         maxParticipants: data['maxParticipants']);
   }
 
-  // Return JSON of the event
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'creatorUser': creatorUser,
-        'creationDate': creationDate,
-        'topic': topic,
-        'book': book,
-        'link': link,
-        'description': description,
-        'eventImage': eventImage,
-        'lecturer': lecturer,
-        'participants': participants,
-        'maxParticipants': maxParticipants,
-        'dates' : dates
-      };
+    'id': id,
+    'creatorUser': creatorUser,
+    'creationDate': creationDate,
+    'topic': topic,
+    'book': book,
+    'link': link,
+    'description': description,
+    'eventImage': eventImage,
+    'lecturer': lecturer,
+    'participants': participants,
+    'maxParticipants': maxParticipants,
+    'dates' : dates
+  };
 
-  Event.fromJson(Map<String, dynamic> json)
+  NotificationUser.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         creatorUser = json['creatorUser'],
         creationDate = json['creationDate'],

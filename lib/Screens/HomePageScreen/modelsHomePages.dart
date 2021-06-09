@@ -6,8 +6,6 @@ import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Globals.dart';
 
 
-/// Example data as it might be returned by an external service
-/// ...this is often a `Map` representing `JSON` or a `FireStore` document
 
 class EventsModel {
   Stream<List<Event>> stream;
@@ -69,3 +67,5 @@ class EventsModel {
     });
   }
 }
+
+
