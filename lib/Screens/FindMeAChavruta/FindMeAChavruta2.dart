@@ -25,6 +25,8 @@ class ListViews extends StatefulWidget {
   List<String> dates;
   List<DateTime> datesForDB;
   int numOfChavs = 1;
+  Event evt = Event();
+  final findChav = FindMeAChavruta2;
 
   ListViews(List<String> dt, List<DateTime> dDB, int n) {
     this.dates = dt;
@@ -38,14 +40,14 @@ class ListViews extends StatefulWidget {
 
 class _ListViewsState extends State<ListViews> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-
-  List<String> eraseDate(List<String> dates, index) {
-    print(dates);
-    print(index);
-    dates.remove(dates[index]);
-    print(dates);
-    return dates;
-  }
+  //
+  // List<String> eraseDate(List<String> dates, index) {
+  //   print(dates);
+  //   print(index);
+  //   dates.remove(dates[index]);
+  //   print(dates);
+  //   return dates;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +100,7 @@ class _ListViewsState extends State<ListViews> {
                   shape:
                       Border(right: BorderSide(color: Colors.green, width: 5)),
                   child: ListTile(
+                    //onTap: () => widget.findChav.,
                     leading: const Icon(
                       Icons.perm_contact_cal,
                       color: Colors.green,
@@ -108,7 +111,7 @@ class _ListViewsState extends State<ListViews> {
                           color: Colors.red,
                         ),
                         onPressed: () {
-                          eraseDate(dates, index);
+                          //eraseDate(dates, index);
                           //index -= 1;
                         }),
                     // trailing: IconButton(
@@ -443,6 +446,9 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
               'הוסיפו זמני לימוד',
               style: TextStyle(
                   fontWeight: FontWeight.bold, color: Colors.teal[400]),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(3.0),
             ),
             Icon(FontAwesomeIcons.clock, size: 25, color: Colors.teal[400])
           ])),
