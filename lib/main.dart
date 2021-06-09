@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
-import 'file:///C:/src/Havruta365/lib/Screens/HomePageScreen/home_page.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:loading_animations/loading_animations.dart';
-
-import 'Screens/SignupScreen.dart';
 
 void main() async{
   runApp(MyApp());
