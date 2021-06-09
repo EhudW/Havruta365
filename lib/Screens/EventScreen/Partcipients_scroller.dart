@@ -55,7 +55,6 @@ class ParticipentsScroller extends StatelessWidget {
                         iconSize: 40.0,
                         color: Colors.white.withOpacity(0),
                         onPressed: () {
-                          print("check");
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => UserScreen(snapshot.data['email'])),
