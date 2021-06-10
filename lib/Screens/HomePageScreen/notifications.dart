@@ -37,7 +37,7 @@ class _NotificationsState extends State<Notifications> {
     n.creatorUser = 'yonatan4';
     n.creationDate = DateTime.now();
     n.description = '';
-    Globals.db.insertNotification(n);
+   // Globals.db.insertNotification(n);
   }
 
   @override
@@ -63,8 +63,8 @@ class _NotificationsState extends State<Notifications> {
                       direction: DismissDirection.startToEnd,
                       resizeDuration: Duration(milliseconds: 200),
                       key: ObjectKey(_snapshot.data[index]),
-                      onDismissed: (direction) {
-                        Globals.db.deleteNotification(_snapshot.data[index]);
+                      onDismissed: (direction) async {
+                        await Globals.db.deleteNotification(_snapshot.data[index]);
                         _snapshot.data.removeAt[index];
                         // TODO: implement your delete function and check direction if needed
                       },

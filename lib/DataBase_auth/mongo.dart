@@ -104,7 +104,7 @@ class Mongo {
   }
   Future<void> deleteNotification(NotificationUser notification) async{
     var collection = db.collection('Notifications');
-    await collection.deleteOne({"_id": "$notification.id"});
+    await collection.deleteOne({"_id": notification.id});
   }
   // Check if user exist
   Future<bool> isUserExist(String mail) async{
