@@ -30,6 +30,14 @@ class _NotificationsState extends State<Notifications> {
       }
     });
     super.initState();
+    NotificationUser n = new NotificationUser();
+    n.message = 'התראה';
+    n.type = '';
+    n.idEvent = '60bbda688b4c85a59e40886f';
+    n.creatorUser = 'yonatan4';
+    n.creationDate = DateTime.now();
+    n.description = '';
+    Globals.db.insertNotification(n);
   }
 
   @override
@@ -57,6 +65,7 @@ class _NotificationsState extends State<Notifications> {
                       key: ObjectKey(_snapshot.data[index]),
                       onDismissed: (direction) {
                         _snapshot.data.removeAt[index];
+
                         // TODO: implement your delete function and check direction if needed
                       },
                       child: NotificationView(
@@ -65,7 +74,7 @@ class _NotificationsState extends State<Notifications> {
                 } else if (notifications.hasMore) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 32.0),
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child:Text("אין התראות")),
                   );
                 } else {
                   return Padding(

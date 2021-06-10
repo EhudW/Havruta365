@@ -31,7 +31,7 @@ class NotificationView extends StatelessWidget {
                         children: <Widget>[
                           ///SizedBox(height: scaler.getHeight(0.5)),
                           Text(
-                            notification.topic,
+                            notification.message,
                             textDirection: TextDirection.rtl,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -39,7 +39,7 @@ class NotificationView extends StatelessWidget {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            notification.book,
+                            notification.message,
                             style: TextStyle(
                                 color: Colors.grey.shade600,
                                 fontSize: scaler.getTextSize(6)),

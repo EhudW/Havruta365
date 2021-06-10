@@ -25,7 +25,8 @@ class notificationModel {
 
   Future<List<NotificationUser>>  _getExampleServerData(int length) async {
     return Future.delayed(Duration(seconds: 1), () {
-      return Globals.db.getNotifications();
+      var data = Globals.db.getNotifications();
+      return data;
     });
   }
   Future<void> refresh() {

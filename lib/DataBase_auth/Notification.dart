@@ -1,74 +1,46 @@
+import 'package:havruta_project/DataBase_auth/Event.dart';
+
+
 class NotificationUser {
   NotificationUser(
-      {this.id,
+      {
         this.creatorUser,
         this.creationDate,
         this.type,
-        this.topic,
-        this.book,
-        this.link,
-        this.description,
-        this.eventImage,
-        this.lecturer,
-        this.participants,
-        this.dates,
-        this.maxParticipants});
+        this.message,
+        this.idEvent,
+        this.description});
 
-  String id,
+  String
       creatorUser,
       type,
-      topic,
-      book,
-      link,
-      description,
-      eventImage,
-      lecturer;
-  int maxParticipants;
+      message,
+      idEvent,
+      description;
   DateTime creationDate;
-  List<dynamic> participants;
-  List<dynamic> dates;
 
   factory NotificationUser.fromServerMap(Map data) {
     return NotificationUser(
-        id: data['id'],
         creatorUser: data['creatorUser'],
         creationDate: data['creationDate'],
-        topic: data['topic'],
-        book: data['book'],
-        link: data['link'],
-        description: data['description'],
-        eventImage: data['eventImage'],
-        lecturer: data['lecturer'],
-        participants: data['participants'],
-        maxParticipants: data['maxParticipants']);
+        type: data['type'],
+        message: data['message'],
+        idEvent: data['idEvent']);
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
     'creatorUser': creatorUser,
     'creationDate': creationDate,
-    'topic': topic,
-    'book': book,
-    'link': link,
+    'message': message,
     'description': description,
-    'eventImage': eventImage,
-    'lecturer': lecturer,
-    'participants': participants,
-    'maxParticipants': maxParticipants,
-    'dates' : dates
+    'idEvent': idEvent
   };
 
   NotificationUser.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
+      :
         creatorUser = json['creatorUser'],
         creationDate = json['creationDate'],
-        topic = json['topic'],
-        book = json['book'],
-        link = json['link'],
-        description = json['description'],
-        eventImage = json['eventImage'],
-        lecturer = json['lecturer'],
-        participants = json['participants'],
-        maxParticipants = json['maxParticipants'],
-        dates = json['dates'];
+        message = json['message'],
+        type = json['type'],
+        idEvent = json['idEvent'];
 }

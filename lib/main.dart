@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 case ConnectionState.done:
                   Globals.currentUser = u1;
-                  return EventScreen(e1);
+                  return HomePage();
                 default:
                   return Text('default');
               }
