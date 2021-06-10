@@ -28,7 +28,7 @@ class EventViewFeed extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => EventScreen(event)));
             },
             child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Expanded(child:Container(
                     width: scaler.getWidth(12),
