@@ -90,7 +90,7 @@ class Mongo {
   Future<List<NotificationUser>> getNotifications() async{
   List<NotificationUser> data = List<NotificationUser>();
   var collection = db.collection('Notifications');
-  final notifications = await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+  final notifications = await collection.find(where.sortBy('_id').skip(0).limit(10)).toList();
   for (var  i in notifications){
     data.add(new NotificationUser.fromJson(i));
   }
@@ -101,6 +101,10 @@ class Mongo {
     var collection = db.collection('Notifications');
     var e = notification.toJson();
     await collection.insertOne(e);
+  }
+  Future<void> deleteNotification(NotificationUser notification) async{
+    var collection = db.collection('Notifications');
+    await collection.deleteOne({"_id": "$notification.id"});
   }
   // Check if user exist
   Future<bool> isUserExist(String mail) async{

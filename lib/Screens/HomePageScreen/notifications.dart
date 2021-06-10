@@ -64,8 +64,8 @@ class _NotificationsState extends State<Notifications> {
                       resizeDuration: Duration(milliseconds: 200),
                       key: ObjectKey(_snapshot.data[index]),
                       onDismissed: (direction) {
+                        Globals.db.deleteNotification(_snapshot.data[index]);
                         _snapshot.data.removeAt[index];
-
                         // TODO: implement your delete function and check direction if needed
                       },
                       child: NotificationView(

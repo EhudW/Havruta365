@@ -1,4 +1,5 @@
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 
 class NotificationUser {
@@ -17,6 +18,7 @@ class NotificationUser {
       message,
       idEvent,
       description;
+  ObjectId id;
   DateTime creationDate;
 
   factory NotificationUser.fromServerMap(Map data) {
@@ -31,6 +33,7 @@ class NotificationUser {
   Map<String, dynamic> toJson() => {
     'creatorUser': creatorUser,
     'creationDate': creationDate,
+    'type': type,
     'message': message,
     'description': description,
     'idEvent': idEvent
@@ -38,6 +41,7 @@ class NotificationUser {
 
   NotificationUser.fromJson(Map<String, dynamic> json)
       :
+        id = json['_id'],
         creatorUser = json['creatorUser'],
         creationDate = json['creationDate'],
         message = json['message'],
