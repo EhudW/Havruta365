@@ -28,9 +28,9 @@ class _HomePageState extends State<HomePage> {
             body: Column(children: <Widget>[Expanded(child: Events())]),
             key: _scaffoldKey,
             drawer: Drawer(
-                child: Container(
-                    color: Colors.white,
-                    child: Column(children: <Widget>[Expanded(child: Notifications())])))),
+                child: Expanded(child:Container(
+                  color: Colors.transparent,
+                    child: Column(children: <Widget>[Expanded(child: Notifications())]))))),
         backgroundColor: Colors.white,
         appBar: appBar(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

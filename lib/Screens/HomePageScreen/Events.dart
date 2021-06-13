@@ -150,7 +150,7 @@ class _EventsState extends State<Events> {
         child: Text('Live שיעורים',
             style: TextStyle(
                 color: Colors.white,
-                fontSize: Globals.scaler.getTextSize(6),
+                fontSize: Globals.scaler.getTextSize(7),
                 fontWeight: FontWeight.bold)),
       )]),
     ]);

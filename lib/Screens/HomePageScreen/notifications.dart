@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 
 class Notifications extends StatefulWidget {
-  const Notifications({
+  const   Notifications({
     Key key,
   }) : super(key: key);
 
@@ -31,13 +31,13 @@ class _NotificationsState extends State<Notifications> {
     });
     super.initState();
     NotificationUser n = new NotificationUser();
-    n.message = 'התראה';
-    n.type = '';
+    n.message = 'הצטרפ/ה לחברותא שלך';
+    n.type = 'E';
     n.idEvent = '60bbda688b4c85a59e40886f';
-    n.creatorUser = 'yonatan4';
+    n.creatorUser = 'יונתן גת';
     n.creationDate = DateTime.now();
     n.description = '';
-   // Globals.db.insertNotification(n);
+   //Globals.db.insertNotification(n);
   }
 
   @override
@@ -47,7 +47,7 @@ class _NotificationsState extends State<Notifications> {
 
   eventsScroll() {
     return Scrollbar(
-        child: StreamBuilder(
+        child: Material(color: Colors.grey.withAlpha(100),child:StreamBuilder(
       stream: notifications.stream,
       builder: (BuildContext _context, AsyncSnapshot _snapshot) {
         if (!_snapshot.hasData) {
@@ -74,7 +74,7 @@ class _NotificationsState extends State<Notifications> {
                 } else if (notifications.hasMore) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 32.0),
-                    child: Center(child:Text("אין התראות")),
+                    child: Center(child:Text("אין לך התראות")),
                   );
                 } else {
                   return Padding(
@@ -86,6 +86,6 @@ class _NotificationsState extends State<Notifications> {
           );
         }
       },
-    ));
+    )));
   }
 }
