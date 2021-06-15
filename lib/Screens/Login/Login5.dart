@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import './Login4.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,9 +12,11 @@ import 'package:image_picker/image_picker.dart';
 class Login5 extends StatefulWidget {
 
 
-  Login5({
-    Key key,
-  }) : super(key: key);
+  Login5(
+    this.email
+  );
+
+  final String email;
 
   Login5_state createState() => Login5_state();
 
@@ -134,38 +137,46 @@ class Login5_state extends State<Login5> {
                 SizedBox(
               width: 327.w,
               height: 48.h,
-              child: Stack(
-                children: <Widget>[
-                  Pinned.fromSize(
-                    bounds: Rect.fromLTWH(0.w, 0.h, 327.w, 48.h),
-                    size: Size(327.w, 48.h),
-                    pinLeft: true,
-                    pinRight: true,
-                    pinTop: true,
-                    pinBottom: true,
-                    child: SvgPicture.string(
-                      _svg_tmar9d,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Pinned.fromSize(
-                    bounds: Rect.fromLTWH(122.1.w, 15.h, 150.w, 16.h),
-                    size: Size(400.w, 48.h),
-                    fixedWidth: true,
-                    fixedHeight: true,
-                    child: Text(
-                      'מצא לי חברותא',
-                      style: TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: 16.sp,
-                        color: const Color(0xff2699fb),
-                        height: 0.8571428571428571.h,
+              child: ElevatedButton(
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                },
+                child: Stack(
+                  children: <Widget>[
+                    Pinned.fromSize(
+                      bounds: Rect.fromLTWH(0.w, 0.h, 327.w, 48.h),
+                      size: Size(327.w, 48.h),
+                      pinLeft: true,
+                      pinRight: true,
+                      pinTop: true,
+                      pinBottom: true,
+                      child: SvgPicture.string(
+                        _svg_tmar9d,
+                        allowDrawingOutsideViewBox: true,
+                        fit: BoxFit.fill,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
+                    Pinned.fromSize(
+                      bounds: Rect.fromLTWH(122.1.w, 15.h, 150.w, 16.h),
+                      size: Size(400.w, 48.h),
+                      fixedWidth: true,
+                      fixedHeight: true,
+                      child: Text(
+                        'מצא לי חברותא',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 16.sp,
+                          color: const Color(0xff2699fb),
+                          height: 0.8571428571428571.h,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -363,12 +374,12 @@ class Login5_state extends State<Login5> {
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-        CircleAvatar(
-          radius: 60.0,
-          backgroundImage: _imageFile == null
-              ? AssetImage("assets/profile.jpg")
-              : FileImage(File(_imageFile.path)),
-        ),
+        // CircleAvatar(
+        //   radius: 60.0,
+        //   backgroundImage: _imageFile == null
+        //       ? AssetImage("assets/profile.jpg")
+        //       : FileImage(File(_imageFile.path)),
+        // ),
         Positioned(
           bottom: 20.0,
           right: 10.0,

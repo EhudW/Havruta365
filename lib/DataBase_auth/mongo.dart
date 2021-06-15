@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/main.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -29,7 +29,7 @@ class Mongo {
   var db;
 
   // Connect to the DB.
-  Future<void> connect() async {
+  Future<User> connect() async {
     db = await Db.create(CONNECT_TO_DB);
     await db.open();
     print('Connected to database');
@@ -114,7 +114,7 @@ class Mongo {
     var collection = Globals.db.db.collection('Events');
     // Get event by id and Add mail to participants array
     var res = await collection.updateOne(
-        where.eq('id', id), ModifierBuilder().push('participants', mail));
+        where.eq('_id', id), ModifierBuilder().push('participants', mail));
   }
 
   Future<void> insertNotification(NotificationUser notification) async {

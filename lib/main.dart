@@ -4,8 +4,11 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
+import 'package:havruta_project/Screens/Login/Login1.dart';
+import 'package:havruta_project/Screens/Login/Login5.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Screens/HomePageScreen/home_page.dart';
 
@@ -21,6 +24,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<String> _email;
   Future mongoConnectFuture;
 
   @override
@@ -64,6 +69,46 @@ class _MyAppState extends State<MyApp> {
                 case ConnectionState.done:
                   Globals.currentUser = u1;
                   return HomePage();
+                  // _email = _prefs.then((prefs) {
+                  //   return (prefs.getString('email') ?? "");
+                  // });
+                  // return FutureBuilder(
+                  //     future: _email,
+                  //     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  //       switch (snapshot.connectionState) {
+                  //         case ConnectionState.waiting:
+                  //           return const CircularProgressIndicator();
+                  //         default:
+                  //           if (snapshot.hasError) {
+                  //             return Text('Error: ${snapshot.error}');
+                  //           } else {
+                  //             if (snapshot.data == ""){
+                  //               Future.delayed(Duration(seconds: 2)).then((value) async {
+                  //                 final SharedPreferences prefs = await _prefs;
+                  //                 await prefs.setString('email', "4yonatan4@gmail.com");
+                  //                 print("email updated");
+                  //               });
+                  //               return Login5("email");
+                  //             }
+                  //             else {
+                  //               var current_user = getUser(snapshot.data);
+                  //               return FutureBuilder(
+                  //                   future: current_user,
+                  //                   builder: (BuildContext context, AsyncSnapshot<User> snapshot){
+                  //                     switch (snapshot.connectionState) {
+                  //                       case ConnectionState.waiting:
+                  //                         return const CircularProgressIndicator();
+                  //                       default:
+                  //                         Globals.currentUser = snapshot.data;
+                  //                         return HomePage();
+                  //                     }
+                  //                   });
+                  //               return HomePage();
+                  //             }
+                  //           }
+                  //       }
+                  //     });
+                  break;
                 default:
                   return Text('default');
               }
