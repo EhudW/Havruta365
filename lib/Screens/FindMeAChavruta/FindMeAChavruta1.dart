@@ -1,13 +1,13 @@
 import 'package:adobe_xd/adobe_xd.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta3.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
+import 'package:havruta_project/DataBase_auth/Topic.dart';
+
 import 'MyData.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,6 +37,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
       topicsDrop = [],
       booksDrop = [],
       genderDrop = [];
+  double spaceBetween = 30, height;
+
   List<String> choice = MyData().choice;
   List<String> topics = MyData().topics;
   List<String> humashBooks = MyData().humashBooks;
@@ -172,9 +174,12 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
   @override
   Widget build(BuildContext context) {
+    Future<List<Topic>> l = Globals.db.geTopics();
+    l.then((value) => print(value));
+    spaceBetween = 10;
+    height = 60;
     loadTopicssData();
-    //loadHours();
-    //loadHowOftenData();
+
     loadGenderData();
     loadChoices();
     intializeEvent(this.event);
@@ -198,6 +203,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
               Column(
                 children: <Widget>[
                   Padding(padding: const EdgeInsets.only(top: 100.0)),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -214,41 +220,47 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           child: Stack(
                         children: [
                           Container(
-                            height: 42,
+                            height: 50,
                             width: 300,
                             decoration: BoxDecoration(
-                              // boxShadow: [
-                              //   BoxShadow(
-                              //     blurRadius: 13.0,
-                              //     color: Colors.teal,
-                              //   ),
-                              // ],
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(1),
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 8.0),
+                              ],
                               color: Colors.white70,
-                              border: Border.all(
-                                color: Colors.teal[400],
-                              ),
-                              borderRadius: BorderRadius.circular(20.0),
+                              border:
+                                  Border.all(color: Colors.white70, width: 2.5),
+                              borderRadius: BorderRadius.circular(50.0),
                             ),
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: DropdownButton(
-                                dropdownColor: Colors.white,
-                                iconEnabledColor: Colors.teal[400],
-                                isExpanded: false,
-                                elevation: 1,
-                                value: selectedChoice,
-                                style: const TextStyle(color: Colors.teal),
-                                hint: Text("בחרו האם זה שיעור או חברותא"),
-                                items: choiceDrop,
-                                onChanged: (value) {
-                                  selectedChoice = value;
-                                  event.type = selectedChoice;
-                                  print(event.type);
-                                  if (event.type == null) {
-                                    event.type = " ";
-                                  }
-                                  setState(() {});
-                                },
+                            child: Material(
+                              elevation: 50,
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButton(
+                                  dropdownColor: Colors.white,
+                                  iconEnabledColor: Colors.teal[400],
+                                  isExpanded: false,
+                                  elevation: 1,
+                                  value: selectedChoice,
+                                  style: const TextStyle(
+                                    color: Colors.teal,
+                                  ),
+                                  hint: Text(
+                                      "          בחרו האם זה שיעור או חברותא"),
+                                  items: choiceDrop,
+                                  onChanged: (value) {
+                                    selectedChoice = value;
+                                    event.type = selectedChoice;
+                                    print(event.type);
+                                    if (event.type == null) {
+                                      event.type = " ";
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -256,9 +268,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                       )),
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
-                  ),
+                  SizedBox(height: spaceBetween),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -275,43 +285,61 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           child: Stack(
                         children: [
                           Container(
-                            height: 42,
+                            height: height,
                             width: 300,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: Colors.teal[400],
-                              ),
+                                  color: Colors.teal[400], width: 2.5),
+                              borderRadius: BorderRadius.circular(20.0),
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 8.0),
+                              ],
+                            ),
+                            child: Material(
+                              elevation: 50,
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: DropdownButton(
-                                dropdownColor: Colors.white,
-                                iconEnabledColor: Colors.teal[400],
-                                isExpanded: false,
-                                elevation: 1,
-                                value: selectedTopic,
-                                style: const TextStyle(color: Colors.teal),
-                                hint: Text("בחרו תחום"),
-                                items: topicsDrop,
-                                onChanged: (value) {
-                                  if (value == "תורה") {
-                                    //loadTorahBooksData("תורה");
-                                    loadTorahBooksData();
-                                  } else if (value == "נ״ך") {
-                                    loadNachBooksData();
-                                  } else if (value == "תלמוד בבלי") {
-                                    loadBavliBooksData();
-                                  }
-                                  selectedTopic = value;
-                                  event.topic = selectedTopic;
-                                  print(event.topic);
-                                  if (event.topic == null) {
-                                    event.topic = " ";
-                                  }
-                                  setState(() {});
-                                },
+                            child: Material(
+                              elevation: 50,
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButton(
+                                  dropdownColor: Colors.white,
+                                  iconEnabledColor: Colors.teal[400],
+                                  isExpanded: false,
+                                  elevation: 1,
+                                  value: selectedTopic,
+                                  style: const TextStyle(
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold),
+                                  hint: Text(
+                                    "                         בחרו תחום",
+                                  ),
+                                  items: topicsDrop,
+                                  onChanged: (value) {
+                                    // need to send to function the value which will load from the db
+                                    if (value == "תורה") {
+                                      //loadTorahBooksData("תורה");
+                                      loadTorahBooksData();
+                                    } else if (value == "נ״ך") {
+                                      loadNachBooksData();
+                                    } else if (value == "תלמוד בבלי") {
+                                      loadBavliBooksData();
+                                    }
+                                    selectedTopic = value;
+                                    event.topic = selectedTopic;
+                                    print(event.topic);
+                                    if (event.topic == null) {
+                                      event.topic = " ";
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
                               ),
                             ),
                           )
@@ -319,9 +347,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                       )),
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
-                  ),
+                  SizedBox(height: spaceBetween),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -336,49 +362,56 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           child: Stack(
                         children: [
                           Container(
-                            height: 42,
+                            height: 50,
                             width: 300,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Colors.grey.withOpacity(0.2),
                               border: Border.all(
-                                color: Colors.teal[400],
-                              ),
+                                  color: Colors.teal[400], width: 2.5),
                               borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: DropdownButton(
-                                //icon: Icon(Icons.book),
-                                dropdownColor: Colors.white,
-                                iconEnabledColor: Colors.teal[400],
-                                elevation: 1,
-                                value: selectedBook,
-                                style: const TextStyle(color: Colors.teal),
-                                hint: Text(
-                                  "בחרו ספר                         ",
-                                  textAlign: TextAlign.right,
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 8.0),
+                              ],
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButton(
+                                  //icon: Icon(Icons.book),
+                                  dropdownColor: Colors.white,
+                                  iconEnabledColor: Colors.teal[400],
+                                  isDense: true,
+                                  elevation: 0,
+                                  value: selectedBook,
+                                  style: const TextStyle(
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold),
+                                  hint: Text(
+                                    "בחרו ספר                         ",
+                                    textAlign: TextAlign.right,
+                                  ),
+                                  items: booksDrop,
+                                  onChanged: (value) {
+                                    selectedBook = value;
+                                    event.book = selectedBook;
+                                    print(event.book);
+                                    if (event.book == null) {
+                                      event.book = " ";
+                                    }
+                                    setState(() {});
+                                  },
                                 ),
-                                items: booksDrop,
-                                onChanged: (value) {
-                                  selectedBook = value;
-                                  event.book = selectedBook;
-                                  print(event.book);
-                                  if (event.book == null) {
-                                    event.book = " ";
-                                  }
-                                  setState(() {});
-                                },
                               ),
                             ),
-                          )
+                          ),
                         ],
                       )),
                     ],
                   ),
 
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
-                  ),
+                  SizedBox(height: spaceBetween),
+
                   Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -393,14 +426,19 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             child: Stack(
                           children: [
                             Container(
-                              height: 42,
+                              height: 50,
                               width: 300,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(
-                                  color: Colors.teal[400],
-                                ),
+                                    color: Colors.teal[400], width: 2.5),
                                 borderRadius: BorderRadius.circular(20.0),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                      color: Colors.grey.withOpacity(1),
+                                      offset: const Offset(0, 2),
+                                      blurRadius: 8.0),
+                                ],
                               ),
                               child: ButtonTheme(
                                 alignedDropdown: true,
@@ -409,8 +447,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   iconEnabledColor: Colors.teal[400],
                                   elevation: 1,
                                   value: gender,
-                                  style: const TextStyle(color: Colors.teal),
-                                  hint: Text("בחר מין יעד             "),
+                                  style: const TextStyle(
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold),
+                                  hint: Text(
+                                      "                         בחר מין יעד"),
                                   items: genderDrop,
                                   onChanged: (value) {
                                     gender = value;
@@ -428,9 +469,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         )),
                       ]),
                   //########### ----NUMBER OF ATTENDEES----########
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(50, 20, 10, 20),
-                  ),
+                  SizedBox(height: spaceBetween),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -447,42 +487,56 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           padding: EdgeInsets.fromLTRB(50, 20, 10, 20),
                         ),
                         Container(
-                          height: 42,
+                          height: 50,
                           width: 300,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(
-                              color: Colors.teal[400],
-                            ),
+                            border:
+                                Border.all(color: Colors.teal[400], width: 2.5),
                             borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: "מספר משתתפים",
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                  color: Colors.grey.withOpacity(1),
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 8.0),
                             ],
-                            maxLines: 1,
-                            onChanged: (newVal) {
-                              var numOfParticapints = int.parse(newVal);
-                              event.maxParticipants = numOfParticapints;
-                              print(event.maxParticipants);
-                              if (event.maxParticipants == null) {
-                                event.maxParticipants = 1;
-                              }
-                            },
+                          ),
+                          child: Material(
+                            elevation: 30,
+                            //shadowColor: Colors.teal.withOpacity(20.0),
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: TextField(
+                              style: const TextStyle(
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.bold),
+                              decoration: InputDecoration(
+                                hintText: "מספר משתתפים",
+                                border: InputBorder.none,
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              maxLines: 1,
+                              onChanged: (newVal) {
+                                var numOfParticapints = int.parse(newVal);
+                                event.maxParticipants = numOfParticapints;
+                                print(event.maxParticipants);
+                                if (event.maxParticipants == null) {
+                                  event.maxParticipants = 1;
+                                }
+                              },
+                            ),
                           ),
                         )
                       ]),
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(55, 5, 10, 20),
-                  ),
+
+                  Padding(padding: EdgeInsets.fromLTRB(55, 100, 20, 10)),
+                  SizedBox(height: spaceBetween),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -536,9 +590,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     ],
                   ),
                   //########### ----NEXT ARROW----########
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(5, 0, 5, 20),
-                  ),
+                  SizedBox(height: spaceBetween),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
