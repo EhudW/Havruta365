@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentState = 0;
   int currentStateAppBar = 0;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
@@ -28,12 +27,11 @@ class _HomePageState extends State<HomePage> {
             body: Column(children: <Widget>[Expanded(child: Events())]),
             key: _scaffoldKey,
             drawer: Drawer(
-                child: Expanded(
-                    child: Container(
-                        color: Colors.transparent,
-                        child: Column(children: <Widget>[
-                          Expanded(child: Notifications())
-                        ]))))),
+                child: Container(
+                    color: Colors.transparent,
+                    child: Column(children: <Widget>[
+                      Expanded(child: Notifications())
+                    ])))),
         backgroundColor: Colors.white,
         appBar: appBar(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -43,14 +41,14 @@ class _HomePageState extends State<HomePage> {
 
   appBar(BuildContext context) {
     return new AppBar(
-        leadingWidth: 20,
+        leadingWidth: 40,
         toolbarHeight: 40,
         elevation: 10,
         leading: Builder(
             builder: (context) => new IconButton(
                   icon: currentStateAppBar == 0
-                      ? Icon(Icons.notifications, color: Colors.teal[400])
-                      : Icon(Icons.notifications_none, color: Colors.teal[400]),
+                      ? Icon(Icons.notifications, color: Colors.teal[400],size: scaler.getTextSize(9))
+                      : Icon(Icons.notifications_none, color: Colors.teal[400],size:scaler.getTextSize(9)),
                   tooltip:
                       MaterialLocalizations.of(context).openAppDrawerTooltip,
                   onPressed: () {
@@ -70,15 +68,19 @@ class _HomePageState extends State<HomePage> {
           bottom: Radius.circular(0),
         )),
         backgroundColor: Colors.white,
-        title:
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Text(
-            'Havruta  ',
-            style:
-                TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
-          ),
-          Icon(FontAwesomeIcons.book, size: 25, color: Colors.teal[400])
-        ]));
+        title: Container(
+          width: scaler.getWidth(28),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Havruta  ',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.teal[400]),
+                ),
+                Icon(FontAwesomeIcons.book, size: 25, color: Colors.teal[400])
+              ]),
+        ));
   }
 
   floatingActionButton() {
@@ -112,22 +114,14 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.settings),
-                color: currentState == 0 ? Colors.white : Colors.white54,
-                onPressed: () {
-                  setState(() {
-                    currentState = 0;
-                  });
-                },
+                color: Colors.white54,
+                onPressed: () {},
                 iconSize: scaler.getTextSize(10),
               ),
               IconButton(
                 icon: Icon(Icons.person),
-                color: currentState == 1 ? Colors.white : Colors.white54,
-                onPressed: () {
-                  setState(() {
-                    currentState = 1;
-                  });
-                },
+                color: Colors.white54,
+                onPressed: () {},
                 iconSize: scaler.getTextSize(10),
               )
             ],
