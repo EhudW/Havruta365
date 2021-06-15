@@ -1,4 +1,5 @@
 import 'package:adobe_xd/adobe_xd.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
@@ -6,6 +7,7 @@ import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta3.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
 import 'MyData.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,7 +25,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   var db = Globals.db;
   final format = DateFormat("yyyy-MM-dd");
   DateTime val;
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   String value = '',
       selectedTopic,
       gender,
@@ -67,6 +69,22 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
               value: val,
             ))
         .toList();
+  }
+
+  void intializeEvent(Event event) {
+    event.maxParticipants = 0;
+    event.targetGender = '';
+    event.book = '';
+    event.topic = '';
+    event.type = '';
+    event.description = '';
+    event.lecturer = '';
+    event.dates = [];
+    event.creatorUser = '';
+    event.eventImage = '';
+    event.participants = [];
+    event.link = '';
+    event.id = '';
   }
 
   // void loadTorahBooksData(String torah) async{
@@ -160,430 +178,470 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     //loadHowOftenData();
     loadGenderData();
     loadChoices();
+    intializeEvent(this.event);
     return Scaffold(
-      //bottomNavigationBar: ,
+      resizeToAvoidBottomInset: false,
       appBar: appBar(),
-
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(30, 30, 20, 20),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Icon(
-                    FontAwesomeIcons.questionCircle,
-                    color: Colors.tealAccent[400],
-                  ),
-                ),
-                //########### ----CHOICE DROPDOWN LIST----########
-                DropdownButtonHideUnderline(
-                    child: Stack(
-                  children: [
-                    Container(
-                      height: 42,
-                      width: 300,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.teal[400],
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton(
-                          dropdownColor: Colors.white,
-                          iconEnabledColor: Colors.teal[400],
-                          isExpanded: false,
-                          elevation: 1,
-                          value: selectedChoice,
-                          style: const TextStyle(color: Colors.teal),
-                          hint: Text("בחרו האם זה שיעור או חברותא"),
-                          items: choiceDrop,
-                          onChanged: (value) {
-                            selectedChoice = value;
-                            event.type = selectedChoice;
-                            setState(() {
-                              //selectedTopic = null;
-                            });
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                )),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Icon(
-                    Icons.topic,
-                    color: Colors.tealAccent[400],
-                  ),
-                ),
-                //########### ----TOPIC DROPDOWN LIST----########
-                DropdownButtonHideUnderline(
-                    child: Stack(
-                  children: [
-                    Container(
-                      height: 42,
-                      width: 300,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.teal[400],
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton(
-                          dropdownColor: Colors.white,
-                          iconEnabledColor: Colors.teal[400],
-                          isExpanded: false,
-                          elevation: 1,
-                          value: selectedTopic,
-                          style: const TextStyle(color: Colors.teal),
-                          hint: Text("בחרו תחום"),
-                          items: topicsDrop,
-                          onChanged: (value) {
-                            if (value == "תורה") {
-                              //loadTorahBooksData("תורה");
-                              loadTorahBooksData();
-                            } else if (value == "נ״ך") {
-                              loadNachBooksData();
-                            } else if (value == "תלמוד בבלי") {
-                              loadBavliBooksData();
-                            }
-                            selectedTopic = value;
-                            event.topic = selectedTopic;
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                )),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Icon(FontAwesomeIcons.book,
-                      color: Colors.tealAccent[400]),
-                ),
-                //########### ----BOOKS DROPDOWN LIST----########
-                DropdownButtonHideUnderline(
-                    child: Stack(
-                  children: [
-                    Container(
-                      height: 42,
-                      width: 300,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.teal[400],
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton(
-                          //icon: Icon(Icons.book),
-                          dropdownColor: Colors.white,
-                          iconEnabledColor: Colors.teal[400],
-                          elevation: 1,
-                          value: selectedBook,
-                          style: const TextStyle(color: Colors.teal),
-                          hint: Text("בחרו ספר"),
-                          items: booksDrop,
-                          onChanged: (value) {
-                            selectedBook = value;
-                            event.book = selectedBook;
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                )),
-              ],
-            ),
-
-            Padding(
-              padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
-            ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
+      body: Builder(
+        builder: (context) => Center(
+          child: Stack(
+            children: [
+              Column(
+                children: [
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Icon(Icons.face, color: Colors.tealAccent[400]),
-                  ),
-                  //########### ----GENDER DROPDOWN LIST----########
-                  DropdownButtonHideUnderline(
-                      child: Stack(
-                    children: [
-                      Container(
-                        height: 42,
-                        width: 300,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.teal[400],
-                          ),
-                          borderRadius: BorderRadius.circular(15.0),
+                      padding: const EdgeInsets.only(bottom: 0.0),
+                      child: WavyHeader()),
+                  // Padding(
+                  //   padding: EdgeInsets.fromLTRB(30, 30, 20, 20),
+                  // ),
+                ],
+              ),
+              Column(
+                children: <Widget>[
+                  Padding(padding: const EdgeInsets.only(top: 100.0)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Icon(
+                          FontAwesomeIcons.questionCircle,
+                          color: Colors.tealAccent[400],
                         ),
-                        child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: DropdownButton(
-                            dropdownColor: Colors.white,
-                            iconEnabledColor: Colors.teal[400],
-                            elevation: 1,
-                            value: gender,
-                            style: const TextStyle(color: Colors.teal),
-                            hint: Text("בחר מין יעד"),
-                            items: genderDrop,
-                            onChanged: (value) {
-                              gender = value;
-                              event.targetGender = gender;
-                              setState(() {});
-                            },
+                      ),
+                      //########### ----CHOICE DROPDOWN LIST----########
+                      DropdownButtonHideUnderline(
+                          child: Stack(
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 300,
+                            decoration: BoxDecoration(
+                              // boxShadow: [
+                              //   BoxShadow(
+                              //     blurRadius: 13.0,
+                              //     color: Colors.teal,
+                              //   ),
+                              // ],
+                              color: Colors.white70,
+                              border: Border.all(
+                                color: Colors.teal[400],
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton(
+                                dropdownColor: Colors.white,
+                                iconEnabledColor: Colors.teal[400],
+                                isExpanded: false,
+                                elevation: 1,
+                                value: selectedChoice,
+                                style: const TextStyle(color: Colors.teal),
+                                hint: Text("בחרו האם זה שיעור או חברותא"),
+                                items: choiceDrop,
+                                onChanged: (value) {
+                                  selectedChoice = value;
+                                  event.type = selectedChoice;
+                                  print(event.type);
+                                  if (event.type == null) {
+                                    event.type = " ";
+                                  }
+                                  setState(() {});
+                                },
+                              ),
+                            ),
                           ),
-                        ),
-                      )
+                        ],
+                      )),
                     ],
-                  )),
-                ]),
-            //########### ----NUMBER OF ATTENDEES----########
-            Padding(
-              padding: EdgeInsets.fromLTRB(50, 20, 10, 20),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Icon(
-                    FontAwesomeIcons.userFriends,
-                    color: Colors.tealAccent[400],
                   ),
-                ),
-                Stack(children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Icon(
+                          Icons.topic,
+                          color: Colors.tealAccent[400],
+                        ),
+                      ),
+                      //########### ----TOPIC DROPDOWN LIST----########
+                      DropdownButtonHideUnderline(
+                          child: Stack(
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 300,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.teal[400],
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton(
+                                dropdownColor: Colors.white,
+                                iconEnabledColor: Colors.teal[400],
+                                isExpanded: false,
+                                elevation: 1,
+                                value: selectedTopic,
+                                style: const TextStyle(color: Colors.teal),
+                                hint: Text("בחרו תחום"),
+                                items: topicsDrop,
+                                onChanged: (value) {
+                                  if (value == "תורה") {
+                                    //loadTorahBooksData("תורה");
+                                    loadTorahBooksData();
+                                  } else if (value == "נ״ך") {
+                                    loadNachBooksData();
+                                  } else if (value == "תלמוד בבלי") {
+                                    loadBavliBooksData();
+                                  }
+                                  selectedTopic = value;
+                                  event.topic = selectedTopic;
+                                  print(event.topic);
+                                  if (event.topic == null) {
+                                    event.topic = " ";
+                                  }
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                          )
+                        ],
+                      )),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Icon(FontAwesomeIcons.book,
+                            color: Colors.tealAccent[400]),
+                      ),
+                      //########### ----BOOKS DROPDOWN LIST----########
+                      DropdownButtonHideUnderline(
+                          child: Stack(
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 300,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.teal[400],
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton(
+                                //icon: Icon(Icons.book),
+                                dropdownColor: Colors.white,
+                                iconEnabledColor: Colors.teal[400],
+                                elevation: 1,
+                                value: selectedBook,
+                                style: const TextStyle(color: Colors.teal),
+                                hint: Text(
+                                  "בחרו ספר                         ",
+                                  textAlign: TextAlign.right,
+                                ),
+                                items: booksDrop,
+                                onChanged: (value) {
+                                  selectedBook = value;
+                                  event.book = selectedBook;
+                                  print(event.book);
+                                  if (event.book == null) {
+                                    event.book = " ";
+                                  }
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                          )
+                        ],
+                      )),
+                    ],
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(55, 20, 10, 20),
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child:
+                              Icon(Icons.face, color: Colors.tealAccent[400]),
+                        ),
+                        //########### ----GENDER DROPDOWN LIST----########
+                        DropdownButtonHideUnderline(
+                            child: Stack(
+                          children: [
+                            Container(
+                              height: 42,
+                              width: 300,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.teal[400],
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButton(
+                                  dropdownColor: Colors.white,
+                                  iconEnabledColor: Colors.teal[400],
+                                  elevation: 1,
+                                  value: gender,
+                                  style: const TextStyle(color: Colors.teal),
+                                  hint: Text("בחר מין יעד             "),
+                                  items: genderDrop,
+                                  onChanged: (value) {
+                                    gender = value;
+                                    event.targetGender = gender;
+                                    print(event.targetGender);
+                                    if (event.targetGender == null) {
+                                      event.targetGender = " ";
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        )),
+                      ]),
+                  //########### ----NUMBER OF ATTENDEES----########
                   Padding(
                     padding: EdgeInsets.fromLTRB(50, 20, 10, 20),
                   ),
-                  Container(
-                    height: 42,
-                    width: 300,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.teal[400],
-                      ),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "מספר משתתפים",
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                      ),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      maxLines: 1,
-                      onChanged: (newVal) {
-                        var numOfParticapints = int.parse(newVal);
-                        event.maxParticipants = numOfParticapints;
-                      },
-                    ),
-                  )
-                ]),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(55, 30, 10, 20),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 54,
-                  height: 6,
-                  child: Stack(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Pinned.fromSize(
-                        bounds: Rect.fromLTWH(16.0, 0.0, 6.0, 6.0),
-                        size: Size(54.0, 6.0),
-                        pinTop: true,
-                        pinBottom: true,
-                        fixedWidth: true,
-                        child: Container(
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Icon(
+                          Icons.group,
+                          color: Colors.tealAccent[400],
+                        ),
+                      ),
+                      Stack(children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(50, 20, 10, 20),
+                        ),
+                        Container(
+                          height: 42,
+                          width: 300,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                                Radius.elliptical(9999.0, 9999.0)),
-                            color: Colors.teal[400],
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.teal[400],
+                            ),
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
-                        ),
-                      ),
-                      Pinned.fromSize(
-                        bounds: Rect.fromLTWH(32.0, 0.0, 6.0, 6.0),
-                        size: Size(54.0, 6.0),
-                        pinTop: true,
-                        pinBottom: true,
-                        fixedWidth: true,
-                        child: SvgPicture.string(
-                          _svg_h36wzl,
-                          allowDrawingOutsideViewBox: true,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Pinned.fromSize(
-                        bounds: Rect.fromLTWH(48.0, 0.0, 6.0, 6.0),
-                        size: Size(54.0, 6.0),
-                        pinTop: true,
-                        pinBottom: true,
-                        fixedWidth: true,
-                        child: SvgPicture.string(
-                          _svg_h36wzl,
-                          allowDrawingOutsideViewBox: true,
-                          fit: BoxFit.fill,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: "מספר משתתפים",
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            maxLines: 1,
+                            onChanged: (newVal) {
+                              var numOfParticapints = int.parse(newVal);
+                              event.maxParticipants = numOfParticapints;
+                              print(event.maxParticipants);
+                              if (event.maxParticipants == null) {
+                                event.maxParticipants = 1;
+                              }
+                            },
+                          ),
+                        )
+                      ]),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(55, 5, 10, 20),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 54,
+                        height: 6,
+                        child: Stack(
+                          children: <Widget>[
+                            Pinned.fromSize(
+                              bounds: Rect.fromLTWH(16.0, 0.0, 6.0, 6.0),
+                              size: Size(54.0, 6.0),
+                              pinTop: true,
+                              pinBottom: true,
+                              fixedWidth: true,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.elliptical(9999.0, 9999.0)),
+                                  color: Colors.teal[400],
+                                ),
+                              ),
+                            ),
+                            Pinned.fromSize(
+                              bounds: Rect.fromLTWH(32.0, 0.0, 6.0, 6.0),
+                              size: Size(54.0, 6.0),
+                              pinTop: true,
+                              pinBottom: true,
+                              fixedWidth: true,
+                              child: SvgPicture.string(
+                                _svg_h36wzl,
+                                allowDrawingOutsideViewBox: true,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            Pinned.fromSize(
+                              bounds: Rect.fromLTWH(48.0, 0.0, 6.0, 6.0),
+                              size: Size(54.0, 6.0),
+                              pinTop: true,
+                              pinBottom: true,
+                              fixedWidth: true,
+                              child: SvgPicture.string(
+                                _svg_h36wzl,
+                                allowDrawingOutsideViewBox: true,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            //########### ----NEXT ARROW----########
-            Padding(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Adobe XD layer: 'Next' (group)
-                SizedBox(
-                  width: 335,
-                  height: 48,
-                  child: Stack(
-                    children: <Widget>[
-                      Pinned.fromSize(
-                          bounds: Rect.fromLTWH(15, 0.0, 327, 48),
-                          size: Size(327, 48),
-                          pinLeft: true,
-                          pinRight: true,
-                          pinTop: true,
-                          pinBottom: true,
-                          // child: Scaffold(
-                          //   body: GestureDetector(
-                          //     onTap: () {
-                          //       // Update user details
-                          //       // go to next page
-                          //       Navigator.push(
-                          //         context,
-                          //         MaterialPageRoute(
-                          //             builder: (context) => FindMeAChavruta2()),
-                          //       );
-                          //     },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(24),
-                              color: Colors.teal[400],
-                            ),
-                          )),
-                      Pinned.fromSize(
-                        bounds: Rect.fromLTWH(156, 16, 16, 16),
-                        size: Size(327, 48),
-                        fixedWidth: true,
-                        fixedHeight: true,
-                        //child: Navigator.push(context, route)
-                        child: PageLink(
-                          links: [
-                            PageLinkInfo(
-                              transition: LinkTransition.SlideLeft,
-                              ease: Curves.linear,
-                              duration: 0.3,
-                              pageBuilder: () =>
-                                  FindMeAChavruta2(event: this.event),
-                            ),
-                          ],
-                          child: Stack(
-                            children: <Widget>[
-                              Pinned.fromSize(
-                                bounds: Rect.fromLTWH(0, 0, 16, 16),
-                                size: Size(16, 16),
+                  //########### ----NEXT ARROW----########
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(5, 0, 5, 20),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Adobe XD layer: 'Next' (group)
+                      SizedBox(
+                        width: 325,
+                        height: 48,
+                        child: Stack(
+                          children: <Widget>[
+                            Pinned.fromSize(
+                                bounds: Rect.fromLTWH(15, 0.0, 327, 48),
+                                size: Size(327, 48),
                                 pinLeft: true,
                                 pinRight: true,
                                 pinTop: true,
                                 pinBottom: true,
-                                child: SvgPicture.string(
-                                  _svg_ru0g9a,
-                                  allowDrawingOutsideViewBox: true,
-                                  fit: BoxFit.fill,
+                                // child: Scaffold(
+                                //   body: GestureDetector(
+                                //     onTap: () {
+                                //       // Update user details
+                                //       // go to next page
+                                //       Navigator.push(
+                                //         context,
+                                //         MaterialPageRoute(
+                                //             builder: (context) => FindMeAChavruta2()),
+                                //       );
+                                //     },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24),
+                                    color: Colors.teal[400],
+                                  ),
+                                )),
+                            Pinned.fromSize(
+                              bounds: Rect.fromLTWH(165, 16, 16, 16),
+                              size: Size(327, 48),
+                              fixedWidth: true,
+                              fixedHeight: true,
+                              child: PageLink(
+                                links: [
+                                  PageLinkInfo(
+                                    transition: LinkTransition.SlideLeft,
+                                    ease: Curves.linear,
+                                    duration: 0.3,
+                                    pageBuilder: () =>
+                                        FindMeAChavruta2(event: this.event),
+                                  ),
+                                ],
+                                child: Stack(
+                                  children: <Widget>[
+                                    Pinned.fromSize(
+                                      bounds: Rect.fromLTWH(0, 0, 16, 16),
+                                      size: Size(16, 16),
+                                      pinLeft: true,
+                                      pinRight: true,
+                                      pinTop: true,
+                                      pinBottom: true,
+                                      child: SvgPicture.string(
+                                        _svg_ru0g9a,
+                                        allowDrawingOutsideViewBox: true,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   appBar() {
-    return AppBar(
-      toolbarHeight: 40,
-      elevation: 20,
-      shadowColor: Colors.teal[400],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(40),
-      )),
-      backgroundColor: Colors.white,
-      title: Center(
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-            Text(
-              'New Havruta',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.teal[400]),
-            ),
-            Icon(FontAwesomeIcons.book, size: 25, color: Colors.teal[400])
-          ])),
-    );
+    return new AppBar(
+        leadingWidth: 20,
+        toolbarHeight: 40,
+        elevation: 10,
+        shadowColor: Colors.teal[400],
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(0),
+        )),
+        backgroundColor: Colors.white,
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Text(
+            'קבע אירוע חדש  ',
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
+          ),
+          Icon(FontAwesomeIcons.calendar, size: 25, color: Colors.teal[400])
+        ]));
   }
 
   // bottomAppBar() {

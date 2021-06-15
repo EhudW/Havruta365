@@ -10,13 +10,7 @@ import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ListItem {
-  String title;
-
-  ListItem(String t) {
-    this.title = t;
-  }
-}
+import 'arc_banner_image.dart';
 
 class ListViews extends StatefulWidget {
   //ListViews({Key key, this.title}) : super(key: key);
@@ -83,42 +77,34 @@ class _ListViewsState extends State<ListViews> {
             itemCount: numOfChavrutot,
             shrinkWrap: true,
             physics: AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(10.0),
-            //itemBuilder: (context, index, animation) => ListItemWidget(
-            //     item: dates[index],
-            //     animation: animation,
-            //     //onClicked: () => removeItem(index),
-            //   ),
+            padding: const EdgeInsets.all(15.0),
             itemBuilder: (context, index) {
               var ind = index + 1;
               var chavrutaInfoMessage = ('${dates[index]}');
               return Card(
                   shape:
                       Border(right: BorderSide(color: Colors.green, width: 5)),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.perm_contact_cal,
-                      color: Colors.green,
-                    ),
-                    trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {
-                          eraseDate(dates, index);
-                          //index -= 1;
-                        }),
-                    // trailing: IconButton(
-                    //   const Icon(
-                    //     Icons.delete,
-                    //     color: Colors.red,
-                    //   ),
-                    //   onPressed: null,
-                    // ),
-                    title: Text(
-                      chavrutaInfoMessage,
-                      style: TextStyle(fontSize: 15),
+                  child: Material(
+                    elevation: 15,
+                    shadowColor: Colors.black,
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.perm_contact_cal,
+                        color: Colors.green,
+                      ),
+                      trailing: IconButton(
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          onPressed: () {
+                            eraseDate(dates, index);
+                            //index -= 1;
+                          }),
+                      title: Text(
+                        chavrutaInfoMessage,
+                        style: TextStyle(fontSize: 15),
+                      ),
                     ),
                   ));
             }));
@@ -127,6 +113,7 @@ class _ListViewsState extends State<ListViews> {
 
 class FindMeAChavruta2 extends StatefulWidget {
   final Event event;
+
   FindMeAChavruta2({Key key, @required this.event}) : super(key: key);
 
   @override
@@ -137,45 +124,86 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
   var db = Globals.db;
   List<String> dateTimes = [];
   List<DateTime> dateTimeListForMongo = [];
-  String text = "בחרו זמנים ללמוד";
+  String text = "בחרו זמנים ללמוד", dayStr;
+  Future<DateTime> day;
   DateTime start, end;
   String startDate, endDate, fullDate;
   int howManyChosen = 0;
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _myController = TextEditingController();
 
-  Future pickDateTime(BuildContext context) async {
-    final date = await pickDate(context);
-    if (date == null) return;
-    final startTime = await pickTime(context);
-    final endTime = await pickTime(context);
-    print(endTime);
-    if (startTime == null || endTime == null) return;
-    int startInMinutes = startTime.hour * 60 + startTime.minute;
-    int endInMinutes = endTime.hour * 60 + endTime.minute;
-    print(startTime.hour);
-    print(endTime.hour);
-    if (startInMinutes >= endInMinutes || startTime.hour > endTime.hour) {
-      //Put a block up here showing error
-      showErrorSnackBar(context);
-      print("Error in choosing the times");
-      return;
-    }
-    setState(() {
-      start = DateTime(
-          date.year, date.month, date.day, startTime.hour, startTime.minute);
-      end = DateTime(
-          date.year, date.month, date.day, endTime.hour, endTime.minute);
-      dateTimeListForMongo.add(start);
-      dateTimeListForMongo.add(end);
-      this.startDate = DateFormat('MM-dd-yyyy: kk:mm').format(start);
-      this.endDate = DateFormat('kk:mm').format(end);
-      this.fullDate = startDate + " - " + this.endDate;
-      this.howManyChosen++;
-      print(this.fullDate);
-      dateTimes.add(this.fullDate);
-      print(dateTimeListForMongo);
-      widget.event.dates = dateTimeListForMongo;
-      print(widget.event.targetGender);
-    });
+  Future<void> addTimeForm(BuildContext context) async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          //return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            content: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _myController,
+                    decoration: InputDecoration(hintText: " בחר תאריך"),
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                      // Below line stops keyboard from appearing
+                      pickDate(context);
+                      //day = new DateTime(day.)
+                      //dayStr = day.toString();
+                      //if (dayStr != null) {
+                      //  _myController.text = dayStr;
+                      //}
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+    //    });
+  }
+
+  Future<DateTime> pickDay(BuildContext context) {
+    final date = pickDate(context);
+    if (date == null) return null;
+    return date;
+    //final startTime = await pickStartTime(context);
+    //final endTime = await pickEndTime(context);
+    //   print(endTime);
+    //   if (startTime == null || endTime == null) return;
+    //   int startInMinutes = startTime.hour * 60 + startTime.minute;
+    //   int endInMinutes = endTime.hour * 60 + endTime.minute;
+    //   print(startTime.hour);
+    //   print(endTime.hour);
+    //   if (startInMinutes >= endInMinutes || startTime.hour > endTime.hour) {
+    //     //Put a block up here showing error
+    //     alertMessage();
+    //     print("Error in choosing the times");
+    //     return;
+    //   }
+    //   setState(() {
+    //     start = DateTime(
+    //         date.year, date.month, date.day, startTime.hour, startTime.minute);
+    //     end = DateTime(
+    //         date.year, date.month, date.day, endTime.hour, endTime.minute);
+    //     dateTimeListForMongo.add(start);
+    //     dateTimeListForMongo.add(end);
+    //     this.startDate = DateFormat('MM-dd-yyyy: kk:mm').format(start);
+    //     this.endDate = DateFormat('kk:mm').format(end);
+    //     this.fullDate = startDate + " - " + this.endDate;
+    //     this.howManyChosen++;
+    //     //print(this.fullDate);
+    //     dateTimes.add(this.fullDate);
+    //
+    //     /// print(dateTimeListForMongo);
+    //     widget.event.dates = dateTimeListForMongo;
+    //     // print(widget.event.dates);
+    //     if (widget.event.dates == null) {
+    //       widget.event.dates = [];
+    //     }
+    //   });
   }
 
   Future<DateTime> pickDate(BuildContext context) async {
@@ -190,10 +218,24 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
     return newDate;
   }
 
-  Future<TimeOfDay> pickTime(BuildContext context) async {
+  Future<TimeOfDay> pickStartTime(BuildContext context) async {
     final initialTime = TimeOfDay(hour: 9, minute: 0);
     final newTime = await showTimePicker(
       context: context,
+      helpText: 'Select Start Time',
+      initialTime: start != null
+          ? TimeOfDay(hour: start.hour, minute: start.minute)
+          : initialTime,
+    );
+    if (newTime == null) return null;
+    return newTime;
+  }
+
+  Future<TimeOfDay> pickEndTime(BuildContext context) async {
+    final initialTime = TimeOfDay(hour: 9, minute: 0);
+    final newTime = await showTimePicker(
+      context: context,
+      helpText: 'Select End Time',
       initialTime: start != null
           ? TimeOfDay(hour: start.hour, minute: start.minute)
           : initialTime,
@@ -205,16 +247,16 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: CustomAppBar(
-        //   title: "חברותא חדשה",
-        //   gradientBegin: Colors.blue,
-        //   gradientEnd: Colors.greenAccent,
-        // ),
         appBar: appBar(),
         body: Builder(
           builder: (context) => Center(
             child: Column(
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5.0),
+                  child: ArcBannerImage(
+                      "https://images.unsplash.com/photo-1435527173128-983b87201f4d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1494&q=80"),
+                ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -261,11 +303,10 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                         //               fontSize: 20, color: Colors.white),
                         //         ),
                         //       ),
-                        //       // child: DatePicker(dateTimes),
                         //     ))),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(2.0),
                       ),
                       Expanded(
                           child: ListViews(this.dateTimes,
@@ -273,7 +314,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                     ],
                   ),
                 ),
-                Padding(padding: EdgeInsets.fromLTRB(80, 25, 80, 0)),
+                Padding(padding: EdgeInsets.fromLTRB(80, 7, 80, 0)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -281,10 +322,11 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                     //Padding(padding: padding)
                     FloatingActionButton(
                       backgroundColor: Colors.green,
-                      onPressed: () => pickDateTime(context),
+                      onPressed: () => addTimeForm(context),
+                      mini: true,
                       child: Text(
                         "+",
-                        style: TextStyle(fontSize: 40),
+                        style: TextStyle(fontSize: 30),
                       ),
                     ),
                   ],
@@ -423,27 +465,50 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
   }
 
   appBar() {
-    return AppBar(
-      toolbarHeight: 40,
-      elevation: 20,
-      shadowColor: Colors.teal[400],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(40),
-      )),
-      backgroundColor: Colors.white,
-      title: Center(
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-            Text(
-              'הוסיפו זמני לימוד',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.teal[400]),
-            ),
-            Icon(FontAwesomeIcons.clock, size: 25, color: Colors.teal[400])
-          ])),
+    return new AppBar(
+        leadingWidth: 20,
+        toolbarHeight: 40,
+        elevation: 10,
+        shadowColor: Colors.teal[400],
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(0),
+        )),
+        backgroundColor: Colors.white,
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Text(
+            'הוסיפו זמני לימוד  ',
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
+          ),
+          Icon(FontAwesomeIcons.clock, size: 25, color: Colors.teal[400])
+        ]));
+  }
+
+  alertMessage() {
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("אי אפשר לשמור את התאריך"),
+      content: Text("זמן התחלה צריך להיות לפני זמן סיום"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
@@ -471,18 +536,19 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
       ..showSnackBar(snackBar);
   }
 
-  floatingActionButton() {
-    return FloatingActionButton(
-      backgroundColor: Colors.green,
-      onPressed: () {
-        pickDateTime(context);
-      },
-      child: Text(
-        "+",
-        style: TextStyle(fontSize: 40),
-      ),
-    );
-  }
+//   floatingActionButton() {
+//     return FloatingActionButton(
+//       backgroundColor: Colors.green,
+//       mini: true,
+//       onPressed: () {
+//         pickDateTime(context);
+//       },
+//       child: Text(
+//         "+",
+//         style: TextStyle(fontSize: 40),
+//       ),
+//     );
+//   }
 }
 
 const String _svg_pkfj6b =
