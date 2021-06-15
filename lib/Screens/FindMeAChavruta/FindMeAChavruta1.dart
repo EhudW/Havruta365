@@ -84,7 +84,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     event.eventImage = '';
     event.participants = [];
     event.link = '';
-    event.id = '';
   }
 
   // void loadTorahBooksData(String torah) async{

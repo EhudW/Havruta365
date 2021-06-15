@@ -244,7 +244,6 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                           onPressed: () {
                             widget.event.creationDate = DateTime.now();
                             widget.event.participants = [];
-                            widget.event.id = "";
                             widget.event.creatorUser = "";
                             widget.event.eventImage =
                                 'https://romancebooks.co.il/wp-content/uploads/2019/06/default-user-image.png';
