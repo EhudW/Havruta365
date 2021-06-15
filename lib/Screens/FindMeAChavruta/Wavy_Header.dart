@@ -13,7 +13,7 @@ class WavyHeader extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.center),
         ),
-        height: MediaQuery.of(context).size.height / 4.65,
+        height: MediaQuery.of(context).size.height / 2.5,
       ),
     );
   }
