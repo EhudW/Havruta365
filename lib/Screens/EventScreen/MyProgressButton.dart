@@ -1,14 +1,11 @@
-import 'package:flushbar/flushbar.dart';
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:progress_state_button/progress_button.dart';
-import 'package:progress_state_button/iconed_button.dart';
-import 'dart:async';
-import 'dart:math';
-import 'package:url_launcher/url_launcher.dart';
 
 class MyProgressButton extends StatefulWidget {
   MyProgressButton({Key key, this.event}) : super(key: key);
@@ -26,18 +23,16 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   ButtonState stateOnlyText = ButtonState.idle;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    if (widget.event.participants.contains(Globals.currentUser.email)){
+    if (widget.event.participants.contains(Globals.currentUser.email)) {
       stateOnlyText = ButtonState.success;
     }
   }
 
-
-  //Widget linkText = Text('');
   Widget buildCustomButton() {
-    TextStyle textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.w500,
-        fontSize: 20);
+    TextStyle textStyle = TextStyle(
+        color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20);
     var progressTextButton = ProgressButton(
       stateWidgets: {
         ButtonState.idle: Text(
@@ -79,33 +74,41 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     return buildCustomButton();
   }
 
-  _launchURL(String link) async {
-    print(link);
-    if (await canLaunch(link)) {
-      await launch(link);
-    } else {
-      throw 'Could not launch $link';
-    }
-  }
 
-  Future<void> addParticipant(String mail, String id) async{
-    var collection = Globals.db.db.collection('Events');
-    // Get event by id and Add mail to participants array
-    var res = await collection.updateOne(
-        where.eq('id', id),
-        ModifierBuilder().push('participants', mail));
-  }
 
   void onPressedCustomButton() {
     setState(() {
       switch (stateOnlyText) {
         case ButtonState.idle:
-          var add_future = addParticipant(Globals.currentUser.email, widget.event.id);
+          var add_future =
+          Globals.db.addParticipant(Globals.currentUser.email, widget.event.id);
+          /*
+          creatorUser = json['creatorUser'],
+        creationDate = json['creationDate'],
+        message = json['message'],
+        type = json['type'],
+        idEvent = json['idEvent'],
+  name = json['name'];
+           */
+          String message;
+          message = widget.event.type == 'H'
+              ? "הצטרפ/ה לחברותא שלך"
+              : "הצטרפ/ה לשיעור שלך!";
+          NotificationUser notification = NotificationUser.fromJson({
+            'creatorUser': Globals.currentUser.email,
+            'creationDate': DateTime.now(),
+            'message': message,
+            'type': 'join',
+            'idEvent' : widget.event.id,
+            'name' : Globals.currentUser.name,
+          });
+          Globals.db.insertNotification(notification);
           add_future.then((value) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('האירוע נוסף בהצלחה לפרופיל האישי',
-                  textAlign: TextAlign.center,))
-            );
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  'האירוע נוסף בהצלחה לפרופיל האישי',
+                  textAlign: TextAlign.center,
+                )));
             setState(() {
               stateOnlyText = ButtonState.success;
             });
@@ -123,4 +126,5 @@ class _MyProgressButtonState extends State<MyProgressButton> {
       }
     });
   }
+
 }

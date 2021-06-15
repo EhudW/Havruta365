@@ -10,9 +10,8 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'User.dart';
 
-String CONNECT_TO_DB = "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havruta?retryWrites=true&w=majority";
-
-
+String CONNECT_TO_DB =
+    "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havruta?retryWrites=true&w=majority";
 
 /*
   Class Mongo
@@ -26,25 +25,23 @@ String CONNECT_TO_DB = "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havr
         for example: return this.name("tani") && this.age > 25;
  */
 class Mongo {
-
   var db;
 
   // Connect to the DB.
-  Future<void> connect() async{
+  Future<void> connect() async {
     db = await Db.create(CONNECT_TO_DB);
     await db.open();
     print('Connected to database');
     Globals.isDbConnect = true;
   }
 
-
-  Future<void> insertEvent(Event event) async{
+  Future<void> insertEvent(Event event) async {
     var collection = db.collection('Events');
     var e = event.toJson();
     await collection.insertOne(e);
   }
 
-  Future<User> getUser(String mail) async{
+  Future<User> getUser(String mail) async {
     // Get the Users Collection
     var collection = db.collection('Users');
     // Check if the user exist
@@ -58,56 +55,70 @@ class Mongo {
     return user;
   }
 
-  Future<List<Event>> searchEvents(String s) async{
+  Future<List<Event>> searchEvents(String s) async {
     List<Event> data = List<Event>();
     var collection = db.collection('Events');
-    final events = await collection.find(where.eq('book',s).sortBy('id').skip(0).limit(10)).toList();
-    for (var  i in events){
-      data.add(new Event.fromJson(i));
-    }
-    return data;
-  }
-  Future<List<Event>> getSomeEvents() async{
-    List<Event> data = List<Event>();
-    var collection = db.collection('Events');
-    final events = await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
-    for (var  i in events){
+    final events = await collection
+        .find(where.eq('book', s).sortBy('id').skip(0).limit(10))
+        .toList();
+    for (var i in events) {
       data.add(new Event.fromJson(i));
     }
     return data;
   }
 
-  Future<List<Event>> getSomeEventsOnline() async{
+  Future<List<Event>> getSomeEvents() async {
     List<Event> data = List<Event>();
     var collection = db.collection('Events');
-    final events = await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
-    for (var  i in events){
+    final events =
+        await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+    for (var i in events) {
       data.add(new Event.fromJson(i));
     }
     return data;
   }
 
-  Future<List<NotificationUser>> getNotifications() async{
-  List<NotificationUser> data = List<NotificationUser>();
-  var collection = db.collection('Notifications');
-  final notifications = await collection.find(where.sortBy('_id')).toList();
-  for (var  i in notifications){
-    data.add(new NotificationUser.fromJson(i));
+  Future<List<Event>> getSomeEventsOnline() async {
+    List<Event> data = List<Event>();
+    var collection = db.collection('Events');
+    final events =
+        await collection.find(where.sortBy('id').skip(0).limit(10)).toList();
+    for (var i in events) {
+      data.add(new Event.fromJson(i));
+    }
+    return data;
   }
-  return data;
-}
 
-  Future<void> insertNotification(NotificationUser notification) async{
+  Future<List<NotificationUser>> getNotifications() async {
+    List<NotificationUser> data = List<NotificationUser>();
+    var collection = db.collection('Notifications');
+    final notifications = await collection.find(where.sortBy('_id')).toList();
+    for (var i in notifications) {
+      data.add(new NotificationUser.fromJson(i));
+    }
+    return data;
+  }
+
+  Future<void> addParticipant(String mail, ObjectId id) async {
+    var collection = Globals.db.db.collection('Events');
+    // Get event by id and Add mail to participants array
+    var res = await collection.updateOne(
+        where.eq('id', id), ModifierBuilder().push('participants', mail));
+  }
+
+  Future<void> insertNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     var e = notification.toJson();
     await collection.insertOne(e);
   }
-  Future<void> deleteNotification(NotificationUser notification) async{
+
+  Future<void> deleteNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     await collection.deleteOne({"_id": notification.id});
   }
+
   // Check if user exist
-  Future<bool> isUserExist(String mail) async{
+  Future<bool> isUserExist(String mail) async {
     // Get the Users Collection
     var collection = db.collection('Users');
     // Check if the user exist
@@ -117,9 +128,10 @@ class Mongo {
     }
     return true;
   }
+
   // Check if the user is exist.
   // If not - throw error. O.W - return the user object.
-  checkNewUser(String mail) async{
+  checkNewUser(String mail) async {
     // Get the Users Collection
     var collection = await db.collection('Users');
     // Check if the user exist
@@ -149,7 +161,7 @@ class Mongo {
     await db.close();
   }
 
-  getEvent (String _id) async{
+  getEvent(String _id) async {
     var collection = db.collection('Events');
     var event = await collection.find(keyLimit: 10);
     return event;
@@ -189,13 +201,9 @@ class Mongo {
     ]);
   }
 
-  void send_info(info) async {
-
-  }
-
+  void send_info(info) async {}
 
   void disconnect() async {
     await db.close();
   }
 }
-

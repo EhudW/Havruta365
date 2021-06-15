@@ -33,7 +33,7 @@ class _NotificationsState extends State<Notifications> {
     NotificationUser n = new NotificationUser();
     n.message = 'הצטרפ/ה לחברותא שלך';
     n.type = 'E';
-    n.idEvent = '60bbda688b4c85a59e40886f';
+    //n.idEvent = '60bbda688b4c85a59e40886f';
     n.creatorUser = 'יונתן גת';
     n.creationDate = DateTime.now();
    //Globals.db.insertNotification(n);

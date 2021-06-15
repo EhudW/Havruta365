@@ -6,14 +6,15 @@ class NotificationUser {
       {this.creatorUser,
         this.name,
       this.creationDate,
+        // type = {join = 'join', newEvent = 'new'}
       this.type,
       this.message,
       this.idEvent
       });
 
   // type = new_event, join_event
-  String creatorUser, name, type, message, idEvent;
-  ObjectId id;
+  String creatorUser, name, type, message;
+  ObjectId id, idEvent;
   DateTime creationDate;
 
   factory NotificationUser.fromServerMap(Map data) {

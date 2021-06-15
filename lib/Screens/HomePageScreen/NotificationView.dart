@@ -63,7 +63,7 @@ class NotificationView extends StatelessWidget {
                               style: TextStyle(fontSize: scaler.getTextSize(7)),
                             ),
                             Text(
-                              notification.creatorUser + " ",
+                              notification.name + " ",
                               textDirection: TextDirection.rtl,
                               textAlign: TextAlign.start,
                               style: TextStyle(
