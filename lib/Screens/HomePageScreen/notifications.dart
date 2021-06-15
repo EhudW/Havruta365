@@ -36,7 +36,6 @@ class _NotificationsState extends State<Notifications> {
     n.idEvent = '60bbda688b4c85a59e40886f';
     n.creatorUser = 'יונתן גת';
     n.creationDate = DateTime.now();
-    n.description = '';
    //Globals.db.insertNotification(n);
   }
 

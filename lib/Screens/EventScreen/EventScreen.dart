@@ -9,11 +9,6 @@ class EventScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'פרטי שיעור',
-        gradientBegin: Colors.blue,
-        gradientEnd: Colors.greenAccent,
-      ),
       body: EventDetailsPage(this.event),
     );
   }

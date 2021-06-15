@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
@@ -36,11 +37,6 @@ class UserScreen extends StatelessWidget {
               );
             case ConnectionState.done:
               return Scaffold(
-                appBar: CustomAppBar(
-                  title: 'פרטי משתמש',
-                  gradientBegin: Colors.blue,
-                  gradientEnd: Colors.greenAccent,
-                ),
                 body: UserDetailsPage(snapshot.data),
               );
             default:
@@ -48,4 +44,5 @@ class UserScreen extends StatelessWidget {
           }
         });
   }
+
 }
