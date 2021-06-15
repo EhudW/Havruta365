@@ -53,9 +53,14 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             //     borderSide: const BorderSide(
             //         color: Colors.blue, width: 2.0))),
           ),
-          onChanged: (link) {
-            widget.event.link = link;
-            print(widget.event.link);
+          onChanged: (lecturer) {
+            widget.event.lecturer = lecturer;
+            print(widget.event.lecturer);
+            if (widget.event.lecturer == null) {
+              widget.event.lecturer = "";
+              print(widget.event.lecturer);
+            }
+            //print(widget.event.link);
           },
         ),
       );
@@ -64,15 +69,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   }
 
   Widget build(BuildContext context) {
-    //checkIfShiur();
     return Scaffold(
-      // appBar: CustomAppBar(
-      //   title: "חברותא חדשה",
-      //   gradientBegin: Colors.blue,
-      //   gradientEnd: Colors.greenAccent,
-      // ),
       appBar: appBar(),
-
       body: Center(
         child: Column(
           children: [
@@ -123,7 +121,12 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       maxLines: 1,
                       onChanged: (link) {
                         widget.event.link = link;
-                        print(widget.event.link);
+                        print("Link" + widget.event.link);
+
+                        if (widget.event.link == null) {
+                          widget.event.link = "";
+                          print("Link" + widget.event.link);
+                        }
                       },
                     )),
               ],
@@ -157,9 +160,12 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       ),
                       onChanged: (description) {
                         widget.event.description = description;
-                        print(widget.event.description);
-                        print(widget.event.dates);
-                        //this.mongoDB.db.
+                        print("Description" + widget.event.description);
+
+                        if (widget.event.description == null) {
+                          widget.event.description = "";
+                          print("Description" + widget.event.description);
+                        }
                       },
                     )),
               ],
@@ -238,9 +244,11 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                           onPressed: () {
                             widget.event.creationDate = DateTime.now();
                             widget.event.participants = [];
+                            widget.event.id = "";
+                            widget.event.creatorUser = "";
                             widget.event.eventImage =
                                 'https://romancebooks.co.il/wp-content/uploads/2019/06/default-user-image.png';
-                            print(widget.event.creationDate);
+                            //print(widget.event.creationDate);
                             mongoDB.insertEvent(widget.event).then((value) =>
                                 Navigator.push(
                                     context,
