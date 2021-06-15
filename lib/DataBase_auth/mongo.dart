@@ -8,6 +8,7 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/main.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
+import 'Topic.dart';
 import 'User.dart';
 
 String CONNECT_TO_DB =
@@ -95,6 +96,16 @@ class Mongo {
     final notifications = await collection.find(where.sortBy('_id')).toList();
     for (var i in notifications) {
       data.add(new NotificationUser.fromJson(i));
+    }
+    return data;
+  }
+
+  Future<List<Topic>> getTopics() async {
+    List<Topic> data = List<Topic>();
+    var collection = db.collection('Topics ');
+    final topics = await collection.find(where.sortBy('_id')).toList();
+    for (var i in topics) {
+      data.add(new Topic.fromJson(i));
     }
     return data;
   }
