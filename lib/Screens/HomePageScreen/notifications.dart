@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 
 class Notifications extends StatefulWidget {
-  const   Notifications({
+  const Notifications({
     Key key,
   }) : super(key: key);
 
@@ -36,7 +36,7 @@ class _NotificationsState extends State<Notifications> {
     //n.idEvent = '60bbda688b4c85a59e40886f';
     n.creatorUser = 'יונתן גת';
     n.creationDate = DateTime.now();
-   //Globals.db.insertNotification(n);
+    //Globals.db.insertNotification(n);
   }
 
   @override
@@ -46,45 +46,48 @@ class _NotificationsState extends State<Notifications> {
 
   eventsScroll() {
     return Scrollbar(
-        child: Material(color: Colors.grey.withAlpha(100),child:StreamBuilder(
-      stream: notifications.stream,
-      builder: (BuildContext _context, AsyncSnapshot _snapshot) {
-        if (!_snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          return RefreshIndicator(
-            onRefresh: notifications.refresh,
-            child: ListView.builder(
-              itemCount: _snapshot.data.length + 1,
-              itemBuilder: (BuildContext _context, int index) {
-                if (index < _snapshot.data.length) {
-                  return Dismissible(
-                      direction: DismissDirection.startToEnd,
-                      resizeDuration: Duration(milliseconds: 200),
-                      key: ObjectKey(_snapshot.data[index]),
-                      onDismissed: (direction) async {
-                        await Globals.db.deleteNotification(_snapshot.data[index]);
-                        _snapshot.data.removeAt[index];
-                        // TODO: implement your delete function and check direction if needed
-                      },
-                      child: NotificationView(
-                        notification: _snapshot.data[index],
-                      ));
-                } else if (notifications.hasMore) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32.0),
-                    child: Center(child:Text("אין לך התראות")),
-                  );
+        child: Material(
+            color: Colors.black.withOpacity(0.5),
+            child: StreamBuilder(
+              stream: notifications.stream,
+              builder: (BuildContext _context, AsyncSnapshot _snapshot) {
+                if (!_snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
                 } else {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32.0),
+                  return RefreshIndicator(
+                    onRefresh: notifications.refresh,
+                    child: ListView.builder(
+                      itemCount: _snapshot.data.length + 1,
+                      itemBuilder: (BuildContext _context, int index) {
+                        if (index < _snapshot.data.length) {
+                          return Dismissible(
+                              direction: DismissDirection.startToEnd,
+                              resizeDuration: Duration(milliseconds: 200),
+                              key: ObjectKey(_snapshot.data[index]),
+                              onDismissed: (direction) async {
+                                await Globals.db
+                                    .deleteNotification(_snapshot.data[index]);
+                                _snapshot.data.removeAt[index];
+                                // TODO: implement your delete function and check direction if needed
+                              },
+                              child: NotificationView(
+                                notification: _snapshot.data[index],
+                              ));
+                        } else if (notifications.hasMore) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32.0),
+                            child: Center(child: Text("אין לך התראות")),
+                          );
+                        } else {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32.0),
+                          );
+                        }
+                      },
+                    ),
                   );
                 }
               },
-            ),
-          );
-        }
-      },
-    )));
+            )));
   }
 }

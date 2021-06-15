@@ -28,9 +28,12 @@ class _HomePageState extends State<HomePage> {
             body: Column(children: <Widget>[Expanded(child: Events())]),
             key: _scaffoldKey,
             drawer: Drawer(
-                child: Expanded(child:Container(
-                  color: Colors.transparent,
-                    child: Column(children: <Widget>[Expanded(child: Notifications())]))))),
+                child: Expanded(
+                    child: Container(
+                        color: Colors.transparent,
+                        child: Column(children: <Widget>[
+                          Expanded(child: Notifications())
+                        ]))))),
         backgroundColor: Colors.white,
         appBar: appBar(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -79,26 +82,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   floatingActionButton() {
-    return FloatingActionButton(
-      backgroundColor: Colors.red,
-      onPressed: () {
-         Navigator.push(context,
-             MaterialPageRoute(builder: (context) => FindMeAChavruta1()));
-      },
-      child: Text(
-        "+",
-        style: TextStyle(fontSize: 40),
-      ),
-    );
+    return SizedBox(
+        height: scaler.getHeight(5),
+        width: scaler.getWidth(4),
+        child: FloatingActionButton(
+          backgroundColor: Colors.red,
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => FindMeAChavruta1()));
+          },
+          child: Text(
+            "+",
+            style: TextStyle(fontSize: scaler.getTextSize(10)),
+          ),
+        ));
   }
 
   bottomAppBar() {
     return BottomAppBar(
       color: Colors.teal[400],
       shape: CircularNotchedRectangle(),
-      notchMargin: 12,
+      notchMargin: scaler.getTextSize(5),
       child: Container(
-        height: 60,
+        height: scaler.getHeight(2.5),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Row(
@@ -112,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                     currentState = 0;
                   });
                 },
-                iconSize: 40,
+                iconSize: scaler.getTextSize(10),
               ),
               IconButton(
                 icon: Icon(Icons.person),
@@ -122,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                     currentState = 1;
                   });
                 },
-                iconSize: 40,
+                iconSize: scaler.getTextSize(10),
               )
             ],
           ),

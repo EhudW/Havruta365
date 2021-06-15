@@ -61,7 +61,7 @@ class EventViewFeed extends StatelessWidget {
                                     children: <Widget>[
                                       Expanded(
                                           child: Text(
-                                        event.participants.length.toString(),
+                                        event.participants.length.toString() + "/" + event.maxParticipants.toString(),
                                         textDirection: TextDirection.rtl,
                                         textAlign: TextAlign.right,
                                         style: TextStyle(
