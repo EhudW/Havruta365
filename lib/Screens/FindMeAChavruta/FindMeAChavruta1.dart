@@ -6,6 +6,8 @@ import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Next_Button.dart';
+
 import 'package:havruta_project/DataBase_auth/Topic.dart';
 import 'MyData.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -177,8 +179,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     l.then((value) => print(value));
     spaceBetween = 20;
     height = 67;
-    width = 320;
-    iconSize = 42;
+    width = 280;
+    iconSize = 45;
 
     loadTopicssData();
     loadGenderData();
@@ -203,10 +205,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
               ),
               Column(
                 children: <Widget>[
-                  Padding(padding: const EdgeInsets.only(top: 80.0)),
+                  Padding(padding: const EdgeInsets.only(top: 70.0)),
 
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       //########### ----CHOICE DROPDOWN LIST----########
@@ -261,7 +263,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         ],
                       )),
                       Padding(
-                        padding: const EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(12.0),
                         child: Icon(
                           FontAwesomeIcons.questionCircle,
                           color: Colors.tealAccent[400],
@@ -272,7 +274,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   ),
                   SizedBox(height: spaceBetween),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Stack(children: [
@@ -296,8 +298,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           ),
                           child: Material(
                             elevation: 50,
-                            borderRadius: BorderRadius.circular(
-                                50.0), //shadowColor: Colors.teal.withOpacity(20.0),
+                            borderRadius: BorderRadius.circular(50.0),
+                            //shadowColor: Colors.teal.withOpacity(20.0),
                             child: TextField(
                               style: const TextStyle(
                                   color: Colors.teal, fontSize: 15),
@@ -325,7 +327,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         )
                       ]),
                       Padding(
-                        padding: const EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(12.0),
                         child: Icon(
                           Icons.group,
                           color: Colors.tealAccent[400],
@@ -336,7 +338,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   ),
                   SizedBox(height: spaceBetween),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       //########### ----TOPIC DROPDOWN LIST----########
@@ -401,7 +403,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         ],
                       )),
                       Padding(
-                        padding: const EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(12.0),
                         child: Icon(
                           Icons.topic,
                           color: Colors.tealAccent[400],
@@ -412,7 +414,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   ),
                   SizedBox(height: spaceBetween),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       //########### ----BOOKS DROPDOWN LIST----########
@@ -449,7 +451,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     color: Colors.teal,
                                   ),
                                   hint: Text(
-                                    "בחרו ספר                           ",
+                                    "בחרו ספר                             ",
                                     textAlign: TextAlign.right,
                                   ),
                                   items: booksDrop,
@@ -469,7 +471,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         ]),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(12),
                         child: Icon(
                           FontAwesomeIcons.book,
                           color: Colors.tealAccent[400],
@@ -482,7 +484,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   SizedBox(height: spaceBetween),
 
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         //########### ----GENDER DROPDOWN LIST----########
@@ -518,7 +520,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       color: Colors.teal,
                                     ),
                                     hint: Text(
-                                        "                         בחרו מין יעד"),
+                                        "                           בחרו מין יעד"),
                                     items: genderDrop,
                                     onChanged: (value) {
                                       gender = value;
@@ -536,7 +538,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           ],
                         )),
                         Padding(
-                          padding: const EdgeInsets.all(0),
+                          padding: const EdgeInsets.all(12),
                           child: Icon(
                             Icons.face,
                             color: Colors.tealAccent[400],
@@ -600,69 +602,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     ],
                   ),
                   //########### ----NEXT ARROW----########
-                  SizedBox(height: spaceBetween),
-
+                  SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Adobe XD layer: 'Next' (group)
-                      SizedBox(
-                        width: 325,
-                        height: 48,
-                        child: Stack(
-                          children: <Widget>[
-                            Pinned.fromSize(
-                                bounds: Rect.fromLTWH(15, 0.0, 327, 48),
-                                size: Size(327, 48),
-                                pinLeft: true,
-                                pinRight: true,
-                                pinTop: true,
-                                pinBottom: true,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24),
-                                    color: Colors.teal[400],
-                                  ),
-                                )),
-                            Pinned.fromSize(
-                              bounds: Rect.fromLTWH(165, 16, 16, 16),
-                              size: Size(327, 48),
-                              fixedWidth: true,
-                              fixedHeight: true,
-                              child: PageLink(
-                                links: [
-                                  PageLinkInfo(
-                                    transition: LinkTransition.SlideLeft,
-                                    ease: Curves.linear,
-                                    duration: 0.3,
-                                    pageBuilder: () =>
-                                        FindMeAChavruta2(event: this.event),
-                                  ),
-                                ],
-                                child: Stack(
-                                  children: <Widget>[
-                                    Pinned.fromSize(
-                                      bounds: Rect.fromLTWH(0, 0, 16, 16),
-                                      size: Size(16, 16),
-                                      pinLeft: true,
-                                      pinRight: true,
-                                      pinTop: true,
-                                      pinBottom: true,
-                                      child: SvgPicture.string(
-                                        _svg_ru0g9a,
-                                        allowDrawingOutsideViewBox: true,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    children: [NextButton(event: this.event, whichPage: 2)],
                   ),
                 ],
               ),
@@ -695,43 +639,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         ]));
   }
 
-  // bottomAppBar() {
-  //   return BottomAppBar(
-  //     color: Colors.teal[400],
-  //     shape: CircularNotched(),
-  //     notchMargin: 12,
-  //     child: Container(
-  //       height: 60,
-  //       child: Padding(
-  //         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: <Widget>[
-  //             IconButton(
-  //               icon: Icon(Icons.settings),
-  //               color: currentState == 0 ? Colors.white : Colors.white54,
-  //               onPressed: () {
-  //                 setState(() {
-  //                   currentState = 0;
-  //                 });
-  //               },
-  //               iconSize: 40,
-  //             ),
-  //             IconButton(
-  //               icon: Icon(Icons.person),
-  //               color: currentState == 1 ? Colors.white : Colors.white54,
-  //               onPressed: () {
-  //                 setState(() {
-  //                   currentState = 1;
-  //                 });
-  //               },
-  //               iconSize: 40,
-  //             )
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
   floatingActionButton() {
     return FloatingActionButton(
       backgroundColor: Colors.teal,
@@ -749,13 +656,5 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   }
 }
 
-const String _svg_pkfj6b =
-    '<svg viewBox="0.0 0.0 16.0 16.0" ><path transform="matrix(-1.0, 0.0, 0.0, -1.0, 16.0, 16.0)" d="M 8 0 L 6.545454978942871 1.454545497894287 L 12.05194854736328 6.961039066314697 L 0 6.961039066314697 L 0 9.038961410522461 L 12.05194854736328 9.038961410522461 L 6.545454978942871 14.54545497894287 L 8 16 L 16 8 L 8 0 Z" fill="#ffffff" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>';
-const String _svg_y73tjv =
-    '<svg viewBox="0.0 0.0 375.0 68.0" ><path transform="translate(-4907.0, -1089.0)" d="M 4907.00048828125 1156.999633789063 L 4907.00048828125 1108.999389648438 L 5282.00048828125 1108.999389648438 L 5282.00048828125 1156.999633789063 L 4907.00048828125 1156.999633789063 Z M 4907.00048828125 1108.999389648438 L 4907.00048828125 1088.999877929688 L 5282.00048828125 1088.999877929688 L 5282.00048828125 1108.999389648438 L 4907.00048828125 1108.999389648438 Z" fill="#2699fb" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>';
-const String _svg_ru0g9a =
-    '<svg viewBox="0.0 0.0 16.0 16.0" ><path  d="M 8 0 L 6.545454978942871 1.454545497894287 L 12.05194854736328 6.961039066314697 L 0 6.961039066314697 L 0 9.038961410522461 L 12.05194854736328 9.038961410522461 L 6.545454978942871 14.54545497894287 L 8 16 L 16 8 L 8 0 Z" fill="#ffffff" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>';
 const String _svg_h36wzl =
     '<svg viewBox="16.0 0.0 6.0 6.0" ><path transform="translate(16.0, 0.0)" d="M 3 0 C 4.656854152679443 0 6 1.343145847320557 6 3 C 6 4.656854152679443 4.656854152679443 6 3 6 C 1.343145847320557 6 0 4.656854152679443 0 3 C 0 1.343145847320557 1.343145847320557 0 3 0 Z" fill="#bce0fd" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>';
-const String _svg_spzoa6 =
-    '<svg viewBox="301.0 111.0 16.0 16.0" ><path transform="translate(4921.0, 111.0)" d="M -4613.00048828125 15.99948692321777 L -4613.00048828125 8.999783515930176 L -4620 8.999783515930176 L -4620 6.999702930450439 L -4613.00048828125 6.999702930450439 L -4613.00048828125 0 L -4611 0 L -4611 6.999702930450439 L -4604.00048828125 6.999702930450439 L -4604.00048828125 8.999783515930176 L -4611 8.999783515930176 L -4611 15.99948692321777 L -4613.00048828125 15.99948692321777 Z" fill="#ffffff" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>';

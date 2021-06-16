@@ -10,6 +10,7 @@ import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'Next_Button.dart';
 import 'arc_banner_image.dart';
 
 class ListViews extends StatefulWidget {
@@ -396,61 +397,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Adobe XD layer: 'Next' (group)
-                    SizedBox(
-                      width: 335,
-                      height: 48,
-                      child: Stack(
-                        children: <Widget>[
-                          Pinned.fromSize(
-                              bounds: Rect.fromLTWH(15, 0, 300, 48),
-                              size: Size(327, 48),
-                              pinLeft: true,
-                              pinRight: true,
-                              pinTop: true,
-                              pinBottom: true,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24),
-                                  color: Colors.teal[400],
-                                ),
-                              )),
-                          Pinned.fromSize(
-                            bounds: Rect.fromLTWH(156, 16, 16, 16),
-                            size: Size(327, 48),
-                            fixedWidth: true,
-                            fixedHeight: true,
-                            child: PageLink(
-                              links: [
-                                PageLinkInfo(
-                                  transition: LinkTransition.SlideLeft,
-                                  ease: Curves.linear,
-                                  duration: 0.3,
-                                  pageBuilder: () =>
-                                      FindMeAChavruta3(event: widget.event),
-                                ),
-                              ],
-                              child: Stack(
-                                children: <Widget>[
-                                  Pinned.fromSize(
-                                    bounds: Rect.fromLTWH(0, 0, 16, 16),
-                                    size: Size(16, 16),
-                                    pinLeft: true,
-                                    pinRight: true,
-                                    pinTop: true,
-                                    pinBottom: true,
-                                    child: SvgPicture.string(
-                                      _svg_ru0g9a,
-                                      allowDrawingOutsideViewBox: true,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    NextButton(event: widget.event, whichPage: 3)
                   ],
                 ),
                 Padding(

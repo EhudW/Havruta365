@@ -63,7 +63,7 @@ class MyData {
   List<String> gender = [
     "גברים",
     "נשים",
-    "לא משנה",
+    "לא משנה רק תבואו",
   ];
 
   List<String> choice = ["שיעור", "חברותא"];
