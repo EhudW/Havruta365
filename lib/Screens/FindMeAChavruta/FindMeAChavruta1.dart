@@ -1,4 +1,3 @@
-import 'package:adobe_xd/adobe_xd.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
@@ -7,7 +6,6 @@ import 'package:havruta_project/Screens/FindMeAChavruta/First_Dot_Row.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/Next_Button.dart';
 import 'package:havruta_project/DataBase_auth/Topic.dart';
 import 'MyData.dart';
 import 'package:flutter/cupertino.dart';
@@ -590,7 +588,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        FindMeAChavruta2(this.event)));
+                                        FindMeAChavruta2(event: this.event)));
                           },
                         ),
                       ),
@@ -637,7 +635,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         Navigator.push(
             context,
             new MaterialPageRoute(
-                builder: (context) => FindMeAChavruta2(this.event)));
+                builder: (context) => FindMeAChavruta2(event: this.event)));
       },
       child: Text(
         "->",

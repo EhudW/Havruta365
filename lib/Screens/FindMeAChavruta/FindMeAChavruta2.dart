@@ -111,9 +111,7 @@ class _ListViewsState extends State<ListViews> {
 
 class FindMeAChavruta2 extends StatefulWidget {
   Event event;
-  FindMeAChavruta2(Event event) {
-    this.event = event;
-  }
+  FindMeAChavruta2({this.event});
 
   @override
   _FindMeAChavruta2CreateState createState() => _FindMeAChavruta2CreateState();
