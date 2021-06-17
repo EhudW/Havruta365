@@ -3,17 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/First_Dot_Row.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Next_Button.dart';
-
 import 'package:havruta_project/DataBase_auth/Topic.dart';
 import 'MyData.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:adobe_xd/pinned.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -38,7 +36,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
       topicsDrop = [],
       booksDrop = [],
       genderDrop = [];
-  double spaceBetween = 30, height, width, iconSize;
+  double spaceBetween, height, width, iconSize;
 
   List<String> choice = MyData().choice;
   List<String> topics = MyData().topics;
@@ -89,19 +87,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     event.link = '';
   }
 
-  // void loadTorahBooksData(String torah) async{
-  //   print("Try to connect...");
-  //   db = await mongo.Db.create(CONNECT_TO_DB);
-  //   await db.open();
-  //   var collection = db.collection('Topics');
-  //   var humashBooks = await collection.findOne(where.eq('תורה', torah));
-  //   booksDrop = [];
-  //   booksDrop = humashBooks
-  //       .map((val) => DropdownMenuItem<String>(
-  //           child: Text(val),
-  //           value: val,
-  //   )).toList();
-  // }
   void loadTorahBooksData() {
     booksDrop = [];
     booksDrop = humashBooks
@@ -153,16 +138,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         .toList();
   }
 
-  // void loadHowOftenData() {
-  //   howOften = [];
-  //   howOften = howOftenList
-  //       .map((val) => DropdownMenuItem<String>(
-  //             child: Text(val),
-  //             value: val,
-  //           ))
-  //       .toList();
-  // }
-
   void loadGenderData() {
     genderDrop = [];
     genderDrop = genderList
@@ -180,8 +155,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     spaceBetween = 20;
     height = 67;
     width = 280;
-    iconSize = 45;
-
+    iconSize = 40;
     loadTopicssData();
     loadGenderData();
     loadChoices();
@@ -198,15 +172,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   Padding(
                       padding: const EdgeInsets.only(bottom: 0.0),
                       child: WavyHeader()),
-                  // Padding(
-                  //   padding: EdgeInsets.fromLTRB(30, 30, 20, 20),
-                  // ),
                 ],
               ),
               Column(
                 children: <Widget>[
-                  Padding(padding: const EdgeInsets.only(top: 70.0)),
-
+                  Padding(padding: const EdgeInsets.only(top: 65.0)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -244,16 +214,29 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   style: const TextStyle(
                                     color: Colors.teal,
                                   ),
-                                  hint: Text(
-                                      "            בחרו האם זה שיעור או חברותא"),
+                                  hint: Container(
+                                      width: 230,
+                                      child: TextField(
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: const TextStyle(
+                                              color: Colors.teal),
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              hintText:
+                                                  "בחרו האם זה שיעור או חברותא"))),
                                   items: choiceDrop,
                                   onChanged: (value) {
                                     selectedChoice = value;
                                     event.type = selectedChoice;
                                     print(event.type);
-                                    if (event.type == null) {
-                                      event.type = " ";
-                                    }
+                                    // if (event.type == null) {
+                                    //   event.type = " ";
+                                    // }
                                     setState(() {});
                                   },
                                 ),
@@ -263,7 +246,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         ],
                       )),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(15.0),
                         child: Icon(
                           FontAwesomeIcons.questionCircle,
                           color: Colors.tealAccent[400],
@@ -282,52 +265,55 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           padding: EdgeInsets.fromLTRB(50, 20, 10, 20),
                         ),
                         Container(
-                          height: height,
-                          width: width,
-                          decoration: BoxDecoration(
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                  color: Colors.grey.withOpacity(1),
-                                  offset: const Offset(0, 2),
-                                  blurRadius: 8.0),
-                            ],
-                            color: Colors.white70,
-                            border:
-                                Border.all(color: Colors.white70, width: 2.5),
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                          child: Material(
-                            elevation: 50,
-                            borderRadius: BorderRadius.circular(50.0),
-                            //shadowColor: Colors.teal.withOpacity(20.0),
-                            child: TextField(
-                              style: const TextStyle(
-                                  color: Colors.teal, fontSize: 15),
-                              decoration: InputDecoration(
-                                hintText: ""
-                                    "                       מספר משתתפים",
-                                border: InputBorder.none,
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+                            height: height,
+                            width: width,
+                            decoration: BoxDecoration(
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(1),
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 8.0),
                               ],
-                              maxLines: 1,
-                              onChanged: (newVal) {
-                                var numOfParticapints = int.parse(newVal);
-                                event.maxParticipants = numOfParticapints;
-                                print(event.maxParticipants);
-                                if (event.maxParticipants == null) {
-                                  event.maxParticipants = 1;
-                                }
-                              },
+                              color: Colors.white70,
+                              border:
+                                  Border.all(color: Colors.white70, width: 2.5),
+                              borderRadius: BorderRadius.circular(50.0),
                             ),
-                          ),
-                        )
+                            child: Material(
+                              elevation: 50,
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: Container(
+                                width: 230,
+                                child: TextField(
+                                  textAlign: TextAlign.center,
+                                  autocorrect: true,
+                                  style: const TextStyle(
+                                      color: Colors.teal, fontSize: 16.5),
+                                  decoration: InputDecoration(
+                                    hintText: ""
+                                        "מספר משתתפים",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.fromLTRB(
+                                        10.0, 20.0, 10.0, 10.0),
+                                  ),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  maxLines: 1,
+                                  onChanged: (newVal) {
+                                    var numOfParticapints = int.parse(newVal);
+                                    event.maxParticipants = numOfParticapints;
+                                    print(event.maxParticipants);
+                                    if (event.maxParticipants == null) {
+                                      event.maxParticipants = 1;
+                                    }
+                                  },
+                                ),
+                              ),
+                            ))
                       ]),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(15.0),
                         child: Icon(
                           Icons.group,
                           color: Colors.tealAccent[400],
@@ -374,9 +360,20 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   style: const TextStyle(
                                     color: Colors.teal,
                                   ),
-                                  hint: Text(
-                                    "                             בחרו תחום",
-                                  ),
+                                  hint: Container(
+                                      width: 230,
+                                      child: TextField(
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: const TextStyle(
+                                              color: Colors.teal),
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              hintText: "בחרו תחום"))),
                                   items: topicsDrop,
                                   onChanged: (value) {
                                     // need to send to function the value which will load from the db
@@ -403,7 +400,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         ],
                       )),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(15.0),
                         child: Icon(
                           Icons.topic,
                           color: Colors.tealAccent[400],
@@ -450,10 +447,20 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   style: const TextStyle(
                                     color: Colors.teal,
                                   ),
-                                  hint: Text(
-                                    "בחרו ספר                             ",
-                                    textAlign: TextAlign.right,
-                                  ),
+                                  hint: Container(
+                                      width: 230,
+                                      child: TextField(
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: const TextStyle(
+                                              color: Colors.teal),
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              hintText: "בחרו ספר"))),
                                   items: booksDrop,
                                   onChanged: (value) {
                                     selectedBook = value;
@@ -471,7 +478,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         ]),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(15),
                         child: Icon(
                           FontAwesomeIcons.book,
                           color: Colors.tealAccent[400],
@@ -480,9 +487,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                       ),
                     ],
                   ),
-
                   SizedBox(height: spaceBetween),
-
                   Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -519,15 +524,30 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     style: const TextStyle(
                                       color: Colors.teal,
                                     ),
-                                    hint: Text(
-                                        "                           בחרו מין יעד"),
+                                    hint: Container(
+                                        width: 230,
+                                        child: TextField(
+                                            textAlign: TextAlign.center,
+                                            autocorrect: true,
+                                            style: const TextStyle(
+                                                color: Colors.teal),
+                                            decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                errorBorder: InputBorder.none,
+                                                disabledBorder:
+                                                    InputBorder.none,
+                                                hintText: "בחרו מין יעד"))),
                                     items: genderDrop,
                                     onChanged: (value) {
                                       gender = value;
-                                      event.targetGender = gender;
+                                      this.event.targetGender = gender;
                                       print(event.targetGender);
                                       if (event.targetGender == null) {
                                         event.targetGender = " ";
+                                        print("targetGender changed" +
+                                            event.targetGender);
                                       }
                                       setState(() {});
                                     },
@@ -538,7 +558,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           ],
                         )),
                         Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(15),
                           child: Icon(
                             Icons.face,
                             color: Colors.tealAccent[400],
@@ -549,64 +569,35 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   //########### ----NUMBER OF ATTENDEES----########
 
                   SizedBox(height: spaceBetween),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 54,
-                        height: 6,
-                        child: Stack(
-                          children: <Widget>[
-                            Pinned.fromSize(
-                              bounds: Rect.fromLTWH(16.0, 0.0, 6.0, 6.0),
-                              size: Size(54.0, 6.0),
-                              pinTop: true,
-                              pinBottom: true,
-                              fixedWidth: true,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.elliptical(9999.0, 9999.0)),
-                                  color: Colors.teal[400],
-                                ),
-                              ),
-                            ),
-                            Pinned.fromSize(
-                              bounds: Rect.fromLTWH(32.0, 0.0, 6.0, 6.0),
-                              size: Size(54.0, 6.0),
-                              pinTop: true,
-                              pinBottom: true,
-                              fixedWidth: true,
-                              child: SvgPicture.string(
-                                _svg_h36wzl,
-                                allowDrawingOutsideViewBox: true,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            Pinned.fromSize(
-                              bounds: Rect.fromLTWH(48.0, 0.0, 6.0, 6.0),
-                              size: Size(54.0, 6.0),
-                              pinTop: true,
-                              pinBottom: true,
-                              fixedWidth: true,
-                              child: SvgPicture.string(
-                                _svg_h36wzl,
-                                allowDrawingOutsideViewBox: true,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  //########### ----NEXT ARROW----########
+                  FirstDotRow(),
+
                   SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [NextButton(event: this.event, whichPage: 2)],
+                    children: [
+                      Container(
+                        width: 290,
+                        height: 50,
+                        child: ElevatedButton(
+                          child: Icon(Icons.arrow_forward_outlined),
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.teal,
+                              shape: StadiumBorder(),
+                              shadowColor: Colors.grey.withOpacity(1)),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        FindMeAChavruta2(this.event)));
+                          },
+                        ),
+                      ),
+
+                      // NextButton(
+                      //     context: context, event: this.event, whichPage: 2)
+                    ],
                   ),
                 ],
               ),
@@ -646,7 +637,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         Navigator.push(
             context,
             new MaterialPageRoute(
-                builder: (context) => FindMeAChavruta2(event: this.event)));
+                builder: (context) => FindMeAChavruta2(this.event)));
       },
       child: Text(
         "->",
