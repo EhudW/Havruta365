@@ -2,19 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Second_Dot_Row.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta3.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:intl/intl.dart';
 import 'Next_Button.dart';
+import 'SetDates.dart';
 import 'arc_banner_image.dart';
 
 class ListViews extends StatefulWidget {
   //ListViews({Key key, this.title}) : super(key: key);
   List<String> dates;
   List<DateTime> datesForDB;
-  int numOfChavs = 1;
+  int numOfChavs;
 
   ListViews(List<String> dt, List<DateTime> dDB, int n) {
     this.dates = dt;
@@ -54,21 +54,6 @@ class _ListViewsState extends State<ListViews> {
       List<String> dates, List<DateTime> datesForMongo, int numOfChavrutot) {
     return Padding(
         padding: const EdgeInsets.all(2.0),
-        // child: Container(
-        //     height: 500,
-        //     padding: const EdgeInsets.all(12.0),
-        //     decoration: BoxDecoration(
-        //       border: Border.all(
-        //         color: Colors.teal[400],
-        //         width: 4,
-        //       ),
-        //       borderRadius: BorderRadius.circular(12),
-        //     ),
-        //     // child: AnimatedList(
-        //     //   initialItemCount: numOfChavrutot,
-        //     //   itemBuilder: (context, index, animation) => ListView.builder(
-        //     //       itemBuilder: (context, index)
-        //     //   )
         child: ListView.builder(
             // child: AnimatedList(
             //   key: _listKey,
@@ -77,7 +62,9 @@ class _ListViewsState extends State<ListViews> {
             physics: AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(15.0),
             itemBuilder: (context, index) {
-              var ind = index + 1;
+              //var ind = index + 1;
+              //if (dates == null) return null;
+              final item = dates[index];
               var chavrutaInfoMessage = ('${dates[index]}');
               return Card(
                   shape:
@@ -85,23 +72,26 @@ class _ListViewsState extends State<ListViews> {
                   child: Material(
                     elevation: 15,
                     shadowColor: Colors.black,
-                    child: ListTile(
-                      leading: const Icon(
-                        Icons.perm_contact_cal,
-                        color: Colors.green,
-                      ),
-                      trailing: IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {
-                            eraseDate(dates, index);
-                            //index -= 1;
-                          }),
-                      title: Text(
-                        chavrutaInfoMessage,
-                        style: TextStyle(fontSize: 15),
+                    child: Dismissible(
+                      key: Key(item),
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.perm_contact_cal,
+                          color: Colors.green,
+                        ),
+                        trailing: IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              eraseDate(dates, index);
+                              //index -= 1;
+                            }),
+                        title: Text(
+                          chavrutaInfoMessage,
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     ),
                   ));
@@ -111,6 +101,7 @@ class _ListViewsState extends State<ListViews> {
 
 class FindMeAChavruta2 extends StatefulWidget {
   Event event;
+
   FindMeAChavruta2({this.event});
 
   @override
@@ -122,130 +113,16 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
   double spaceBetween;
   List<String> dateTimes = [];
   List<DateTime> dateTimeListForMongo = [];
-  String text = "בחרו זמנים ללמוד", dayStr;
-  Future<DateTime> day;
-  DateTime start, end;
-  String startDate, endDate, fullDate;
+  String text = "בחרו זמנים ללמוד", dayStr, startDate, endDate, fullDate;
+
   int howManyChosen = 0;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final TextEditingController _myController = TextEditingController();
-
-  Future<void> addTimeForm(BuildContext context) async {
-    await showDialog(
-        context: context,
-        builder: (context) {
-          //return StatefulBuilder(builder: (context, setState) {
-          return AlertDialog(
-            content: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: _myController,
-                    decoration: InputDecoration(hintText: " בחר תאריך"),
-                    onTap: () {
-                      FocusScope.of(context).requestFocus(new FocusNode());
-                      // Below line stops keyboard from appearing
-                      pickDate(context);
-                      //day = new DateTime(day.)
-                      //dayStr = day.toString();
-                      //if (dayStr != null) {
-                      //  _myController.text = dayStr;
-                      //}
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-    //    });
-  }
-
-  Future<DateTime> pickDay(BuildContext context) {
-    final date = pickDate(context);
-    if (date == null) return null;
-    return date;
-    //final startTime = await pickStartTime(context);
-    //final endTime = await pickEndTime(context);
-    //   print(endTime);
-    //   if (startTime == null || endTime == null) return;
-    //   int startInMinutes = startTime.hour * 60 + startTime.minute;
-    //   int endInMinutes = endTime.hour * 60 + endTime.minute;
-    //   print(startTime.hour);
-    //   print(endTime.hour);
-    //   if (startInMinutes >= endInMinutes || startTime.hour > endTime.hour) {
-    //     //Put a block up here showing error
-    //     alertMessage();
-    //     print("Error in choosing the times");
-    //     return;
-    //   }
-    //   setState(() {
-    //     start = DateTime(
-    //         date.year, date.month, date.day, startTime.hour, startTime.minute);
-    //     end = DateTime(
-    //         date.year, date.month, date.day, endTime.hour, endTime.minute);
-    //     dateTimeListForMongo.add(start);
-    //     dateTimeListForMongo.add(end);
-    //     this.startDate = DateFormat('MM-dd-yyyy: kk:mm').format(start);
-    //     this.endDate = DateFormat('kk:mm').format(end);
-    //     this.fullDate = startDate + " - " + this.endDate;
-    //     this.howManyChosen++;
-    //     //print(this.fullDate);
-    //     dateTimes.add(this.fullDate);
-    //
-    //     /// print(dateTimeListForMongo);
-    //     widget.event.dates = dateTimeListForMongo;
-    //     // print(widget.event.dates);
-    //     if (widget.event.dates == null) {
-    //       widget.event.dates = [];
-    //     }
-    //   });
-  }
-
-  Future<DateTime> pickDate(BuildContext context) async {
-    final initialDate = DateTime.now();
-    final newDate = await showDatePicker(
-      context: context,
-      initialDate: start ?? initialDate,
-      firstDate: DateTime(DateTime.now().year - 5),
-      lastDate: DateTime(DateTime.now().year + 5),
-    );
-    if (newDate == null) return null;
-    return newDate;
-  }
-
-  Future<TimeOfDay> pickStartTime(BuildContext context) async {
-    final initialTime = TimeOfDay(hour: 9, minute: 0);
-    final newTime = await showTimePicker(
-      context: context,
-      helpText: 'Select Start Time',
-      initialTime: start != null
-          ? TimeOfDay(hour: start.hour, minute: start.minute)
-          : initialTime,
-    );
-    if (newTime == null) return null;
-    return newTime;
-  }
-
-  Future<TimeOfDay> pickEndTime(BuildContext context) async {
-    final initialTime = TimeOfDay(hour: 9, minute: 0);
-    final newTime = await showTimePicker(
-      context: context,
-      helpText: 'Select End Time',
-      initialTime: start != null
-          ? TimeOfDay(hour: start.hour, minute: start.minute)
-          : initialTime,
-    );
-    if (newTime == null) return null;
-    return newTime;
-  }
 
   @override
   Widget build(BuildContext context) {
     spaceBetween = 20;
-    print("type in chav 2" + widget.event.targetGender);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -268,43 +145,6 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                               // // ),
                               Material(
                                 shadowColor: Colors.teal,
-                                // child: Container(
-                                //   child: FloatingActionButton(
-                                //     backgroundColor: Colors.green,
-                                //     onPressed: () => pickDateTime(context),
-                                //     child: Text(
-                                //       "+",
-                                //       style: TextStyle(fontSize: 40),
-                                //     ),
-                                //   ),
-
-                                // child: ElevatedButton(
-                                //     onPressed: () => pickDateTime(context),
-                                //     style: ElevatedButton.styleFrom(
-                                //         //minimumSize: Size.fromHeight(20),
-                                //         primary: Colors.teal[400],
-                                //         onSurface: Colors.white70),
-                                //     child: Container(
-                                //       height: 50,
-                                //       width: 200,
-                                //       padding: const EdgeInsets.fromLTRB(
-                                //           10.0, 10.0, 10.0, 10.0),
-                                //       decoration: BoxDecoration(
-                                //         color: Colors.teal[400],
-                                //         borderRadius: BorderRadius.only(
-                                //             topLeft: Radius.circular(10),
-                                //             topRight: Radius.circular(10),
-                                //             bottomLeft: Radius.circular(10),
-                                //             bottomRight: Radius.circular(10)),
-                                //       ),
-                                //       child: FittedBox(
-                                //         child: Text(
-                                //           text,
-                                //           style: TextStyle(
-                                //               fontSize: 20, color: Colors.white),
-                                //         ),
-                                //       ),
-                                //     ))),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(2.0),
@@ -327,7 +167,32 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                             //Padding(padding: padding)
                             FloatingActionButton(
                               backgroundColor: Colors.green,
-                              onPressed: () => addTimeForm(context),
+                              onPressed: () async {
+                                final List<DateTime> dTList =
+                                    await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SetDate(event: widget.event)));
+                                this.howManyChosen += 1;
+                                setState(() {
+                                  // for (var dt in dTList) {
+                                  //   print(dt);
+                                  //   widget.event.dates.add(dt);
+                                  // //}
+                                  widget.event.dates.add(dTList[0]);
+                                  widget.event.dates.add(dTList[1]);
+                                  this.startDate =
+                                      DateFormat('MM-dd-yyyy: kk:mm')
+                                          .format(dTList[0]);
+                                  this.endDate =
+                                      DateFormat('kk:mm').format(dTList[1]);
+                                  this.fullDate =
+                                      startDate + " - " + this.endDate;
+                                  this.dateTimes.add(fullDate);
+                                  //print(widget.event.dates);
+                                });
+                              },
                               mini: true,
                               child: Text(
                                 "+",
@@ -349,32 +214,23 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              width: 290,
-                              height: 50,
-                              child: ElevatedButton(
-                                  child: Icon(Icons.arrow_forward_outlined),
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.teal,
-                                      shape: StadiumBorder(),
-                                      shadowColor: Colors.grey.withOpacity(1)),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                            builder: (context) =>
-                                                FindMeAChavruta3(
-                                                    event: widget.event)));
-                                  }),
-                            ),
+                            widget.event.dates.isEmpty
+                                ? NextButton(
+                                    context: context,
+                                    event: widget.event,
+                                    whichPage: 3,
+                                    isEmpty: true)
+                                : NextButton(
+                                    context: context,
+                                    event: widget.event,
+                                    whichPage: 3,
+                                    isEmpty: false)
                           ],
                         ),
                         SizedBox(height: spaceBetween)
                       ],
                     ),
                   ]),
-
-                  //floatingActionButton: FloatingActionButton,
                 )));
   }
 
@@ -424,29 +280,5 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
         return alert;
       },
     );
-  }
-
-  void showErrorSnackBar(BuildContext context) {
-    final snackBar = SnackBar(
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Icon(Icons.error_outline, size: 32),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              'זמן סיום צריך להיות אחרי זמן התחלה',
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-        ],
-      ),
-      backgroundColor: Colors.red,
-      duration: Duration(seconds: 3),
-      behavior: SnackBarBehavior.fixed,
-    );
-    Scaffold.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
   }
 }

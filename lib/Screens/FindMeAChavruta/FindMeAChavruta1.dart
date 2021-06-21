@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/First_Dot_Row.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
@@ -12,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'Next_Button.dart';
 
 class FindMeAChavruta1 extends StatefulWidget {
   @override
@@ -35,6 +36,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
       booksDrop = [],
       genderDrop = [];
   double spaceBetween, height, width, iconSize;
+  int counter = 0;
 
   List<String> choice = MyData().choice;
   List<String> topics = MyData().topics;
@@ -54,7 +56,14 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     topicsDrop = [];
     topicsDrop = topics
         .map((val) => DropdownMenuItem<String>(
-              child: Text(val),
+              child: Container(
+                width: 231,
+                alignment: Alignment.center,
+                child: Text(
+                  val,
+                  textAlign: TextAlign.center,
+                ),
+              ),
               value: val,
             ))
         .toList();
@@ -89,7 +98,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = humashBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Text(val),
+              child: Container(
+                child: Text(val),
+                width: 230,
+                alignment: Alignment.center,
+              ),
               value: val,
             ))
         .toList();
@@ -100,7 +113,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = nachBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Text(val),
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
               value: val,
             ))
         .toList();
@@ -110,7 +126,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = talmudBavliBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Text(val),
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
               value: val,
             ))
         .toList();
@@ -130,7 +149,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = halachaBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Text(val),
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
               value: val,
             ))
         .toList();
@@ -140,7 +162,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     genderDrop = [];
     genderDrop = genderList
         .map((val) => DropdownMenuItem<String>(
-              child: Text(val),
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
               value: val,
             ))
         .toList();
@@ -150,6 +175,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   Widget build(BuildContext context) {
     Future<List<Topic>> l = Globals.db.getTopics();
     l.then((value) => print(value));
+    if (this.counter == 0) {
+      intializeEvent(this.event);
+      this.counter += 1;
+    }
     spaceBetween = 20;
     height = 67;
     width = 280;
@@ -157,7 +186,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     loadTopicssData();
     loadGenderData();
     loadChoices();
-    intializeEvent(this.event);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: appBar(),
@@ -232,9 +260,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     selectedChoice = value;
                                     event.type = selectedChoice;
                                     print(event.type);
-                                    // if (event.type == null) {
-                                    //   event.type = " ";
-                                    // }
                                     setState(() {});
                                   },
                                 ),
@@ -288,14 +313,13 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   style: const TextStyle(
                                       color: Colors.teal, fontSize: 16.5),
                                   decoration: InputDecoration(
-                                    hintText: ""
-                                        "מספר משתתפים",
+                                    hintText: "מספר משתתפים",
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.fromLTRB(
                                         10.0, 20.0, 10.0, 10.0),
                                   ),
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
+                                    FilteringTextInputFormatter.digitsOnly,
                                   ],
                                   maxLines: 1,
                                   onChanged: (newVal) {
@@ -386,9 +410,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     selectedTopic = value;
                                     event.topic = selectedTopic;
                                     print(event.topic);
-                                    if (event.topic == null) {
-                                      event.topic = " ";
-                                    }
                                     setState(() {});
                                   },
                                 ),
@@ -464,9 +485,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     selectedBook = value;
                                     event.book = selectedBook;
                                     print(event.book);
-                                    if (event.book == null) {
-                                      event.book = " ";
-                                    }
                                     setState(() {});
                                   },
                                 ),
@@ -542,11 +560,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       gender = value;
                                       this.event.targetGender = gender;
                                       print(event.targetGender);
-                                      if (event.targetGender == null) {
-                                        event.targetGender = " ";
-                                        print("targetGender changed" +
-                                            event.targetGender);
-                                      }
                                       setState(() {});
                                     },
                                   ),
@@ -574,27 +587,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 290,
-                        height: 50,
-                        child: ElevatedButton(
-                          child: Icon(Icons.arrow_forward_outlined),
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.teal,
-                              shape: StadiumBorder(),
-                              shadowColor: Colors.grey.withOpacity(1)),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        FindMeAChavruta2(event: this.event)));
-                          },
-                        ),
-                      ),
-
-                      // NextButton(
-                      //     context: context, event: this.event, whichPage: 2)
+                      NextButton(
+                          context: context,
+                          event: this.event,
+                          whichPage: 2,
+                          isEmpty: false)
                     ],
                   ),
                 ],
@@ -627,23 +624,4 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
           Icon(FontAwesomeIcons.calendar, size: 25, color: Colors.teal[400])
         ]));
   }
-
-  floatingActionButton() {
-    return FloatingActionButton(
-      backgroundColor: Colors.teal,
-      onPressed: () {
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) => FindMeAChavruta2(event: this.event)));
-      },
-      child: Text(
-        "->",
-        style: TextStyle(fontSize: 40),
-      ),
-    );
-  }
 }
-
-const String _svg_h36wzl =
-    '<svg viewBox="16.0 0.0 6.0 6.0" ><path transform="translate(16.0, 0.0)" d="M 3 0 C 4.656854152679443 0 6 1.343145847320557 6 3 C 6 4.656854152679443 4.656854152679443 6 3 6 C 1.343145847320557 6 0 4.656854152679443 0 3 C 0 1.343145847320557 1.343145847320557 0 3 0 Z" fill="#bce0fd" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>';

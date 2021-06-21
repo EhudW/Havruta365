@@ -105,8 +105,9 @@ class Mongo {
     var collection = db.collection('Topics ');
     final topics = await collection.find(where.sortBy('_id')).toList();
     for (var i in topics) {
-      data.add(new Topic.fromJson(i));
+      data.add(Topic.fromJson(i));
     }
+    print(data);
     return data;
   }
 

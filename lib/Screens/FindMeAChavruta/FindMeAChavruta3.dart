@@ -85,13 +85,13 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
               SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    Padding(padding: const EdgeInsets.only(top: 65.0)),
+                    Padding(padding: const EdgeInsets.only(top: 45.0)),
                     Container(
                       width: 150,
                       height: 100,
                       child: imageProfile(),
                     ),
-                    //SizedBox(height: spaceBetween),
+                    SizedBox(height: spaceBetween),
                     Container(
                       child: checkIfShiur(),
                     ),
@@ -170,7 +170,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(10, 60, 20, 20),
+                      padding: EdgeInsets.fromLTRB(10, 20, 20, 20),
                     ),
                     ThirdDotRow(),
                     Padding(
