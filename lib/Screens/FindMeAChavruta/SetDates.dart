@@ -209,11 +209,7 @@ class _SetDateCreateState extends State<SetDate> {
                             Padding(padding: EdgeInsets.all(12.0)),
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                        builder: (context) => FindMeAChavruta2(
-                                            event: widget.event)));
+                                Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
                                   primary: Colors.blue,

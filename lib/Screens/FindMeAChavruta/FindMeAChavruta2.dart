@@ -10,95 +10,6 @@ import 'Next_Button.dart';
 import 'SetDates.dart';
 import 'arc_banner_image.dart';
 
-class ListViews extends StatefulWidget {
-  //ListViews({Key key, this.title}) : super(key: key);
-  List<String> dates;
-  List<DateTime> datesForDB;
-  int numOfChavs;
-
-  ListViews(List<String> dt, List<DateTime> dDB, int n) {
-    this.dates = dt;
-    this.numOfChavs = n;
-    this.datesForDB = dDB;
-  }
-
-  @override
-  _ListViewsState createState() => _ListViewsState();
-}
-
-class _ListViewsState extends State<ListViews> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-
-  List<String> eraseDate(List<String> dates, index) {
-    print(dates);
-    print(index);
-    dates.remove(dates[index]);
-    print(dates);
-    return dates;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // body: AnimatedList(
-      //   //initialItemCount: widget.numOfChavs,
-      //   itemBuilder: (context, index, animation) =>
-      //       _buildListView(widget.dates, widget.datesForDB, widget.numOfChavs),
-      // ),
-
-      body: _buildListView(widget.dates, widget.datesForDB, widget.numOfChavs),
-    );
-  }
-
-  Widget _buildListView(
-      List<String> dates, List<DateTime> datesForMongo, int numOfChavrutot) {
-    return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: ListView.builder(
-            // child: AnimatedList(
-            //   key: _listKey,
-            itemCount: numOfChavrutot,
-            shrinkWrap: true,
-            physics: AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(15.0),
-            itemBuilder: (context, index) {
-              //var ind = index + 1;
-              //if (dates == null) return null;
-              final item = dates[index];
-              var chavrutaInfoMessage = ('${dates[index]}');
-              return Card(
-                  shape:
-                      Border(right: BorderSide(color: Colors.green, width: 5)),
-                  child: Material(
-                    elevation: 15,
-                    shadowColor: Colors.black,
-                    child: Dismissible(
-                      key: Key(item),
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.perm_contact_cal,
-                          color: Colors.green,
-                        ),
-                        trailing: IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              eraseDate(dates, index);
-                              //index -= 1;
-                            }),
-                        title: Text(
-                          chavrutaInfoMessage,
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
-                    ),
-                  ));
-            }));
-  }
-}
-
 class FindMeAChavruta2 extends StatefulWidget {
   Event event;
 
@@ -114,11 +25,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
   List<String> dateTimes = [];
   List<DateTime> dateTimeListForMongo = [];
   String text = "בחרו זמנים ללמוד", dayStr, startDate, endDate, fullDate;
-
-  int howManyChosen = 0;
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _myController = TextEditingController();
+  int indexForDbList = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -150,10 +57,87 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                 padding: const EdgeInsets.all(2.0),
                               ),
                               Expanded(
-                                  child: ListViews(
-                                      this.dateTimes,
-                                      this.dateTimeListForMongo,
-                                      this.howManyChosen)),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: ListView.builder(
+                                          itemCount: this.dateTimes.length,
+                                          shrinkWrap: true,
+                                          physics:
+                                              AlwaysScrollableScrollPhysics(),
+                                          padding: const EdgeInsets.all(15.0),
+                                          itemBuilder: (context, index) {
+                                            final item = this.dateTimes[index];
+                                            var chavrutaInfoMessage =
+                                                ('${this.dateTimes[index]}');
+                                            return Dismissible(
+                                              key: Key(item),
+                                              direction:
+                                                  DismissDirection.endToStart,
+                                              onDismissed: (direction) {
+                                                setState(() {
+                                                  print(dateTimes);
+                                                  this
+                                                      .dateTimes
+                                                      .removeAt(index);
+                                                  widget.event.dates.removeAt(
+                                                      indexForDbList - 1);
+                                                  widget.event.dates.removeAt(
+                                                      indexForDbList - 2);
+                                                  indexForDbList -= 2;
+                                                  return widget.event.dates;
+                                                });
+                                              },
+                                              background:
+                                                  buildSwipeActionRight(),
+                                              child: Card(
+                                                shape: Border(
+                                                    right: BorderSide(
+                                                        color: Colors.green,
+                                                        width: 5)),
+                                                child: Material(
+                                                  elevation: 15,
+                                                  shadowColor: Colors.black,
+                                                  child: ListTile(
+                                                    title: Text(
+                                                      chavrutaInfoMessage,
+                                                      style: TextStyle(
+                                                          fontSize: 15),
+                                                    ),
+                                                    leading: const Icon(
+                                                      Icons.perm_contact_cal,
+                                                      color: Colors.green,
+                                                    ),
+                                                    trailing: IconButton(
+                                                        icon: const Icon(
+                                                          Icons.delete,
+                                                          color: Colors.red,
+                                                        ),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            this
+                                                                .dateTimes
+                                                                .removeAt(
+                                                                    index);
+                                                            widget.event.dates
+                                                                .removeAt(
+                                                                    indexForDbList -
+                                                                        1);
+                                                            widget.event.dates
+                                                                .removeAt(
+                                                                    indexForDbList -
+                                                                        2);
+                                                            indexForDbList -= 2;
+                                                            return widget
+                                                                .event.dates;
+
+                                                            ///might need to add a function here to remove from events.dates list
+                                                          });
+                                                        }),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          })))
                             ],
                           ),
                         ),
@@ -174,12 +158,8 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 SetDate(event: widget.event)));
-                                this.howManyChosen += 1;
+                                this.indexForDbList += 2;
                                 setState(() {
-                                  // for (var dt in dTList) {
-                                  //   print(dt);
-                                  //   widget.event.dates.add(dt);
-                                  // //}
                                   widget.event.dates.add(dTList[0]);
                                   widget.event.dates.add(dTList[1]);
                                   this.startDate =
@@ -255,6 +235,13 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
           Icon(FontAwesomeIcons.clock, size: 25, color: Colors.teal[400])
         ]));
   }
+
+  Widget buildSwipeActionRight() => Container(
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        color: Colors.red,
+        child: Icon(Icons.delete_forever, color: Colors.white, size: 32),
+      );
 
   alertMessage() {
     Widget okButton = TextButton(
