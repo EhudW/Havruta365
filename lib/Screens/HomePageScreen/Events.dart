@@ -77,7 +77,7 @@ class _EventsState extends State<Events> {
                 } else if (events.hasMore) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 32.0),
-                    child: Center(child: CircularProgressIndicator()),
+                      child: Center(child: Text("אין חברותא מתאימה")),
                   );
                 } else {
                   return Padding(

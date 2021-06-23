@@ -59,10 +59,16 @@ class Mongo {
   Future<List<Event>> searchEvents(String s) async {
     List<Event> data = List<Event>();
     var collection = db.collection('Events');
-    final events = await collection
+    final eventsBook = await collection
         .find(where.eq('book', s).sortBy('id').skip(0).limit(10))
         .toList();
-    for (var i in events) {
+    for (var i in eventsBook) {
+      data.add(new Event.fromJson(i));
+    }
+    final eventsTopic = await collection
+        .find(where.eq('topic', s).sortBy('id').skip(0).limit(10))
+        .toList();
+    for (var i in eventsTopic) {
       data.add(new Event.fromJson(i));
     }
     return data;
