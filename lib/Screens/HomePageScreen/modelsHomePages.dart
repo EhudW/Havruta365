@@ -39,11 +39,11 @@ class EventsModel {
     }
     if (onlineBit == true){
       return Future.delayed(Duration(seconds: 1), () {
-        return Globals.db.getSomeEventsOnline();
+        return Globals.db.getSomeEventsOnline(length);
       });
     }
     return Future.delayed(Duration(seconds: 1), () {
-      return Globals.db.getSomeEvents();
+      return Globals.db.getSomeEvents(length);
     });
   }
   Future<void> refresh() {
@@ -59,10 +59,10 @@ class EventsModel {
       return Future.value();
     }
     _isLoading = true;
-    return _getExampleServerData(1).then((postsData) {
+    return _getExampleServerData(_data.length).then((postsData) {
       _isLoading = false;
       _data.addAll(postsData);
-      hasMore = (_data.length < 1);
+      hasMore =  true;
       _controller.add(_data);
     });
   }

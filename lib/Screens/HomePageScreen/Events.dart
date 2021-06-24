@@ -77,7 +77,10 @@ class _EventsState extends State<Events> {
                 } else if (events.hasMore) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 32.0),
-                      child: Center(child: Text("אין חברותא מתאימה")),
+                    child: Center(
+                        child: _snapshot.data.length == 0
+                            ? Text("לא נמצאה חברותא מתאימה")
+                            : Text("")),
                   );
                 } else {
                   return Padding(
@@ -129,30 +132,30 @@ class _EventsState extends State<Events> {
           }
         },
       )),
-    Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[Container(
-        height: 20,
-        width: Globals.scaler.getWidth(10),
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: const BorderRadius.all(
-            Radius.elliptical(5, 10),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+        Container(
+          height: 20,
+          width: Globals.scaler.getWidth(10),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: const BorderRadius.all(
+              Radius.elliptical(5, 10),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.white,
+                  offset: const Offset(0, 0),
+                  blurRadius: 10.0),
+            ],
           ),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.white,
-                offset: const Offset(0, 0),
-                blurRadius: 10.0),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text('Live שיעורים',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: Globals.scaler.getTextSize(7),
-                fontWeight: FontWeight.bold)),
-      )]),
+          alignment: Alignment.center,
+          child: Text('Live שיעורים',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: Globals.scaler.getTextSize(7),
+                  fontWeight: FontWeight.bold)),
+        )
+      ]),
     ]);
   }
 
@@ -160,9 +163,9 @@ class _EventsState extends State<Events> {
     String searchBarString;
     return Center(
         //padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 20),
-        child: Column(children: <Widget>[          SizedBox(height: Globals.scaler.getHeight(1))
-,
-          Row(
+        child: Column(children: <Widget>[
+      SizedBox(height: Globals.scaler.getHeight(1)),
+      Row(
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),
           Material(
@@ -226,7 +229,7 @@ class _EventsState extends State<Events> {
           SizedBox(width: Globals.scaler.getWidth(1)),
         ],
       ),
-          SizedBox(height: Globals.scaler.getHeight(1))
+      SizedBox(height: Globals.scaler.getHeight(1))
     ]));
   }
 }

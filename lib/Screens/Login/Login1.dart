@@ -1,6 +1,7 @@
 import 'package:adobe_xd/pinned.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
@@ -73,7 +74,7 @@ class Login1 extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24.w),
-                        color: const Color(0xff2699fb),
+                        color: Colors.teal[400],
                       ),
                     ),
                   ),
@@ -116,7 +117,7 @@ class Login1 extends StatelessWidget {
                   pinBottom: true,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xff2699fb),
+                      color:Colors.teal[400],
                     ),
                   ),
                 ),
@@ -148,7 +149,7 @@ class Login1 extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2.w),
-                color: const Color(0xffbce0fd),
+                color: Colors.teal[200],
               ),
             ),
           ),
@@ -183,7 +184,7 @@ class Login1 extends StatelessWidget {
                   fixedHeight: true,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xffbce0fd),
+                      color: Colors.teal[200],
                     ),
                   ),
                 ),
@@ -194,13 +195,9 @@ class Login1 extends StatelessWidget {
                   pinTop: true,
                   fixedWidth: true,
                   fixedHeight: true,
-                  child:
-                  // Adobe XD layer: 'Icon' (shape)
-                  SvgPicture.string(
-                    _svg_sjnak0,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  ),
+                    child:Icon(FontAwesomeIcons.user,
+                        size: 20,
+                        color: Colors.red)
                 ),
               ],
             ),
@@ -236,7 +233,7 @@ class Login1 extends StatelessWidget {
                   fixedHeight: true,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xffbce0fd),
+                      color: Colors.teal[200],
                     ),
                   ),
                 ),
@@ -269,11 +266,9 @@ class Login1 extends StatelessWidget {
                         pinRight: true,
                         pinTop: true,
                         pinBottom: true,
-                        child: SvgPicture.string(
-                          _svg_fy8d8n,
-                          allowDrawingOutsideViewBox: true,
-                          fit: BoxFit.fill,
-                        ),
+                          child:Icon(FontAwesomeIcons.key,
+                              size: 20,
+                              color: Colors.red)
                       ),
                     ],
                   ),
@@ -323,7 +318,7 @@ class Login1 extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Bauhaus 93',
                         fontSize: 18.sp,
-                        color: const Color(0xff2699fb),
+                        color: Colors.teal[400],
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -360,7 +355,7 @@ class Login1 extends StatelessWidget {
                         borderRadius:
                         BorderRadius.all(Radius.elliptical(9999.w, 9999.h)),
                         border: Border.all(
-                            width: 1.0, color: const Color(0xffbce0fd)),
+                            width: 1.0, color:  Colors.teal[200]),
                       ),
                     ),
                   ),
@@ -459,7 +454,7 @@ class Login1 extends StatelessWidget {
                       borderRadius:
                       BorderRadius.all(Radius.elliptical(9999.w, 9999.h)),
                       border: Border.all(
-                          width: 1.0, color: const Color(0xffbce0fd)),
+                          width: 1.0, color: Colors.teal[200]),
                     ),
                   ),
                 ),
