@@ -5,6 +5,7 @@ import 'package:havruta_project/Screens/HomePageScreen/NotificationView.dart';
 import 'package:havruta_project/Globals.dart';
 import 'dart:async';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mongo;
 
 class Notifications extends StatefulWidget {
   const Notifications({
@@ -33,10 +34,12 @@ class _NotificationsState extends State<Notifications> {
     NotificationUser n = new NotificationUser();
     n.message = 'הצטרפ/ה לחברותא שלך';
     n.type = 'E';
-    //n.idEvent = '60bbda688b4c85a59e40886f';
+    n.name = 'Yonatan Gat';
+    n.destinationUser = 'michal@gmail.com';
+    n.idEvent = new mongo.ObjectId.fromHexString('60bbda688b4c85a59e40886f');
     n.creatorUser = 'יונתן גת';
     n.creationDate = DateTime.now();
-    //Globals.db.insertNotification(n);
+    Globals.db.insertNotification(n);
   }
 
   @override
@@ -47,12 +50,12 @@ class _NotificationsState extends State<Notifications> {
   eventsScroll() {
     return Scrollbar(
         child: Material(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.grey.withOpacity(0.8),
             child: StreamBuilder(
               stream: notifications.stream,
               builder: (BuildContext _context, AsyncSnapshot _snapshot) {
                 if (!_snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator(color: Colors.teal));
                 } else {
                   return RefreshIndicator(
                     onRefresh: notifications.refresh,
@@ -67,7 +70,7 @@ class _NotificationsState extends State<Notifications> {
                               onDismissed: (direction) async {
                                 await Globals.db
                                     .deleteNotification(_snapshot.data[index]);
-                                _snapshot.data.removeAt[index];
+                                 //_snapshot.data.removeAt[index];
                                 // TODO: implement your delete function and check direction if needed
                               },
                               child: NotificationView(

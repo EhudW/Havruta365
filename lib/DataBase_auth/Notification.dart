@@ -1,10 +1,10 @@
-import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class NotificationUser {
   NotificationUser(
       {this.creatorUser,
         this.name,
+        this.destinationUser,
       this.creationDate,
         // type = {join = 'join', newEvent = 'new'}
       this.type,
@@ -13,7 +13,7 @@ class NotificationUser {
       });
 
   // type = new_event, join_event
-  String creatorUser, name, type, message;
+  String creatorUser, destinationUser, name, type, message;
   ObjectId id, idEvent;
   DateTime creationDate;
 
@@ -21,6 +21,7 @@ class NotificationUser {
     return NotificationUser(
         creatorUser: data['creatorUser'],
         creationDate: data['creationDate'],
+        destinationUser: data['destinationUser'],
         type: data['type'],
         message: data['message'],
         idEvent: data['idEvent']);
@@ -29,6 +30,7 @@ class NotificationUser {
   Map<String, dynamic> toJson() => {
         'creatorUser': creatorUser,
         'creationDate': creationDate,
+        'destinationUser': destinationUser,
         'type': type,
         'message': message,
         'name': name,
@@ -39,6 +41,7 @@ class NotificationUser {
       : id = json['_id'],
         creatorUser = json['creatorUser'],
         creationDate = json['creationDate'],
+        destinationUser = json['destinationUser'],
         message = json['message'],
         type = json['type'],
         idEvent = json['idEvent'],

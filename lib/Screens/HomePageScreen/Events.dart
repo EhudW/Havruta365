@@ -60,7 +60,7 @@ class _EventsState extends State<Events> {
       stream: events.stream,
       builder: (BuildContext _context, AsyncSnapshot _snapshot) {
         if (!_snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: Colors.teal));
         } else {
           return RefreshIndicator(
             onRefresh: events.refresh,
@@ -102,7 +102,7 @@ class _EventsState extends State<Events> {
         stream: eventsOnline.stream,
         builder: (BuildContext _context, AsyncSnapshot _snapshot) {
           if (!_snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: Colors.teal));
           } else {
             return RefreshIndicator(
               onRefresh: eventsOnline.refresh,
@@ -121,7 +121,7 @@ class _EventsState extends State<Events> {
                   } else if (eventsOnline.hasMore) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 32.0),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(child: CircularProgressIndicator(color: Colors.teal)),
                     );
                   } else {
                     return null;

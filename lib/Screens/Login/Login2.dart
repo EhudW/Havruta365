@@ -10,6 +10,8 @@ import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'Login.dart';
+
 class Login2 extends StatelessWidget {
   final name = TextEditingController();
   String name_str = "";
@@ -33,7 +35,7 @@ class Login2 extends StatelessWidget {
 
       resizeToAvoidBottomInset: false,
 
-      backgroundColor: const Color(0xfff1f9ff),
+      backgroundColor: Colors.teal[50],
       body: Stack(
           children: <Widget>[
             Transform.translate(
@@ -67,7 +69,7 @@ class Login2 extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                     Radius.elliptical(9999.w, 9999.h)),
-                                color: const Color(0xff2699fb),
+                                color: Colors.teal[400],
                               ),
                             ),
                           ),
@@ -81,7 +83,7 @@ class Login2 extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                     Radius.elliptical(9999.w, 9999.h)),
-                                color: const Color(0xffbce0fd),
+                                color: Colors.teal[100],
                               ),
                             ),
                           ),
@@ -95,7 +97,7 @@ class Login2 extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                     Radius.elliptical(9999.w, 9999.h)),
-                                color: const Color(0xffbce0fd),
+                                color: Colors.teal[100],
                               ),
                             ),
                           ),
@@ -110,7 +112,7 @@ class Login2 extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                     Radius.elliptical(9999.w, 9999.h)),
-                                color: const Color(0xffbce0fd),
+                                color: Colors.teal[100],
                               ),
                             ),
                           ),
@@ -127,34 +129,22 @@ class Login2 extends StatelessWidget {
               height: 68.h,
               child: Stack(
                 children: <Widget>[
-                  Pinned.fromSize(
-                    bounds: Rect.fromLTWH(0.0, 0.0, 375.w, 68.h),
-                    size: Size(375.w, 68.h),
-                    pinLeft: true,
-                    pinRight: true,
-                    pinTop: true,
-                    pinBottom: true,
-                    child:
-                    // Adobe XD layer: 'Merged bar' (shape)
-                    SvgPicture.string(
-                      _svg_y73tjv,
-                      allowDrawingOutsideViewBox: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Pinned.fromSize(
-                    bounds: Rect.fromLTWH(130.w, 30.h, 120.w, 22.h),
-                    size: Size(375.w, 68.h),
-                    fixedWidth: true,
-                    fixedHeight: true,
-                    child: Text(
-                      'משתמש חדש',
-                      style: TextStyle(
-                        fontFamily: 'Bauhaus 93',
-                        fontSize: 20.sp,
-                        color: const Color(0xffffffff),
+                  Container(
+                    color: Colors.teal,
+                    child: Pinned.fromSize(
+                      bounds: Rect.fromLTWH(130.w, 30.h, 120.w, 22.h),
+                      size: Size(375.w, 68.h),
+                      fixedWidth: true,
+                      fixedHeight: true,
+                      child: Text(
+                        'משתמש חדש',
+                        style: TextStyle(
+                          fontFamily: 'Bauhaus 93',
+                          fontSize: 20.sp,
+                          color: const Color(0xffffffff),
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                   Pinned.fromSize(
@@ -171,7 +161,7 @@ class Login2 extends StatelessWidget {
                           transition: LinkTransition.SlideRight,
                           ease: Curves.easeOut,
                           duration: 0.3,
-                          pageBuilder: () => Login1(),
+                          pageBuilder: () => Login(),
                         ),
                       ],
                       child: Stack(
@@ -224,7 +214,7 @@ class Login2 extends StatelessWidget {
                                 messageText: Text(
                                   'ודא שמילאת את כל השדות',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.lightBlue,
+                                  style: TextStyle(color: Colors.teal[400],
                                   fontSize: 20)
                                 ),
                                 duration: Duration(seconds: 3),
@@ -238,7 +228,7 @@ class Login2 extends StatelessWidget {
                                 messageText: Text(
                                   'סיסמאות לא תואמות',
                                   textAlign: TextAlign.center,
-                                    style: TextStyle(color: Colors.lightBlue,
+                                    style: TextStyle(color: Colors.teal[400],
                                         fontSize: 20)
                                 ),
                                 duration: Duration(seconds: 3),
@@ -252,7 +242,7 @@ class Login2 extends StatelessWidget {
                                 messageText: Text(
                                   'קיים חשבון עבור מייל זה',
                                   textAlign: TextAlign.center,
-                                    style: TextStyle(color: Colors.lightBlue,
+                                    style: TextStyle(color: Colors.teal[400],
                                         fontSize: 20)
                                 ),
                                 duration: Duration(seconds: 3),
@@ -274,7 +264,7 @@ class Login2 extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(24.w),
-                              color: const Color(0xff2699fb),
+                              color: Colors.teal[400],
                             ),
                           ),
                         ),
@@ -338,7 +328,7 @@ class Login2 extends StatelessWidget {
                             borderRadius: BorderRadius.circular(24.w),
                             color: const Color(0xffffffff),
                             border: Border.all(
-                                width: 1.0, color: const Color(0xffbce0fd)),
+                                width: 1.0, color: Colors.teal[100]),
                           ),
                           child: TextField(
                               textAlign: TextAlign.center,
@@ -389,7 +379,7 @@ class Login2 extends StatelessWidget {
                             borderRadius: BorderRadius.circular(24.w),
                             color: const Color(0xffffffff),
                             border: Border.all(
-                                width: 1.0.w, color: const Color(0xffbce0fd)),
+                                width: 1.0.w, color: Colors.teal[100]),
                           ),
                           child: TextField(
                               textAlign: TextAlign.center,
@@ -439,7 +429,7 @@ class Login2 extends StatelessWidget {
                             borderRadius: BorderRadius.circular(24.w),
                             color: const Color(0xffffffff),
                             border: Border.all(
-                                width: 1.0, color: const Color(0xffbce0fd)),
+                                width: 1.0, color: Colors.teal[100]),
                           ),
                           child: TextField(
                               textAlign: TextAlign.center,
@@ -489,7 +479,7 @@ class Login2 extends StatelessWidget {
                             borderRadius: BorderRadius.circular(24.w),
                             color: const Color(0xffffffff),
                             border: Border.all(
-                                width: 1.0, color: const Color(0xffbce0fd)),
+                                width: 1.0, color: Colors.teal[100]),
                           ),
                           child: TextField(
                               textAlign: TextAlign.center,

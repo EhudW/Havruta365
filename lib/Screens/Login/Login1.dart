@@ -1,6 +1,7 @@
 import 'package:adobe_xd/pinned.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 import 'package:havruta_project/Globals.dart';
@@ -27,6 +28,7 @@ class Login1 extends StatelessWidget {
         maxHeight: MediaQuery.of(context).size.height),
         designSize: Size(375, 667),
         orientation: Orientation.portrait);
+    ScreenScaler scaler = new ScreenScaler();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

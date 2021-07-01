@@ -4,11 +4,13 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
+import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/Login/Login1.dart';
-import 'package:havruta_project/Screens/Login/Login5.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:havruta_project/Screens/Login/Login.dart';
+
 
 import 'Screens/HomePageScreen/home_page.dart';
 
@@ -68,7 +70,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 case ConnectionState.done:
                   Globals.currentUser = u1;
-                  return HomePage();
+                  return Login();
                   // _email = _prefs.then((prefs) {
                   //   return (prefs.getString('email') ?? "");
                   // });

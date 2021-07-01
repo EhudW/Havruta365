@@ -93,7 +93,7 @@ class Mongo {
   Future<List<NotificationUser>> getNotifications() async {
     List<NotificationUser> data = List<NotificationUser>();
     var collection = db.collection('Notifications');
-    final notifications = await collection.find(where.sortBy('_id')).toList();
+    final notifications = await collection.find(where.eq('destinationUser', Globals.currentUser.email).sortBy('_id')).toList();
     for (var i in notifications) {
       data.add(new NotificationUser.fromJson(i));
     }
