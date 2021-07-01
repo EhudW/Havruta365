@@ -55,7 +55,7 @@ class _NotificationsState extends State<Notifications> {
               stream: notifications.stream,
               builder: (BuildContext _context, AsyncSnapshot _snapshot) {
                 if (!_snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator(color: Colors.teal));
+                  return Center(child: CircularProgressIndicator());
                 } else {
                   return RefreshIndicator(
                     onRefresh: notifications.refresh,
@@ -70,7 +70,7 @@ class _NotificationsState extends State<Notifications> {
                               onDismissed: (direction) async {
                                 await Globals.db
                                     .deleteNotification(_snapshot.data[index]);
-                                 //_snapshot.data.removeAt[index];
+                                //_snapshot.data.removeAt[index];
                                 // TODO: implement your delete function and check direction if needed
                               },
                               child: NotificationView(

@@ -72,7 +72,7 @@ flutter:
   uses-material-design: true
 
 
-   #To add assets to your application, add an assets section, like this:
+  #To add assets to your application, add an assets section, like this:
   #assets:
 
 
@@ -91,3 +91,4 @@ flutter:
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+

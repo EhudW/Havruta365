@@ -60,7 +60,12 @@ class Mongo {
     List<Event> data = List<Event>();
     var collection = db.collection('Events');
     final events = await collection
-        .find(where.eq('book', s).or(where.eq('topic', s)).sortBy('id').skip(0).limit(10))
+        .find(where
+            .eq('book', s)
+            .or(where.eq('topic', s))
+            .sortBy('id')
+            .skip(0)
+            .limit(10))
         .toList();
     for (var i in events) {
       data.add(new Event.fromJson(i));
@@ -93,7 +98,11 @@ class Mongo {
   Future<List<NotificationUser>> getNotifications() async {
     List<NotificationUser> data = List<NotificationUser>();
     var collection = db.collection('Notifications');
-    final notifications = await collection.find(where.eq('destinationUser', Globals.currentUser.email).sortBy('_id')).toList();
+    final notifications = await collection
+        .find(where
+            .eq('destinationUser', Globals.currentUser.email)
+            .sortBy('_id'))
+        .toList();
     for (var i in notifications) {
       data.add(new NotificationUser.fromJson(i));
     }
@@ -107,8 +116,9 @@ class Mongo {
     for (var i in topics) {
       data.add(Topic.fromJson(i));
     }
+    print(topics);
     print(data);
-    return data;
+    return topics;
   }
 
   Future<void> addParticipant(String mail, ObjectId id) async {

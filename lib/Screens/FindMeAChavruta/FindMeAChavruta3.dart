@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:flutter/cupertino.dart';
@@ -195,8 +197,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                     widget.event.participants = [];
                                     widget.event.creatorUser = "";
                                     widget.event.eventImage =
-                                        'https://romancebooks.co.il/wp-content/uploads/2019/06/default-user-image.png';
-                                    //print(widget.event.creationDate);
+                                        'https://jewishvisual.com/wp-content/uploads/2016/07/DSC7952.jpg'; //print(widget.event.creationDate);
                                     mongoDB.insertEvent(widget.event).then(
                                         (value) => Navigator.push(
                                             context,
@@ -275,14 +276,14 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             TextButton.icon(
               icon: Icon(Icons.camera),
               onPressed: () {
-                takePhoto(ImageSource.camera);
+                openCamera(ImageSource.camera);
               },
               label: Text("Camera"),
             ),
             TextButton.icon(
               icon: Icon(Icons.image),
               onPressed: () {
-                takePhoto(ImageSource.gallery);
+                openCamera(ImageSource.gallery);
               },
               label: Text("Gallery"),
             ),
@@ -292,34 +293,41 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     );
   }
 
-  void takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.getImage(
-      source: source,
-    );
-    setState(() {
-      _imageFile = pickedFile;
-    });
-  }
-}
+  Future<File> openCamera(source) async {
+    File _image;
+    final picker = ImagePicker();
 
-appBar() {
-  return AppBar(
-      leadingWidth: 20,
-      toolbarHeight: 40,
-      elevation: 10,
-      shadowColor: Colors.teal[400],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(0),
-      )),
-      backgroundColor: Colors.white,
-      title:
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-        Text(
-          'פרטים נוספים',
-          style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
-        ),
-        //Icon(FontAwesomeIcons.calendar, size: 25, color: Colors.teal[400])
-      ]));
+    final pickedFile = await picker.getImage(source: source);
+    print('PickedFile: ${pickedFile.toString()}');
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+    if (_image != null) {
+      return _image;
+    }
+    return null;
+  }
+
+  appBar() {
+    return AppBar(
+        leadingWidth: 20,
+        toolbarHeight: 40,
+        elevation: 10,
+        shadowColor: Colors.teal[400],
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(0),
+        )),
+        backgroundColor: Colors.white,
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Text(
+            'פרטים נוספים',
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
+          ),
+          //Icon(FontAwesomeIcons.calendar, size: 25, color: Colors.teal[400])
+        ]));
+  }
 }

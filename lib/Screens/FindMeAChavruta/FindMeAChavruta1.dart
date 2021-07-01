@@ -56,16 +56,16 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     topicsDrop = [];
     topicsDrop = topics
         .map((val) => DropdownMenuItem<String>(
-      child: Container(
-        width: 231,
-        alignment: Alignment.center,
-        child: Text(
-          val,
-          textAlign: TextAlign.center,
-        ),
-      ),
-      value: val,
-    ))
+              child: Container(
+                width: 231,
+                alignment: Alignment.center,
+                child: Text(
+                  val,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              value: val,
+            ))
         .toList();
   }
 
@@ -73,9 +73,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     choiceDrop = [];
     choiceDrop = choice
         .map((val) => DropdownMenuItem<String>(
-      child: Text(val),
-      value: val,
-    ))
+              child: Text(val),
+              value: val,
+            ))
         .toList();
   }
 
@@ -98,13 +98,13 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = humashBooks
         .map((val) => DropdownMenuItem<String>(
-      child: Container(
-        child: Text(val),
-        width: 230,
-        alignment: Alignment.center,
-      ),
-      value: val,
-    ))
+              child: Container(
+                child: Text(val),
+                width: 230,
+                alignment: Alignment.center,
+              ),
+              value: val,
+            ))
         .toList();
   }
 
@@ -113,12 +113,12 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = nachBooks
         .map((val) => DropdownMenuItem<String>(
-      child: Text(
-        val,
-        textAlign: TextAlign.center,
-      ),
-      value: val,
-    ))
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
+              value: val,
+            ))
         .toList();
   }
 
@@ -126,12 +126,12 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = talmudBavliBooks
         .map((val) => DropdownMenuItem<String>(
-      child: Text(
-        val,
-        textAlign: TextAlign.center,
-      ),
-      value: val,
-    ))
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
+              value: val,
+            ))
         .toList();
   }
 
@@ -139,9 +139,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = talmudYerushalmiBooks
         .map((val) => DropdownMenuItem<String>(
-      child: Text(val),
-      value: val,
-    ))
+              child: Text(val),
+              value: val,
+            ))
         .toList();
   }
 
@@ -149,12 +149,12 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     booksDrop = [];
     booksDrop = halachaBooks
         .map((val) => DropdownMenuItem<String>(
-      child: Text(
-        val,
-        textAlign: TextAlign.center,
-      ),
-      value: val,
-    ))
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
+              value: val,
+            ))
         .toList();
   }
 
@@ -162,19 +162,25 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     genderDrop = [];
     genderDrop = genderList
         .map((val) => DropdownMenuItem<String>(
-      child: Text(
-        val,
-        textAlign: TextAlign.center,
-      ),
-      value: val,
-    ))
+              child: Text(
+                val,
+                textAlign: TextAlign.center,
+              ),
+              value: val,
+            ))
         .toList();
+  }
+
+  Future<List<Topic>> getTopics() async {
+    final topicsList = await Globals.db.getTopics();
+    return topicsList;
   }
 
   @override
   Widget build(BuildContext context) {
-    Future<List<Topic>> l = Globals.db.getTopics();
-    l.then((value) => print(value));
+    //Future<List<Topic>> topicsList = await;
+
+    //l.then((value) => print(value));
     if (this.counter == 0) {
       intializeEvent(this.event);
       this.counter += 1;
@@ -186,6 +192,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     loadTopicssData();
     loadGenderData();
     loadChoices();
+    // for (val in l) {
+    //   print(val);
+    // }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: appBar(),
@@ -210,64 +219,64 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                       //########### ----CHOICE DROPDOWN LIST----########
                       DropdownButtonHideUnderline(
                           child: Stack(
-                            children: [
-                              Container(
-                                height: height,
-                                width: width,
-                                decoration: BoxDecoration(
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                        color: Colors.grey.withOpacity(1),
-                                        offset: const Offset(0, 2),
-                                        blurRadius: 8.0),
-                                  ],
-                                  color: Colors.white70,
-                                  border:
+                        children: [
+                          Container(
+                            height: height,
+                            width: width,
+                            decoration: BoxDecoration(
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(1),
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 8.0),
+                              ],
+                              color: Colors.white70,
+                              border:
                                   Border.all(color: Colors.white70, width: 2.5),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                                child: Material(
-                                  elevation: 50,
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  child: ButtonTheme(
-                                    alignedDropdown: true,
-                                    child: DropdownButton(
-                                      dropdownColor: Colors.white,
-                                      iconEnabledColor: Colors.teal[400],
-                                      isExpanded: false,
-                                      elevation: 1,
-                                      value: selectedChoice,
-                                      style: const TextStyle(
-                                        color: Colors.teal,
-                                      ),
-                                      hint: Container(
-                                          width: 230,
-                                          child: TextField(
-                                              textAlign: TextAlign.center,
-                                              autocorrect: true,
-                                              style: const TextStyle(
-                                                  color: Colors.teal),
-                                              decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  focusedBorder: InputBorder.none,
-                                                  enabledBorder: InputBorder.none,
-                                                  errorBorder: InputBorder.none,
-                                                  disabledBorder: InputBorder.none,
-                                                  hintText:
-                                                  "בחרו האם זה שיעור או חברותא"))),
-                                      items: choiceDrop,
-                                      onChanged: (value) {
-                                        selectedChoice = value;
-                                        event.type = selectedChoice;
-                                        print(event.type);
-                                        setState(() {});
-                                      },
-                                    ),
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            child: Material(
+                              elevation: 50,
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButton(
+                                  dropdownColor: Colors.white,
+                                  iconEnabledColor: Colors.teal[400],
+                                  isExpanded: false,
+                                  elevation: 1,
+                                  value: selectedChoice,
+                                  style: const TextStyle(
+                                    color: Colors.teal,
                                   ),
+                                  hint: Container(
+                                      width: 230,
+                                      child: TextField(
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: const TextStyle(
+                                              color: Colors.teal),
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              hintText:
+                                                  "בחרו האם זה שיעור או חברותא"))),
+                                  items: choiceDrop,
+                                  onChanged: (value) {
+                                    selectedChoice = value;
+                                    event.type = selectedChoice;
+                                    print(event.type);
+                                    setState(() {});
+                                  },
                                 ),
                               ),
-                            ],
-                          )),
+                            ),
+                          ),
+                        ],
+                      )),
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Icon(
@@ -299,7 +308,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                               ],
                               color: Colors.white70,
                               border:
-                              Border.all(color: Colors.white70, width: 2.5),
+                                  Border.all(color: Colors.white70, width: 2.5),
                               borderRadius: BorderRadius.circular(50.0),
                             ),
                             child: Material(
@@ -352,72 +361,72 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                       //########### ----TOPIC DROPDOWN LIST----########
                       DropdownButtonHideUnderline(
                           child: Stack(
-                            children: [
-                              Container(
-                                height: height,
-                                width: width,
-                                decoration: BoxDecoration(
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                        color: Colors.grey.withOpacity(1),
-                                        offset: const Offset(0, 2),
-                                        blurRadius: 8.0),
-                                  ],
-                                  color: Colors.white70,
-                                  border:
+                        children: [
+                          Container(
+                            height: height,
+                            width: width,
+                            decoration: BoxDecoration(
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(1),
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 8.0),
+                              ],
+                              color: Colors.white70,
+                              border:
                                   Border.all(color: Colors.white70, width: 2.5),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                                child: Material(
-                                  elevation: 50,
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  child: ButtonTheme(
-                                    alignedDropdown: true,
-                                    child: DropdownButton(
-                                      dropdownColor: Colors.white,
-                                      iconEnabledColor: Colors.teal[400],
-                                      isExpanded: false,
-                                      elevation: 1,
-                                      value: selectedTopic,
-                                      style: const TextStyle(
-                                        color: Colors.teal,
-                                      ),
-                                      hint: Container(
-                                          width: 230,
-                                          child: TextField(
-                                              textAlign: TextAlign.center,
-                                              autocorrect: true,
-                                              style: const TextStyle(
-                                                  color: Colors.teal),
-                                              decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  focusedBorder: InputBorder.none,
-                                                  enabledBorder: InputBorder.none,
-                                                  errorBorder: InputBorder.none,
-                                                  disabledBorder: InputBorder.none,
-                                                  hintText: "בחרו תחום"))),
-                                      items: topicsDrop,
-                                      onChanged: (value) {
-                                        // need to send to function the value which will load from the db
-                                        if (value == "תורה") {
-                                          //loadTorahBooksData("תורה");
-                                          loadTorahBooksData();
-                                        } else if (value == "נ״ך") {
-                                          loadNachBooksData();
-                                        } else if (value == "תלמוד בבלי") {
-                                          loadBavliBooksData();
-                                        }
-                                        selectedTopic = value;
-                                        event.topic = selectedTopic;
-                                        print(event.topic);
-                                        setState(() {});
-                                      },
-                                    ),
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            child: Material(
+                              elevation: 50,
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButton(
+                                  dropdownColor: Colors.white,
+                                  iconEnabledColor: Colors.teal[400],
+                                  isExpanded: false,
+                                  elevation: 1,
+                                  value: selectedTopic,
+                                  style: const TextStyle(
+                                    color: Colors.teal,
                                   ),
+                                  hint: Container(
+                                      width: 230,
+                                      child: TextField(
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: const TextStyle(
+                                              color: Colors.teal),
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              hintText: "בחרו תחום"))),
+                                  items: topicsDrop,
+                                  onChanged: (value) {
+                                    // need to send to function the value which will load from the db
+                                    if (value == "תורה") {
+                                      //loadTorahBooksData("תורה");
+                                      loadTorahBooksData();
+                                    } else if (value == "נ״ך") {
+                                      loadNachBooksData();
+                                    } else if (value == "תלמוד בבלי") {
+                                      loadBavliBooksData();
+                                    }
+                                    selectedTopic = value;
+                                    event.topic = selectedTopic;
+                                    print(event.topic);
+                                    setState(() {});
+                                  },
                                 ),
-                              )
-                            ],
-                          )),
+                              ),
+                            ),
+                          )
+                        ],
+                      )),
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Icon(
@@ -448,7 +457,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                               ],
                               color: Colors.white70,
                               border:
-                              Border.all(color: Colors.white70, width: 2.5),
+                                  Border.all(color: Colors.white70, width: 2.5),
                               borderRadius: BorderRadius.circular(50.0),
                             ),
                             child: Material(
@@ -511,63 +520,63 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                         //########### ----GENDER DROPDOWN LIST----########
                         DropdownButtonHideUnderline(
                             child: Stack(
-                              children: [
-                                Container(
-                                  height: height,
-                                  width: width,
-                                  decoration: BoxDecoration(
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                          color: Colors.grey.withOpacity(1),
-                                          offset: const Offset(0, 2),
-                                          blurRadius: 8.0),
-                                    ],
-                                    color: Colors.white70,
-                                    border: Border.all(
-                                        color: Colors.white70, width: 2.5),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Material(
-                                    elevation: 50,
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    child: ButtonTheme(
-                                      alignedDropdown: true,
-                                      child: DropdownButton(
-                                        dropdownColor: Colors.white,
-                                        iconEnabledColor: Colors.teal[400],
-                                        elevation: 1,
-                                        value: gender,
-                                        style: const TextStyle(
-                                          color: Colors.teal,
-                                        ),
-                                        hint: Container(
-                                            width: 230,
-                                            child: TextField(
-                                                textAlign: TextAlign.center,
-                                                autocorrect: true,
-                                                style: const TextStyle(
-                                                    color: Colors.teal),
-                                                decoration: InputDecoration(
-                                                    border: InputBorder.none,
-                                                    focusedBorder: InputBorder.none,
-                                                    enabledBorder: InputBorder.none,
-                                                    errorBorder: InputBorder.none,
-                                                    disabledBorder:
-                                                    InputBorder.none,
-                                                    hintText: "בחרו מין יעד"))),
-                                        items: genderDrop,
-                                        onChanged: (value) {
-                                          gender = value;
-                                          this.event.targetGender = gender;
-                                          print(event.targetGender);
-                                          setState(() {});
-                                        },
-                                      ),
+                          children: [
+                            Container(
+                              height: height,
+                              width: width,
+                              decoration: BoxDecoration(
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                      color: Colors.grey.withOpacity(1),
+                                      offset: const Offset(0, 2),
+                                      blurRadius: 8.0),
+                                ],
+                                color: Colors.white70,
+                                border: Border.all(
+                                    color: Colors.white70, width: 2.5),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              child: Material(
+                                elevation: 50,
+                                borderRadius: BorderRadius.circular(50.0),
+                                child: ButtonTheme(
+                                  alignedDropdown: true,
+                                  child: DropdownButton(
+                                    dropdownColor: Colors.white,
+                                    iconEnabledColor: Colors.teal[400],
+                                    elevation: 1,
+                                    value: gender,
+                                    style: const TextStyle(
+                                      color: Colors.teal,
                                     ),
+                                    hint: Container(
+                                        width: 230,
+                                        child: TextField(
+                                            textAlign: TextAlign.center,
+                                            autocorrect: true,
+                                            style: const TextStyle(
+                                                color: Colors.teal),
+                                            decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                errorBorder: InputBorder.none,
+                                                disabledBorder:
+                                                    InputBorder.none,
+                                                hintText: "בחרו מין יעד"))),
+                                    items: genderDrop,
+                                    onChanged: (value) {
+                                      gender = value;
+                                      this.event.targetGender = gender;
+                                      print(event.targetGender);
+                                      setState(() {});
+                                    },
                                   ),
-                                )
-                              ],
-                            )),
+                                ),
+                              ),
+                            )
+                          ],
+                        )),
                         Padding(
                           padding: const EdgeInsets.all(15),
                           child: Icon(
@@ -611,15 +620,15 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         shadowColor: Colors.teal[400],
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(0),
-            )),
+          bottom: Radius.circular(0),
+        )),
         backgroundColor: Colors.white,
         title:
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
             'קבע אירוע חדש  ',
             style:
-            TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
           ),
           Icon(FontAwesomeIcons.calendar, size: 25, color: Colors.teal[400])
         ]));
