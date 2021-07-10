@@ -1,3 +1,4 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 
 import '../../Globals.dart';
@@ -5,7 +6,6 @@ import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'Login2.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
 class Login extends StatefulWidget {
@@ -72,7 +72,7 @@ class _HomePageState extends State<Login> {
                       Text(
                         "פרוייקט חברותא",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 30),
+                        style: GoogleFonts.alef(fontSize: 30),
                       )),
                   SizedBox(
                     height: 30,

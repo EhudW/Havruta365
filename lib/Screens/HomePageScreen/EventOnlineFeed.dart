@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 
 class EventOnlineFeed extends StatelessWidget {
   final Event event;
@@ -43,8 +44,8 @@ class EventOnlineFeed extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.0),
               ),
               onTap: () {
-                print(event.topic);
-                //NavigationToolbar.push(context, new MaterialPageRoute(bulder))
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => EventScreen(event)));
               },
             ),
           ),

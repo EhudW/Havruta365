@@ -168,30 +168,7 @@ class _EventsState extends State<Events> {
       Row(
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),
-          Material(
-              child: InkWell(
-                  splashColor: Colors.red,
-                  customBorder: CircleBorder(),
-                  onTap: () {
-                    events.searchData = searchBarString;
-                    events.refresh();
-                  },
-                  child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(40.0),
-                        ),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                              color: Colors.red,
-                              offset: const Offset(0, 2),
-                              blurRadius: 10.0),
-                        ],
-                      ),
-                      child: (Icon(FontAwesomeIcons.search,
-                          size: 22, color: Colors.grey[50]))))),
+
           SizedBox(width: Globals.scaler.getWidth(1)),
           Expanded(
             child: Container(
@@ -211,6 +188,8 @@ class _EventsState extends State<Events> {
               child: TextField(
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
+                      suffixIcon: Icon(FontAwesomeIcons.search,
+                          size: 22, color: Colors.red , textDirection: TextDirection.rtl),
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
@@ -218,10 +197,14 @@ class _EventsState extends State<Events> {
                       disabledBorder: InputBorder.none,
                       hintText: 'חפש חברותא'),
                   onChanged: (text) {
-                    if (text.toLowerCase() == "") {
-                      searchBarString = null;
+                    if (text.toLowerCase() == "" ||
+                        text.toLowerCase() == null) {
+                      events.searchData = null;
+                      events.refresh();
                     } else {
                       searchBarString = text.toLowerCase();
+                      events.searchData = searchBarString;
+                      events.refresh();
                     }
                   }),
             ),

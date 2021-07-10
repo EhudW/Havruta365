@@ -4,6 +4,8 @@ import 'Events.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -73,11 +75,11 @@ class _HomePageState extends State<HomePage> {
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'Havruta  ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.teal[400]),
-                ),
+            Text(
+            "Havruta  ",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.alef(fontWeight: FontWeight.bold,  fontSize: 20, color:Colors.teal[400]),
+          ),
                 Icon(FontAwesomeIcons.book, size: 25, color: Colors.teal[400])
               ]),
         ));

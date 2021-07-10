@@ -39,7 +39,7 @@ class _NotificationsState extends State<Notifications> {
     n.idEvent = new mongo.ObjectId.fromHexString('60bbda688b4c85a59e40886f');
     n.creatorUser = 'יונתן גת';
     n.creationDate = DateTime.now();
-    Globals.db.insertNotification(n);
+    //Globals.db.insertNotification(n);
   }
 
   @override
@@ -70,7 +70,7 @@ class _NotificationsState extends State<Notifications> {
                               onDismissed: (direction) async {
                                 await Globals.db
                                     .deleteNotification(_snapshot.data[index]);
-                                //_snapshot.data.removeAt[index];
+                                 //_snapshot.data.removeAt[index];
                                 // TODO: implement your delete function and check direction if needed
                               },
                               child: NotificationView(
