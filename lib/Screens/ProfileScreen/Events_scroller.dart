@@ -1,103 +1,111 @@
-// import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:havruta_project/DataBase_auth/User.dart';
-// import 'package:havruta_project/Globals.dart';
-// import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
-// import 'package:loading_animations/loading_animations.dart';
-// import 'package:mongo_dart_query/mongo_dart_query.dart';
-//
-// class EventsScroller extends StatelessWidget {
-//   EventsScroller(this.user);
-//
-//   User user;
-//
-//   Future getEvents(String userMail) async {
-//     var user = await userColl.findOne(where.eq('email', '$userMail'));
-//     return user;
-//   }
-//
-//   Widget _buildActor(BuildContext ctx, int index) {
-//     var userMail = usersMail[index];
-//     // TODO find user via mail and get it from the mongo
-//     // build user: avatar, name, button to the user profile
-//     //Future<User> user = Globals.db.getUser(userMail);
-//     // var user = await collection.findOne(where.eq('email', '$mail'));
-//     Future user = getUser(userMail);
-//     return FutureBuilder(
-//       future: user,
-//       builder: (context, snapshot) {
-//         switch (snapshot.connectionState) {
-//           case ConnectionState.none:
-//             return Text('none');
-//           case ConnectionState.active:
-//           case ConnectionState.waiting:
-//             return Center(
-//               child: LoadingBouncingGrid.square(
-//                 borderColor: Colors.teal[400],
-//                 backgroundColor: Colors.teal[400],
-//                 size: 20.0,
-//               ),
-//             );
-//           case ConnectionState.done:
-//             return Padding(
-//               padding: const EdgeInsets.only(right: 16.0),
-//               child: Column(
-//                 children: [
-//                   CircleAvatar(
-//                     backgroundImage: NetworkImage(snapshot.data['avatar']),
-//                     radius: 40.0,
-//                     child: IconButton(
-//                         icon: Icon(FontAwesomeIcons.houseUser),
-//                         iconSize: 40.0,
-//                         color: Colors.white.withOpacity(0),
-//                         onPressed: () {
-//                           Navigator.push(
-//                             context,
-//                             MaterialPageRoute(builder: (context) => UserScreen(snapshot.data['email'])),
-//                           );
-//                         }),
-//                   ),
-//                   Padding(
-//                     padding: const EdgeInsets.only(top: 8.0),
-//                     child: Text(snapshot.data['name']),
-//                   ),
-//                 ],
-//               ),
-//             );
-//           default:
-//             return Text('default');
-//         }
-//       },
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     var textTheme = Theme.of(context).textTheme;
-//
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Align(
-//           alignment: Alignment.center,
-//           child: Padding(
-//             padding: const EdgeInsets.symmetric(horizontal: 50),
-//             child: Text(
-//               'משתתפים',
-//               style: textTheme.subhead.copyWith(fontSize: 18.0),
-//             ),
-//           ),
-//         ),
-//         SizedBox.fromSize(
-//           size: const Size.fromHeight(120.0),
-//           child: ListView.builder(
-//             itemCount: usersMail.length,
-//             scrollDirection: Axis.horizontal,
-//             padding: const EdgeInsets.only(top: 12.0, left: 20.0),
-//             itemBuilder: _buildActor,
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
+import 'package:havruta_project/Screens/EventScreen/Event_api.dart';
+import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
+import 'package:loading_animations/loading_animations.dart';
+
+
+class EventsScroller extends StatefulWidget {
+  EventsScroller(this.userMail);
+
+  String userMail;
+
+  @override
+  _EventsScrollerState createState() => _EventsScrollerState();
+}
+
+class _EventsScrollerState extends State<EventsScroller> {
+  Future eventsList;
+  List<Event> events;
+
+  @override
+  void initState() {
+    super.initState();
+    eventsList = Globals.db.getEvents(widget.userMail);
+  }
+
+  Widget _buildEvent(BuildContext ctx, int index) {
+    var event = events[index];
+    return Padding(
+      padding: const EdgeInsets.only(right: 16.0),
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(event.eventImage),
+            radius: 40.0,
+            child: IconButton(
+                icon: Icon(FontAwesomeIcons.houseUser),
+                iconSize: 40.0,
+                color: Colors.white.withOpacity(0),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EventScreen(event),
+                      ));
+                }),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Column(
+              children: [
+                Text(event.book,
+                    style: GoogleFonts.secularOne(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                    textDirection: TextDirection.rtl),
+                Text(event.lecturer)
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme
+        .of(context)
+        .textTheme;
+    return FutureBuilder(future: eventsList, builder: (context, snapshot)
+    {
+      switch (snapshot.connectionState) {
+        case ConnectionState.none:
+          return Text('none');
+        case ConnectionState.active:
+        case ConnectionState.waiting:
+          return Center(
+            child: LoadingBouncingGrid.circle(
+              borderColor: Colors.teal[400],
+              backgroundColor: Colors.teal[400],
+              size: 40.0,
+            ),
+          );
+        case ConnectionState.done:
+          events = snapshot.data;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox.fromSize(
+                size: const Size.fromHeight(140.0),
+                child: ListView.builder(
+                  itemCount: events.length,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.only(top: 0, left: 20.0),
+                  itemBuilder: _buildEvent,
+                ),
+              ),
+            ],
+          );
+        default:
+          return Text('default');
+      }
+    });
+  }
+}

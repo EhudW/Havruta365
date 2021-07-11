@@ -88,6 +88,18 @@ class Mongo {
     return data;
   }
 
+  // Query all events that currents user register for them.
+  Future<List<Event>> getEvents(String userMail) async {
+    print("start...");
+    List<Event> events = [];
+    var eventsColl = db.collection('Events');
+    var allEvent = await eventsColl.find({"participants": Globals.currentUser.email}).toList();
+    for (var i in allEvent) {
+      events.add(new Event.fromJson(i));
+    }
+    return events;
+  }
+
   Future<List<NotificationUser>> getNotifications() async {
     List<NotificationUser> data = List<NotificationUser>();
     var collection = db.collection('Notifications');
