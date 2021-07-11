@@ -121,9 +121,7 @@ class Mongo {
     for (var i in topics) {
       data.add(Topic.fromJson(i));
     }
-    print(topics);
-    print(data);
-    return topics;
+    return data;
   }
 
   Future<void> addParticipant(String mail, ObjectId id) async {

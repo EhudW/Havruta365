@@ -108,8 +108,8 @@ class _SetDateCreateState extends State<SetDate> {
 
   @override
   Widget build(BuildContext context) {
-    spaceBetween = 120;
-    spaceBetweenTimes = 40;
+    spaceBetween = 100;
+    spaceBetweenTimes = 20;
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -132,6 +132,26 @@ class _SetDateCreateState extends State<SetDate> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                    padding:
+                                        const EdgeInsets.only(right: 300.0)),
+                                Text(
+                                  "תאריך",
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -158,6 +178,25 @@ class _SetDateCreateState extends State<SetDate> {
                           height: spaceBetweenTimes,
                         ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.only(right: 252.0)),
+                            Text(
+                              "זמן התחלה",
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -178,6 +217,25 @@ class _SetDateCreateState extends State<SetDate> {
                         ),
                         SizedBox(
                           height: spaceBetweenTimes,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.only(right: 280.0)),
+                            Text(
+                              "זמן סיום",
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,

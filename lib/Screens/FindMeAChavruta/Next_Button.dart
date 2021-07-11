@@ -27,12 +27,18 @@ class NextButton extends StatelessWidget {
           onPressed: () {
             if (!this.isEmpty) {
               if (this.whichPage == 2) {
-                print("Event" + this.event.type);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            FindMeAChavruta2(event: this.event)));
+                if (!(this.event.type ==""|| this.event.topic == '' || this.event.targetGender == ""||
+                this.event.book =="" || this.event.maxParticipants ==0)) {
+                  print("Event" + this.event.type);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              FindMeAChavruta2(event: this.event)));
+                } else{
+                  showErrorSnackBar(
+                      context, 'צריך למלאות את השדות לפני שמתקדמים');
+                }
               } else {
                 print(this.event.type);
                 Navigator.push(

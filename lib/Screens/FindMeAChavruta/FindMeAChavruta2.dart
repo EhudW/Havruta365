@@ -129,8 +129,6 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                             indexForDbList -= 2;
                                                             return widget
                                                                 .event.dates;
-
-                                                            ///might need to add a function here to remove from events.dates list
                                                           });
                                                         }),
                                                   ),
