@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/HomePageScreen/notifications.dart';
 import 'Events.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';

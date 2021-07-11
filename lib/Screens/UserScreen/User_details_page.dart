@@ -20,7 +20,6 @@ class UserDetailsPage extends StatefulWidget {
 class _UserDetailsPageState extends State<UserDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    print(widget.user);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(

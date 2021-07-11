@@ -42,17 +42,10 @@ class Mongo {
     await collection.insertOne(e);
   }
 
-  Future<User> getUser(String mail) async {
-    // Get the Users Collection
-    var collection = db.collection('Users');
-    // Check if the user exist
-    var user = await collection.findOne(where.eq('email', '$mail'));
-    print("!!DB!!!$user");
-    if (user == null) {
-      return null;
-    }
-    user = User.fromJson(user);
-    print("!!JSON!!!$user");
+  Future<User> getUser(String userMail) async {
+    var coll = Globals.db.db.collection('Users');
+    var user_json = await coll.findOne(where.eq('email', '$userMail'));
+    User user = User.fromJson(user_json);
     return user;
   }
 
