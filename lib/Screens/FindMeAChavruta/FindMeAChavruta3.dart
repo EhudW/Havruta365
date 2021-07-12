@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/rendering.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
-
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'Wavy_Header.dart';
 
 class FindMeAChavruta3 extends StatefulWidget {
@@ -31,12 +30,12 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   String link;
   double spaceBetween;
 
-  Widget checkIfShiur() {
+  Widget checkIfShiur(ScreenScaler scaler) {
     print("Event type" + widget.event.type);
     if (widget.event.type == 'שיעור') {
       return Container(
-        height: 42,
-        width: 380,
+        height: scaler.getHeight(2.2),
+        width: scaler.getWidth(33),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.teal[400], width: 1.0),
@@ -48,11 +47,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             border: InputBorder.none,
             hintText: "פרטי מעביר השיעור",
             focusColor: Colors.teal,
-            contentPadding: EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
-            // border: OutlineInputBorder(
-            //     borderRadius: BorderRadius.circular(20.0),
-            //     borderSide: const BorderSide(
-            //         color: Colors.blue, width: 2.0))),
+            contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2), scaler.getHeight(1), scaler.getWidth(2), scaler.getHeight(.5)),
           ),
           onChanged: (lecturer) {
             widget.event.lecturer = lecturer;
@@ -70,7 +65,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   }
 
   Widget build(BuildContext context) {
-    spaceBetween = 40;
+    ScreenScaler scaler = ScreenScaler();
+    spaceBetween = scaler.getHeight(2);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -79,7 +75,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
               Column(
                 children: [
                   Padding(
-                      padding: const EdgeInsets.only(bottom: 0.0),
+                      padding:  EdgeInsets.only(bottom: scaler.getHeight(0)),
                       child: WavyHeader()),
                 ],
               ),
@@ -87,27 +83,27 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
               SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    Padding(padding: const EdgeInsets.only(top: 45.0)),
+                    Padding(padding:  EdgeInsets.only(top: scaler.getHeight(2))),
                     Container(
-                      width: 150,
-                      height: 100,
+                      width: scaler.getWidth(12),
+                      height: scaler.getHeight(5),
                       child: imageProfile(),
                     ),
                     SizedBox(height: spaceBetween),
                     Container(
-                      child: checkIfShiur(),
+                      child: checkIfShiur(scaler),
                     ),
                     SizedBox(height: spaceBetween),
                     Stack(
                       children: [
                         SizedBox(height: spaceBetween),
                         Container(
-                            height: 42,
-                            width: 380,
+                            height: scaler.getHeight(2.2),
+                            width: scaler.getWidth(33),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                  color: Colors.teal[400], width: 1.0),
+                                  color: Colors.teal[400], width: scaler.getWidth(0.1)),
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: new TextField(
@@ -116,14 +112,12 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 border: InputBorder.none,
                                 hintText: "קישור לזום",
                                 focusColor: Colors.teal,
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
+                                contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2), scaler.getHeight(1), scaler.getWidth(2), scaler.getHeight(.5)),
                               ),
                               maxLines: 1,
                               onChanged: (link) {
                                 widget.event.link = link;
                                 print("Link" + widget.event.link);
-
                                 if (widget.event.link == null) {
                                   widget.event.link = "";
                                   print("Link" + widget.event.link);
@@ -136,8 +130,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     Stack(
                       children: [
                         Container(
-                            height: 130,
-                            width: 380,
+                            height: scaler.getHeight(8),
+                            width: scaler.getWidth(33),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
@@ -151,17 +145,11 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 border: InputBorder.none,
                                 hintText: "פרטים נוספים",
                                 focusColor: Colors.blue,
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(8.0, 10.0, 10.0, 10.0),
-                                // border: OutlineInputBorder(
-                                //     borderRadius: BorderRadius.circular(20.0),
-                                //     borderSide: const BorderSide(
-                                //         color: Colors.blue, width: 2.0))),
+                                contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2), scaler.getHeight(1), scaler.getWidth(2), scaler.getHeight(.5)),
                               ),
                               onChanged: (description) {
                                 widget.event.description = description;
                                 print("Description" + widget.event.description);
-
                                 if (widget.event.description == null) {
                                   widget.event.description = "";
                                   print(
@@ -171,21 +159,17 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             )),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 20, 20, 20),
-                    ),
+                    SizedBox(height: spaceBetween),
                     ThirdDotRow(),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    ),
+                    SizedBox(height: spaceBetween - 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Stack(children: [
                           Container(
-                              height: 42,
-                              width: 350,
+                              width: scaler.getWidth(30),
+                              height: scaler.getHeight(2.5),
                               decoration: BoxDecoration(
                                 color: Colors.teal[400],
                               ),
@@ -197,7 +181,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                     widget.event.participants = [];
                                     widget.event.creatorUser = "";
                                     widget.event.eventImage =
-                                        'https://jewishvisual.com/wp-content/uploads/2016/07/DSC7952.jpg'; //print(widget.event.creationDate);
+                                        'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
                                     mongoDB.insertEvent(widget.event).then(
                                         (value) => Navigator.push(
                                             context,
@@ -208,7 +192,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   child: new Text(
                                     "מצא לי חברותא",
                                     style: TextStyle(
-                                        fontSize: 20.0, color: Colors.white),
+                                        fontSize: scaler.getTextSize(8.5), color: Colors.white),
                                   )))
                         ])
                       ],

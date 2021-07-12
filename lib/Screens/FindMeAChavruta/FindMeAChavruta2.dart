@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'Next_Button.dart';
 import 'SetDates.dart';
 import 'arc_banner_image.dart';
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+
 
 class FindMeAChavruta2 extends StatefulWidget {
   Event event;
@@ -29,7 +31,8 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
 
   @override
   Widget build(BuildContext context) {
-    spaceBetween = 20;
+    ScreenScaler scaler = ScreenScaler();
+    spaceBetween = scaler.getHeight(1.5);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -38,7 +41,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                     Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 5.0),
+                          padding: EdgeInsets.only(bottom: scaler.getHeight(0)),
                           child: ArcBannerImage(
                               "https://images.unsplash.com/photo-1435527173128-983b87201f4d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1494&q=80"),
                         ),
@@ -47,18 +50,15 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Padding(
-                              //   padding: const EdgeInsets.all(8.0),
-                              // // ),
                               Material(
                                 shadowColor: Colors.teal,
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(2.0),
+                                padding: EdgeInsets.all(scaler.getWidth(0)),
                               ),
                               Expanded(
                                   child: Padding(
-                                      padding: const EdgeInsets.all(2.0),
+                                      padding: EdgeInsets.all(scaler.getWidth(0)),
                                       child: ListView.builder(
                                           itemCount: this.dateTimes.length,
                                           shrinkWrap: true,
@@ -93,7 +93,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                 shape: Border(
                                                     right: BorderSide(
                                                         color: Colors.green,
-                                                        width: 5)),
+                                                        width: scaler.getWidth(0.5))),
                                                 child: Material(
                                                   elevation: 15,
                                                   shadowColor: Colors.black,
@@ -101,7 +101,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                     title: Text(
                                                       chavrutaInfoMessage,
                                                       style: TextStyle(
-                                                          fontSize: 15),
+                                                          fontSize: scaler.getTextSize(7.85)),
                                                     ),
                                                     leading: const Icon(
                                                       Icons.perm_contact_cal,
@@ -139,13 +139,13 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                             ],
                           ),
                         ),
-                        Padding(padding: EdgeInsets.fromLTRB(80, 7, 80, 0)),
+                        //Padding(padding: EdgeInsets.fromLTRB(80, 7, 80, 0)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Padding(
-                                padding: EdgeInsets.fromLTRB(108, 0, 80, 0)),
+                                padding: EdgeInsets.fromLTRB(scaler.getWidth(7), scaler.getHeight(1.5), scaler.getWidth(10.3), 0)),
                             //Padding(padding: padding)
                             FloatingActionButton(
                               backgroundColor: Colors.green,
@@ -168,25 +168,24 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                   this.fullDate =
                                       startDate + " - " + this.endDate;
                                   this.dateTimes.add(fullDate);
-                                  //print(widget.event.dates);
                                 });
                               },
                               mini: true,
                               child: Text(
                                 "+",
-                                style: TextStyle(fontSize: 30),
+                                style: TextStyle(fontSize: scaler.getTextSize(10)),
                               ),
                             ),
                           ],
                         ),
 
                         Padding(
-                          padding: EdgeInsets.fromLTRB(55, 25, 10, 0),
+                          padding: EdgeInsets.fromLTRB(scaler.getWidth(10), scaler.getHeight(1), 10, 0),
                         ),
                         SecondDotRow(),
                         //########### ----NEXT ARROW----########
                         Padding(
-                          padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
+                          padding: EdgeInsets.fromLTRB(scaler.getWidth(10), scaler.getHeight(1), 0, 0),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,

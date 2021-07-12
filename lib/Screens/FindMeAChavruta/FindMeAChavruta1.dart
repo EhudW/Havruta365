@@ -13,6 +13,10 @@ import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "dart:async";
 import 'Next_Button.dart';
+import 'package:loading_gifs/loading_gifs.dart';
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+
+
 
 class FindMeAChavruta1 extends StatefulWidget {
   @override
@@ -168,6 +172,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                 child: Text(
                   val,
                   textAlign: TextAlign.center,
+                  // style: TextStyle(
+                  //     fontSize: 15
+                  // ),
                 ),
               ),
               value: val,
@@ -185,6 +192,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         child: Text(
           val,
           textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 25
+          ),
         ),
       ),
       value: val,
@@ -202,6 +212,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         child: Text(
           val,
           textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 25
+          ),
         ),
       ),
       value: val,
@@ -228,7 +241,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
   void intializeEvent(Event event) {
     event.maxParticipants = 0;
-    event.targetGender = "";
+    event.targetGender = '';
     event.book = '';
     event.topic = '';
     event.type = '';
@@ -260,28 +273,20 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
   @override
   Widget build(BuildContext context) {
-    //final l = getTopics();
-    // make a function that does all of the logic with the topics
-    //l.then((value) => print(value));
+    ScreenScaler scaler = ScreenScaler();
     if (this.counter == 0) {
       intializeEvent(this.event);
       this.counter += 1;
     }
-    spaceBetween = 20;
-    height = 67;
-    width = 280;
-    iconSize = 40;
-    loadTopicssData();
+    spaceBetween = scaler.getHeight(1.2);
+    height = scaler.getHeight(3);
+    width = scaler.getWidth(27);
+    iconSize = scaler.getTextSize(11);
     loadGenderData();
     loadChoices();
-    // for (val in l) {
-    //   print(val);
-    // }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: appBar(),
-      //body: Builder(
-      //builder: (context) => Center(
       body: Container(
         child: FutureBuilder(
             future: getTopics(),
@@ -289,7 +294,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
               if (snapshot.data == null) {
                 return Container(
                     child: Center(
-                  child: Text("Loading"),
+                      child: Image.asset(circularProgressIndicator, scale: 10),
                 ));
               } else {
                 return Stack(
@@ -297,13 +302,13 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     Column(
                       children: [
                         Padding(
-                            padding: const EdgeInsets.only(bottom: 0.0),
+                            padding:  EdgeInsets.only(bottom: scaler.getHeight(0)),
                             child: WavyHeader()),
                       ],
                     ),
                     Column(
                       children: <Widget>[
-                        Padding(padding: const EdgeInsets.only(top: 65.0)),
+                        Padding(padding: EdgeInsets.only(top: scaler.getHeight(3))),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -342,7 +347,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                           color: Colors.teal,
                                         ),
                                         hint: Container(
-                                            width: 230,
+                                            width: scaler.getWidth(10),
                                             child: TextField(
                                                 textAlign: TextAlign.center,
                                                 autocorrect: true,
@@ -374,7 +379,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                               ],
                             )),
                             Padding(
-                              padding: const EdgeInsets.all(15.0),
+                              padding:  EdgeInsets.all(scaler.getWidth(1.5)),
                               child: Icon(
                                 FontAwesomeIcons.questionCircle,
                                 color: Colors.tealAccent[400],
@@ -390,7 +395,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           children: <Widget>[
                             Stack(children: [
                               Padding(
-                                padding: EdgeInsets.fromLTRB(50, 20, 10, 20),
+                                padding: EdgeInsets.fromLTRB(scaler.getWidth(10), scaler.getHeight(1), scaler.getWidth(10), scaler.getHeight(1)),
                               ),
                               Container(
                                   height: height,
@@ -415,13 +420,13 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       child: TextField(
                                         textAlign: TextAlign.center,
                                         autocorrect: true,
-                                        style: const TextStyle(
-                                            color: Colors.teal, fontSize: 16.5),
+                                        style:  TextStyle(
+                                            color: Colors.teal, fontSize: scaler.getTextSize(7)),
                                         decoration: InputDecoration(
                                           hintText: "מספר משתתפים",
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.fromLTRB(
-                                              10.0, 20.0, 10.0, 10.0),
+                                              scaler.getWidth(1.5), 15.0, 20.0, 10.0),
                                         ),
                                         inputFormatters: [
                                           FilteringTextInputFormatter
@@ -443,7 +448,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   ))
                             ]),
                             Padding(
-                              padding: const EdgeInsets.all(15.0),
+                              padding:  EdgeInsets.all(scaler.getWidth(1.5)),
                               child: Icon(
                                 Icons.group,
                                 color: Colors.tealAccent[400],
@@ -491,7 +496,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                           color: Colors.teal,
                                         ),
                                         hint: Container(
-                                            width: 230,
+                                            width: scaler.getWidth(10),
                                             child: TextField(
                                                 textAlign: TextAlign.center,
                                                 autocorrect: true,
@@ -510,34 +515,30 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                                     hintText: "בחרו תחום"))),
                                         items: topicsDrop,
                                         onChanged: (value) {
-                                          // need to send to function the value which will load from the db
                                           if (value == "תורה") {
-                                            booksDrop = [];
+                                            topics = [];
                                             loadTorahBooksData();
                                           } else if (value == "נביאים") {
-                                            booksDrop = [];
+                                            topics = [];
                                             loadNachBooksData();
                                           } else if (value == "כתובים") {
-                                            booksDrop = [];
+                                            topics = [];
                                             ketuvimBooksData();
                                           }else if (value == "תלמוד בבלי") {
-                                            booksDrop = [];
+                                            topics = [];
                                             loadBavliBooksData();
                                           }
                                           else if (value == "תלמוד ירושלמי") {
-                                            booksDrop = [];
+                                            topics = [];
                                             loadYerushalmiBooksData();
                                           }
                                           else if (value == "הלכה") {
-                                            booksDrop = [];
+                                            topics = [];
                                             loadHalachaBooksData();
                                           }
                                           selectedTopic = value;
                                           event.topic = selectedTopic;
-                                          topicsDrop = [];
                                           setState(() {
-                                            value = '';
-                                            topicsDrop = [];
                                           });
                                         },
                                       ),
@@ -547,7 +548,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                               ],
                             )),
                             Padding(
-                              padding: const EdgeInsets.all(15.0),
+                              padding:  EdgeInsets.all(scaler.getWidth(1.5)),
                               child: Icon(
                                 Icons.topic,
                                 color: Colors.tealAccent[400],
@@ -595,7 +596,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                           color: Colors.teal,
                                         ),
                                         hint: Container(
-                                            width: 230,
+                                            width: scaler.getWidth(10),
                                             child: TextField(
                                                 textAlign: TextAlign.center,
                                                 autocorrect: true,
@@ -625,7 +626,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                               ]),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(15),
+                              padding:  EdgeInsets.all(scaler.getWidth(1.5)),
                               child: Icon(
                                 FontAwesomeIcons.book,
                                 color: Colors.tealAccent[400],
@@ -672,7 +673,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                             color: Colors.teal,
                                           ),
                                           hint: Container(
-                                              width: 230,
+                                              width: scaler.getWidth(10),
                                               child: TextField(
                                                   textAlign: TextAlign.center,
                                                   autocorrect: true,
@@ -703,7 +704,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                 ],
                               )),
                               Padding(
-                                padding: const EdgeInsets.all(15),
+                                padding:  EdgeInsets.all(scaler.getWidth(1.5)),
                                 child: Icon(
                                   Icons.face,
                                   color: Colors.tealAccent[400],
@@ -715,10 +716,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
                         SizedBox(height: spaceBetween),
                         FirstDotRow(),
-
-                        SizedBox(height: 12),
+                        SizedBox(height: scaler.getHeight(1)),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             NextButton(

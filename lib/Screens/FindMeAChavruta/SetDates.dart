@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/Second_Dot_Row.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-
-import 'FindMeAChavruta2.dart';
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'Wavy_Header.dart';
 
 class SetDate extends StatefulWidget {
@@ -108,8 +107,9 @@ class _SetDateCreateState extends State<SetDate> {
 
   @override
   Widget build(BuildContext context) {
-    spaceBetween = 100;
-    spaceBetweenTimes = 20;
+    ScreenScaler scaler = ScreenScaler();
+    spaceBetween = scaler.getHeight(4);
+    spaceBetweenTimes = scaler.getHeight(2);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -118,13 +118,13 @@ class _SetDateCreateState extends State<SetDate> {
                     Column(
                       children: [
                         Padding(
-                            padding: const EdgeInsets.only(bottom: 0.0),
+                            padding:  EdgeInsets.only(bottom: scaler.getHeight(0)),
                             child: WavyHeader()),
                       ],
                     ),
                     Column(
                       children: <Widget>[
-                        Padding(padding: const EdgeInsets.only(top: 20.0)),
+                        Padding(padding: EdgeInsets.only(top: scaler.getHeight(1))),
                         SizedBox(
                           height: spaceBetween,
                         ),
@@ -138,13 +138,13 @@ class _SetDateCreateState extends State<SetDate> {
                               children: [
                                 Padding(
                                     padding:
-                                        const EdgeInsets.only(right: 300.0)),
+                                         EdgeInsets.only(right: scaler.getWidth(27))),
                                 Text(
                                   "תאריך",
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 22,
+                                      fontSize: scaler.getTextSize(8.8),
                                       fontWeight: FontWeight.bold),
                                 )
                               ],
@@ -158,16 +158,15 @@ class _SetDateCreateState extends State<SetDate> {
                               children: [
                                 ConstrainedBox(
                                   constraints: BoxConstraints.tightFor(
-                                      width: 330, height: 60),
+                                      width: scaler.getWidth(30), height: scaler.getHeight(3)),
                                   child: ElevatedButton(
                                     onPressed: () => pickDate(context),
                                     style: ElevatedButton.styleFrom(
                                         primary: Colors.teal,
-                                        //shape: (),
                                         shadowColor:
                                             Colors.grey.withOpacity(1)),
                                     child: Text(getDateText(this.date),
-                                        style: TextStyle(fontSize: 20)),
+                                        style: TextStyle(fontSize: scaler.getTextSize(9))),
                                   ),
                                 )
                               ],
@@ -182,13 +181,13 @@ class _SetDateCreateState extends State<SetDate> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                                padding: const EdgeInsets.only(right: 252.0)),
+                                padding:  EdgeInsets.only(right: scaler.getWidth(23))),
                             Text(
                               "זמן התחלה",
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 22,
+                                  fontSize: scaler.getTextSize(8.8),
                                   fontWeight: FontWeight.bold),
                             )
                           ],
@@ -202,7 +201,7 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
-                                  width: 330, height: 60),
+                                  width: scaler.getWidth(30), height: scaler.getHeight(3)),
                               child: ElevatedButton(
                                 onPressed: () => pickStartTime(context),
                                 style: ElevatedButton.styleFrom(
@@ -210,7 +209,7 @@ class _SetDateCreateState extends State<SetDate> {
                                     //shape: (),
                                     shadowColor: Colors.grey.withOpacity(1)),
                                 child: Text(getStartTimeText(),
-                                    style: TextStyle(fontSize: 20)),
+                                    style: TextStyle(fontSize: scaler.getTextSize(8.8))),
                               ),
                             )
                           ],
@@ -223,13 +222,13 @@ class _SetDateCreateState extends State<SetDate> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                                padding: const EdgeInsets.only(right: 280.0)),
+                                padding:  EdgeInsets.only(right: scaler.getWidth(26))),
                             Text(
                               "זמן סיום",
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 22,
+                                  fontSize: scaler.getTextSize(8.8),
                                   fontWeight: FontWeight.bold),
                             )
                           ],
@@ -243,7 +242,7 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
-                                  width: 330, height: 60),
+                                  width: scaler.getWidth(30), height: scaler.getHeight(3)),
                               child: ElevatedButton(
                                 onPressed: () => pickEndTime(context),
                                 style: ElevatedButton.styleFrom(
@@ -251,20 +250,20 @@ class _SetDateCreateState extends State<SetDate> {
                                     //shape: (),
                                     shadowColor: Colors.grey.withOpacity(1)),
                                 child: Text(getEndTimeText(),
-                                    style: TextStyle(fontSize: 20)),
+                                    style: TextStyle(fontSize: scaler.getTextSize(8.8))),
                               ),
                             )
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(2.0),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(2.0),
+                        // ),
                         SizedBox(height: spaceBetween),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(padding: EdgeInsets.all(12.0)),
+                            Padding(padding: EdgeInsets.all(scaler.getHeight(0.7))),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.pop(context);
@@ -276,12 +275,11 @@ class _SetDateCreateState extends State<SetDate> {
                               child: Text("בטל"),
                             ),
                             Padding(
-                                padding: const EdgeInsets.only(right: 235.0)),
+                                padding:  EdgeInsets.only(right: scaler.getWidth(21))),
                             ElevatedButton(
                               onPressed: () => saveData(),
                               style: ElevatedButton.styleFrom(
                                   primary: Colors.blue,
-                                  //shape: (),
                                   shadowColor: Colors.grey.withOpacity(1)),
                               child: Text("שמור"),
                             ),
@@ -325,7 +323,7 @@ class _SetDateCreateState extends State<SetDate> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(
-        "אי אפשר לשמור את התאריך!",
+        "!אי אפשר לשמור את התאריך",
         style: TextStyle(
           color: Colors.red,
         ),
@@ -359,7 +357,6 @@ class _SetDateCreateState extends State<SetDate> {
     } else {
       final hours = startTime.hour.toString().padLeft(2, '0');
       final minutes = startTime.minute.toString().padLeft(2, '0');
-
       return '$hours:$minutes';
     }
   }
@@ -370,7 +367,6 @@ class _SetDateCreateState extends State<SetDate> {
     } else {
       final hours = endTime.hour.toString().padLeft(2, '0');
       final minutes = endTime.minute.toString().padLeft(2, '0');
-
       return '$hours:$minutes';
     }
   }
