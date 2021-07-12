@@ -168,7 +168,6 @@ class _EventsState extends State<Events> {
       Row(
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),
-
           SizedBox(width: Globals.scaler.getWidth(1)),
           Expanded(
             child: Container(
@@ -197,7 +196,7 @@ class _EventsState extends State<Events> {
                       disabledBorder: InputBorder.none,
                       hintText: 'חפש חברותא'),
                   onChanged: (text) {
-                    if (text.toLowerCase() == "" ||
+                    if (text.toLowerCase() == "" ||text.toLowerCase() == " "||
                         text.toLowerCase() == null) {
                       events.searchData = null;
                       events.refresh();

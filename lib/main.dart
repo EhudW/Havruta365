@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 case ConnectionState.done:
                   Globals.currentUser = u1;
-                  return HomePage();
+                  return Login3();
                   // _email = _prefs.then((prefs) {
                   //   return (prefs.getString('email') ?? "");
                   // });
