@@ -248,7 +248,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     event.description = '';
     event.lecturer = '';
     event.dates = [];
-    event.creatorUser = '';
+    event.creatorUser = Globals.currentUser.email;
     event.eventImage = '';
     event.participants = [];
     event.link = '';

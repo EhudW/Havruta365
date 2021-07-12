@@ -131,6 +131,12 @@ class _HomePageState extends State<LoginDetails> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: Globals.scaler.getHeight(1)),
+            Align(
+                alignment: Alignment.centerRight,
+                child:Text("פרטים אישיים   " ,style: GoogleFonts.alef(
+                fontSize: 18,
+                color: Colors.teal[400]),
+    )),
             genderField(gender),
             SizedBox(height: Globals.scaler.getHeight(1)),
             Container(
@@ -150,6 +156,13 @@ class _HomePageState extends State<LoginDetails> {
                 FontAwesomeIcons.home, false),
             newFiled(mail, mail_str, "כתובת המייל", FontAwesomeIcons.mailBulk,
                 false),
+            SizedBox(height: Globals.scaler.getHeight(1)),
+            Align(
+                alignment: Alignment.centerRight,
+                child:Text("פרטי משתמש   " ,style: GoogleFonts.alef(
+                    fontSize: 18,
+                    color: Colors.teal[400]),
+                )),
             newFiled(user_name, user_name_str, "שם משתמש",
                 FontAwesomeIcons.userAlt, false),
             newFiled(
@@ -216,17 +229,17 @@ Widget genderField(gender_str) {
     SizedBox(width: Globals.scaler.getWidth(6)),
     Expanded(
       child: GenderPickerWithImage(
-        maleText: '',
-        femaleText: '',
+        maleText: 'גבר',
+        femaleText: 'אישה',
         maleImage: NetworkImage(
             'https://image.flaticon.com/icons/png/512/180/180644.png'),
         femaleImage: NetworkImage(
             'https://image.flaticon.com/icons/png/512/180/180678.png'),
         verticalAlignedText: true,
-        //selectedGenderTextStyle:
-        //     TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),
-        // unSelectedGenderTextStyle:
-        //     TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
+        selectedGenderTextStyle:
+            TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),
+        unSelectedGenderTextStyle:
+            TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
         onChanged: (Gender gender) {
           gender_str.text = gender.toString();
         },

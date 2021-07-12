@@ -1,5 +1,6 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
+import 'package:havruta_project/Screens/Login/LoginDetails.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
@@ -31,12 +32,12 @@ class _HomePageState extends State<Login> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                height: 350,
+                height: 250,
                 child: Stack(
                   children: <Widget>[
                     Positioned(
-                      top: -40,
-                      height: 350,
+                      top: -60,
+                      height: 300,
                       width: width,
                       child: FadeAnimation(
                         1,
@@ -232,7 +233,7 @@ class _HomePageState extends State<Login> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Login2()),
+                              MaterialPageRoute(builder: (context) => LoginDetails()),
                             );
                           },
                           child: Center(

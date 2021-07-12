@@ -24,7 +24,7 @@ class _HomePageState extends State<LoginMoreDetails> {
   final description = TextEditingController();
   String description_str = "";
   final status = TextEditingController();
-  String status_str = "רווק/ה";
+  String status_str = "סטטוס משפחתי";
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class _HomePageState extends State<LoginMoreDetails> {
           "מצא לי חברותא ",
           textAlign: TextAlign.center,
           style: GoogleFonts.abel(
-              fontWeight: FontWeight.bold, fontSize: 23, color: Colors.white),
+             fontSize: 23, color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
             alignment: Alignment.center,
@@ -60,7 +60,15 @@ class _HomePageState extends State<LoginMoreDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            SizedBox(height: Globals.scaler.getHeight(1)),
+            Align(
+                alignment: Alignment.centerRight,
+                child:Text("פרטים נוספים   " ,style: GoogleFonts.alef(
+                    fontSize: 18,
+                    color: Colors.teal[400]),
+                )),
             SizedBox(height: Globals.scaler.getHeight(10)),
+
       FadeAnimation(1.7,
               Container(
                   alignment: AlignmentDirectional.centerEnd,
@@ -96,7 +104,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                         status_str = newValue;
                       });
                     },
-                    items: <String>["רווק/ה", 'נשוי/אה', 'גרוש/ה']
+                    items: <String>["סטטוס משפחתי","רווק/ה", 'נשוי/אה', 'גרוש/ה']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -106,9 +114,9 @@ class _HomePageState extends State<LoginMoreDetails> {
                   )),
             ),
             newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
-                6.0, false),
-            newFiled(description, description_str, "פרטים שחשוב לך לשתף",
-                FontAwesomeIcons.list, 10.0, true),
+                6.0),
+            newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
+                FontAwesomeIcons.list, 10.0),
             SizedBox(height: Globals.scaler.getHeight(4)),
           ],
         ),
@@ -117,7 +125,7 @@ class _HomePageState extends State<LoginMoreDetails> {
   }
 }
 
-newFiled(controller, str, text, icon, size, expands) {
+newFiled(controller, str, text, icon, size) {
   return FadeAnimation(
       1.7,
     new Column(children: <Widget>[
@@ -140,8 +148,6 @@ newFiled(controller, str, text, icon, size, expands) {
             ],
           ),
           child: TextField(
-              maxLines: null,
-              expands: expands,
               textAlign: TextAlign.center,
               controller: controller,
               style: TextStyle(fontSize: 18),
@@ -167,21 +173,55 @@ newFiled(controller, str, text, icon, size, expands) {
   );
 }
 
-button(name_str) {
-  return OutlineButton(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-    onPressed: () async {
-      print(name_str);
-    },
-    child: Center(
-      child: Text(
-        "כניסה",
-        style: TextStyle(color: Colors.white, fontSize: 15),
+newFiled1(controller, str, text, icon, size) {
+  return FadeAnimation(
+    1.7,
+    new Column(children: <Widget>[
+      SizedBox(height: Globals.scaler.getHeight(1.5)),
+      Center(
+        child: Container(
+          alignment: AlignmentDirectional.center,
+          width: Globals.scaler.getWidth(35),
+          height: Globals.scaler.getWidth(size),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.all(
+              Radius.circular(30.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.withOpacity(1),
+                  offset: const Offset(0, 2),
+                  blurRadius: 8.0),
+            ],
+          ),
+          child: TextField(
+              maxLines: null,
+              expands: true,
+              textAlign: TextAlign.center,
+              controller: controller,
+              style: TextStyle(fontSize: 18),
+              decoration: InputDecoration(
+                  suffixIcon: Icon(
+                    icon,
+                    size: 22,
+                    color: Colors.red,
+                  ),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  hintText: text),
+              onChanged: (text) {
+                str = controller.text;
+                print(text);
+              }),
+        ),
       ),
-    ),
+    ]),
   );
 }
-
 appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();
 

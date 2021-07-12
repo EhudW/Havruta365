@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/HomePageScreen/notifications.dart';
+import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
 import 'Events.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -124,7 +125,12 @@ class _HomePageState extends State<HomePage> {
               IconButton(
                 icon: Icon(Icons.person),
                 color: Colors.white54,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  );
+                },
                 iconSize: scaler.getTextSize(10),
               )
             ],
