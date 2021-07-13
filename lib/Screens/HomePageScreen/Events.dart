@@ -121,10 +121,15 @@ class _EventsState extends State<Events> {
                   } else if (eventsOnline.hasMore) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 32.0),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                          child: _snapshot.data.length == 0
+                              ? Text("לא נמצאה חברותא מתאימה")
+                              : Text("")),
                     );
                   } else {
-                    return null;
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 32.0),
+                    );
                   }
                 },
               ),
@@ -149,10 +154,10 @@ class _EventsState extends State<Events> {
             ],
           ),
           alignment: Alignment.center,
-          child: Text('Live שיעורים',
+          child: Text('שיעורים מומלצים',
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: Globals.scaler.getTextSize(7),
+                  fontSize: Globals.scaler.getTextSize(6.5),
                   fontWeight: FontWeight.bold)),
         )
       ]),

@@ -1,11 +1,8 @@
 import 'dart:core';
 import 'dart:convert';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
-import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/main.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'Topic.dart';
@@ -81,7 +78,7 @@ class Mongo {
     List<Event> data = List<Event>();
     var collection = db.collection('Events');
     final events =
-        await collection.find(where.sortBy('_id').skip(len).limit(10)).toList();
+        await collection.find(where.eq('type', 'L').sortBy('_id').skip(len).limit(10)).toList();
     for (var i in events) {
       data.add(new Event.fromJson(i));
     }

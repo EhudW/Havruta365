@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
                             default:
                             // Update global current_user
                               Globals.currentUser = snapshot.data;
-                              return ProfileScreen();
+                              return Login();
                           }
                         });
                 // TODO CODE TO REMOVE - UNTIL HERE
