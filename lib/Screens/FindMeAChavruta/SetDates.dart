@@ -269,7 +269,7 @@ class _SetDateCreateState extends State<SetDate> {
                                 Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.blue,
+                                  primary: Colors.red,
                                   //shape: (),
                                   shadowColor: Colors.grey.withOpacity(1)),
                               child: Text("בטל"),
@@ -279,7 +279,7 @@ class _SetDateCreateState extends State<SetDate> {
                             ElevatedButton(
                               onPressed: () => saveData(),
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.blue,
+                                  primary: Colors.red,
                                   shadowColor: Colors.grey.withOpacity(1)),
                               child: Text("שמור"),
                             ),

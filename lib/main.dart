@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
@@ -74,7 +75,7 @@ class _MyAppState extends State<MyApp> {
                             default:
                             // Update global current_user
                               Globals.currentUser = snapshot.data;
-                              return ProfileScreen();
+                              return FindMeAChavruta1();
                           }
                         });
                 // TODO CODE TO REMOVE - UNTIL HERE
