@@ -35,9 +35,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   final format = DateFormat("yyyy-MM-dd");
   DateTime val;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-  String
-  //value = '',
-  value,
+  String value,
       selectedTopic,
       gender,
       selectedBook,
@@ -52,8 +50,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   int counter = 0;
   List<String> choice = MyData().choice;
   List<String> genderList = MyData().gender;
-
-  //User user = User();
   String user = "yonatan";
   Event event = Event();
 
@@ -103,130 +99,78 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   }
 
   Future<void> loadTopicssData() async {
-    topicsDrop = [];
     topicsDrop = topics
-        .map((val) => DropdownMenuItem<String>(
-            child: Container(
-              width: 231,
-              alignment: Alignment.center,
-              child: Text(
-                val,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            value: val))
+        .map((val) =>
+            DropdownMenuItem<String>(child: dropDownContainer(val), value: val))
         .toList();
   }
 
   void loadTorahBooksData() {
-    booksDrop = [];
     booksDrop = humashBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                child: Text(val),
-                width: 230,
-                alignment: Alignment.center,
-              ),
+              child: dropDownContainer(val),
               value: val,
             ))
         .toList();
   }
 
+  dropDownContainer(val) {
+    return Container(
+      child: Text(val),
+      width: 231,
+      alignment: Alignment.center,
+    );
+  }
+
   void loadNachBooksData() {
-    //booksDrop = [];
     booksDrop = neviimBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                child: Text(val),
-                width: 231,
-                alignment: Alignment.center,
-              ),
+              child: dropDownContainer(val),
               value: val,
             ))
         .toList();
   }
 
   void loadBavliBooksData() {
-    //booksDrop = [];
     booksDrop = talmudBavliBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                child: Text(val),
-                width: 231,
-                alignment: Alignment.center,
-              ),
+              child: dropDownContainer(val),
               value: val,
             ))
         .toList();
   }
 
   void loadChoices() {
-    choiceDrop = [];
     choiceDrop = choice
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                width: 231,
-                alignment: Alignment.center,
-                child: Text(
-                  val,
-                  textAlign: TextAlign.center,
-                  // style: TextStyle(
-                  //     fontSize: 15
-                  // ),
-                ),
-              ),
+              child: dropDownContainer(val),
               value: val,
             ))
         .toList();
   }
 
   void ketuvimBooksData() {
-    booksDrop = [];
     booksDrop = ketuvimBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                width: 231,
-                alignment: Alignment.center,
-                child: Text(
-                  val,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25),
-                ),
-              ),
+              child: dropDownContainer(val),
               value: val,
             ))
         .toList();
   }
 
   void loadYerushalmiBooksData() {
-    booksDrop = [];
     booksDrop = talmudYerushalmiBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                width: 231,
-                alignment: Alignment.center,
-                child: Text(
-                  val,
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: dropDownContainer(val),
               value: val,
             ))
         .toList();
   }
 
   void loadHalachaBooksData() {
-    booksDrop = [];
     booksDrop = halachaBooks
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                width: 231,
-                alignment: Alignment.center,
-                child: Text(
-                  val,
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: dropDownContainer(val),
               value: val,
             ))
         .toList();
@@ -251,14 +195,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     genderDrop = [];
     genderDrop = genderList
         .map((val) => DropdownMenuItem<String>(
-              child: Container(
-                width: 231,
-                alignment: Alignment.center,
-                child: Text(
-                  val,
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child:dropDownContainer(val),
               value: val,
             ))
         .toList();
@@ -440,11 +377,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
+                              ///########### ----GENDER DROPDOWN LIST----########
                               dropDownList(
                                   scaler, "בחרו מין יעד", genderDrop, gender),
-
-                              ///########### ----GENDER DROPDOWN LIST----########
-
                               Padding(
                                 padding: EdgeInsets.all(scaler.getWidth(1.5)),
                                 child: Icon(
@@ -455,7 +390,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                               ),
                             ]),
 
-                        ///########### ----NUMBER OF ATTENDEES----########
                         SizedBox(height: spaceBetween),
                         FirstDotRow(),
                         SizedBox(height: scaler.getHeight(1)),
