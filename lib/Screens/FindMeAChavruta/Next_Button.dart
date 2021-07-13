@@ -4,7 +4,6 @@ import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta3.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
-
 class NextButton extends StatelessWidget {
   final Event event;
   final int whichPage;
@@ -23,21 +22,24 @@ class NextButton extends StatelessWidget {
   Widget build(context) {
     ScreenScaler scaler = new ScreenScaler();
     return Container(
-        width: scaler.getWidth(27),
-        height: scaler.getHeight(2.8),
+        width: scaler.getWidth(26),
+        height: scaler.getHeight(1.8),
         child: ElevatedButton(
           onPressed: () {
             if (!this.isEmpty) {
               if (this.whichPage == 2) {
-                if (!(this.event.type ==""|| this.event.topic == '' || this.event.targetGender == ""||
-                this.event.book =="" || this.event.maxParticipants ==0)) {
+                if (!(this.event.type == "" ||
+                    this.event.topic == '' ||
+                    this.event.targetGender == "" ||
+                    this.event.book == "" ||
+                    this.event.maxParticipants == 0)) {
                   print("Event" + this.event.type);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
                               FindMeAChavruta2(event: this.event)));
-                } else{
+                } else {
                   showErrorSnackBar(
                       context, 'צריך למלאות את השדות לפני שמתקדמים', scaler);
                 }
@@ -66,7 +68,8 @@ class NextButton extends StatelessWidget {
         ));
   }
 
-  void showErrorSnackBar(BuildContext context, String text, ScreenScaler scalar) {
+  void showErrorSnackBar(
+      BuildContext context, String text, ScreenScaler scalar) {
     final snackBar = SnackBar(
       content: Row(
         mainAxisAlignment: MainAxisAlignment.start,

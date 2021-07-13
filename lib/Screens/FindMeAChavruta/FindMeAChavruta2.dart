@@ -11,7 +11,6 @@ import 'SetDates.dart';
 import 'arc_banner_image.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
-
 class FindMeAChavruta2 extends StatefulWidget {
   Event event;
 
@@ -58,7 +57,8 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                               ),
                               Expanded(
                                   child: Padding(
-                                      padding: EdgeInsets.all(scaler.getWidth(0)),
+                                      padding:
+                                          EdgeInsets.all(scaler.getWidth(0)),
                                       child: ListView.builder(
                                           itemCount: this.dateTimes.length,
                                           shrinkWrap: true,
@@ -93,7 +93,8 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                 shape: Border(
                                                     right: BorderSide(
                                                         color: Colors.green,
-                                                        width: scaler.getWidth(0.5))),
+                                                        width: scaler
+                                                            .getWidth(0.5))),
                                                 child: Material(
                                                   elevation: 15,
                                                   shadowColor: Colors.black,
@@ -101,7 +102,8 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                     title: Text(
                                                       chavrutaInfoMessage,
                                                       style: TextStyle(
-                                                          fontSize: scaler.getTextSize(7.85)),
+                                                          fontSize: scaler
+                                                              .getTextSize(7)),
                                                     ),
                                                     leading: const Icon(
                                                       Icons.perm_contact_cal,
@@ -139,13 +141,18 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                             ],
                           ),
                         ),
+                        SizedBox(height: scaler.getHeight(2)),
                         //Padding(padding: EdgeInsets.fromLTRB(80, 7, 80, 0)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Padding(
-                                padding: EdgeInsets.fromLTRB(scaler.getWidth(7), scaler.getHeight(1.5), scaler.getWidth(10.3), 0)),
+                                padding: EdgeInsets.fromLTRB(
+                                    scaler.getWidth(6.5),
+                                    scaler.getHeight(0),
+                                    scaler.getWidth(6.5),
+                                    scaler.getHeight(0))),
                             //Padding(padding: padding)
                             FloatingActionButton(
                               backgroundColor: Colors.green,
@@ -173,20 +180,31 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                               mini: true,
                               child: Text(
                                 "+",
-                                style: TextStyle(fontSize: scaler.getTextSize(10)),
+                                style:
+                                    TextStyle(fontSize: scaler.getTextSize(10)),
                               ),
                             ),
                           ],
                         ),
 
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(scaler.getWidth(10), scaler.getHeight(1), 10, 0),
+                        // Padding(
+                        //   padding: EdgeInsets.fromLTRB(
+                        //       scaler.getWidth(10), scaler.getHeight(0), 10, 0),
+                        //),
+                        SizedBox(height: scaler.getHeight(0.5)),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [SecondDotRow()],
                         ),
-                        SecondDotRow(),
                         //########### ----NEXT ARROW----########
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(scaler.getWidth(10), scaler.getHeight(1), 0, 0),
-                        ),
+                        // Padding(
+                        //   padding: EdgeInsets.fromLTRB(
+                        //       scaler.getWidth(10), scaler.getHeight(1), 0, 0),
+                        // ),
+                        SizedBox(height: scaler.getHeight(0.2)),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -204,7 +222,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                     isEmpty: false)
                           ],
                         ),
-                        SizedBox(height: spaceBetween)
+                        SizedBox(height: scaler.getHeight(0.4))
                       ],
                     ),
                   ]),
