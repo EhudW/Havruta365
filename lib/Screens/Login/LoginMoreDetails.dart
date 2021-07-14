@@ -3,6 +3,8 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
+import 'package:mongo_dart_query/mongo_dart_query.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
@@ -22,6 +24,7 @@ class _HomePageState extends State<LoginMoreDetails> {
   String description_str = " ";
   final status = TextEditingController();
   String status_str = "סטטוס משפחתי";
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +111,13 @@ class _HomePageState extends State<LoginMoreDetails> {
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
+                // TODO currentUser.id - save ObjectId locally
+                var coll = Globals.db.db.collection('Users');
+                var user_json = await coll.findOne(where.eq('email', Globals.currentUser.email));
+                // This is ObjectID!!
+                var id = user_json['_id'];
+                final SharedPreferences prefs = await _prefs;
+                await prefs.setString('id', id.toString());
                 yeshiva_str = yeshiva.text;
                 description_str = description.text;
                 status_str = status.text;
