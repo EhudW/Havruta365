@@ -7,7 +7,7 @@ packages:
       name: adobe_xd
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0+1"
+    version: "2.0.0+1"
   archive:
     dependency: transitive
     description:
@@ -119,7 +119,7 @@ packages:
       name: english_words
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.5"
+    version: "4.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -147,23 +147,23 @@ packages:
       name: firebase_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.1"
+    version: "2.0.0"
   firebase_auth_platform_interface:
     dependency: transitive
     description:
       name: firebase_auth_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.3.1"
+    version: "5.0.0"
   firebase_auth_web:
     dependency: transitive
     description:
       name: firebase_auth_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.1"
+    version: "2.0.0"
   firebase_core:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"
@@ -202,13 +202,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_facebook_login:
+  flutter_image_compress:
     dependency: "direct main"
     description:
-      name: flutter_facebook_login
+      name: flutter_image_compress
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "1.0.0"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -229,7 +229,7 @@ packages:
       name: flutter_screen_scaler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1"
+    version: "2.0.0"
   flutter_screenutil:
     dependency: "direct main"
     description:
@@ -243,7 +243,7 @@ packages:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.20.0-nullsafety.3"
+    version: "0.21.0+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -311,7 +311,7 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.7.5+4"
+    version: "0.8.1+3"
   image_picker_for_web:
     dependency: transitive
     description:

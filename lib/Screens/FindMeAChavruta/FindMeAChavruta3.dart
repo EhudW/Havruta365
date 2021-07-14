@@ -34,7 +34,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     print("Event type" + widget.event.type);
     if (widget.event.type == 'שיעור') {
       return Container(
-        height: scaler.getHeight(2.2),
+        height: scaler.getHeight(1.5),
         width: scaler.getWidth(33),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -47,7 +47,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             border: InputBorder.none,
             hintText: "פרטי מעביר השיעור",
             focusColor: Colors.teal,
-            contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2), scaler.getHeight(1), scaler.getWidth(2), scaler.getHeight(.5)),
+            contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2),
+                scaler.getHeight(0), scaler.getWidth(2), scaler.getHeight(0)),
           ),
           onChanged: (lecturer) {
             widget.event.lecturer = lecturer;
@@ -66,7 +67,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
 
   Widget build(BuildContext context) {
     ScreenScaler scaler = ScreenScaler();
-    spaceBetween = scaler.getHeight(2);
+    spaceBetween = scaler.getHeight(1.3);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -74,19 +75,20 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             child: Stack(children: [
               Column(
                 children: [
-                  Padding(
-                      padding:  EdgeInsets.only(bottom: scaler.getHeight(0)),
-                      child: WavyHeader()),
+                  // Padding(
+                  //     padding: EdgeInsets.only(bottom: scaler.getHeight(0)),
+                  WavyHeader(),
                 ],
               ),
               //------Camera--------
               SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    Padding(padding:  EdgeInsets.only(top: scaler.getHeight(2))),
+                    Padding(
+                        padding: EdgeInsets.only(top: scaler.getHeight(0.5))),
                     Container(
-                      width: scaler.getWidth(12),
-                      height: scaler.getHeight(5),
+                      width: scaler.getWidth(10),
+                      height: scaler.getHeight(3.5),
                       child: imageProfile(),
                     ),
                     SizedBox(height: spaceBetween),
@@ -98,21 +100,25 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       children: [
                         SizedBox(height: spaceBetween),
                         Container(
-                            height: scaler.getHeight(2.2),
+                            height: scaler.getHeight(1.5),
                             width: scaler.getWidth(33),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                  color: Colors.teal[400], width: scaler.getWidth(0.1)),
+                                  color: Colors.teal[400], width: 1.0),
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: new TextField(
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "קישור לזום",
+                                hintText: "קישור לשיעור",
                                 focusColor: Colors.teal,
-                                contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2), scaler.getHeight(1), scaler.getWidth(2), scaler.getHeight(.5)),
+                                contentPadding: EdgeInsets.fromLTRB(
+                                    scaler.getWidth(2),
+                                    scaler.getHeight(0),
+                                    scaler.getWidth(2),
+                                    scaler.getHeight(0)),
                               ),
                               maxLines: 1,
                               onChanged: (link) {
@@ -130,7 +136,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     Stack(
                       children: [
                         Container(
-                            height: scaler.getHeight(8),
+                            height: scaler.getHeight(6),
                             width: scaler.getWidth(33),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -145,7 +151,11 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 border: InputBorder.none,
                                 hintText: "פרטים נוספים",
                                 focusColor: Colors.blue,
-                                contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2), scaler.getHeight(1), scaler.getWidth(2), scaler.getHeight(.5)),
+                                contentPadding: EdgeInsets.fromLTRB(
+                                    scaler.getWidth(2),
+                                    scaler.getHeight(0),
+                                    scaler.getWidth(2),
+                                    scaler.getHeight(0.5)),
                               ),
                               onChanged: (description) {
                                 widget.event.description = description;
@@ -161,15 +171,15 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     ),
                     SizedBox(height: spaceBetween),
                     ThirdDotRow(),
-                    SizedBox(height: spaceBetween - 12),
+                    SizedBox(height: spaceBetween - 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Stack(children: [
                           Container(
-                              width: scaler.getWidth(30),
-                              height: scaler.getHeight(2.5),
+                              width: scaler.getWidth(26),
+                              height: scaler.getHeight(1.8),
                               decoration: BoxDecoration(
                                 color: Colors.teal[400],
                               ),
@@ -192,7 +202,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   child: new Text(
                                     "מצא לי חברותא",
                                     style: TextStyle(
-                                        fontSize: scaler.getTextSize(8.5), color: Colors.white),
+                                        fontSize: scaler.getTextSize(7.5),
+                                        color: Colors.white),
                                   )))
                         ])
                       ],

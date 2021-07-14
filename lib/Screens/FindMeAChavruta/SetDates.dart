@@ -11,6 +11,7 @@ import 'Wavy_Header.dart';
 
 class SetDate extends StatefulWidget {
   Event event;
+
   SetDate({this.event});
 
   @override
@@ -108,8 +109,8 @@ class _SetDateCreateState extends State<SetDate> {
   @override
   Widget build(BuildContext context) {
     ScreenScaler scaler = ScreenScaler();
-    spaceBetween = scaler.getHeight(4);
-    spaceBetweenTimes = scaler.getHeight(2);
+    spaceBetween = scaler.getHeight(2);
+    spaceBetweenTimes = scaler.getHeight(1.5);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -118,13 +119,15 @@ class _SetDateCreateState extends State<SetDate> {
                     Column(
                       children: [
                         Padding(
-                            padding:  EdgeInsets.only(bottom: scaler.getHeight(0)),
+                            padding:
+                                EdgeInsets.only(bottom: scaler.getHeight(0)),
                             child: WavyHeader()),
                       ],
                     ),
                     Column(
                       children: <Widget>[
-                        Padding(padding: EdgeInsets.only(top: scaler.getHeight(1))),
+                        // Padding(
+                        //     padding: EdgeInsets.only(top: scaler.getHeight(1))),
                         SizedBox(
                           height: spaceBetween,
                         ),
@@ -137,8 +140,8 @@ class _SetDateCreateState extends State<SetDate> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                    padding:
-                                         EdgeInsets.only(right: scaler.getWidth(27))),
+                                    padding: EdgeInsets.only(
+                                        right: scaler.getWidth(24))),
                                 Text(
                                   "תאריך",
                                   textAlign: TextAlign.end,
@@ -158,7 +161,8 @@ class _SetDateCreateState extends State<SetDate> {
                               children: [
                                 ConstrainedBox(
                                   constraints: BoxConstraints.tightFor(
-                                      width: scaler.getWidth(30), height: scaler.getHeight(3)),
+                                      width: scaler.getWidth(28),
+                                      height: scaler.getHeight(2)),
                                   child: ElevatedButton(
                                     onPressed: () => pickDate(context),
                                     style: ElevatedButton.styleFrom(
@@ -166,7 +170,8 @@ class _SetDateCreateState extends State<SetDate> {
                                         shadowColor:
                                             Colors.grey.withOpacity(1)),
                                     child: Text(getDateText(this.date),
-                                        style: TextStyle(fontSize: scaler.getTextSize(9))),
+                                        style: TextStyle(
+                                            fontSize: scaler.getTextSize(8.8))),
                                   ),
                                 )
                               ],
@@ -181,7 +186,8 @@ class _SetDateCreateState extends State<SetDate> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                                padding:  EdgeInsets.only(right: scaler.getWidth(23))),
+                                padding: EdgeInsets.only(
+                                    right: scaler.getWidth(18.5))),
                             Text(
                               "זמן התחלה",
                               textAlign: TextAlign.end,
@@ -201,7 +207,8 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
-                                  width: scaler.getWidth(30), height: scaler.getHeight(3)),
+                                  width: scaler.getWidth(28),
+                                  height: scaler.getHeight(2)),
                               child: ElevatedButton(
                                 onPressed: () => pickStartTime(context),
                                 style: ElevatedButton.styleFrom(
@@ -209,7 +216,8 @@ class _SetDateCreateState extends State<SetDate> {
                                     //shape: (),
                                     shadowColor: Colors.grey.withOpacity(1)),
                                 child: Text(getStartTimeText(),
-                                    style: TextStyle(fontSize: scaler.getTextSize(8.8))),
+                                    style: TextStyle(
+                                        fontSize: scaler.getTextSize(8.8))),
                               ),
                             )
                           ],
@@ -222,7 +230,8 @@ class _SetDateCreateState extends State<SetDate> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                                padding:  EdgeInsets.only(right: scaler.getWidth(26))),
+                                padding: EdgeInsets.only(
+                                    right: scaler.getWidth(22))),
                             Text(
                               "זמן סיום",
                               textAlign: TextAlign.end,
@@ -242,7 +251,8 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
-                                  width: scaler.getWidth(30), height: scaler.getHeight(3)),
+                                  width: scaler.getWidth(28),
+                                  height: scaler.getHeight(2)),
                               child: ElevatedButton(
                                 onPressed: () => pickEndTime(context),
                                 style: ElevatedButton.styleFrom(
@@ -250,7 +260,8 @@ class _SetDateCreateState extends State<SetDate> {
                                     //shape: (),
                                     shadowColor: Colors.grey.withOpacity(1)),
                                 child: Text(getEndTimeText(),
-                                    style: TextStyle(fontSize: scaler.getTextSize(8.8))),
+                                    style: TextStyle(
+                                        fontSize: scaler.getTextSize(8.8))),
                               ),
                             )
                           ],
@@ -263,23 +274,25 @@ class _SetDateCreateState extends State<SetDate> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(padding: EdgeInsets.all(scaler.getHeight(0.7))),
+                            Padding(
+                                padding: EdgeInsets.all(scaler.getHeight(0.7))),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.blue,
+                                  primary: Colors.red,
                                   //shape: (),
                                   shadowColor: Colors.grey.withOpacity(1)),
                               child: Text("בטל"),
                             ),
                             Padding(
-                                padding:  EdgeInsets.only(right: scaler.getWidth(21))),
+                                padding: EdgeInsets.only(
+                                    right: scaler.getWidth(15))),
                             ElevatedButton(
                               onPressed: () => saveData(),
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.blue,
+                                  primary: Colors.red,
                                   shadowColor: Colors.grey.withOpacity(1)),
                               child: Text("שמור"),
                             ),
