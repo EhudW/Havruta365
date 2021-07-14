@@ -32,12 +32,12 @@ class _HomePageState extends State<Login> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                height: 250,
+                height: Globals.scaler.getHeight(13),
                 child: Stack(
                   children: <Widget>[
                     Positioned(
                       top: -70,
-                      height: 300,
+                      height:  Globals.scaler.getHeight(16),
                       width: width,
                       child: FadeAnimation(
                         1,
@@ -55,15 +55,14 @@ class _HomePageState extends State<Login> {
                                   offset: Offset(0, 10),
                                 )
                               ]),
-                          child: Image.network(
-                            'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg',
-                            fit: BoxFit.cover,
-                          ),
                         ),
                       ),
                     )
                   ],
                 ),
+              ),
+              SizedBox(
+                height:  Globals.scaler.getHeight(1),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40),
@@ -75,10 +74,10 @@ class _HomePageState extends State<Login> {
                         Text(
                           "פרוייקט חברותא",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.alef(fontSize: 30),
+                          style: GoogleFonts.alef(fontSize:  Globals.scaler.getTextSize(10)),
                         )),
                     SizedBox(
-                      height: 30,
+                      height:  Globals.scaler.getHeight(1),
                     ),
                     FadeAnimation(
                         1.7,
@@ -106,7 +105,7 @@ class _HomePageState extends State<Login> {
                                     textAlign: TextAlign.center,
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        hintText: "שם משתמש",
+                                        hintText: "כתובת המייל",
                                         hintStyle: TextStyle(color: Colors.grey)),
                                     onChanged: (String text) {
                                       mail_str = mail.text;
@@ -130,15 +129,13 @@ class _HomePageState extends State<Login> {
                           ),
                         )),
                     SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      height: 30,
+                      height:  Globals.scaler.getHeight(2),
                     ),
                     FadeAnimation(
                         1.9,
                         Container(
-                          height: 50,
+                          height:  Globals.scaler.getHeight(2.5),
+                          width:  Globals.scaler.getWidth(19),
                           margin: EdgeInsets.symmetric(horizontal: 60),
                           decoration: BoxDecoration(
                             boxShadow: [
@@ -185,7 +182,7 @@ class _HomePageState extends State<Login> {
                           ),
                         )),
                     SizedBox(
-                      height: 20,
+                      height: Globals.scaler.getHeight(1),
                     ),
                     FadeAnimation(
                         1.9,
@@ -200,8 +197,9 @@ class _HomePageState extends State<Login> {
                             g.login();
                             Navigator.of(context).pushNamed('/homeScreen');
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child:  Container(
+                            height:  Globals.scaler.getHeight(2.5),
+                            width:  Globals.scaler.getWidth(16),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -226,7 +224,7 @@ class _HomePageState extends State<Login> {
                           ),
                         )),
                     SizedBox(
-                      height: 25,
+                      height: Globals.scaler.getHeight(1),
                     ),
                     FadeAnimation(
                         2,
@@ -244,7 +242,7 @@ class _HomePageState extends State<Login> {
                           )),
                         )),
                     SizedBox(
-                      height: 20,
+                      height: Globals.scaler.getHeight(1),
                     ),
                   ],
                 ),

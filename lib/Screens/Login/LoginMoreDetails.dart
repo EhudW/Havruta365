@@ -3,7 +3,6 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
-import 'Login3.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
@@ -28,37 +27,6 @@ class _HomePageState extends State<LoginMoreDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ElevatedButton(
-        child: Text(
-          "מצא לי חברותא ",
-          textAlign: TextAlign.center,
-          style: GoogleFonts.abel(
-             fontSize: 23, color: Colors.white),
-        ),
-        style: ElevatedButton.styleFrom(
-            alignment: Alignment.center,
-            minimumSize:
-                Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(2)),
-            shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(38.0),
-            ),
-            primary: Colors.red,
-            // <-- Button color
-            onPrimary: Colors.teal),
-        onPressed: () async {
-          yeshiva_str = yeshiva.text;
-          description_str = description.text;
-          status_str = status.text;
-          Globals.currentUser.yeshiva = yeshiva_str;
-          Globals.currentUser.description = description_str;
-          Globals.currentUser.status = status_str;
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        },
-      ),
       backgroundColor: Colors.teal[100],
       appBar: appBar(context),
       body: SingleChildScrollView(
@@ -72,13 +40,12 @@ class _HomePageState extends State<LoginMoreDetails> {
                     fontSize: 18,
                     color: Colors.teal[400]),
                 )),
-            SizedBox(height: Globals.scaler.getHeight(6)),
-
+            SizedBox(height: Globals.scaler.getHeight(8)),
       FadeAnimation(1.7,
               Container(
                   alignment: AlignmentDirectional.centerEnd,
                   width: Globals.scaler.getWidth(20),
-                  height: Globals.scaler.getWidth(4),
+                  height: Globals.scaler.getHeight(3),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: const BorderRadius.all(
@@ -119,10 +86,41 @@ class _HomePageState extends State<LoginMoreDetails> {
                   )),
             ),
             newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
-                4.0),
+                3.0),
             newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
                 FontAwesomeIcons.list, 8.0),
-            SizedBox(height: Globals.scaler.getHeight(4)),
+            SizedBox(height: Globals.scaler.getHeight(1)),
+            ElevatedButton(
+              child: Text(
+                "מצא לי חברותא ",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.abel(
+                    fontSize: 23, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                  alignment: Alignment.center,
+                  minimumSize:
+                  Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(38.0),
+                  ),
+                  primary: Colors.red,
+                  // <-- Button color
+                  onPrimary: Colors.teal),
+              onPressed: () async {
+                yeshiva_str = yeshiva.text;
+                description_str = description.text;
+                status_str = status.text;
+                Globals.currentUser.yeshiva = yeshiva_str;
+                Globals.currentUser.description = description_str;
+                Globals.currentUser.status = status_str;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+              },
+            ),
+            SizedBox(height: Globals.scaler.getHeight(1)),
           ],
         ),
       ),
@@ -139,7 +137,7 @@ newFiled(controller, str, text, icon, size) {
         child: Container(
           alignment: AlignmentDirectional.center,
           width: Globals.scaler.getWidth(32),
-          height: Globals.scaler.getWidth(size),
+          height: Globals.scaler.getHeight(size),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: const BorderRadius.all(
@@ -187,7 +185,7 @@ newFiled1(controller, str, text, icon, size) {
         child: Container(
           alignment: AlignmentDirectional.center,
           width: Globals.scaler.getWidth(32),
-          height: Globals.scaler.getWidth(size),
+          height: Globals.scaler.getHeight(size),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: const BorderRadius.all(
@@ -231,25 +229,25 @@ appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();
 
   return new AppBar(
-      leadingWidth: 40,
+      leadingWidth: 0,
       toolbarHeight: 40,
-      elevation: 10,
+      elevation: 30,
       shadowColor: Colors.teal[400],
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(0),
-      )),
+            bottom: Radius.circular(0),
+          )),
       backgroundColor: Colors.white,
       title: Container(
         width: scaler.getWidth(50),
         child:
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
             "משתמש חדש  ",
             textAlign: TextAlign.center,
             style: GoogleFonts.alef(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
           Icon(FontAwesomeIcons.userAlt, size: 20, color: Colors.teal[400])

@@ -5,7 +5,6 @@ import './Login5.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
-import 'package:havruta_project/Screens/Login/Login3.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Login4 extends StatefulWidget {
@@ -193,17 +192,8 @@ class _Login4CreateState extends State<Login4> {
                 pinLeft: true,
                 fixedWidth: true,
                 fixedHeight: true,
-                child:
                 // Adobe XD layer: 'Backward arrow' (group)
-                PageLink(
-                  links: [
-                    PageLinkInfo(
-                      transition: LinkTransition.SlideRight,
-                      ease: Curves.easeOut,
-                      duration: 0.3,
-                      pageBuilder: () => Login3(),
-                    ),
-                  ],
+
                   child: Stack(
                     children: <Widget>[
                       Pinned.fromSize(
@@ -222,7 +212,6 @@ class _Login4CreateState extends State<Login4> {
                     ],
                   ),
                 ),
-              ),
             ],
           ),
         ),
