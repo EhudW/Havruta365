@@ -149,9 +149,9 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                           children: [
                             Padding(
                                 padding: EdgeInsets.fromLTRB(
-                                    scaler.getWidth(6.5),
+                                    scaler.getWidth(10),
                                     scaler.getHeight(0),
-                                    scaler.getWidth(6.5),
+                                    scaler.getWidth(7.3),
                                     scaler.getHeight(0))),
                             //Padding(padding: padding)
                             FloatingActionButton(
@@ -203,7 +203,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                         //   padding: EdgeInsets.fromLTRB(
                         //       scaler.getWidth(10), scaler.getHeight(1), 0, 0),
                         // ),
-                        SizedBox(height: scaler.getHeight(0.2)),
+                        SizedBox(height: scaler.getHeight(0.7)),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,

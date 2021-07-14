@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/rendering.dart';
@@ -9,6 +10,12 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'Wavy_Header.dart';
+
+//import 'package:path/path.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+ScreenScaler scaler = ScreenScaler();
+PickedFile image;
 
 class FindMeAChavruta3 extends StatefulWidget {
   final Event event;
@@ -20,8 +27,10 @@ class FindMeAChavruta3 extends StatefulWidget {
 }
 
 class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
+  final AuthService authenticate = AuthService();
   var mongoDB = Globals.db;
   PickedFile _imageFile;
+  File image;
   final ImagePicker _picker = ImagePicker();
   final yeshiva = TextEditingController();
   String yeshiva_str = "";
@@ -34,8 +43,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     print("Event type" + widget.event.type);
     if (widget.event.type == 'L') {
       return Container(
-        height: scaler.getHeight(1.5),
-        width: scaler.getWidth(33),
+        height: scaler.getHeight(2.5),
+        width: scaler.getWidth(35),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.teal[400], width: 1.0),
@@ -66,8 +75,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   }
 
   Widget build(BuildContext context) {
-    ScreenScaler scaler = ScreenScaler();
-    spaceBetween = scaler.getHeight(1.3);
+    spaceBetween = scaler.getHeight(2);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -85,11 +93,11 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                        padding: EdgeInsets.only(top: scaler.getHeight(0.5))),
+                        padding: EdgeInsets.only(top: scaler.getHeight(1.5))),
                     Container(
-                      width: scaler.getWidth(10),
-                      height: scaler.getHeight(3.5),
-                      child: imageProfile(),
+                      width: scaler.getWidth(12),
+                      height: scaler.getHeight(5),
+                      child: imageProfile(scaler),
                     ),
                     SizedBox(height: spaceBetween),
                     Container(
@@ -100,8 +108,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       children: [
                         SizedBox(height: spaceBetween),
                         Container(
-                            height: scaler.getHeight(1.5),
-                            width: scaler.getWidth(33),
+                            height: scaler.getHeight(2.5),
+                            width: scaler.getWidth(35),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
@@ -126,7 +134,6 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 print("Link" + widget.event.link);
                                 if (widget.event.link == null) {
                                   widget.event.link = "";
-                                  print("Link" + widget.event.link);
                                 }
                               },
                             )),
@@ -136,8 +143,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     Stack(
                       children: [
                         Container(
-                            height: scaler.getHeight(6),
-                            width: scaler.getWidth(33),
+                            height: scaler.getHeight(9),
+                            width: scaler.getWidth(35),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
@@ -159,12 +166,6 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                               ),
                               onChanged: (description) {
                                 widget.event.description = description;
-                                print("Description" + widget.event.description);
-                                if (widget.event.description == null) {
-                                  widget.event.description = "";
-                                  print(
-                                      "Description" + widget.event.description);
-                                }
                               },
                             )),
                       ],
@@ -178,8 +179,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       children: [
                         Stack(children: [
                           Container(
-                              width: scaler.getWidth(26),
-                              height: scaler.getHeight(1.8),
+                              width: scaler.getWidth(28),
+                              height: scaler.getHeight(2.0),
                               decoration: BoxDecoration(
                                 color: Colors.teal[400],
                               ),
@@ -190,8 +191,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                     widget.event.creationDate = DateTime.now();
                                     widget.event.participants = [];
                                     widget.event.creatorUser = "";
-                                    widget.event.eventImage =
-                                        'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+                                    // widget.event.eventImage =
+                                    //     'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
                                     mongoDB.insertEvent(widget.event).then(
                                         (value) => Navigator.push(
                                             context,
@@ -202,7 +203,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   child: new Text(
                                     "מצא לי חברותא",
                                     style: TextStyle(
-                                        fontSize: scaler.getTextSize(7.5),
+                                        fontSize: scaler.getTextSize(9),
                                         color: Colors.white),
                                   )))
                         ])
@@ -216,16 +217,25 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
         ));
   }
 
-  Widget imageProfile() {
+  Widget imageProfile(ScreenScaler scaler) {
     return Center(
       child: Stack(children: <Widget>[
         CircleAvatar(
           radius: 60.0,
           backgroundColor: Colors.teal,
+          // child: ClipOval(
+          //     child: SizedBox(
+          //         width: scaler.getWidth(10),
+          //         height: scaler.getHeight(3.6),
+          //         child: (image != null)
+          //             ? Image.file(image, fit: BoxFit.fill)
+          //             : null))),
+          // : Image.network(
+          //     'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg')),
 
-          // backgroundImage: _imageFile == null
-          //     ? AssetImage("assets/profile.jpg")
-          //     : FileImage(File(_imageFile.path)),
+          backgroundImage: (widget.event.eventImage != null)
+              ? NetworkImage(widget.event.eventImage)
+              : null,
         ),
         Positioned(
           bottom: 35.0,
@@ -253,32 +263,34 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
       height: 100.0,
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 20,
+        horizontal: scaler.getWidth(3),
+        vertical: scaler.getHeight(1),
       ),
       child: Column(
         children: <Widget>[
           Text(
             "בחר תמונה לחברותא",
             style: TextStyle(
-              fontSize: 20.0,
+              fontSize: scaler.getTextSize(8.5),
             ),
           ),
           SizedBox(
-            height: 20,
+            height: scaler.getHeight(1),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             TextButton.icon(
               icon: Icon(Icons.camera),
-              onPressed: () {
-                openCamera(ImageSource.camera);
+              onPressed: () async {
+                uploadImage(ImageSource.camera);
+                Navigator.pop(context);
               },
               label: Text("Camera"),
             ),
             TextButton.icon(
               icon: Icon(Icons.image),
               onPressed: () {
-                openCamera(ImageSource.gallery);
+                uploadImage(ImageSource.gallery);
+                Navigator.pop(context);
               },
               label: Text("Gallery"),
             ),
@@ -288,20 +300,35 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     );
   }
 
-  Future<File> openCamera(source) async {
-    File _image;
+  Future<File> uploadImage(source) async {
+    final _storage = FirebaseStorage.instance;
+    PickedFile image;
     final picker = ImagePicker();
-
-    final pickedFile = await picker.getImage(source: source);
-    print('PickedFile: ${pickedFile.toString()}');
-
-    setState(() {
-      _image = File(pickedFile.path);
-    });
-    if (_image != null) {
-      return _image;
+    dynamic result = await authenticate.signInAnon();
+    if (result == null) {
+      print("error signing in");
+    } else {
+      print('signed in');
+      print(result.uid);
     }
-    return null;
+    image = await picker.getImage(source: source);
+    var file = File(image.path);
+
+    //check if an image was picked
+    if (image != null) {
+      //final destination = 'folderName/imageName';
+      var snapshot =
+          await _storage.ref().child('folderName/imageName').putFile(file);
+      var downloadUrl = await snapshot.ref.getDownloadURL();
+      setState(() {
+        widget.event.eventImage = downloadUrl;
+      });
+    } else {
+      setState(() {
+        widget.event.eventImage =
+            'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+      });
+    }
   }
 
   appBar() {

@@ -29,6 +29,7 @@ List<String> talmudBavliBooks = [];
 List<String> talmudYerushalmiBooks = [];
 List<String> halachaBooks = [];
 List<String> booksDrop = [];
+ScreenScaler scaler = ScreenScaler();
 
 class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   var db = Globals.db;
@@ -117,7 +118,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   dropDownContainer(val) {
     return Container(
       child: Text(val),
-      width: 271,
+      width: scaler.getWidth(25),
       alignment: Alignment.center,
     );
   }
@@ -203,15 +204,14 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenScaler scaler = ScreenScaler();
     if (this.counter == 0) {
       intializeEvent(this.event);
       this.counter += 1;
     }
-    spaceBetween = scaler.getHeight(0.8);
-    height = scaler.getHeight(2);
-    width = scaler.getWidth(26.4);
-    iconSize = scaler.getTextSize(10.5);
+    spaceBetween = scaler.getHeight(2);
+    height = scaler.getHeight(3);
+    width = scaler.getWidth(31);
+    iconSize = scaler.getTextSize(12);
     loadGenderData();
     loadChoices();
     return Scaffold(
@@ -262,7 +262,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             ),
                           ],
                         ),
-                        SizedBox(height: scaler.getHeight(0.8)),
+                        SizedBox(height: spaceBetween),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -296,7 +296,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                         autocorrect: true,
                                         style: TextStyle(
                                             color: Colors.teal,
-                                            fontSize: scaler.getTextSize(6.5)),
+                                            fontSize: scaler.getTextSize(7.2)),
                                         decoration: InputDecoration(
                                           hintText: "מספר משתתפים",
                                           border: InputBorder.none,
@@ -335,7 +335,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             ),
                           ],
                         ),
-                        SizedBox(height: scaler.getHeight(0.8)),
+                        SizedBox(height: spaceBetween),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -356,7 +356,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             ),
                           ],
                         ),
-                        SizedBox(height: scaler.getHeight(0.8)),
+                        SizedBox(height: spaceBetween),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -377,7 +377,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             ),
                           ],
                         ),
-                        SizedBox(height: scaler.getHeight(0.8)),
+                        SizedBox(height: spaceBetween),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -399,7 +399,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             ]),
                         SizedBox(height: spaceBetween),
                         FirstDotRow(),
-                        SizedBox(height: scaler.getHeight(0.5)),
+                        SizedBox(height: scaler.getHeight(0.7)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -454,7 +454,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   color: Colors.teal,
                 ),
                 hint: Container(
-                    width: scaler.getWidth(22),
+                    width: scaler.getWidth(26.2),
                     child: TextField(
                         textAlign: TextAlign.center,
                         autocorrect: true,

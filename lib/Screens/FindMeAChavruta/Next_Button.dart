@@ -22,8 +22,8 @@ class NextButton extends StatelessWidget {
   Widget build(context) {
     ScreenScaler scaler = new ScreenScaler();
     return Container(
-        width: scaler.getWidth(26),
-        height: scaler.getHeight(1.8),
+        width: scaler.getWidth(31),
+        height: scaler.getHeight(3),
         child: ElevatedButton(
           onPressed: () {
             if (!this.isEmpty) {

@@ -1,10 +1,11 @@
-
-
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
@@ -13,12 +14,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Globals.dart';
 
-void main(){
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  // final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+  // Future signInAnon() async {
+  //   try {
+  //     auth.UserCredential result = await _auth.signInAnonymously();
+  //     auth.User user = result.user;
+  //     return user;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
+
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -29,14 +43,14 @@ class _MyAppState extends State<MyApp> {
   Future mongoConnectFuture;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     Globals.db = new Mongo();
     mongoConnectFuture = Globals.db.connect();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     Globals.db.db.close();
   }
@@ -47,40 +61,41 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           body: Container(
-            child: FutureBuilder(
-              future: mongoConnectFuture,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return Text('none');
-                  case ConnectionState.active:
-                  case ConnectionState.waiting:
-                    return Center(
-                      child: LoadingBouncingGrid.square(
-                        borderColor: Colors.teal[400],
-                        backgroundColor: Colors.teal[400],
-                        size: 80.0,
-                      ),
-                    );
-                  case ConnectionState.done:
-                  // TODO REMOVE THIS CODE WHEN THE CURRENT USER IS READY TO GO
-                  // getUser by mail
-                    var current_user = Globals.db.getUser("4yonatan4@gmail.com");
-                    return FutureBuilder(
-                        future: current_user,
-                        builder: (BuildContext context, AsyncSnapshot<User> snapshot){
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const CircularProgressIndicator();
-                            default:
-                            // Update global current_user
-                              Globals.currentUser = snapshot.data;
-                              return Login();
-                          }
-                        });
-                // TODO CODE TO REMOVE - UNTIL HERE
-                // TODO - CODE OF SAVING DATA IN USER PHONE
-                /*
+        child: FutureBuilder(
+          future: mongoConnectFuture,
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return Text('none');
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Center(
+                  child: LoadingBouncingGrid.square(
+                    borderColor: Colors.teal[400],
+                    backgroundColor: Colors.teal[400],
+                    size: 80.0,
+                  ),
+                );
+              case ConnectionState.done:
+                // TODO REMOVE THIS CODE WHEN THE CURRENT USER IS READY TO GO
+                // getUser by mail
+                var current_user = Globals.db.getUser("4yonatan4@gmail.com");
+                return FutureBuilder(
+                    future: current_user,
+                    builder:
+                        (BuildContext context, AsyncSnapshot<User> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const CircularProgressIndicator();
+                        default:
+                          // Update global current_user
+                          Globals.currentUser = snapshot.data;
+                          return HomePage();
+                      }
+                    });
+              // TODO CODE TO REMOVE - UNTIL HERE
+              // TODO - CODE OF SAVING DATA IN USER PHONE
+              /*
                     // // return ProfileScreen();
                     // _email = _prefs.then((prefs) {
                     //   return (prefs.getString('email') ?? "");
@@ -125,13 +140,12 @@ class _MyAppState extends State<MyApp> {
                     //     });
                     // break;
                      */
-                  default:
-                    return Text('default');
-                }
-              },
-            ),
-          )
-      ),
+              default:
+                return Text('default');
+            }
+          },
+        ),
+      )),
     );
   }
 }

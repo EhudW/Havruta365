@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1013165410865",
+    "project_id": "havruta-project-d114d",
+    "storage_bucket": "havruta-project-d114d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013165410865:android:54b04f6dc8201a3f7c2310",
+        "android_client_info": {
+          "package_name": "com.example.havruta_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013165410865-a0lnpts3e1bdet8kc2ptieivt071r9bh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo7lvRh-sn9FdUHYLkv_QP5mqkIAwwt0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013165410865-a0lnpts3e1bdet8kc2ptieivt071r9bh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

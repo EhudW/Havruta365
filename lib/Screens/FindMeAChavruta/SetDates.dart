@@ -109,8 +109,8 @@ class _SetDateCreateState extends State<SetDate> {
   @override
   Widget build(BuildContext context) {
     ScreenScaler scaler = ScreenScaler();
-    spaceBetween = scaler.getHeight(2);
-    spaceBetweenTimes = scaler.getHeight(1.5);
+    spaceBetween = scaler.getHeight(4);
+    spaceBetweenTimes = scaler.getHeight(2);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -141,7 +141,7 @@ class _SetDateCreateState extends State<SetDate> {
                               children: [
                                 Padding(
                                     padding: EdgeInsets.only(
-                                        right: scaler.getWidth(24))),
+                                        right: scaler.getWidth(28))),
                                 Text(
                                   "תאריך",
                                   textAlign: TextAlign.end,
@@ -153,7 +153,7 @@ class _SetDateCreateState extends State<SetDate> {
                               ],
                             ),
                             SizedBox(
-                              height: 5,
+                              height: scaler.getHeight(0.5),
                             ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -161,8 +161,8 @@ class _SetDateCreateState extends State<SetDate> {
                               children: [
                                 ConstrainedBox(
                                   constraints: BoxConstraints.tightFor(
-                                      width: scaler.getWidth(28),
-                                      height: scaler.getHeight(2)),
+                                      width: scaler.getWidth(31),
+                                      height: scaler.getHeight(3)),
                                   child: ElevatedButton(
                                     onPressed: () => pickDate(context),
                                     style: ElevatedButton.styleFrom(
@@ -187,7 +187,7 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             Padding(
                                 padding: EdgeInsets.only(
-                                    right: scaler.getWidth(18.5))),
+                                    right: scaler.getWidth(23.5))),
                             Text(
                               "זמן התחלה",
                               textAlign: TextAlign.end,
@@ -199,7 +199,7 @@ class _SetDateCreateState extends State<SetDate> {
                           ],
                         ),
                         SizedBox(
-                          height: 5,
+                          height: scaler.getHeight(0.5),
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -207,8 +207,8 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
-                                  width: scaler.getWidth(28),
-                                  height: scaler.getHeight(2)),
+                                  width: scaler.getWidth(31),
+                                  height: scaler.getHeight(3)),
                               child: ElevatedButton(
                                 onPressed: () => pickStartTime(context),
                                 style: ElevatedButton.styleFrom(
@@ -231,7 +231,7 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             Padding(
                                 padding: EdgeInsets.only(
-                                    right: scaler.getWidth(22))),
+                                    right: scaler.getWidth(26.5))),
                             Text(
                               "זמן סיום",
                               textAlign: TextAlign.end,
@@ -243,7 +243,7 @@ class _SetDateCreateState extends State<SetDate> {
                           ],
                         ),
                         SizedBox(
-                          height: 5,
+                          height: scaler.getHeight(0.5),
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -251,8 +251,8 @@ class _SetDateCreateState extends State<SetDate> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
-                                  width: scaler.getWidth(28),
-                                  height: scaler.getHeight(2)),
+                                  width: scaler.getWidth(31),
+                                  height: scaler.getHeight(3)),
                               child: ElevatedButton(
                                 onPressed: () => pickEndTime(context),
                                 style: ElevatedButton.styleFrom(
@@ -288,7 +288,7 @@ class _SetDateCreateState extends State<SetDate> {
                             ),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    right: scaler.getWidth(15))),
+                                    right: scaler.getWidth(21))),
                             ElevatedButton(
                               onPressed: () => saveData(),
                               style: ElevatedButton.styleFrom(
