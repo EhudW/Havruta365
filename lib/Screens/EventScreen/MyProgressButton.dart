@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/EventScreen/JoinButton.dart';
 import 'package:progress_state_button/progress_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyProgressButton extends StatefulWidget {
   MyProgressButton({Key key, this.event}) : super(key: key);
@@ -49,7 +51,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
           style: textStyle,
         ),
         ButtonState.success: Text(
-          "!נרשמת בהצלחה",
+          "!היכנס לשיעור",
           style: textStyle,
         )
       },
@@ -120,6 +122,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         // stateOnlyText = ButtonState.fail;
           break;
         case ButtonState.success:
+          _launchURL();
           break;
         case ButtonState.fail:
         // stateOnlyText = ButtonState.success;
@@ -128,4 +131,12 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     });
   }
 
+  _launchURL() async {
+    var url = widget.event.link;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

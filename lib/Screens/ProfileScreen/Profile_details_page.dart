@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ProfileScreen/interestsList.dart';
 import 'package:havruta_project/Screens/ProfileScreen/profile_details_column.dart';
 import 'package:havruta_project/Screens/UserScreen/user_details_column.dart';
@@ -24,7 +25,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
       child: Column(
         children: [
           ProfileDetailHeader(widget.user),
-          SizedBox(height: 5),
+          SizedBox(height: Globals.scaler.getHeight(5)),
           Divider(
             thickness: 2.0,
             indent: 10,
