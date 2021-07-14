@@ -2,19 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
-import 'Login3.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
-import 'package:intl/intl.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
-import 'Login2.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class LoginDetails extends StatefulWidget {
   @override
@@ -52,7 +48,7 @@ class _HomePageState extends State<LoginDetails> {
         style: ElevatedButton.styleFrom(
             alignment: Alignment.center,
             minimumSize:
-                Size(Globals.scaler.getWidth(35), Globals.scaler.getHeight(3)),
+                Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(2)),
             shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(38.0),
             ),
@@ -60,67 +56,74 @@ class _HomePageState extends State<LoginDetails> {
             // <-- Button color
             onPrimary: Colors.teal),
         onPressed: () async {
-          // gender.text == 'Gender.Female' ? gender_str = 'F' : gender_str = 'M';
-          // if (_dateTime == null) {
-          //   _dateTime = DateTime.now();
-          // }
-          // ;
-          // print(_dateTime);
-          // name_str = name.text;
-          // password_str = password.text;
-          // password_con_str = password_con.text;
-          // mail_str = mail.text;
-          // if (password_con_str.isEmpty ||
-          //     password_con_str == null ||
-          //     password_str.isEmpty ||
-          //     password_str == null ||
-          //     mail_str.isEmpty ||
-          //     mail_str == null ||
-          //     name_str.isEmpty ||
-          //     name_str == null) {
-          //   Flushbar(
-          //     title: 'שגיאה בהרשמה',
-          //     messageText: Text('ודא שמילאת את כל השדות',
-          //         textAlign: TextAlign.center,
-          //         style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-          //     duration: Duration(seconds: 3),
-          //   )..show(context);
-          //   return;
-          // }
-          // // Check if the passwords are equals
-          // if (password_str != password_con_str) {
-          //   Flushbar(
-          //     title: 'שגיאה בהרשמה',
-          //     messageText: Text('סיסמאות לא תואמות',
-          //         textAlign: TextAlign.center,
-          //         style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-          //     duration: Duration(seconds: 3),
-          //   )..show(context);
-          //   return;
-          // }
-          // bool userExist = await Globals.db.isUserExist(mail_str);
-          // if (userExist) {
-          //   Flushbar(
-          //     title: 'שגיאה בהרשמה',
-          //     messageText: Text('קיים חשבון עבור מייל זה',
-          //         textAlign: TextAlign.center,
-          //         style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-          //     duration: Duration(seconds: 3),
-          //   )..show(context);
-          //   return;
-          // }
-          // User user = new User();
-          // Globals.currentUser = user;
-          // user.email = mail_str;
-          // user.name = name_str;
-          // user.gender = gender_str;
-          // user.birthDate = _dateTime;
-          // user.password = password_str;
-          // var res = Globals.db.insertNewUser(user);
-          // print("Registration Succeeded");
+          gender.text == 'Gender.Female' ? gender_str = 'F' : gender_str = 'M';
+          if (_dateTime == null) {
+            _dateTime = DateTime.now();
+          }
+          ;
+          user_name_str = user_name.text;
+          address_str = address.text;
+          name_str = name.text;
+          password_str = password.text;
+          password_con_str = password_con.text;
+          mail_str = mail.text;
+          if (password_con_str.isEmpty ||
+              password_con_str == null ||
+              password_str.isEmpty ||
+              password_str == null ||
+              mail_str.isEmpty ||
+              mail_str == null ||
+              address_str.isEmpty ||
+              address_str == null ||
+              user_name_str.isEmpty ||
+              user_name_str == null ||
+              name_str.isEmpty ||
+              name_str == null) {
+            Flushbar(
+              title: 'שגיאה בהרשמה',
+              messageText: Text('ודא שמילאת את כל השדות',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+              duration: Duration(seconds: 3),
+            )..show(context);
+            return;
+          }
+          // Check if the passwords are equals
+          if (password_str != password_con_str) {
+            Flushbar(
+              title: 'שגיאה בהרשמה',
+              messageText: Text('סיסמאות לא תואמות',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+              duration: Duration(seconds: 3),
+            )..show(context);
+            return;
+          }
+          bool userExist = await Globals.db.isUserExist(mail_str);
+          if (userExist) {
+            Flushbar(
+              title: 'שגיאה בהרשמה',
+              messageText: Text('קיים חשבון עבור מייל זה',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+              duration: Duration(seconds: 3),
+            )..show(context);
+            return;
+          }
+          User user = new User();
+          user.address = address_str;
+          user.userName = user_name_str;
+          user.email = mail_str;
+          user.name = name_str;
+          user.gender = gender_str;
+          user.birthDate = _dateTime;
+          user.password = password_str;
+          Globals.currentUser = user;
+          var res = Globals.db.insertNewUser(user);
+          print("Registration Succeeded");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => LoginMoreDetails(mail_str)),
+            MaterialPageRoute(builder: (context) => LoginMoreDetails()),
           );
         },
       ),
@@ -180,12 +183,12 @@ class _HomePageState extends State<LoginDetails> {
 newFiled(controller, str, text, icon, cover) {
   return new  FadeAnimation(
       1.7, Column(children: <Widget>[
-    SizedBox(height: Globals.scaler.getHeight(1.5)),
+    SizedBox(height: Globals.scaler.getHeight(1)),
     Center(
       child: Container(
         alignment: AlignmentDirectional.center,
-        width: Globals.scaler.getWidth(35),
-        height: Globals.scaler.getWidth(6),
+        width: Globals.scaler.getWidth(32),
+        height: Globals.scaler.getWidth(4),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.all(
@@ -226,7 +229,7 @@ newFiled(controller, str, text, icon, cover) {
 
 Widget genderField(gender_str) {
   return Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-    SizedBox(width: Globals.scaler.getWidth(6)),
+    SizedBox(width: Globals.scaler.getWidth(2)),
     Expanded(
       child: GenderPickerWithImage(
         maleText: 'גבר',

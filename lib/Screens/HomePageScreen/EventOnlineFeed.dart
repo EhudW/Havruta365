@@ -32,7 +32,7 @@ class EventOnlineFeed extends StatelessWidget {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: Colors.white)))
+                        color: Colors.black)))
           ),
         ]),
         Positioned.fill(

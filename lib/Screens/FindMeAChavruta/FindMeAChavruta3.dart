@@ -32,7 +32,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
 
   Widget checkIfShiur(ScreenScaler scaler) {
     print("Event type" + widget.event.type);
-    if (widget.event.type == 'שיעור') {
+    if (widget.event.type == 'L') {
       return Container(
         height: scaler.getHeight(1.5),
         width: scaler.getWidth(33),

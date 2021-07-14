@@ -4,6 +4,9 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+import 'package:intl/intl.dart' as intl;
+import 'package:havruta_project/DataBase_auth/User.dart';
+
 
 class EventViewFeed extends StatelessWidget {
   final Event event;
@@ -17,6 +20,8 @@ class EventViewFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenScaler scaler = new ScreenScaler();
+    var user = Globals.db.getUser(event.creatorUser);
+
     return Material(
         child: InkWell(
             splashColor: Colors.teal[400],
@@ -78,7 +83,7 @@ class EventViewFeed extends StatelessWidget {
                                           //mainAxisAlignment: MainAxisAlignment.end,
                                           children: <Widget>[
                                             Text(
-                                              event.book,
+                                              event.dates[0].toString().substring(0, 10),
                                               textDirection: TextDirection.rtl,
                                               textAlign: TextAlign.right,
                                               style: TextStyle(
@@ -124,8 +129,8 @@ class EventViewFeed extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          event.topic,
-                          style: TextStyle(color: Colors.grey.shade600),
+                          this.event.type == 'L' ?event.lecturer: event.creatorUser,
+     style: TextStyle(color: Colors.grey.shade600, fontSize: scaler.getTextSize(5)),
                         ),
                       ],
                     ),

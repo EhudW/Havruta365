@@ -1,12 +1,12 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/LoginDetails.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
-import 'Login2.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 
 class Login extends StatefulWidget {
@@ -36,7 +36,7 @@ class _HomePageState extends State<Login> {
                 child: Stack(
                   children: <Widget>[
                     Positioned(
-                      top: -60,
+                      top: -70,
                       height: 300,
                       width: width,
                       child: FadeAnimation(
@@ -115,6 +115,7 @@ class _HomePageState extends State<Login> {
                               Container(
                                 padding: EdgeInsets.all(10),
                                 child: TextField(
+                                    obscureText:  true,
                                     controller: password,
                                     textAlign: TextAlign.center,
                                     decoration: InputDecoration(
@@ -170,7 +171,7 @@ class _HomePageState extends State<Login> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Login2()),
+                                      builder: (context) => HomePage()),
                                 );
                               }
                             },
@@ -209,7 +210,7 @@ class _HomePageState extends State<Login> {
                                     image: NetworkImage(
                                         "https://assets.materialup.com/uploads/82eae29e-33b7-4ff7-be10-df432402b2b6/preview"),
                                     width: 30,
-                                    height: 30),
+                                    height: 20),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: Text(

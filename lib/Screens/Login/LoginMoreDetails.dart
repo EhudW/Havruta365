@@ -10,9 +10,7 @@ import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 
 class LoginMoreDetails extends StatefulWidget {
-  LoginMoreDetails(this.email);
 
-  final String email;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -20,9 +18,9 @@ class LoginMoreDetails extends StatefulWidget {
 
 class _HomePageState extends State<LoginMoreDetails> {
   final yeshiva = TextEditingController();
-  String yeshiva_str = "";
+  String yeshiva_str = " ";
   final description = TextEditingController();
-  String description_str = "";
+  String description_str = " ";
   final status = TextEditingController();
   String status_str = "סטטוס משפחתי";
 
@@ -40,7 +38,7 @@ class _HomePageState extends State<LoginMoreDetails> {
         style: ElevatedButton.styleFrom(
             alignment: Alignment.center,
             minimumSize:
-                Size(Globals.scaler.getWidth(35), Globals.scaler.getHeight(3)),
+                Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(2)),
             shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(38.0),
             ),
@@ -48,6 +46,13 @@ class _HomePageState extends State<LoginMoreDetails> {
             // <-- Button color
             onPrimary: Colors.teal),
         onPressed: () async {
+          yeshiva_str = yeshiva.text;
+          description_str = description.text;
+          status_str = status.text;
+          Globals.currentUser.yeshiva = yeshiva_str;
+          Globals.currentUser.description = description_str;
+          Globals.currentUser.status = status_str;
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
@@ -67,13 +72,13 @@ class _HomePageState extends State<LoginMoreDetails> {
                     fontSize: 18,
                     color: Colors.teal[400]),
                 )),
-            SizedBox(height: Globals.scaler.getHeight(10)),
+            SizedBox(height: Globals.scaler.getHeight(6)),
 
       FadeAnimation(1.7,
               Container(
                   alignment: AlignmentDirectional.centerEnd,
                   width: Globals.scaler.getWidth(20),
-                  height: Globals.scaler.getWidth(5.5),
+                  height: Globals.scaler.getWidth(4),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: const BorderRadius.all(
@@ -114,9 +119,9 @@ class _HomePageState extends State<LoginMoreDetails> {
                   )),
             ),
             newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
-                6.0),
+                4.0),
             newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
-                FontAwesomeIcons.list, 10.0),
+                FontAwesomeIcons.list, 8.0),
             SizedBox(height: Globals.scaler.getHeight(4)),
           ],
         ),
@@ -129,11 +134,11 @@ newFiled(controller, str, text, icon, size) {
   return FadeAnimation(
       1.7,
     new Column(children: <Widget>[
-      SizedBox(height: Globals.scaler.getHeight(1.5)),
+      SizedBox(height: Globals.scaler.getHeight(1)),
       Center(
         child: Container(
           alignment: AlignmentDirectional.center,
-          width: Globals.scaler.getWidth(35),
+          width: Globals.scaler.getWidth(32),
           height: Globals.scaler.getWidth(size),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -177,11 +182,11 @@ newFiled1(controller, str, text, icon, size) {
   return FadeAnimation(
     1.7,
     new Column(children: <Widget>[
-      SizedBox(height: Globals.scaler.getHeight(1.5)),
+      SizedBox(height: Globals.scaler.getHeight(1)),
       Center(
         child: Container(
           alignment: AlignmentDirectional.center,
-          width: Globals.scaler.getWidth(35),
+          width: Globals.scaler.getWidth(32),
           height: Globals.scaler.getWidth(size),
           decoration: BoxDecoration(
             color: Colors.white,
