@@ -20,13 +20,17 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
 
   @override
   Widget build(BuildContext context) {
-    var size_header = 24.0;
-    var icon_size = 35.0;
+    var size_header = Globals.scaler.getTextSize(8.5);
+    var icon_size = Globals.scaler.getTextSize(11);
     return Expanded(
       child: SingleChildScrollView(
         child: Column(children: [
           Container(
-            margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
+            margin: EdgeInsets.fromLTRB(
+                Globals.scaler.getWidth(2.5),
+                Globals.scaler.getHeight(0),
+                Globals.scaler.getWidth(2.5),
+                Globals.scaler.getHeight(0.8)),
             child: ExpansionPanelList(
               animationDuration: Duration(milliseconds: 500),
               children: [
@@ -35,12 +39,17 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: Globals.scaler.getHeight(1.8))),
                         Text("השיעורים שלי",
                             style: GoogleFonts.secularOne(
+                                textStyle: TextStyle(
+                                    color: Colors.black, letterSpacing: .5),
                                 fontSize: size_header,
                                 fontWeight: FontWeight.bold),
                             textDirection: TextDirection.rtl),
-                        SizedBox(width: 20.0),
+                        SizedBox(width: Globals.scaler.getWidth(1)),
                         Icon(
                           FontAwesomeIcons.graduationCap,
                           size: icon_size,
@@ -65,21 +74,26 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               // TODO open box with all events of the user
             },
             child: Container(
-              height: 55,
-              width: 350,
+              height: Globals.scaler.getHeight(3),
+              width: Globals.scaler.getWidth(33.5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
-                  border: Border.all(width: 1, color: Colors.grey[350]),
+                  border: Border.all(width: 0.5, color: Colors.grey[350]),
                   color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Padding(
+                        padding:
+                            EdgeInsets.only(left: Globals.scaler.getWidth(0))),
                     Text("עדכון פרטים",
                         style: GoogleFonts.secularOne(
                             fontSize: size_header,
-                            fontWeight: FontWeight.bold),
+                            fontWeight: FontWeight.bold,
+                            textStyle: TextStyle(
+                                color: Colors.black, letterSpacing: .5)),
                         textDirection: TextDirection.rtl),
-                    SizedBox(width: 20.0),
+                    SizedBox(width: Globals.scaler.getWidth(1.5)),
                     Icon(
                       FontAwesomeIcons.userEdit,
                       size: icon_size,
@@ -89,7 +103,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: Globals.scaler.getHeight(0.8),
           ),
           GestureDetector(
             onTap: () {
@@ -105,16 +119,18 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(width: 1, color: Colors.grey[350]),
-              color: Colors.white),
+                  color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Padding(
+                        padding:
+                            EdgeInsets.only(left: Globals.scaler.getWidth(3))),
                     Text("התנתק",
                         style: GoogleFonts.secularOne(
-                            fontSize: size_header,
-                            fontWeight: FontWeight.bold),
+                            fontSize: size_header, fontWeight: FontWeight.bold),
                         textDirection: TextDirection.rtl),
-                    SizedBox(width: 20.0),
+                    SizedBox(width: Globals.scaler.getWidth(5)),
                     Icon(
                       FontAwesomeIcons.signOutAlt,
                       size: icon_size,

@@ -9,7 +9,6 @@ import 'package:havruta_project/Screens/EventScreen/Event_api.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 
-
 class EventsScroller extends StatefulWidget {
   EventsScroller(this.userMail);
 
@@ -32,15 +31,15 @@ class _EventsScrollerState extends State<EventsScroller> {
   Widget _buildEvent(BuildContext ctx, int index) {
     var event = events[index];
     return Padding(
-      padding: const EdgeInsets.only(right: 16.0),
+      padding: EdgeInsets.only(right: Globals.scaler.getWidth(1.5)),
       child: Column(
         children: [
           CircleAvatar(
             backgroundImage: NetworkImage(event.eventImage),
-            radius: 40.0,
+            radius: 30.0,
             child: IconButton(
                 icon: Icon(FontAwesomeIcons.houseUser),
-                iconSize: 40.0,
+                iconSize: Globals.scaler.getWidth(5),
                 color: Colors.white.withOpacity(0),
                 onPressed: () {
                   Navigator.push(
@@ -51,13 +50,12 @@ class _EventsScrollerState extends State<EventsScroller> {
                 }),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: EdgeInsets.only(top: Globals.scaler.getHeight(0)),
             child: Column(
               children: [
                 Text(event.book,
                     style: GoogleFonts.secularOne(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
+                        fontSize: 12, fontWeight: FontWeight.bold),
                     textDirection: TextDirection.rtl),
                 Text(event.lecturer)
               ],
@@ -70,42 +68,41 @@ class _EventsScrollerState extends State<EventsScroller> {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme
-        .of(context)
-        .textTheme;
-    return FutureBuilder(future: eventsList, builder: (context, snapshot)
-    {
-      switch (snapshot.connectionState) {
-        case ConnectionState.none:
-          return Text('none');
-        case ConnectionState.active:
-        case ConnectionState.waiting:
-          return Center(
-            child: LoadingBouncingGrid.circle(
-              borderColor: Colors.teal[400],
-              backgroundColor: Colors.teal[400],
-              size: 40.0,
-            ),
-          );
-        case ConnectionState.done:
-          events = snapshot.data;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox.fromSize(
-                size: const Size.fromHeight(140.0),
-                child: ListView.builder(
-                  itemCount: events.length,
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(top: 0, left: 20.0),
-                  itemBuilder: _buildEvent,
+    var textTheme = Theme.of(context).textTheme;
+    return FutureBuilder(
+        future: eventsList,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Text('none');
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return Center(
+                child: LoadingBouncingGrid.circle(
+                  borderColor: Colors.teal[400],
+                  backgroundColor: Colors.teal[400],
+                  size: 40.0,
                 ),
-              ),
-            ],
-          );
-        default:
-          return Text('default');
-      }
-    });
+              );
+            case ConnectionState.done:
+              events = snapshot.data;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox.fromSize(
+                    size: Size.fromHeight(Globals.scaler.getHeight(5)),
+                    child: ListView.builder(
+                      itemCount: events.length,
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.only(top: 0, left: 20.0),
+                      itemBuilder: _buildEvent,
+                    ),
+                  ),
+                ],
+              );
+            default:
+              return Text('default');
+          }
+        });
   }
 }

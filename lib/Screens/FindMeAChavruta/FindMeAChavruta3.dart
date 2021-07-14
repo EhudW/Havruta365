@@ -10,8 +10,6 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'Wavy_Header.dart';
-
-//import 'package:path/path.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 ScreenScaler scaler = ScreenScaler();
@@ -29,9 +27,7 @@ class FindMeAChavruta3 extends StatefulWidget {
 class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   final AuthService authenticate = AuthService();
   var mongoDB = Globals.db;
-  PickedFile _imageFile;
   File image;
-  final ImagePicker _picker = ImagePicker();
   final yeshiva = TextEditingController();
   String yeshiva_str = "";
   final details = TextEditingController();
@@ -40,7 +36,6 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   double spaceBetween;
 
   Widget checkIfShiur(ScreenScaler scaler) {
-    print("Event type" + widget.event.type);
     if (widget.event.type == 'L') {
       return Container(
         height: scaler.getHeight(2.5),
@@ -191,8 +186,10 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                     widget.event.creationDate = DateTime.now();
                                     widget.event.participants = [];
                                     widget.event.creatorUser = "";
-                                    // widget.event.eventImage =
-                                    //     'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+                                    if (widget.event.eventImage == "") {
+                                      widget.event.eventImage =
+                                          'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+                                    }
                                     mongoDB.insertEvent(widget.event).then(
                                         (value) => Navigator.push(
                                             context,
@@ -313,10 +310,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     }
     image = await picker.getImage(source: source);
     var file = File(image.path);
-
     //check if an image was picked
     if (image != null) {
-      //final destination = 'folderName/imageName';
       var snapshot =
           await _storage.ref().child('folderName/imageName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();

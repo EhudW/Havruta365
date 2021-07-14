@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:havruta_project/Screens/EventScreen/JoinButton.dart';
+//import 'package:havruta_project/Screens/EventScreen/JoinButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
 import 'package:havruta_project/Screens/EventScreen/datesList.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,10 +9,9 @@ import 'Partcipients_scroller.dart';
 import 'Event_detail_header.dart';
 import 'story_line.dart';
 
-
 class EventDetailsPage extends StatefulWidget {
   Event event;
-  EventDetailsPage(Event event){
+  EventDetailsPage(Event event) {
     this.event = event;
   }
 
@@ -21,7 +20,6 @@ class EventDetailsPage extends StatefulWidget {
 }
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

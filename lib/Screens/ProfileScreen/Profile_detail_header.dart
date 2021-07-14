@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/Globals.dart';
 import 'arc_banner_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,7 +20,7 @@ class ProfileDetailHeader extends StatelessWidget {
       alignment: AlignmentDirectional.center,
       child: Text(user.name,
           style: GoogleFonts.alef(
-              fontSize: 32,
+              fontSize: Globals.scaler.getTextSize(10),
               textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
               fontWeight: FontWeight.bold),
           textAlign: TextAlign.center),
@@ -28,14 +29,14 @@ class ProfileDetailHeader extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 170.0),
+          padding: EdgeInsets.only(bottom: Globals.scaler.getHeight(8)),
           child: ArcBannerImage(
               "https://static.vecteezy.com/system/resources/previews/001/816/806/non_2x/stack-of-books-on-nature-background-free-photo.jpg"),
         ),
         Positioned(
-          bottom: 0.0,
-          left: 16.0,
-          right: 16.0,
+          bottom: Globals.scaler.getHeight(0),
+          left: Globals.scaler.getWidth(0),
+          right: Globals.scaler.getWidth(0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.end,
