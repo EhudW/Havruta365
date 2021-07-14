@@ -2,11 +2,11 @@ import 'dart:core';
 import 'dart:convert';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'Topic.dart';
-import 'User.dart';
 
 String CONNECT_TO_DB =
     "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havruta?retryWrites=true&w=majority";
@@ -168,8 +168,12 @@ class Mongo {
   // insert new user details
   insertNewUser(User user) async {
     var collection = db.collection('Users');
-    // insert a new User
-    await collection.save(user.toJson());
+    // Check if the user exist
+    var isExist = await collection.findOne(where.eq('email', user.email));
+    if (isExist == null){
+      // insert a new User
+      await collection.save(user.toJson());
+    }
   }
 
   /*
