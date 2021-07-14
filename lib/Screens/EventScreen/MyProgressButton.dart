@@ -1,12 +1,8 @@
-
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Screens/EventScreen/JoinButton.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -59,7 +55,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         ButtonState.idle: Colors.teal[400],
         ButtonState.loading: Colors.grey,
         ButtonState.fail: Colors.red.shade300,
-        ButtonState.success: Colors.green.shade400,
+        ButtonState.success: Colors.redAccent,
       },
       onPressed: onPressedCustomButton,
       state: stateOnlyText,

@@ -39,7 +39,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<String> _email;
+  Future<String> _id;
   Future mongoConnectFuture;
 
   @override
@@ -77,69 +77,48 @@ class _MyAppState extends State<MyApp> {
                   ),
                 );
               case ConnectionState.done:
-                // TODO REMOVE THIS CODE WHEN THE CURRENT USER IS READY TO GO
-                // getUser by mail
-                var current_user = Globals.db.getUser("4yonatan4@gmail.com");
+                _id = _prefs.then((prefs) {
+                  return (prefs.getString('id') ?? "");
+                });
                 return FutureBuilder(
-                    future: current_user,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<User> snapshot) {
+                    future: _id,
+                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                           return const CircularProgressIndicator();
+                        case ConnectionState.done:
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            // Not connected - go to Login
+                            if (snapshot.data == ""){
+                              return Login();
+                            }
+                            // Connected - update current_user and go to home page
+                            else {
+                              var current_user = Globals.db.getUserByID(snapshot.data);
+                              return FutureBuilder(
+                                  future: current_user,
+                                  builder: (BuildContext context, AsyncSnapshot<User> snapshot){
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.waiting:
+                                        return const CircularProgressIndicator();
+                                      case ConnectionState.done:
+                                        Globals.currentUser = snapshot.data;
+                                        return HomePage();
+                                        break;
+                                      default:
+                                        return Text('default');
+                                    }
+                                  });
+                            }
+                          }
+                          break;
                         default:
-                          // Update global current_user
-                          Globals.currentUser = snapshot.data;
-                          return HomePage();
+                          return Text('default');
                       }
                     });
-              // TODO CODE TO REMOVE - UNTIL HERE
-              // TODO - CODE OF SAVING DATA IN USER PHONE
-              /*
-                    // // return ProfileScreen();
-                    // _email = _prefs.then((prefs) {
-                    //   return (prefs.getString('email') ?? "");
-                    // });
-                    // return FutureBuilder(
-                    //     future: _email,
-                    //     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    //       switch (snapshot.connectionState) {
-                    //         case ConnectionState.waiting:
-                    //           return const CircularProgressIndicator();
-                    //         default:
-                    //           if (snapshot.hasError) {
-                    //             return Text('Error: ${snapshot.error}');
-                    //           } else {
-                    //             // Not connected - go to Login
-                    //             if (snapshot.data == ""){
-                    //               // This Code need to be in the last login page - to save the mail locally in the user phone
-                    //               // Future.delayed(Duration(seconds: 2)).then((value) async {
-                    //               //   final SharedPreferences prefs = await _prefs;
-                    //               //   await prefs.setString('email', "4yonatan4@gmail.com");
-                    //               //   print("email updated");
-                    //               // });
-                    //               return Login();
-                    //             }
-                    //             // Connected - update current_user and go to home page
-                    //             else {
-                    //               var current_user = getUser(snapshot.data);
-                    //               return FutureBuilder(
-                    //                   future: current_user,
-                    //                   builder: (BuildContext context, AsyncSnapshot<User> snapshot){
-                    //                     switch (snapshot.connectionState) {
-                    //                       case ConnectionState.waiting:
-                    //                         return const CircularProgressIndicator();
-                    //                       default:
-                    //                         Globals.currentUser = snapshot.data;
-                    //                         return HomePage();
-                    //                     }
-                    //                   });
-                    //             }
-                    //           }
-                    //       }
-                    //     });
-                    // break;
-                     */
+                break;
               default:
                 return Text('default');
             }
@@ -149,3 +128,22 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+
+// // TODO REMOVE THIS CODE WHEN THE CURRENT USER IS READY TO GO
+// // getUser by mail
+// var current_user = Globals.db.getUser("4yonatan4@gmail.com");
+// return FutureBuilder(
+// future: current_user,
+// builder:
+// (BuildContext context, AsyncSnapshot<User> snapshot) {
+// switch (snapshot.connectionState) {
+// case ConnectionState.waiting:
+// return const CircularProgressIndicator();
+// default:
+// // Update global current_user
+// Globals.currentUser = snapshot.data;
+// return Login();
+// }
+// });
+// // TODO CODE TO REMOVE - UNTIL HERE

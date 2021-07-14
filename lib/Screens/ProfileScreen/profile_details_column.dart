@@ -5,6 +5,7 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/ProfileScreen/Events_scroller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileDetailsColumn extends StatefulWidget {
   ProfileDetailsColumn(this.user);
@@ -17,6 +18,7 @@ class ProfileDetailsColumn extends StatefulWidget {
 
 class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
   bool _lesson_expanded = false;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
@@ -106,8 +108,10 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             height: Globals.scaler.getHeight(0.8),
           ),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               // TODO remove mail from local phone and go to Login page
+              final SharedPreferences prefs = await _prefs;
+              await prefs.setString('id', "");
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Login()),

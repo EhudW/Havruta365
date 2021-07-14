@@ -46,6 +46,20 @@ class Mongo {
     return user;
   }
 
+  Future<User> getUserByID(String id) async {
+    var coll = Globals.db.db.collection('Users');
+    print("id is $id");
+    String sub = id.substring(10,34);
+    print(sub);
+    ObjectId obj_id = ObjectId.fromHexString(sub);
+    var user_json = await coll.findOne(where.eq('_id', obj_id));
+    print(user_json);
+    User user = User.fromJson(user_json);
+    return user;
+  }
+
+
+
   Future<List<Event>> searchEvents(String s) async {
     List<Event> data = List<Event>();
     var collection = db.collection('Events');

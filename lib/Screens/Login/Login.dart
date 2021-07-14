@@ -2,6 +2,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/LoginDetails.dart';
+import 'package:mongo_dart_query/mongo_dart_query.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
@@ -19,6 +21,7 @@ class _HomePageState extends State<Login> {
   String mail_str = "";
   final password = TextEditingController();
   String password_str = "";
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +167,13 @@ class _HomePageState extends State<Login> {
                               } else {
                                 // Update current user
                                 Globals.currentUser = res;
+                                var coll = Globals.db.db.collection('Users');
+                                var user_json = await coll.findOne(where.eq('email', Globals.currentUser.email));
+                                // This is ObjectID!!
+
+                                var id = user_json['_id'];
+                                final SharedPreferences prefs = await _prefs;
+                                await prefs.setString('id', id.toString());
                                 // Go to HomePage
                                 Navigator.push(
                                   context,
