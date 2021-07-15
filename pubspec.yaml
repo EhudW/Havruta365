@@ -65,6 +65,10 @@ dev_dependencies:
 
   english_words: ^4.0.0
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "images/AppIcon2.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
