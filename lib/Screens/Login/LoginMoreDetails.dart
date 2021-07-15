@@ -129,7 +129,6 @@ class _HomePageState extends State<LoginMoreDetails> {
                 await prefs.setString('id', id.toString());
                 yeshiva_str = yeshiva.text;
                 description_str = description.text;
-                status_str = status.text;
                 Globals.currentUser.yeshiva = yeshiva_str;
                 Globals.currentUser.description = description_str;
                 Globals.currentUser.status = status_str;
