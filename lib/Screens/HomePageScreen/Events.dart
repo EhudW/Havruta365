@@ -201,6 +201,7 @@ class _EventsState extends State<Events> {
                       disabledBorder: InputBorder.none,
                       hintText: 'חפש חברותא'),
                   onChanged: (text) {
+                    print(text);
                     if (text.toLowerCase() == "" ||text.toLowerCase() == " "||
                         text.toLowerCase() == null) {
                       events.searchData = null;

@@ -52,7 +52,8 @@ class _HomePageState extends State<LoginMoreDetails> {
                     color: Colors.teal[400]),
                 )),
             imageProfile(),
-      FadeAnimation(1.7,
+            SizedBox(height: Globals.scaler.getHeight(1)),
+            FadeAnimation(1.7,
               Container(
                   alignment: AlignmentDirectional.centerEnd,
                   width: Globals.scaler.getWidth(20),

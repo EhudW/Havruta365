@@ -32,16 +32,16 @@ class EventsModel {
   }
 
   Future<List<Event>>  _getExampleServerData(int length) async {
-    if (searchData != null) {
+    if (searchData != null && searchData != "") {
       return Future.delayed(Duration(seconds: 1), () {
         return Globals.db.searchEvents(searchData);
       });
     }
-    if (onlineBit == true){
-      return Future.delayed(Duration(seconds: 1), () {
-        return Globals.db.getSomeEventsOnline(length);
-      });
-    }
+    // if (onlineBit == true){
+    //   return Future.delayed(Duration(seconds: 1), () {
+    //     return Globals.db.getSomeEventsOnline(length);
+    //   });
+    // }
     return Future.delayed(Duration(seconds: 1), () {
       return Globals.db.getSomeEvents(length);
     });
