@@ -93,7 +93,7 @@ class _MyAppState extends State<MyApp> {
                           } else {
                             // Not connected - go to Login
                             if (snapshot.data == ""){
-                              return LoginMoreDetails();
+                              return Login();
                             }
                             // Connected - update current_user and go to home page
                             else {
