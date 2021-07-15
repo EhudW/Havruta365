@@ -8,6 +8,7 @@ import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
+import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,7 +93,7 @@ class _MyAppState extends State<MyApp> {
                           } else {
                             // Not connected - go to Login
                             if (snapshot.data == ""){
-                              return Login();
+                              return LoginMoreDetails();
                             }
                             // Connected - update current_user and go to home page
                             else {

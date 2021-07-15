@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,9 +30,12 @@ class _HomePageState extends State<LoginMoreDetails> {
   final status = TextEditingController();
   String status_str = "סטטוס משפחתי";
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final AuthService authenticate = AuthService();
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       backgroundColor: Colors.teal[100],
@@ -43,7 +51,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                     fontSize: 18,
                     color: Colors.teal[400]),
                 )),
-            SizedBox(height: Globals.scaler.getHeight(8)),
+            imageProfile(),
       FadeAnimation(1.7,
               Container(
                   alignment: AlignmentDirectional.centerEnd,
@@ -124,6 +132,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                 Globals.currentUser.yeshiva = yeshiva_str;
                 Globals.currentUser.description = description_str;
                 Globals.currentUser.status = status_str;
+                Globals.db.updateUser(Globals.currentUser);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HomePage()),
@@ -135,6 +144,118 @@ class _HomePageState extends State<LoginMoreDetails> {
         ),
       ),
     );
+
+  }
+  Widget imageProfile() {
+    return Center(
+      child: Stack(children: <Widget>[
+        CircleAvatar(
+          radius: 60.0,
+          backgroundColor: Colors.teal,
+          // child: ClipOval(
+          //     child: SizedBox(
+          //         width: scaler.getWidth(10),
+          //         height: scaler.getHeight(3.6),
+          //         child: (image != null)
+          //             ? Image.file(image, fit: BoxFit.fill)
+          //             : null))),
+          // : Image.network(
+          //     'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg')),
+
+          backgroundImage: (Globals.currentUser.avatar != null)
+              ? NetworkImage(Globals.currentUser.avatar)
+              : null,
+        ),
+        Positioned(
+          bottom: 35.0,
+          right: 45.0,
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: ((builder) => bottomSheet()),
+              );
+            },
+            child: Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+              size: 28.0,
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget bottomSheet() {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: Globals.scaler.getWidth(3),
+        vertical: Globals.scaler.getHeight(1),
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            "בחר תמונה",
+            style: TextStyle(
+              fontSize: Globals.scaler.getTextSize(8.5),
+            ),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(1),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            TextButton.icon(
+              icon: Icon(Icons.camera),
+              onPressed: () async {
+                uploadImage(ImageSource.camera);
+                Navigator.pop(context);
+              },
+              label: Text("Camera"),
+            ),
+            TextButton.icon(
+              icon: Icon(Icons.image),
+              onPressed: () {
+                uploadImage(ImageSource.gallery);
+                Navigator.pop(context);
+              },
+              label: Text("Gallery"),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+
+  Future<File> uploadImage(source) async {
+    final _storage = FirebaseStorage.instance;
+    PickedFile image;
+    final picker = ImagePicker();
+    dynamic result = await authenticate.signInAnon();
+    if (result == null) {
+      print("error signing in");
+    } else {
+      print('signed in');
+      print(result.uid);
+    }
+    image = await picker.getImage(source: source);
+    var file = File(image.path);
+    //check if an image was picked
+    if (image != null) {
+      var snapshot =
+      await _storage.ref().child('folderName/imageName').putFile(file);
+      var downloadUrl = await snapshot.ref.getDownloadURL();
+      setState(() {
+        Globals.currentUser.avatar = downloadUrl;
+      });
+    } else {
+      setState(() {
+        Globals.currentUser.avatar =
+        'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+      });
+    }
   }
 }
 

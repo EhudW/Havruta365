@@ -190,6 +190,19 @@ class Mongo {
     }
   }
 
+  updateUser(User user) async {
+    var collection = db.collection('Users');
+    // Check if the user exist
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('yeshiva', user.yeshiva));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('description', user.description));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('status', user.status));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('avatar', user.avatar));
+    }
+
   /*
   Remove user from the DB according to the mail.
    */
