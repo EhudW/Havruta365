@@ -126,10 +126,6 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                               maxLines: 1,
                               onChanged: (link) {
                                 widget.event.link = link;
-                                print("Link" + widget.event.link);
-                                if (widget.event.link == null) {
-                                  widget.event.link = "";
-                                }
                               },
                             )),
                       ],
@@ -217,26 +213,23 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   Widget imageProfile(ScreenScaler scaler) {
     return Center(
       child: Stack(children: <Widget>[
-        CircleAvatar(
-          radius: 60.0,
-          backgroundColor: Colors.teal,
-          // child: ClipOval(
-          //     child: SizedBox(
-          //         width: scaler.getWidth(10),
-          //         height: scaler.getHeight(3.6),
-          //         child: (image != null)
-          //             ? Image.file(image, fit: BoxFit.fill)
-          //             : null))),
-          // : Image.network(
-          //     'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg')),
-
-          backgroundImage: (widget.event.eventImage != null)
-              ? NetworkImage(widget.event.eventImage)
-              : null,
+        FlatButton(
+          color: Colors.transparent,
+          onPressed: () {
+            showModalBottomSheet(
+                context: context, builder: ((builder) => bottomSheet()));
+          },
+          child: CircleAvatar(
+            radius: 60.0,
+            backgroundColor: Colors.teal,
+            backgroundImage: (widget.event.eventImage != null)
+                ? NetworkImage(widget.event.eventImage)
+                : null,
+          ),
         ),
         Positioned(
-          bottom: 35.0,
-          right: 45.0,
+          bottom: scaler.getHeight(1.5),
+          right: scaler.getWidth(4.3),
           child: InkWell(
             onTap: () {
               showModalBottomSheet(
@@ -247,7 +240,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             child: Icon(
               Icons.camera_alt,
               color: Colors.white,
-              size: 28.0,
+              size: scaler.getTextSize(11),
             ),
           ),
         ),

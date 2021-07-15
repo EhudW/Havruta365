@@ -43,7 +43,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                       children: <Widget>[
                         Padding(
                             padding: EdgeInsets.only(
-                                left: Globals.scaler.getHeight(1.8))),
+                                left: Globals.scaler.getWidth(2.5))),
                         Text("השיעורים שלי",
                             style: GoogleFonts.secularOne(
                                 textStyle: TextStyle(
@@ -77,7 +77,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             },
             child: Container(
               height: Globals.scaler.getHeight(3),
-              width: Globals.scaler.getWidth(33.5),
+              width: Globals.scaler.getWidth(32.5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(width: 0.5, color: Colors.grey[350]),
@@ -118,8 +118,8 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               );
             },
             child: Container(
-              height: 55,
-              width: 350,
+              height: Globals.scaler.getHeight(3),
+              width: Globals.scaler.getWidth(32.5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(width: 1, color: Colors.grey[350]),

@@ -5,6 +5,7 @@ import 'package:havruta_project/Screens/UserScreen/contact_buttons.dart';
 import 'package:havruta_project/Screens/UserScreen/user_details_column.dart';
 import 'User_detail_header.dart';
 import 'interestsList.dart';
+import 'package:havruta_project/Globals.dart';
 
 class UserDetailsPage extends StatefulWidget {
   User user;
@@ -25,20 +26,25 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
         child: Column(
           children: [
             UserDetailHeader(widget.user),
-            SizedBox(height: 5),
+            SizedBox(height: Globals.scaler.getHeight(0.5)),
             // Contact buttons
             Center(
               child: ContactButtons(widget.user),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: Globals.scaler.getHeight(0.5)),
             Divider(
               thickness: 2.0,
               indent: 10,
               endIndent: 10,
             ),
-            SizedBox(height: 15),
+            SizedBox(height: Globals.scaler.getHeight(0.5)),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
+              padding: EdgeInsets.fromLTRB(
+                Globals.scaler.getHeight(0),
+                Globals.scaler.getWidth(0),
+                Globals.scaler.getHeight(0),
+                Globals.scaler.getHeight(0.5),
+              ),
               child: UserDetailsColumn(widget.user),
             ),
             Divider(
@@ -47,7 +53,11 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
               endIndent: 10,
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20),
+              padding: EdgeInsets.fromLTRB(
+                  Globals.scaler.getWidth(2),
+                  Globals.scaler.getHeight(0),
+                  Globals.scaler.getWidth(2),
+                  Globals.scaler.getHeight(0)),
               child: InterestsList(widget.user.interestList),
             ),
             // MyProgressButton(id: widget.event.id, link: widget.event.link),

@@ -28,10 +28,10 @@ class InterestsList extends StatelessWidget {
             color: Colors.grey[600],
           ),
         ]),
-        SizedBox(height: 15),
+        //SizedBox(height: 15),
         ConstrainedBox(
           constraints: new BoxConstraints(
-            maxHeight: 90,
+            maxHeight: 120,
           ),
           child: ListView.builder(
             physics: ClampingScrollPhysics(),
