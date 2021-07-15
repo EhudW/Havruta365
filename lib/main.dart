@@ -92,8 +92,8 @@ class _MyAppState extends State<MyApp> {
                             return Text('Error: ${snapshot.error}');
                           } else {
                             // Not connected - go to Login
-                            if (snapshot.data == ""){
-                              return Login();
+                            if (true){
+                              return LoginMoreDetails();
                             }
                             // Connected - update current_user and go to home page
                             else {
