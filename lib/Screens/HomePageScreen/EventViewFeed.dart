@@ -125,14 +125,17 @@ class EventViewFeed extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          this.event.type == 'L' ?event.lecturer: event.creatorUser,
-     style: TextStyle(color: Colors.grey.shade600, fontSize: scaler.getTextSize(5)),
-                        ),
-                      ],
+                    SizedBox(
+                      width: Globals.scaler.getWidth(6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            this.event.type == 'L' ?event.lecturer: event.creatorUser.substring(0, event.creatorUser.indexOf('@')),
+     style: TextStyle(color: Colors.grey.shade600, fontSize: scaler.getTextSize(6)),
+                              textAlign: TextAlign.center),
+                        ],
+                      ),
                     ),
                   ])
                   ,SizedBox(width: scaler.getWidth(1))
