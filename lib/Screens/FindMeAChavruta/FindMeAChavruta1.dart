@@ -28,6 +28,10 @@ List<String> ketuvimBooks = [];
 List<String> talmudBavliBooks = [];
 List<String> talmudYerushalmiBooks = [];
 List<String> halachaBooks = [];
+List<String> chasidutBooks = [];
+List<String> machsehvetBooks = [];
+List<String> otherBooks = [];
+
 List<String> booksDrop = [];
 ScreenScaler scaler = ScreenScaler();
 
@@ -35,7 +39,6 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   var db = Globals.db;
   final format = DateFormat("yyyy-MM-dd");
   DateTime val;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   String value,
       selectedTopic,
       gender,
@@ -63,6 +66,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     talmudBavliBooks = [];
     talmudYerushalmiBooks = [];
     halachaBooks = [];
+    chasidutBooks = [];
+    machsehvetBooks = [];
     for (var i in topicsList) {
       final title = i.title;
       if (title == "תחומים") {
@@ -93,6 +98,14 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         for (var j in i.tags) {
           halachaBooks.add(j);
         }
+      } else if (title == "חסידות") {
+        for (var j in i.tags) {
+          chasidutBooks.add(j);
+        }
+      } else if (title == "מחשבת ישראל") {
+        for (var j in i.tags) {
+          machsehvetBooks.add(j);
+        }
       }
     }
     loadTopicssData();
@@ -113,6 +126,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
               value: val,
             ))
         .toList();
+  }
+
+  void loadOtherBooksData() {
+    booksDrop = [];
   }
 
   dropDownContainer(val) {
@@ -170,6 +187,24 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
   void loadHalachaBooksData() {
     booksDrop = halachaBooks
+        .map((val) => DropdownMenuItem<String>(
+              child: dropDownContainer(val),
+              value: val,
+            ))
+        .toList();
+  }
+
+  void loadHasidutBooksData() {
+    booksDrop = chasidutBooks
+        .map((val) => DropdownMenuItem<String>(
+              child: dropDownContainer(val),
+              value: val,
+            ))
+        .toList();
+  }
+
+  void loadMachshevetBooksData() {
+    booksDrop = machsehvetBooks
         .map((val) => DropdownMenuItem<String>(
               child: dropDownContainer(val),
               value: val,
@@ -488,6 +523,15 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     } else if (value == "תלמוד ירושלמי") {
                       selectedBook = null;
                       loadYerushalmiBooksData();
+                    } else if (value == "חסידות") {
+                      selectedBook = null;
+                      loadHasidutBooksData();
+                    } else if (value == "מחשבת ישראל") {
+                      selectedBook = null;
+                      loadMachshevetBooksData();
+                    } else if (value == "אחר") {
+                      selectedBook = null;
+                      loadOtherBooksData();
                     } else if (value == "הלכה") {
                       selectedBook = null;
                       loadHalachaBooksData();

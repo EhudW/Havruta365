@@ -31,7 +31,7 @@ class NextButton extends StatelessWidget {
                 if (!(this.event.type == "" ||
                     this.event.topic == '' ||
                     this.event.targetGender == "" ||
-                    this.event.book == "" ||
+                    // this.event.book == "" ||
                     this.event.maxParticipants == 0)) {
                   print("Event" + this.event.type);
                   Navigator.push(
