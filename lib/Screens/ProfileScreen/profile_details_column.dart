@@ -113,8 +113,10 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               // Remove mail from local phone and go to Login page
               final SharedPreferences prefs = await _prefs;
               await prefs.setString('id', "");
-              // Disconnect from gmail
-              await GoogleSignInApi.logout();
+              if (await GoogleSignInApi.getGoogleCurrentUser() != null){
+                // Disconnect from gmail
+                await GoogleSignInApi.logout();
+              }
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => Login())
               );
@@ -149,4 +151,6 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
       ),
     );
   }
+
+
 }
