@@ -6,6 +6,7 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Topic.dart';
 
 String CONNECT_TO_DB =
@@ -220,41 +221,16 @@ class Mongo {
     return event;
   }
 
-  // update user details
-  // insert new event
-  // update new event
-
-  void insert2(name, age, mail, user, password) async {
-    db = await Db.create(
-        "mongodb+srv://yanivm93:kr2yptso@Cluster0.imwti.mongodb.net/test?tls=true&retryWrites=true&w=majority");
-    await db.open();
-    print('Connected to database');
-    var coll = db.collection('test');
-    await coll.insertAll([
-      // info!!
-      {
-        'login': user,
-        'name': name,
-        'email': mail,
-        'age': age,
-        'password': password
-      },
-    ]);
+  // Save the id of the current user locally in the user phone.
+  // for next session - automatic connect
+  saveIdLocally() async{
+    var coll = Globals.db.db.collection('Users');
+    var user_json = await coll.findOne(where.eq('email', Globals.currentUser.email));
+    // This is ObjectID!!
+    var id = user_json['_id'];
+    final SharedPreferences prefs = await Globals.prefs;
+    await prefs.setString('id', id.toString());
   }
-
-  void connectGoogle(name, email) async {
-    db = await Db.create(
-        "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/test?retryWrites=true&w=majority");
-    await db.open();
-    print('Connected to database');
-    var coll = db.collection('users');
-    await coll.insertAll([
-      // info!!
-      {'name': name, 'email': email},
-    ]);
-  }
-
-  void send_info(info) async {}
 
   void disconnect() async {
     await db.close();

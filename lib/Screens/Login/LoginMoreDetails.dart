@@ -29,7 +29,6 @@ class _HomePageState extends State<LoginMoreDetails> {
   String description_str = " ";
   final status = TextEditingController();
   String status_str = "סטטוס משפחתי";
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final AuthService authenticate = AuthService();
 
 
@@ -120,13 +119,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
-                // TODO currentUser.id - save ObjectId locally
-                var coll = Globals.db.db.collection('Users');
-                var user_json = await coll.findOne(where.eq('email', Globals.currentUser.email));
-                // This is ObjectID!!
-                var id = user_json['_id'];
-                final SharedPreferences prefs = await _prefs;
-                await prefs.setString('id', id.toString());
+                Globals.db.saveIdLocally();
                 yeshiva_str = yeshiva.text;
                 description_str = description.text;
                 Globals.currentUser.yeshiva = yeshiva_str;

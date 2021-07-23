@@ -12,22 +12,12 @@ import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
-class LoginDetails extends StatefulWidget {
+class LoginDetailsGmail extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<LoginDetails> {
-  final name = TextEditingController();
-  String name_str = "";
-  final mail = TextEditingController();
-  String mail_str = "";
-  final password = TextEditingController();
-  String password_str = "";
-  final password_con = TextEditingController();
-  String password_con_str = "";
-  final user_name = TextEditingController();
-  String user_name_str = "";
+class _HomePageState extends State<LoginDetailsGmail> {
   final address = TextEditingController();
   String address_str = "";
   final gender = TextEditingController();
@@ -65,12 +55,8 @@ class _HomePageState extends State<LoginDetails> {
                 },
               ),
             ),
-            newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
-                false),
             newFiled(address, address_str, "כתובת מגורים",
                 FontAwesomeIcons.home, false),
-            newFiled(mail, mail_str, "כתובת המייל", FontAwesomeIcons.mailBulk,
-                false),
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
                 alignment: Alignment.centerRight,
@@ -78,12 +64,6 @@ class _HomePageState extends State<LoginDetails> {
                     fontSize: 18,
                     color: Colors.teal[400]),
                 )),
-            newFiled(user_name, user_name_str, "שם משתמש",
-                FontAwesomeIcons.userAlt, false),
-            newFiled(
-                password, password_str, "סיסמא", FontAwesomeIcons.key, true),
-            newFiled(password_con, password_con_str, "אישור סיסמא",
-                FontAwesomeIcons.check, true),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
@@ -106,25 +86,8 @@ class _HomePageState extends State<LoginDetails> {
                 if (_dateTime == null) {
                   _dateTime = DateTime.now();
                 }
-                ;
-                user_name_str = user_name.text;
                 address_str = address.text;
-                name_str = name.text;
-                password_str = password.text;
-                password_con_str = password_con.text;
-                mail_str = mail.text;
-                if (password_con_str.isEmpty ||
-                    password_con_str == null ||
-                    password_str.isEmpty ||
-                    password_str == null ||
-                    mail_str.isEmpty ||
-                    mail_str == null ||
-                    address_str.isEmpty ||
-                    address_str == null ||
-                    user_name_str.isEmpty ||
-                    user_name_str == null ||
-                    name_str.isEmpty ||
-                    name_str == null) {
+                if (address_str.isEmpty || address_str == null) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('ודא שמילאת את כל השדות',
@@ -134,36 +97,10 @@ class _HomePageState extends State<LoginDetails> {
                   )..show(context);
                   return;
                 }
-                // Check if the passwords are equals
-                if (password_str != password_con_str) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('סיסמאות לא תואמות',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                bool userExist = await Globals.db.isUserExist(mail_str);
-                if (userExist) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('קיים חשבון עבור מייל זה',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                User user = new User();
+                User user = Globals.currentUser;
                 user.address = address_str;
-                user.email = mail_str;
-                user.name = name_str;
                 user.gender = gender_str;
                 user.birthDate = _dateTime;
-                user.password = password_str;
-                Globals.currentUser = user;
                 var res = Globals.db.insertNewUser(user);
                 print("Registration Succeeded");
                 Navigator.push(

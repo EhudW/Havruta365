@@ -27,18 +27,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
           children: [
             ProfileDetailHeader(widget.user),
             SizedBox(height: Globals.scaler.getHeight(0)),
-            // Divider(
-            //   thickness: 0,
-            //   indent: 10,
-            //   endIndent: 10,
-            // ),
             SizedBox(height: Globals.scaler.getHeight(1.5)),
             ProfileDetailsColumn(widget.user),
-            // MyProgressButton(id: widget.event.id, link: widget.event.link),
-            // SizedBox(height: 20.0),
-            // ParticipentsScroller(widget.event.participants),
-            // SizedBox(height: 10.0),
-            // Link
           ],
         ),
       ),

@@ -1,7 +1,10 @@
 import 'package:google_fonts/google_fonts.dart';
-import 'package:havruta_project/DataBase_auth/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
+import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/LoginDetails.dart';
+import 'package:havruta_project/Screens/Login/LoginDetailsGmail.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,6 +12,8 @@ import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
+
+import 'LoginMoreDetails.dart';
 
 
 class Login extends StatefulWidget {
@@ -21,7 +26,7 @@ class _HomePageState extends State<Login> {
   String mail_str = "";
   final password = TextEditingController();
   String password_str = "";
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<SharedPreferences> _prefs = Globals.prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -203,9 +208,7 @@ class _HomePageState extends State<Login> {
                           highlightElevation: 0,
                           borderSide: BorderSide(color: Colors.grey),
                           onPressed: () {
-                            GoogleLogIn g = new GoogleLogIn();
-                            g.login();
-                            Navigator.of(context).pushNamed('/homeScreen');
+                            signIn();
                           },
                           child:  Container(
                             height:  Globals.scaler.getHeight(2.5),
@@ -263,5 +266,38 @@ class _HomePageState extends State<Login> {
         ),
       ),
     );
+  }
+
+  Future signIn() async {
+    final google_user = await GoogleSignInApi.login();
+    print(google_user);
+    if (google_user == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('התחברות נכשלה')));
+    } else {
+      // if user exist => homepage
+      bool userExist = await Globals.db.isUserExist(google_user.email);
+      if (userExist) {
+        // Update current user
+        Globals.currentUser = await Globals.db.getUser(google_user.email);
+        Globals.db.saveIdLocally();
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomePage())
+        );
+      } else {
+        // else - new user
+        GoogleSignInAccount g_user = google_user;
+        User user = new User();
+        user.avatar = g_user.photoUrl;
+        user.name = g_user.displayName;
+        user.email = g_user.email;
+        Globals.currentUser = user;
+        // TODO - GO TO NEW SCREEN - SPECIFIC FOR GOOGLE
+        // TODO - JUST REMOVE EMAIL AND NAME
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => LoginDetailsGmail())
+        );
+      }
+    }
   }
 }

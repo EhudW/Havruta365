@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
@@ -109,12 +110,13 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           ),
           GestureDetector(
             onTap: () async {
-              // TODO remove mail from local phone and go to Login page
+              // Remove mail from local phone and go to Login page
               final SharedPreferences prefs = await _prefs;
               await prefs.setString('id', "");
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Login()),
+              // Disconnect from gmail
+              await GoogleSignInApi.logout();
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => Login())
               );
             },
             child: Container(
