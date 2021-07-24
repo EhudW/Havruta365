@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.havruta_project">
+    package="com.havruta">
    <application
         android:label="Havruta"
         android:icon="@mipmap/ic_launcher">
