@@ -171,7 +171,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                         Stack(children: [
                           Container(
                               width: scaler.getWidth(28),
-                              height: scaler.getHeight(2.0),
+                              height: scaler.getHeight(2.3),
                               decoration: BoxDecoration(
                                 color: Colors.teal[400],
                               ),
@@ -181,7 +181,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   onPressed: () {
                                     widget.event.creationDate = DateTime.now();
                                     widget.event.participants = [];
-                                    widget.event.creatorUser = Globals.currentUser.email;
+                                    widget.event.creatorUser =
+                                        Globals.currentUser.email;
                                     if (widget.event.eventImage == "") {
                                       widget.event.eventImage =
                                           'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
@@ -222,7 +223,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
           child: CircleAvatar(
             radius: 60.0,
             backgroundColor: Colors.teal,
-            backgroundImage: (widget.event.eventImage != null)
+            backgroundImage: (widget.event.eventImage.isNotEmpty)
                 ? NetworkImage(widget.event.eventImage)
                 : null,
           ),

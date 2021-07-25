@@ -546,8 +546,16 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     setState(() {});
                   } else if (text == "בחרו האם זה שיעור או חברותא") {
                     selectedChoice = value;
-                    event.type = selectedChoice;
-                    setState(() {});
+                    //event.type = selectedChoice;
+                    setState(() {
+                      if (selectedChoice == "שיעור") {
+                        event.type = "L";
+                        print(event.type);
+                      } else {
+                        event.type = "H";
+                        print(event.type);
+                      }
+                    });
                   }
                 },
               ),

@@ -162,11 +162,12 @@ class _SetDateCreateState extends State<SetDate> {
                                 ConstrainedBox(
                                   constraints: BoxConstraints.tightFor(
                                       width: scaler.getWidth(31),
-                                      height: scaler.getHeight(3)),
+                                      height: scaler.getHeight(3.5)),
                                   child: ElevatedButton(
                                     onPressed: () => pickDate(context),
                                     style: ElevatedButton.styleFrom(
                                         primary: Colors.teal,
+                                        shape: StadiumBorder(),
                                         shadowColor:
                                             Colors.grey.withOpacity(1)),
                                     child: Text(getDateText(this.date),
@@ -208,12 +209,12 @@ class _SetDateCreateState extends State<SetDate> {
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
                                   width: scaler.getWidth(31),
-                                  height: scaler.getHeight(3)),
+                                  height: scaler.getHeight(3.5)),
                               child: ElevatedButton(
                                 onPressed: () => pickStartTime(context),
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.teal,
-                                    //shape: (),
+                                    shape: StadiumBorder(),
                                     shadowColor: Colors.grey.withOpacity(1)),
                                 child: Text(getStartTimeText(),
                                     style: TextStyle(
@@ -252,12 +253,12 @@ class _SetDateCreateState extends State<SetDate> {
                             ConstrainedBox(
                               constraints: BoxConstraints.tightFor(
                                   width: scaler.getWidth(31),
-                                  height: scaler.getHeight(3)),
+                                  height: scaler.getHeight(3.5)),
                               child: ElevatedButton(
                                 onPressed: () => pickEndTime(context),
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.teal,
-                                    //shape: (),
+                                    shape: StadiumBorder(),
                                     shadowColor: Colors.grey.withOpacity(1)),
                                 child: Text(getEndTimeText(),
                                     style: TextStyle(

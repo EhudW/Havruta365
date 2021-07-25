@@ -16,8 +16,6 @@ import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 
 class LoginMoreDetails extends StatefulWidget {
-
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -31,10 +29,8 @@ class _HomePageState extends State<LoginMoreDetails> {
   String status_str = "סטטוס משפחתי";
   final AuthService authenticate = AuthService();
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       backgroundColor: Colors.teal[100],
@@ -46,13 +42,15 @@ class _HomePageState extends State<LoginMoreDetails> {
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
                 alignment: Alignment.centerRight,
-                child:Text("פרטים נוספים   " ,style: GoogleFonts.alef(
-                    fontSize: 18,
-                    color: Colors.teal[400]),
+                child: Text(
+                  "פרטים נוספים   ",
+                  style:
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),
             imageProfile(),
             SizedBox(height: Globals.scaler.getHeight(1)),
-            FadeAnimation(1.7,
+            FadeAnimation(
+              1.7,
               Container(
                   alignment: AlignmentDirectional.centerEnd,
                   width: Globals.scaler.getWidth(20),
@@ -87,11 +85,16 @@ class _HomePageState extends State<LoginMoreDetails> {
                         status_str = newValue;
                       });
                     },
-                    items: <String>["סטטוס משפחתי","רווק/ה", 'נשוי/אה', 'גרוש/ה']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: <String>[
+                      "סטטוס משפחתי",
+                      "רווק/ה",
+                      'נשוי/אה',
+                      'גרוש/ה'
+                    ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Center(child: Text(value, textAlign: TextAlign.center)),
+                        child: Center(
+                            child: Text(value, textAlign: TextAlign.center)),
                       );
                     }).toList(),
                   )),
@@ -105,13 +108,12 @@ class _HomePageState extends State<LoginMoreDetails> {
               child: Text(
                 "מצא לי חברותא ",
                 textAlign: TextAlign.center,
-                style: GoogleFonts.abel(
-                    fontSize: 23, color: Colors.white),
+                style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
                   alignment: Alignment.center,
-                  minimumSize:
-                  Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
+                  minimumSize: Size(
+                      Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
@@ -137,31 +139,28 @@ class _HomePageState extends State<LoginMoreDetails> {
         ),
       ),
     );
-
   }
+
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-        CircleAvatar(
-          radius: 60.0,
-          backgroundColor: Colors.teal,
-          // child: ClipOval(
-          //     child: SizedBox(
-          //         width: scaler.getWidth(10),
-          //         height: scaler.getHeight(3.6),
-          //         child: (image != null)
-          //             ? Image.file(image, fit: BoxFit.fill)
-          //             : null))),
-          // : Image.network(
-          //     'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg')),
-
-          backgroundImage: (Globals.currentUser.avatar != null)
-              ? NetworkImage(Globals.currentUser.avatar)
-              : null,
+        FlatButton(
+          color: Colors.transparent,
+          onPressed: () {
+            showModalBottomSheet(
+                context: context, builder: ((builder) => bottomSheet()));
+          },
+          child: CircleAvatar(
+            radius: 60.0,
+            backgroundColor: Colors.teal,
+            backgroundImage: (Globals.currentUser.avatar.isNotEmpty)
+                ? NetworkImage(Globals.currentUser.avatar)
+                : null,
+          ),
         ),
         Positioned(
-          bottom: 35.0,
-          right: 45.0,
+          bottom: Globals.scaler.getHeight(2.2),
+          right: Globals.scaler.getWidth(5.3),
           child: InkWell(
             onTap: () {
               showModalBottomSheet(
@@ -172,7 +171,7 @@ class _HomePageState extends State<LoginMoreDetails> {
             child: Icon(
               Icons.camera_alt,
               color: Colors.white,
-              size: 28.0,
+              size: Globals.scaler.getTextSize(11),
             ),
           ),
         ),
@@ -238,7 +237,7 @@ class _HomePageState extends State<LoginMoreDetails> {
     //check if an image was picked
     if (image != null) {
       var snapshot =
-      await _storage.ref().child('folderName/imageName').putFile(file);
+          await _storage.ref().child('folderName/imageName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
         Globals.currentUser.avatar = downloadUrl;
@@ -246,7 +245,7 @@ class _HomePageState extends State<LoginMoreDetails> {
     } else {
       setState(() {
         Globals.currentUser.avatar =
-        'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+            'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
       });
     }
   }
@@ -254,7 +253,7 @@ class _HomePageState extends State<LoginMoreDetails> {
 
 newFiled(controller, str, text, icon, size) {
   return FadeAnimation(
-      1.7,
+    1.7,
     new Column(children: <Widget>[
       SizedBox(height: Globals.scaler.getHeight(1)),
       Center(
@@ -349,6 +348,7 @@ newFiled1(controller, str, text, icon, size) {
     ]),
   );
 }
+
 appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();
 
@@ -359,13 +359,13 @@ appBar(BuildContext context) {
       shadowColor: Colors.teal[400],
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(0),
-          )),
+        bottom: Radius.circular(0),
+      )),
       backgroundColor: Colors.white,
       title: Container(
         width: scaler.getWidth(50),
         child:
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
             "משתמש חדש  ",
             textAlign: TextAlign.center,
