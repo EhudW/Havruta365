@@ -16,20 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Globals.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  // final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
-  // Future signInAnon() async {
-  //   try {
-  //     auth.UserCredential result = await _auth.signInAnonymously();
-  //     auth.User user = result.user;
-  //     return user;
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
   runApp(MyApp());
 }
 
@@ -43,11 +29,17 @@ class _MyAppState extends State<MyApp> {
   Future<String> _id;
   Future mongoConnectFuture;
 
+  void initFirebase() async{
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+  }
+
   @override
   void initState() {
     super.initState();
     Globals.db = new Mongo();
     mongoConnectFuture = Globals.db.connect();
+    initFirebase();
   }
 
   @override

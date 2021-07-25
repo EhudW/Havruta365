@@ -181,7 +181,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   onPressed: () {
                                     widget.event.creationDate = DateTime.now();
                                     widget.event.participants = [];
-                                    widget.event.creatorUser = "";
+                                    widget.event.creatorUser = Globals.currentUser.email;
                                     if (widget.event.eventImage == "") {
                                       widget.event.eventImage =
                                           'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';

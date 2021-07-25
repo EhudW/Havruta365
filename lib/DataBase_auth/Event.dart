@@ -20,6 +20,14 @@ class Event {
       this.dates,
       this.maxParticipants});
 
+  var _id;
+
+  get id => _id;
+
+  set id(value) {
+    _id = value;
+  }
+
   String creatorUser,
       type,
       topic,
@@ -30,7 +38,6 @@ class Event {
       targetGender,
       lecturer;
   int maxParticipants;
-  ObjectId id;
   DateTime creationDate;
   List<dynamic> participants;
   List<dynamic> dates;
@@ -53,7 +60,6 @@ class Event {
 
   // Return JSON of the event
   Map<String, dynamic> toJson() => {
-        'id': id,
         'creatorUser': creatorUser,
         'creationDate': creationDate,
         'topic': topic,
@@ -69,7 +75,7 @@ class Event {
       };
 
   Event.fromJson(Map<String, dynamic> json)
-      : id = json['_id'],
+      : _id = json['_id'],
         creatorUser = json['creatorUser'],
         creationDate = json['creationDate'],
         topic = json['topic'],
