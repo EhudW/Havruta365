@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1013165410865-v1eqnkp3s1ima6fc2tletm7dfnh1k3kf.apps.googleusercontent.com",
+          "client_id": "1013165410865-0vr5qad1tur38q3r0is40hc31csuflnq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.havruta",
-            "certificate_hash": "1d2e097a2736c25f447e18baab29e98ad18b56e5"
+            "certificate_hash": "d46a197fc009407c7ff4d28d66830858b1ec287c"
           }
         },
         {
