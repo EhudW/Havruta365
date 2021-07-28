@@ -153,7 +153,7 @@ class _HomePageState extends State<LoginMoreDetails> {
           child: CircleAvatar(
             radius: 60.0,
             backgroundColor: Colors.teal,
-            backgroundImage: (Globals.currentUser.avatar.isNotEmpty)
+            backgroundImage: (Globals.currentUser.avatar != null)
                 ? NetworkImage(Globals.currentUser.avatar)
                 : null,
           ),
