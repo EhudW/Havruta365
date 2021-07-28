@@ -78,8 +78,6 @@ class _HomePageState extends State<LoginDetails> {
                     fontSize: 18,
                     color: Colors.teal[400]),
                 )),
-            newFiled(user_name, user_name_str, "שם משתמש",
-                FontAwesomeIcons.userAlt, false),
             newFiled(
                 password, password_str, "סיסמא", FontAwesomeIcons.key, true),
             newFiled(password_con, password_con_str, "אישור סיסמא",

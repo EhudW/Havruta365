@@ -15,7 +15,6 @@ import 'package:another_flushbar/flushbar.dart';
 
 import 'LoginMoreDetails.dart';
 
-
 class Login extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -45,7 +44,7 @@ class _HomePageState extends State<Login> {
                   children: <Widget>[
                     Positioned(
                       top: -70,
-                      height:  Globals.scaler.getHeight(16),
+                      height: Globals.scaler.getHeight(16),
                       width: width,
                       child: FadeAnimation(
                         1,
@@ -70,7 +69,7 @@ class _HomePageState extends State<Login> {
                 ),
               ),
               SizedBox(
-                height:  Globals.scaler.getHeight(1),
+                height: Globals.scaler.getHeight(1),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40),
@@ -82,10 +81,11 @@ class _HomePageState extends State<Login> {
                         Text(
                           "פרוייקט חברותא",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.alef(fontSize:  Globals.scaler.getTextSize(10)),
+                          style: GoogleFonts.alef(
+                              fontSize: Globals.scaler.getTextSize(10)),
                         )),
                     SizedBox(
-                      height:  Globals.scaler.getHeight(1),
+                      height: Globals.scaler.getHeight(1),
                     ),
                     FadeAnimation(
                         1.7,
@@ -106,15 +106,16 @@ class _HomePageState extends State<Login> {
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                     border: Border(
-                                        bottom:
-                                            BorderSide(color: Colors.grey[200]))),
+                                        bottom: BorderSide(
+                                            color: Colors.grey[200]))),
                                 child: TextField(
                                     controller: mail,
                                     textAlign: TextAlign.center,
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: "כתובת המייל",
-                                        hintStyle: TextStyle(color: Colors.grey)),
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey)),
                                     onChanged: (String text) {
                                       mail_str = mail.text;
                                     }),
@@ -122,13 +123,14 @@ class _HomePageState extends State<Login> {
                               Container(
                                 padding: EdgeInsets.all(10),
                                 child: TextField(
-                                    obscureText:  true,
+                                    obscureText: true,
                                     controller: password,
                                     textAlign: TextAlign.center,
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: "סיסמא",
-                                        hintStyle: TextStyle(color: Colors.grey)),
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey)),
                                     onChanged: (String text) {
                                       password_str = password.text;
                                     }),
@@ -137,13 +139,13 @@ class _HomePageState extends State<Login> {
                           ),
                         )),
                     SizedBox(
-                      height:  Globals.scaler.getHeight(2),
+                      height: Globals.scaler.getHeight(2),
                     ),
                     FadeAnimation(
                         1.9,
                         Container(
-                          height:  Globals.scaler.getHeight(2.5),
-                          width:  Globals.scaler.getWidth(19),
+                          height: Globals.scaler.getHeight(2.5),
+                          width: Globals.scaler.getWidth(19),
                           margin: EdgeInsets.symmetric(horizontal: 60),
                           decoration: BoxDecoration(
                             boxShadow: [
@@ -160,38 +162,37 @@ class _HomePageState extends State<Login> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(40)),
                             onPressed: () async {
-                              var res = await Globals.db.checkNewUser(mail_str);
-                              print(res);
-                              // User not exist
-                              if (res == 'User not exist!') {
+                              var coll = Globals.db.db.collection('Users');
+                              var user_json = await coll.findOne({
+                                'email': mail_str,
+                                'password': password_str
+                              });
+                              if (user_json == null) {
                                 Flushbar(
                                   title: 'שגיאה בהתחברות',
-                                  message: 'משתמש לא קיים',
+                                  message: 'פרטי התחברות אינם נכונים',
                                   duration: Duration(seconds: 3),
                                 )..show(context);
-                              } else {
-                                // Update current user
-                                Globals.currentUser = res;
-                                var coll = Globals.db.db.collection('Users');
-                                var user_json = await coll.findOne(where.eq('email', Globals.currentUser.email));
-                                // This is ObjectID!!
-
-                                var id = user_json['_id'];
-                                final SharedPreferences prefs = await _prefs;
-                                await prefs.setString('id', id.toString());
-                                // Go to HomePage
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage()),
-                                );
+                                return;
                               }
+                              // Update current user
+                              Globals.currentUser = User.fromJson(user_json);
+                              // This is ObjectID!!
+                              var id = user_json['_id'];
+                              final SharedPreferences prefs = await _prefs;
+                              await prefs.setString('id', id.toString());
+                              // Go to HomePage
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage()),
+                              );
                             },
                             child: Center(
                               child: Text(
                                 "כניסה",
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 15),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
                               ),
                             ),
                           ),
@@ -210,9 +211,9 @@ class _HomePageState extends State<Login> {
                           onPressed: () {
                             signIn();
                           },
-                          child:  Container(
-                            height:  Globals.scaler.getHeight(2.5),
-                            width:  Globals.scaler.getWidth(16),
+                          child: Container(
+                            height: Globals.scaler.getHeight(2.5),
+                            width: Globals.scaler.getWidth(16),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -246,7 +247,8 @@ class _HomePageState extends State<Login> {
                             Globals.db.updateUser(Globals.currentUser);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => LoginDetails()),
+                              MaterialPageRoute(
+                                  builder: (context) => LoginDetails()),
                             );
                           },
                           child: Center(
@@ -282,8 +284,7 @@ class _HomePageState extends State<Login> {
         Globals.currentUser = await Globals.db.getUser(google_user.email);
         Globals.db.saveIdLocally();
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => HomePage())
-        );
+            MaterialPageRoute(builder: (context) => HomePage()));
       } else {
         // else - new user
         GoogleSignInAccount g_user = google_user;
@@ -295,8 +296,7 @@ class _HomePageState extends State<Login> {
         // TODO - GO TO NEW SCREEN - SPECIFIC FOR GOOGLE
         // TODO - JUST REMOVE EMAIL AND NAME
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => LoginDetailsGmail())
-        );
+            MaterialPageRoute(builder: (context) => LoginDetailsGmail()));
       }
     }
   }
