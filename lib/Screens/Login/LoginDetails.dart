@@ -26,8 +26,6 @@ class _HomePageState extends State<LoginDetails> {
   String password_str = "";
   final password_con = TextEditingController();
   String password_con_str = "";
-  final user_name = TextEditingController();
-  String user_name_str = "";
   final address = TextEditingController();
   String address_str = "";
   final gender = TextEditingController();
@@ -54,6 +52,13 @@ class _HomePageState extends State<LoginDetails> {
     )),
             genderField(gender),
             SizedBox(height: Globals.scaler.getHeight(1)),
+            Align(
+                alignment: Alignment.centerRight,
+                child:Text("תאריך לידה   " ,style: GoogleFonts.alef(
+                    fontSize: 18,
+                    color: Colors.teal[400]),
+                )),
+            SizedBox(height: Globals.scaler.getHeight(1)),
             Container(
               height: 60,
               child: CupertinoDatePicker(
@@ -65,6 +70,7 @@ class _HomePageState extends State<LoginDetails> {
                 },
               ),
             ),
+            SizedBox(height: Globals.scaler.getHeight(1)),
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
                 false),
             newFiled(address, address_str, "כתובת מגורים",
@@ -74,7 +80,7 @@ class _HomePageState extends State<LoginDetails> {
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
                 alignment: Alignment.centerRight,
-                child:Text("פרטי משתמש   " ,style: GoogleFonts.alef(
+                child:Text("אבטחה   " ,style: GoogleFonts.alef(
                     fontSize: 18,
                     color: Colors.teal[400]),
                 )),
@@ -96,7 +102,7 @@ class _HomePageState extends State<LoginDetails> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
-                  primary: Colors.red,
+                  primary: Colors.teal,
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
@@ -105,7 +111,6 @@ class _HomePageState extends State<LoginDetails> {
                   _dateTime = DateTime.now();
                 }
                 ;
-                user_name_str = user_name.text;
                 address_str = address.text;
                 name_str = name.text;
                 password_str = password.text;
@@ -119,13 +124,21 @@ class _HomePageState extends State<LoginDetails> {
                     mail_str == null ||
                     address_str.isEmpty ||
                     address_str == null ||
-                    user_name_str.isEmpty ||
-                    user_name_str == null ||
                     name_str.isEmpty ||
                     name_str == null) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('ודא שמילאת את כל השדות',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+                    duration: Duration(seconds: 3),
+                  )..show(context);
+                  return;
+                }
+                if (password_str.length < 5) {
+                  Flushbar(
+                    title: 'שגיאה בהרשמה',
+                    messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.teal[400], fontSize: 20)),
                     duration: Duration(seconds: 3),
@@ -157,7 +170,6 @@ class _HomePageState extends State<LoginDetails> {
                 User user = new User();
                 user.address = address_str;
                 user.email = mail_str;
-                user.name = name_str;
                 user.gender = gender_str;
                 user.birthDate = _dateTime;
                 user.password = password_str;

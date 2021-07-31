@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/HomePageScreen/notifications.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
@@ -117,9 +118,11 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                icon: Icon(Icons.settings),
+                icon: Icon(Icons.exit_to_app_outlined),
                 color: Colors.white54,
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(context: context, builder: (_)=> AlertDialog());
+                },
                 iconSize: scaler.getTextSize(10),
               ),
               IconButton(
