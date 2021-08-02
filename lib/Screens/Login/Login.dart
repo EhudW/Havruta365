@@ -162,9 +162,11 @@ class _HomePageState extends State<Login> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(40)),
                             onPressed: () async {
+
+                              FocusScope.of(context).requestFocus(FocusNode());
                               var coll = Globals.db.db.collection('Users');
                               var user_json = await coll.findOne({
-                                'email': mail_str,
+                                'email': mail_str.replaceAll(new RegExp(r"\s+"), ""),
                                 'password': password_str
                               });
                               if (user_json == null) {
@@ -209,6 +211,7 @@ class _HomePageState extends State<Login> {
                           highlightElevation: 0,
                           borderSide: BorderSide(color: Colors.grey),
                           onPressed: () {
+                            FocusScope.of(context).requestFocus(FocusNode());
                             signIn();
                           },
                           child: Container(

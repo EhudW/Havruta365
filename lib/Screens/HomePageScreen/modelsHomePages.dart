@@ -32,7 +32,8 @@ class EventsModel {
   }
 
   Future<List<Event>>  _getExampleServerData(int length) async {
-    if (searchData != null && searchData != "") {
+   // print(searchData + 'db');
+    if (searchData != null) {
       return Future.delayed(Duration(seconds: 1), () {
         return Globals.db.searchEvents(searchData);
       });
@@ -55,7 +56,7 @@ class EventsModel {
       _data = List<Event>();
       hasMore = true;
     }
-    if (_isLoading || !hasMore) {
+    if ((_isLoading || !hasMore)&& searchData != null) {
       return Future.value();
     }
     _isLoading = true;

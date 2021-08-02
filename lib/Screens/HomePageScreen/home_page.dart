@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         appBar: appBar(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        resizeToAvoidBottomInset: false,
         floatingActionButton: floatingActionButton(),
         bottomNavigationBar: bottomAppBar());
   }
@@ -51,9 +52,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 10,
         leading: Builder(
             builder: (context) => new IconButton(
-                  icon: currentStateAppBar == 0
-                      ? Icon(Icons.notifications, color: Colors.teal[400],size: scaler.getTextSize(9))
-                      : Icon(Icons.notifications_none, color: Colors.teal[400],size:scaler.getTextSize(9)),
+                  icon: Icon(Icons.notifications, color: Colors.teal[400],size: scaler.getTextSize(9)),
                   tooltip:
                       MaterialLocalizations.of(context).openAppDrawerTooltip,
                   onPressed: () {

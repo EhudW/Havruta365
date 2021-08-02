@@ -190,6 +190,7 @@ class _EventsState extends State<Events> {
                 ],
               ),
               child: TextField(
+                  textInputAction: TextInputAction.go,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
                       suffixIcon: Icon(FontAwesomeIcons.search,
@@ -202,15 +203,14 @@ class _EventsState extends State<Events> {
                       hintText: 'חפש חברותא'),
                   onChanged: (text) {
                     print(text);
-                    if (text.toLowerCase() == "" ||text.toLowerCase() == " "||
-                        text.toLowerCase() == null) {
+                    text.replaceAll(new RegExp(r"\s+"), "");
+                    if (text == "") {
                       events.searchData = null;
-                      events.refresh();
                     } else {
                       searchBarString = text.toLowerCase();
                       events.searchData = searchBarString;
-                      events.refresh();
                     }
+                    events.refresh();
                   }),
             ),
           ),
