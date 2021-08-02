@@ -57,13 +57,6 @@ class _HomePageState extends State<LoginDetailsGmail> {
             ),
             newFiled(address, address_str, "כתובת מגורים",
                 FontAwesomeIcons.home, false),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            Align(
-                alignment: Alignment.centerRight,
-                child:Text("פרטי משתמש   " ,style: GoogleFonts.alef(
-                    fontSize: 18,
-                    color: Colors.teal[400]),
-                )),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
@@ -78,7 +71,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
-                  primary: Colors.red,
+                  primary: Colors.teal,
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
