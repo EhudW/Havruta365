@@ -121,22 +121,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-
-// // TODO REMOVE THIS CODE WHEN THE CURRENT USER IS READY TO GO
-// // getUser by mail
-// var current_user = Globals.db.getUser("4yonatan4@gmail.com");
-// return FutureBuilder(
-// future: current_user,
-// builder:
-// (BuildContext context, AsyncSnapshot<User> snapshot) {
-// switch (snapshot.connectionState) {
-// case ConnectionState.waiting:
-// return const CircularProgressIndicator();
-// default:
-// // Update global current_user
-// Globals.currentUser = snapshot.data;
-// return Login();
-// }
-// });
-// // TODO CODE TO REMOVE - UNTIL HERE

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Storyline extends StatelessWidget {
   Storyline(this.storyline);
@@ -10,11 +11,12 @@ class Storyline extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           'תיאור',
-          style: textTheme.subhead.copyWith(fontSize: 18.0),
+          style: GoogleFonts.secularOne(fontSize: 20.0),
         ),
         SizedBox(height: 2.0),
         Text(

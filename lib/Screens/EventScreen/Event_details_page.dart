@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
 import 'package:havruta_project/Screens/EventScreen/datesList.dart';
@@ -21,21 +22,37 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
 
+
   @override
   Widget build(BuildContext context) {
+    var num = widget.event.maxParticipants - widget.event.participants.length;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             EventDetailHeader(widget.event),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Storyline(widget.event.description),
+            Storyline(widget.event.description),
+            Divider(),
+            Text(
+              'זמני לימוד',
+              style: GoogleFonts.secularOne(fontSize: 20.0),
+              textAlign: TextAlign.end,
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 40.0, 20),
-              child: DatesList(widget.event.dates),
+            DatesList(widget.event.dates),
+            Divider(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("!מהרו להירשם",
+                    style: GoogleFonts.alef(
+                        fontSize: 22.0, color: Colors.grey[700],
+                        fontWeight: FontWeight.bold)),
+                Text("נשארו" + " $num " + "מקומות פנויים",
+                    style: GoogleFonts.suezOne(
+                        fontSize: 20.0, color: Colors.grey[700]))
+              ],
             ),
+            SizedBox(height: 8),
             MyProgressButton(event: widget.event),
             SizedBox(height: 20.0),
             ParticipentsScroller(widget.event.participants),

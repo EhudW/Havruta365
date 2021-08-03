@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -23,37 +24,28 @@ class EventDetailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
 
     Future creator = getUser(event.creatorUser);
     var movieInformation = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      //crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Align(
-          alignment: AlignmentDirectional.center,
-          child: Text(
-            event.topic,
-            style: TextStyle(fontFamily: 'sdgsg', fontSize: 25),
-            textAlign: TextAlign.center,
-          ),
+        SizedBox(height: 50,),
+        Text(
+          event.topic,
+          style: GoogleFonts.secularOne(fontSize: 26.0),
+          textAlign: TextAlign.center,
         ),
 
-        // SizedBox(height: 12.0),
-        Align(
-          alignment: AlignmentDirectional.center,
-          child: Text(
-            event.book,
-            style: TextStyle(fontSize: 20),
-            textAlign: TextAlign.center,
-          ),
+        Text(
+          event.book,
+          style: GoogleFonts.secularOne(fontSize: 22.0),
+          textAlign: TextAlign.center,
         ),
-        Align(
-          alignment: AlignmentDirectional.center,
-          child: Text(
-            event.lecturer,
-            style: TextStyle(fontSize: 20),
-            textAlign: TextAlign.center,
-          ),
+        Text(
+          event.lecturer,
+          style: GoogleFonts.secularOne(fontSize: 22.0),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -74,7 +66,7 @@ class EventDetailHeader extends StatelessWidget {
           return Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.only(bottom: 90.0),
+                padding: const EdgeInsets.only(bottom: 100.0),
                 child: ArcBannerImage(event.eventImage),
               ),
               Positioned(
@@ -82,10 +74,11 @@ class EventDetailHeader extends StatelessWidget {
                 left: 16.0,
                 right: 16.0,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Expanded(child: movieInformation),
+                    movieInformation,
+                    SizedBox(width: 60,),
                     //SizedBox(width: 16.0),
                     CircleAvatar(
                       backgroundImage: NetworkImage(snapshot.data['avatar']),
