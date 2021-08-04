@@ -81,7 +81,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               width: Globals.scaler.getWidth(32.5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
-                  border: Border.all(width: 0.5, color: Colors.grey[350]),
+                  border: Border.all(width: Globals.scaler.getWidth(0.1), color: Colors.grey[350]),
                   color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -94,7 +94,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                             fontSize: size_header,
                             fontWeight: FontWeight.bold,
                             textStyle: TextStyle(
-                                color: Colors.black, letterSpacing: .5)),
+                                color: Colors.black, letterSpacing: Globals.scaler.getWidth(.5))),
                         textDirection: TextDirection.rtl),
                     SizedBox(width: Globals.scaler.getWidth(1.5)),
                     Icon(
@@ -110,13 +110,13 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           ),
           GestureDetector(
             onTap: () async {
-              // Remove mail from local phone and go to Login page
-              final SharedPreferences prefs = await _prefs;
-              await prefs.setString('id', "");
               if (await GoogleSignInApi.getGoogleCurrentUser() != null){
                 // Disconnect from gmail
                 await GoogleSignInApi.logout();
               }
+              // Remove mail from local phone and go to Login page
+              final SharedPreferences prefs = await _prefs;
+              await prefs.setString('id', "");
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => Login())
               );
@@ -126,7 +126,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               width: Globals.scaler.getWidth(32.5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
-                  border: Border.all(width: 1, color: Colors.grey[350]),
+                  border: Border.all(width: Globals.scaler.getWidth(0.1), color: Colors.grey[350]),
                   color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

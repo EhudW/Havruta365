@@ -47,18 +47,18 @@ class User {
 
   // Return JSON of the user
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'email': email,
-        'password': password,
-        'birthDate': birthDate,
-        'address': address,
-        'yeshiva': yeshiva,
-        'description': description,
-        'gender': gender,
-        'status': status,
-        'avatar': avatar,
-        'interest': interestList,
-        'phone': phone,
+        'name': name ?? "",
+        'email': email ?? "",
+        'password': password ?? "",
+        'birthDate': birthDate ?? "",
+        'address': address ?? "",
+        'yeshiva': yeshiva ?? "",
+        'description': description ?? "",
+        'gender': gender ?? "",
+        'status': status ?? "",
+        'avatar': avatar ?? "",
+        'interest': interestList ?? [],
+        'phone': phone ?? "",
       };
 
   User.fromJson(Map<String, dynamic> json)

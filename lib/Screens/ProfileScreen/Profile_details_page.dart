@@ -26,7 +26,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
         child: Column(
           children: [
             ProfileDetailHeader(widget.user),
-            SizedBox(height: Globals.scaler.getHeight(0)),
             SizedBox(height: Globals.scaler.getHeight(1.5)),
             ProfileDetailsColumn(widget.user),
           ],

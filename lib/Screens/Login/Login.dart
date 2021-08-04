@@ -244,7 +244,6 @@ class _HomePageState extends State<Login> {
                           2,
                           GestureDetector(
                             onTap: () {
-                              Globals.db.updateUser(Globals.currentUser);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

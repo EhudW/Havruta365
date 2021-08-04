@@ -83,7 +83,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
                 if (address_str.isEmpty || address_str == null) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
-                    messageText: Text('ודא שמילאת את כל השדות',
+                    messageText: Text('יש להכניס כתובת מגורים',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.teal[400], fontSize: 20)),
                     duration: Duration(seconds: 3),
@@ -95,7 +95,6 @@ class _HomePageState extends State<LoginDetailsGmail> {
                 user.gender = gender_str;
                 user.birthDate = _dateTime;
                 var res = Globals.db.insertNewUser(user);
-                print("Registration Succeeded");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginMoreDetails()),

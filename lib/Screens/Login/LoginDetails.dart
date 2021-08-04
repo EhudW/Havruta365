@@ -6,7 +6,6 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
-
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +75,7 @@ class _HomePageState extends State<LoginDetails> {
                   false),
               newFiled(address, address_str, "כתובת מגורים",
                   FontAwesomeIcons.home, false),
-              newFiled(mail, mail_str, "כתובת המייל", FontAwesomeIcons.mailBulk,
+              newFiled(mail, mail_str, "כתובת מייל", FontAwesomeIcons.mailBulk,
                   false),
               SizedBox(height: Globals.scaler.getHeight(1)),
               Align(
@@ -111,25 +110,61 @@ class _HomePageState extends State<LoginDetails> {
                   if (_dateTime == null) {
                     _dateTime = DateTime.now();
                   }
-                  ;
                   address_str = address.text;
                   name_str = name.text;
                   password_str = password.text;
                   password_con_str = password_con.text;
                   mail_str = mail.text;
-                  if (password_con_str.isEmpty ||
-                      password_con_str == null ||
-                      password_str.isEmpty ||
-                      password_str == null ||
-                      mail_str.isEmpty ||
-                      mail_str == null ||
-                      address_str.isEmpty ||
-                      address_str == null ||
-                      name_str.isEmpty ||
+                  if (address_str.isEmpty && name_str.isEmpty && password_str.isEmpty && mail_str.isEmpty){
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('יש למלא את כל השדות',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  if ( name_str.isEmpty ||
                       name_str == null) {
                     Flushbar(
                       title: 'שגיאה בהרשמה',
-                      messageText: Text('ודא שמילאת את כל השדות',
+                      messageText: Text('יש להכניס שם',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  if ( address_str.isEmpty ||
+                      address_str == null ) {
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('יש להכניס כתובת מגורים',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  if (mail_str.isEmpty ||
+                      mail_str == null ){
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('יש להכניס כתובת מייל',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  if (password_con_str.isEmpty ||
+                      password_con_str == null ||
+                      password_str.isEmpty ||
+                      password_str == null) {
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('יש להכניס סיסמא',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
                       duration: Duration(seconds: 3),
@@ -146,7 +181,7 @@ class _HomePageState extends State<LoginDetails> {
                     )..show(context);
                     return;
                   }
-                  if (password_str.length < 5) {
+                  if (password_str.length <= 5) {
                     Flushbar(
                       title: 'שגיאה בהרשמה',
                       messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
@@ -179,14 +214,15 @@ class _HomePageState extends State<LoginDetails> {
                     return;
                   }
                   User user = new User();
+                  user.name = name_str;
                   user.address = address_str;
                   user.email = mail_str;
                   user.gender = gender_str;
                   user.birthDate = _dateTime;
                   user.password = password_str;
+                  // user.avatar = 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
                   Globals.currentUser = user;
                   var res = Globals.db.insertNewUser(user);
-                  print("Registration Succeeded");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginMoreDetails()),
@@ -242,7 +278,6 @@ newFiled(controller, str, text, icon, cover) {
                 hintText: text),
             onChanged: (text) {
               str = controller.text;
-              print(text);
             }),
       ),
     ),

@@ -76,7 +76,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                         value: status_str,
                         icon: Icon(Icons.arrow_drop_down),
                         iconSize: Globals.scaler.getTextSize(9),
-                        //this inicrease the size
+                        // this increase the size
                         elevation: 100,
                         style: TextStyle(
                           color: Colors.red,
@@ -127,9 +127,11 @@ class _HomePageState extends State<LoginMoreDetails> {
                     Globals.db.saveIdLocally();
                     yeshiva_str = yeshiva.text;
                     description_str = description.text;
-                    Globals.currentUser.yeshiva = yeshiva_str;
-                    Globals.currentUser.description = description_str;
-                    Globals.currentUser.status = status_str;
+                    Globals.currentUser.yeshiva = yeshiva_str ?? "";
+                    Globals.currentUser.description = description_str ?? "";
+                    Globals.currentUser.status = status_str ?? "";
+                    if (Globals.currentUser.avatar == null)
+                      Globals.currentUser.avatar = 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
                     Globals.db.updateUser(Globals.currentUser);
                     Navigator.push(
                       context,
@@ -209,7 +211,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                 uploadImage(ImageSource.camera);
                 Navigator.pop(context);
               },
-              label: Text("Camera"),
+              label: Text("מצלמה"),
             ),
             TextButton.icon(
               icon: Icon(Icons.image),
@@ -217,7 +219,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                 uploadImage(ImageSource.gallery);
                 Navigator.pop(context);
               },
-              label: Text("Gallery"),
+              label: Text("גלריה"),
             ),
           ])
         ],
@@ -249,7 +251,7 @@ class _HomePageState extends State<LoginMoreDetails> {
     } else {
       setState(() {
         Globals.currentUser.avatar =
-            'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+            'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
       });
     }
   }
