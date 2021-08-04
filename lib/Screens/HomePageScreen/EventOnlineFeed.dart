@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 
+import '../../Globals.dart';
+
 class EventOnlineFeed extends StatelessWidget {
   final Event event;
 
@@ -17,8 +19,8 @@ class EventOnlineFeed extends StatelessWidget {
       children: <Widget>[
         Stack(children: <Widget>[
           Container(
-            width: 120.0,
-            height: 120.0,
+            width: Globals.scaler.getWidth(10),
+            height: Globals.scaler.getHeight(6),
             decoration: BoxDecoration(
               image: DecorationImage(
                   fit: BoxFit.cover, image: NetworkImage(event.eventImage)),
@@ -27,12 +29,24 @@ class EventOnlineFeed extends StatelessWidget {
             ),
             child: Align(
                 alignment: Alignment.bottomCenter,
-                child: Text(event.topic,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.black)))
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.7),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 10,
+                          offset: Offset(0, 1),
+                        )
+                      ]),
+                  width: Globals.scaler.getWidth(10),
+                  child: Text(event.topic,
+                      textAlign: TextAlign.center,
+
+                      style: TextStyle(
+    fontWeight: FontWeight.bold,
+                          fontSize: Globals.scaler.getTextSize(6),
+                          color: Colors.white)),
+                ))
           ),
         ]),
         Positioned.fill(

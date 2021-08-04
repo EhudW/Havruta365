@@ -35,155 +35,167 @@ class _HomePageState extends State<LoginDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      backgroundColor: Colors.teal[100],
-      appBar: appBar(context),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            Align(
-                alignment: Alignment.centerRight,
-                child:Text("פרטים אישיים   " ,style: GoogleFonts.alef(
-                fontSize: 18,
-                color: Colors.teal[400]),
-    )),
-            genderField(gender),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            Align(
-                alignment: Alignment.centerRight,
-                child:Text("תאריך לידה   " ,style: GoogleFonts.alef(
-                    fontSize: 18,
-                    color: Colors.teal[400]),
-                )),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            Container(
-              height: 60,
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: DateTime(1969, 1, 1),
-                maximumDate: DateTime.now(),
-                onDateTimeChanged: (DateTime newDateTime) {
-                  _dateTime = newDateTime;
+    return Center(
+      child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        backgroundColor: Colors.teal[100],
+        appBar: appBar(context),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: Globals.scaler.getHeight(1)),
+              Align(
+                  alignment: Alignment.centerRight,
+                  child:Text("פרטים אישיים   " ,style: GoogleFonts.alef(
+                  fontSize: Globals.scaler.getTextSize(8),
+                  color: Colors.teal[400]),
+      )),
+              genderField(gender),
+              SizedBox(height: Globals.scaler.getHeight(1)),
+              Align(
+                  alignment: Alignment.centerRight,
+                  child:Text("תאריך לידה   " ,style: GoogleFonts.alef(
+                      fontSize: Globals.scaler.getTextSize(8),
+                      color: Colors.teal[400]),
+                  )),
+              SizedBox(height: Globals.scaler.getHeight(1)),
+              Container(
+                height: Globals.scaler.getHeight(4),
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: DateTime(1969, 1, 1),
+                  maximumDate: DateTime.now(),
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    _dateTime = newDateTime;
+                  },
+                ),
+              ),
+              SizedBox(height: Globals.scaler.getHeight(1)),
+              newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
+                  false),
+              newFiled(address, address_str, "כתובת מגורים",
+                  FontAwesomeIcons.home, false),
+              newFiled(mail, mail_str, "כתובת המייל", FontAwesomeIcons.mailBulk,
+                  false),
+              SizedBox(height: Globals.scaler.getHeight(1)),
+              Align(
+                  alignment: Alignment.centerRight,
+                  child:Text("אבטחה   " ,style: GoogleFonts.alef(
+                      fontSize: Globals.scaler.getTextSize(8),
+                      color: Colors.teal[400]),
+                  )),
+              newFiled(
+                  password, password_str, "סיסמא", FontAwesomeIcons.key, true),
+              newFiled(password_con, password_con_str, "אישור סיסמא",
+                  FontAwesomeIcons.check, true),
+              SizedBox(height: Globals.scaler.getHeight(2)),
+              ElevatedButton(
+                child: Text(
+                  "תרשום אותי",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.abel(fontSize: Globals.scaler.getTextSize(9), color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                    alignment: Alignment.center,
+                    minimumSize:
+                    Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(38.0),
+                    ),
+                    primary: Colors.teal,
+                    // <-- Button color
+                    onPrimary: Colors.teal),
+                onPressed: () async {
+                  gender.text == 'Gender.Female' ? gender_str = 'F' : gender_str = 'M';
+                  if (_dateTime == null) {
+                    _dateTime = DateTime.now();
+                  }
+                  ;
+                  address_str = address.text;
+                  name_str = name.text;
+                  password_str = password.text;
+                  password_con_str = password_con.text;
+                  mail_str = mail.text;
+                  if (password_con_str.isEmpty ||
+                      password_con_str == null ||
+                      password_str.isEmpty ||
+                      password_str == null ||
+                      mail_str.isEmpty ||
+                      mail_str == null ||
+                      address_str.isEmpty ||
+                      address_str == null ||
+                      name_str.isEmpty ||
+                      name_str == null) {
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('ודא שמילאת את כל השדות',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  if (!(mail_str.contains("@")&&mail_str.contains("."))) {
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('כותבת המייל לא תקינה ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  if (password_str.length < 5) {
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  // Check if the passwords are equals
+                  if (password_str != password_con_str) {
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('סיסמאות לא תואמות',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  bool userExist = await Globals.db.isUserExist(mail_str);
+                  if (userExist) {
+                    Flushbar(
+                      title: 'שגיאה בהרשמה',
+                      messageText: Text('קיים חשבון עבור מייל זה',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.teal[400], fontSize: Globals.scaler.getTextSize(8))),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                    return;
+                  }
+                  User user = new User();
+                  user.address = address_str;
+                  user.email = mail_str;
+                  user.gender = gender_str;
+                  user.birthDate = _dateTime;
+                  user.password = password_str;
+                  Globals.currentUser = user;
+                  var res = Globals.db.insertNewUser(user);
+                  print("Registration Succeeded");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginMoreDetails()),
+                  );
                 },
               ),
-            ),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
-                false),
-            newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.home, false),
-            newFiled(mail, mail_str, "כתובת המייל", FontAwesomeIcons.mailBulk,
-                false),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            Align(
-                alignment: Alignment.centerRight,
-                child:Text("אבטחה   " ,style: GoogleFonts.alef(
-                    fontSize: 18,
-                    color: Colors.teal[400]),
-                )),
-            newFiled(
-                password, password_str, "סיסמא", FontAwesomeIcons.key, true),
-            newFiled(password_con, password_con_str, "אישור סיסמא",
-                FontAwesomeIcons.check, true),
-            SizedBox(height: Globals.scaler.getHeight(2)),
-            ElevatedButton(
-              child: Text(
-                "תרשום אותי",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                  alignment: Alignment.center,
-                  minimumSize:
-                  Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(38.0),
-                  ),
-                  primary: Colors.teal,
-                  // <-- Button color
-                  onPrimary: Colors.teal),
-              onPressed: () async {
-                gender.text == 'Gender.Female' ? gender_str = 'F' : gender_str = 'M';
-                if (_dateTime == null) {
-                  _dateTime = DateTime.now();
-                }
-                ;
-                address_str = address.text;
-                name_str = name.text;
-                password_str = password.text;
-                password_con_str = password_con.text;
-                mail_str = mail.text;
-                if (password_con_str.isEmpty ||
-                    password_con_str == null ||
-                    password_str.isEmpty ||
-                    password_str == null ||
-                    mail_str.isEmpty ||
-                    mail_str == null ||
-                    address_str.isEmpty ||
-                    address_str == null ||
-                    name_str.isEmpty ||
-                    name_str == null) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('ודא שמילאת את כל השדות',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                if (password_str.length < 5) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                // Check if the passwords are equals
-                if (password_str != password_con_str) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('סיסמאות לא תואמות',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                bool userExist = await Globals.db.isUserExist(mail_str);
-                if (userExist) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('קיים חשבון עבור מייל זה',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                User user = new User();
-                user.address = address_str;
-                user.email = mail_str;
-                user.gender = gender_str;
-                user.birthDate = _dateTime;
-                user.password = password_str;
-                Globals.currentUser = user;
-                var res = Globals.db.insertNewUser(user);
-                print("Registration Succeeded");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginMoreDetails()),
-                );
-              },
-            ),
-            SizedBox(height: Globals.scaler.getHeight(1))
-          ],
+              SizedBox(height: Globals.scaler.getHeight(1))
+            ],
+          ),
         ),
       ),
     );
@@ -215,7 +227,7 @@ newFiled(controller, str, text, icon, cover) {
             textAlign: TextAlign.center,
             controller: controller,
             obscureText: cover,
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: Globals.scaler.getTextSize(7.5)),
             decoration: InputDecoration(
                 suffixIcon: Icon(
                   icon,
@@ -250,9 +262,9 @@ Widget genderField(gender_str) {
             'https://image.flaticon.com/icons/png/512/180/180678.png'),
         verticalAlignedText: true,
         selectedGenderTextStyle:
-            TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),
+            TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: Globals.scaler.getTextSize(8)),
         unSelectedGenderTextStyle:
-            TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
+            TextStyle(color: Colors.teal, fontWeight: FontWeight.normal, fontSize: Globals.scaler.getTextSize(7.5)),
         onChanged: (Gender gender) {
           gender_str.text = gender.toString();
         },
@@ -263,7 +275,7 @@ Widget genderField(gender_str) {
         // default : true,
         opacityOfGradient: 0.4,
         padding: const EdgeInsets.all(1),
-        size: 100, //default : 40
+        size: Globals.scaler.getTextSize(19), //default : 40
       ),
     ),
   ]);
@@ -286,10 +298,9 @@ button(name_str) {
 
 appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();
-
   return new AppBar(
       leadingWidth: 0,
-      toolbarHeight: 40,
+      toolbarHeight: Globals.scaler.getHeight(2),
       elevation: 30,
       shadowColor: Colors.teal[400],
       shape: RoundedRectangleBorder(
@@ -309,7 +320,7 @@ appBar(BuildContext context) {
                 fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.userAlt, size: 20, color: Colors.teal[400])
+          Icon(FontAwesomeIcons.userAlt, size: Globals.scaler.getTextSize(9), color: Colors.teal[400])
         ]),
       ));
 }

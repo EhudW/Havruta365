@@ -31,111 +31,116 @@ class _HomePageState extends State<LoginMoreDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      backgroundColor: Colors.teal[100],
-      appBar: appBar(context),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "פרטים נוספים   ",
-                  style:
-                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
-                )),
-            imageProfile(),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            FadeAnimation(
-              1.7,
-              Container(
-                  alignment: AlignmentDirectional.centerEnd,
-                  width: Globals.scaler.getWidth(20),
-                  height: Globals.scaler.getHeight(3),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(30.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(1),
-                          offset: const Offset(0, 2),
-                          blurRadius: 8.0),
-                    ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Center(
+        child: Scaffold(
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          backgroundColor: Colors.teal[100],
+          appBar: appBar(context),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: Globals.scaler.getHeight(1)),
+                Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "פרטים נוספים   ",
+                      style:
+                          GoogleFonts.alef(fontSize: Globals.scaler.getTextSize(8), color: Colors.teal[400]),
+                    )),
+                imageProfile(),
+                SizedBox(height: Globals.scaler.getHeight(1)),
+                FadeAnimation(
+                  1.7,
+                  Container(
+                      alignment: AlignmentDirectional.centerEnd,
+                      width: Globals.scaler.getWidth(20),
+                      height: Globals.scaler.getHeight(3),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(30.0),
+                        ),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                              color: Colors.grey.withOpacity(1),
+                              offset: const Offset(0, 2),
+                              blurRadius: 8.0),
+                        ],
+                      ),
+                      child: DropdownButton<String>(
+                        iconDisabledColor: Colors.teal,
+                        isExpanded: true,
+                        value: status_str,
+                        icon: Icon(Icons.arrow_drop_down),
+                        iconSize: Globals.scaler.getTextSize(9),
+                        //this inicrease the size
+                        elevation: 100,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize:  Globals.scaler.getTextSize(8),
+                        ),
+                        underline: Container(),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            status_str = newValue;
+                          });
+                        },
+                        items: <String>[
+                          "סטטוס משפחתי",
+                          "רווק/ה",
+                          'נשוי/אה',
+                          'גרוש/ה'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Center(
+                                child: Text(value, textAlign: TextAlign.center)),
+                          );
+                        }).toList(),
+                      )),
+                ),
+                newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
+                    3.0),
+                newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
+                    FontAwesomeIcons.list, 8.0),
+                SizedBox(height: Globals.scaler.getHeight(1)),
+                ElevatedButton(
+                  child: Text(
+                    "מצא לי חברותא ",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.abel(fontSize: Globals.scaler.getTextSize(9), color: Colors.white),
                   ),
-                  child: DropdownButton<String>(
-                    iconDisabledColor: Colors.teal,
-                    isExpanded: true,
-                    value: status_str,
-                    icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 30,
-                    //this inicrease the size
-                    elevation: 100,
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 18,
-                    ),
-                    underline: Container(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        status_str = newValue;
-                      });
-                    },
-                    items: <String>[
-                      "סטטוס משפחתי",
-                      "רווק/ה",
-                      'נשוי/אה',
-                      'גרוש/ה'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Center(
-                            child: Text(value, textAlign: TextAlign.center)),
-                      );
-                    }).toList(),
-                  )),
+                  style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                      minimumSize: Size(
+                          Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
+                      shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(38.0),
+                      ),
+                      primary: Colors.red,
+                      // <-- Button color
+                      onPrimary: Colors.teal),
+                  onPressed: () async {
+                    Globals.db.saveIdLocally();
+                    yeshiva_str = yeshiva.text;
+                    description_str = description.text;
+                    Globals.currentUser.yeshiva = yeshiva_str;
+                    Globals.currentUser.description = description_str;
+                    Globals.currentUser.status = status_str;
+                    Globals.db.updateUser(Globals.currentUser);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
+                  },
+                ),
+                SizedBox(height: Globals.scaler.getHeight(1)),
+              ],
             ),
-            newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
-                3.0),
-            newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
-                FontAwesomeIcons.list, 8.0),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            ElevatedButton(
-              child: Text(
-                "מצא לי חברותא ",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                  alignment: Alignment.center,
-                  minimumSize: Size(
-                      Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(38.0),
-                  ),
-                  primary: Colors.red,
-                  // <-- Button color
-                  onPrimary: Colors.teal),
-              onPressed: () async {
-                Globals.db.saveIdLocally();
-                yeshiva_str = yeshiva.text;
-                description_str = description.text;
-                Globals.currentUser.yeshiva = yeshiva_str;
-                Globals.currentUser.description = description_str;
-                Globals.currentUser.status = status_str;
-                Globals.db.updateUser(Globals.currentUser);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
-              },
-            ),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-          ],
+          ),
         ),
       ),
     );
@@ -181,7 +186,6 @@ class _HomePageState extends State<LoginMoreDetails> {
 
   Widget bottomSheet() {
     return Container(
-      height: 100.0,
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.symmetric(
         horizontal: Globals.scaler.getWidth(3),
@@ -276,11 +280,11 @@ newFiled(controller, str, text, icon, size) {
           child: TextField(
               textAlign: TextAlign.center,
               controller: controller,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: Globals.scaler.getTextSize(7.5)),
               decoration: InputDecoration(
                   suffixIcon: Icon(
                     icon,
-                    size: 22,
+                    size: Globals.scaler.getTextSize(8),
                     color: Colors.red,
                   ),
                   border: InputBorder.none,
@@ -326,11 +330,11 @@ newFiled1(controller, str, text, icon, size) {
               expands: true,
               textAlign: TextAlign.center,
               controller: controller,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: Globals.scaler.getTextSize(7.5)),
               decoration: InputDecoration(
                   suffixIcon: Icon(
                     icon,
-                    size: 22,
+                    size: Globals.scaler.getTextSize(8),
                     color: Colors.red,
                   ),
                   border: InputBorder.none,
@@ -351,21 +355,20 @@ newFiled1(controller, str, text, icon, size) {
 
 appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();
-
   return new AppBar(
       leadingWidth: 0,
-      toolbarHeight: 40,
+      toolbarHeight: Globals.scaler.getHeight(2),
       elevation: 30,
       shadowColor: Colors.teal[400],
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(0),
-      )),
+            bottom: Radius.circular(0),
+          )),
       backgroundColor: Colors.white,
       title: Container(
         width: scaler.getWidth(50),
         child:
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
             "משתמש חדש  ",
             textAlign: TextAlign.center,
@@ -374,7 +377,7 @@ appBar(BuildContext context) {
                 fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.userAlt, size: 20, color: Colors.teal[400])
+          Icon(FontAwesomeIcons.userAlt, size: Globals.scaler.getTextSize(9), color: Colors.teal[400])
         ]),
       ));
 }

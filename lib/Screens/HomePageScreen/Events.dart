@@ -45,13 +45,15 @@ class _EventsState extends State<Events> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: true,
-        body: Column(children: <Widget>[
-          Expanded(flex: 2, child: eventsOnlineScroll()),
-          searchBar(),
-          Expanded(flex: 7, child: eventsScroll())
-        ]));
+    return Center(
+      child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          body: Column(children: <Widget>[
+            Expanded(flex: 2, child: eventsOnlineScroll()),
+            searchBar(),
+            Expanded(flex: 7, child: eventsScroll())
+          ])),
+    );
   }
 
   eventsScroll() {
@@ -139,12 +141,12 @@ class _EventsState extends State<Events> {
       )),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         Container(
-          height: 20,
+          height: Globals.scaler.getHeight(1),
           width: Globals.scaler.getWidth(10),
           decoration: BoxDecoration(
             color: Colors.red,
             borderRadius: const BorderRadius.all(
-              Radius.elliptical(5, 10),
+              Radius.elliptical(10, 10),
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
@@ -157,7 +159,7 @@ class _EventsState extends State<Events> {
           child: Text('שיעורים מומלצים',
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: Globals.scaler.getTextSize(6.5),
+                  fontSize: Globals.scaler.getTextSize(6),
                   fontWeight: FontWeight.bold)),
         )
       ]),
@@ -169,14 +171,13 @@ class _EventsState extends State<Events> {
     return Center(
         //padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 20),
         child: Column(children: <Widget>[
-      SizedBox(height: Globals.scaler.getHeight(1)),
       Row(
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),
           SizedBox(width: Globals.scaler.getWidth(1)),
           Expanded(
             child: Container(
-              height: 40,
+              height: Globals.scaler.getHeight(2.5),
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: const BorderRadius.all(
@@ -194,7 +195,7 @@ class _EventsState extends State<Events> {
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
                       suffixIcon: Icon(FontAwesomeIcons.search,
-                          size: 22, color: Colors.red , textDirection: TextDirection.rtl),
+                          size: Globals.scaler.getTextSize(8), color: Colors.red , textDirection: TextDirection.rtl),
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,

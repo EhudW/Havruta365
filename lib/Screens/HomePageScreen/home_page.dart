@@ -27,28 +27,33 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Scaffold(
-            body: Column(children: <Widget>[Expanded(child: Events())]),
-            key: _scaffoldKey,
-            drawer: Drawer(
-                child: Container(
-                    color: Colors.transparent,
-                    child: Column(children: <Widget>[
-                      Expanded(child: Notifications())
-                    ])))),
-        backgroundColor: Colors.white,
-        appBar: appBar(context),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        resizeToAvoidBottomInset: false,
-        floatingActionButton: floatingActionButton(),
-        bottomNavigationBar: bottomAppBar());
+    return WillPopScope(
+        onWillPop: () async => false,
+      child: Center(
+        child: Scaffold(
+            body: Scaffold(
+                body: Column(children: <Widget>[Expanded(child: Events())]),
+                key: _scaffoldKey,
+                drawer: Drawer(
+                    child: Container(
+                        color: Colors.transparent,
+                        child: Column(children: <Widget>[
+                          Expanded(child: Notifications())
+                        ])))),
+            backgroundColor: Colors.white,
+            appBar: appBar(context),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            resizeToAvoidBottomInset: false,
+            floatingActionButton: floatingActionButton(),
+            bottomNavigationBar: bottomAppBar()),
+      ),
+    );
   }
 
   appBar(BuildContext context) {
     return new AppBar(
-        leadingWidth: 40,
-        toolbarHeight: 40,
+        leadingWidth: Globals.scaler.getWidth(3),
+        toolbarHeight: Globals.scaler.getHeight(2),
         elevation: 10,
         leading: Builder(
             builder: (context) => new IconButton(
@@ -80,9 +85,9 @@ class _HomePageState extends State<HomePage> {
             Text(
             "Havruta  ",
             textAlign: TextAlign.center,
-            style: GoogleFonts.alef(fontWeight: FontWeight.bold,  fontSize: 20, color:Colors.teal[400]),
+            style: GoogleFonts.alef(fontWeight: FontWeight.bold,  fontSize: Globals.scaler.getTextSize(8), color:Colors.teal[400]),
           ),
-                Icon(FontAwesomeIcons.book, size: 25, color: Colors.teal[400])
+                Icon(FontAwesomeIcons.book, size: Globals.scaler.getTextSize(8), color: Colors.teal[400])
               ]),
         ));
   }
@@ -120,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.exit_to_app_outlined),
                 color: Colors.white54,
                 onPressed: () {
-                  showDialog(context: context, builder: (_)=> AlertDialog());
+                  SystemNavigator.pop();
                 },
                 iconSize: scaler.getTextSize(10),
               ),
