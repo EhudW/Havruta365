@@ -12,7 +12,7 @@ import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'Globals.dart';
 
 void main() async {
@@ -29,9 +29,11 @@ class _MyAppState extends State<MyApp> {
   Future<String> _id;
   Future mongoConnectFuture;
 
-  void initFirebase() async{
+  void initFirebase() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    //FirebaseCrashlytics.instance.crash();
   }
 
   @override
@@ -75,7 +77,8 @@ class _MyAppState extends State<MyApp> {
                 });
                 return FutureBuilder(
                     future: _id,
-                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                           return const CircularProgressIndicator();
@@ -84,15 +87,17 @@ class _MyAppState extends State<MyApp> {
                             return Text('Error: ${snapshot.error}');
                           } else {
                             // Not connected - go to Login
-                            if (snapshot.data == ""){
+                            if (snapshot.data == "") {
                               return Login();
                             }
                             // Connected - update current_user and go to home page
                             else {
-                              var current_user = Globals.db.getUserByID(snapshot.data);
+                              var current_user =
+                                  Globals.db.getUserByID(snapshot.data);
                               return FutureBuilder(
                                   future: current_user,
-                                  builder: (BuildContext context, AsyncSnapshot<User> snapshot){
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<User> snapshot) {
                                     switch (snapshot.connectionState) {
                                       case ConnectionState.waiting:
                                         return const CircularProgressIndicator();
