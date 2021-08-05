@@ -6,7 +6,6 @@ import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
 import 'package:havruta_project/DataBase_auth/Topic.dart';
-import 'package:objectid/objectid.dart';
 import 'MyData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +14,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "dart:async";
 import 'Next_Button.dart';
 import 'package:loading_gifs/loading_gifs.dart';
-import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
 class FindMeAChavruta1 extends StatefulWidget {
   @override
@@ -34,7 +32,6 @@ List<String> machsehvetBooks = [];
 List<String> otherBooks = [];
 
 List<String> booksDrop = [];
-ScreenScaler scaler = ScreenScaler();
 
 class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   var db = Globals.db;
@@ -136,7 +133,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   dropDownContainer(val) {
     return Container(
       child: Text(val),
-      width: scaler.getWidth(25),
+      width: Globals.scaler.getWidth(25),
       alignment: Alignment.center,
     );
   }
@@ -245,10 +242,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
       intializeEvent(this.event);
       this.counter += 1;
     }
-    spaceBetween = scaler.getHeight(2);
-    height = scaler.getHeight(3);
-    width = scaler.getWidth(31);
-    iconSize = scaler.getTextSize(12);
+    spaceBetween = Globals.scaler.getHeight(2);
+    height = Globals.scaler.getHeight(3);
+    width = Globals.scaler.getWidth(31);
+    iconSize = Globals.scaler.getTextSize(12);
     loadGenderData();
     loadChoices();
     return Scaffold(
@@ -269,28 +266,30 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     Column(
                       children: [
                         Padding(
-                            padding:
-                                EdgeInsets.only(bottom: scaler.getHeight(0)),
+                            padding: EdgeInsets.only(
+                                bottom: Globals.scaler.getHeight(0)),
                             child: WavyHeader()),
                       ],
                     ),
                     Column(
                       children: <Widget>[
                         Padding(
-                            padding:
-                                EdgeInsets.only(top: scaler.getHeight(2.5))),
+                            padding: EdgeInsets.only(
+                                top: Globals.scaler.getHeight(2.5))),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Padding(
-                                padding: EdgeInsets.all(scaler.getWidth(0.5))),
+                                padding: EdgeInsets.all(
+                                    Globals.scaler.getWidth(0.5))),
 
                             ///########### ----CHOICE DROPDOWN LIST----########
-                            dropDownList(scaler, "בחרו האם זה שיעור או חברותא",
+                            dropDownList("בחרו האם זה שיעור או חברותא",
                                 choiceDrop, selectedChoice),
                             Padding(
-                              padding: EdgeInsets.all(scaler.getWidth(.5)),
+                              padding:
+                                  EdgeInsets.all(Globals.scaler.getWidth(.5)),
                               child: Icon(
                                 FontAwesomeIcons.questionCircle,
                                 color: Colors.tealAccent[400],
@@ -306,8 +305,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           children: <Widget>[
                             Stack(children: [
                               Padding(
-                                  padding:
-                                      EdgeInsets.all(scaler.getWidth(0.5))),
+                                  padding: EdgeInsets.all(
+                                      Globals.scaler.getWidth(0.5))),
                               Container(
                                   height: height,
                                   width: width,
@@ -316,32 +315,36 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       BoxShadow(
                                           color: Colors.grey.withOpacity(1),
                                           offset: const Offset(0, 2),
-                                          blurRadius: 8.0),
+                                          blurRadius:
+                                              Globals.scaler.getHeight(.2)),
                                     ],
                                     color: Colors.white70,
                                     border: Border.all(
-                                        color: Colors.white70, width: 2.5),
+                                        color: Colors.white70,
+                                        width: Globals.scaler.getWidth(0.2)),
                                     borderRadius: BorderRadius.circular(50.0),
                                   ),
                                   child: Material(
-                                    elevation: 50,
+                                    elevation: Globals.scaler.getHeight(2),
                                     borderRadius: BorderRadius.circular(50.0),
                                     child: Container(
-                                      width: scaler.getWidth(21),
+                                      width: Globals.scaler.getWidth(21),
                                       child: TextField(
                                         textAlign: TextAlign.center,
                                         autocorrect: true,
                                         style: TextStyle(
                                             color: Colors.teal,
-                                            fontSize: scaler.getTextSize(7.2)),
+                                            fontSize: Globals.scaler
+                                                .getTextSize(7.2)),
                                         decoration: InputDecoration(
                                           hintText: "מספר משתתפים",
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.fromLTRB(
-                                              scaler.getWidth(1.3),
-                                              15.0,
-                                              20.0,
-                                              10.0),
+                                            Globals.scaler.getWidth(1.3),
+                                            Globals.scaler.getWidth(1.3),
+                                            Globals.scaler.getWidth(1.3),
+                                            Globals.scaler.getWidth(1.3),
+                                          ),
                                         ),
                                         inputFormatters: [
                                           FilteringTextInputFormatter
@@ -363,7 +366,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   ))
                             ]),
                             Padding(
-                              padding: EdgeInsets.all(scaler.getWidth(.5)),
+                              padding:
+                                  EdgeInsets.all(Globals.scaler.getWidth(.5)),
                               child: Icon(
                                 Icons.group,
                                 color: Colors.tealAccent[400],
@@ -378,13 +382,15 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Padding(
-                                padding: EdgeInsets.all(scaler.getWidth(0.8))),
+                                padding: EdgeInsets.all(
+                                    Globals.scaler.getWidth(0.8))),
                             dropDownList(
-                                scaler, "בחרו תחום", topicsDrop, selectedTopic),
+                                "בחרו תחום", topicsDrop, selectedTopic),
 
                             ///########### ----TOPIC DROPDOWN LIST----########
                             Padding(
-                              padding: EdgeInsets.all(scaler.getWidth(.5)),
+                              padding:
+                                  EdgeInsets.all(Globals.scaler.getWidth(.5)),
                               child: Icon(
                                 Icons.topic,
                                 color: Colors.tealAccent[400],
@@ -399,13 +405,14 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Padding(
-                                padding: EdgeInsets.all(scaler.getWidth(0.8))),
+                                padding: EdgeInsets.all(
+                                    Globals.scaler.getWidth(0.8))),
 
                             ///########### ----BOOKS DROPDOWN LIST----########
-                            dropDownList(
-                                scaler, "בחרו ספר", booksDrop, selectedBook),
+                            dropDownList("בחרו ספר", booksDrop, selectedBook),
                             Padding(
-                              padding: EdgeInsets.all(scaler.getWidth(.5)),
+                              padding:
+                                  EdgeInsets.all(Globals.scaler.getWidth(.5)),
                               child: Icon(
                                 FontAwesomeIcons.book,
                                 color: Colors.tealAccent[400],
@@ -420,13 +427,14 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Padding(
-                                  padding: EdgeInsets.all(scaler.getWidth(.8))),
+                                  padding: EdgeInsets.all(
+                                      Globals.scaler.getWidth(.8))),
 
                               ///########### ----GENDER DROPDOWN LIST----########
-                              dropDownList(
-                                  scaler, "בחרו מין יעד", genderDrop, gender),
+                              dropDownList("בחרו מין יעד", genderDrop, gender),
                               Padding(
-                                padding: EdgeInsets.all(scaler.getWidth(.5)),
+                                padding:
+                                    EdgeInsets.all(Globals.scaler.getWidth(.5)),
                                 child: Icon(
                                   Icons.face,
                                   color: Colors.tealAccent[400],
@@ -436,7 +444,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             ]),
                         SizedBox(height: spaceBetween),
                         FirstDotRow(),
-                        SizedBox(height: scaler.getHeight(0.7)),
+                        SizedBox(height: Globals.scaler.getHeight(0.7)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -458,8 +466,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     );
   }
 
-  dropDownList(ScreenScaler scaler, String text,
-      List<DropdownMenuItem<String>> listDrop, var val) {
+  dropDownList(String text, List<DropdownMenuItem<String>> listDrop, var val) {
     return DropdownButtonHideUnderline(
         child: Stack(
       children: [
@@ -471,14 +478,15 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
               BoxShadow(
                   color: Colors.grey.withOpacity(1),
                   offset: const Offset(0, 2),
-                  blurRadius: 8.0),
+                  blurRadius: Globals.scaler.getHeight(.2)),
             ],
             color: Colors.white70,
-            border: Border.all(color: Colors.white70, width: 2.5),
+            border: Border.all(
+                color: Colors.white70, width: Globals.scaler.getWidth(0.2)),
             borderRadius: BorderRadius.circular(50.0),
           ),
           child: Material(
-            elevation: 50,
+            elevation: Globals.scaler.getHeight(2),
             borderRadius: BorderRadius.circular(50.0),
             child: ButtonTheme(
               alignedDropdown: true,
@@ -491,7 +499,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   color: Colors.teal,
                 ),
                 hint: Container(
-                    width: scaler.getWidth(26.2),
+                    width: Globals.scaler.getWidth(26.2),
                     child: TextField(
                         textAlign: TextAlign.center,
                         autocorrect: true,
@@ -569,9 +577,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
   appBar() {
     return new AppBar(
-        leadingWidth: 20,
-        toolbarHeight: 40,
-        elevation: 10,
+        leadingWidth: Globals.scaler.getWidth(0),
+        toolbarHeight: Globals.scaler.getHeight(1.9),
+        elevation: Globals.scaler.getHeight(1),
         shadowColor: Colors.teal[400],
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
@@ -585,7 +593,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
             style:
                 TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.calendar, size: 25, color: Colors.teal[400])
+          Icon(FontAwesomeIcons.calendar,
+              size: Globals.scaler.getTextSize(9), color: Colors.teal[400])
         ]));
   }
 }

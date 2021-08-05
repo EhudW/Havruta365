@@ -1,6 +1,7 @@
 import 'package:adobe_xd/pinned.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:havruta_project/Globals.dart';
 
 class SecondDotRow extends StatelessWidget {
   @override
@@ -15,7 +16,11 @@ class SecondDotRow extends StatelessWidget {
           child: Stack(
             children: <Widget>[
               Pinned.fromSize(
-                bounds: Rect.fromLTWH(32.0, 0.0, 6.0, 6.0),
+                bounds: Rect.fromLTWH(
+                    Globals.scaler.getWidth(2.5),
+                    Globals.scaler.getHeight(0),
+                    Globals.scaler.getWidth(0.5),
+                    Globals.scaler.getWidth(0.5)),
                 size: Size(54.0, 6.0),
                 pinTop: true,
                 pinBottom: true,
@@ -29,7 +34,11 @@ class SecondDotRow extends StatelessWidget {
                 ),
               ),
               Pinned.fromSize(
-                bounds: Rect.fromLTWH(16.0, 0.0, 6.0, 6.0),
+                bounds: Rect.fromLTWH(
+                    Globals.scaler.getWidth(0.1),
+                    Globals.scaler.getHeight(0),
+                    Globals.scaler.getWidth(0.5),
+                    Globals.scaler.getWidth(0.5)),
                 size: Size(54.0, 6.0),
                 pinTop: true,
                 pinBottom: true,
@@ -41,7 +50,11 @@ class SecondDotRow extends StatelessWidget {
                 ),
               ),
               Pinned.fromSize(
-                bounds: Rect.fromLTWH(48.0, 0.0, 6.0, 6.0),
+                bounds: Rect.fromLTWH(
+                    Globals.scaler.getWidth(5),
+                    Globals.scaler.getHeight(0),
+                    Globals.scaler.getWidth(0.5),
+                    Globals.scaler.getWidth(0.5)),
                 size: Size(54.0, 6.0),
                 pinTop: true,
                 pinBottom: true,

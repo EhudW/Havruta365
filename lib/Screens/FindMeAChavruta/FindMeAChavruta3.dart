@@ -12,7 +12,6 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'Wavy_Header.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-ScreenScaler scaler = ScreenScaler();
 PickedFile image;
 
 class FindMeAChavruta3 extends StatefulWidget {
@@ -35,14 +34,15 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   String link;
   double spaceBetween;
 
-  Widget checkIfShiur(ScreenScaler scaler) {
+  Widget checkIfShiur() {
     if (widget.event.type == 'L') {
       return Container(
-        height: scaler.getHeight(2.5),
-        width: scaler.getWidth(35),
+        height: Globals.scaler.getHeight(2.5),
+        width: Globals.scaler.getWidth(35),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: Colors.teal[400], width: 1.0),
+          border: Border.all(
+              color: Colors.teal[400], width: Globals.scaler.getWidth(.1)),
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: new TextField(
@@ -51,8 +51,11 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             border: InputBorder.none,
             hintText: "פרטי מעביר השיעור",
             focusColor: Colors.teal,
-            contentPadding: EdgeInsets.fromLTRB(scaler.getWidth(2),
-                scaler.getHeight(0), scaler.getWidth(2), scaler.getHeight(0)),
+            contentPadding: EdgeInsets.fromLTRB(
+                Globals.scaler.getWidth(2),
+                Globals.scaler.getHeight(0),
+                Globals.scaler.getWidth(2),
+                Globals.scaler.getHeight(0)),
           ),
           onChanged: (lecturer) {
             widget.event.lecturer = lecturer;
@@ -61,16 +64,15 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
               widget.event.lecturer = "";
               print(widget.event.lecturer);
             }
-            //print(widget.event.link);
           },
         ),
       );
     }
-    return Container(height: 0);
+    return Container(height: Globals.scaler.getHeight(0));
   }
 
   Widget build(BuildContext context) {
-    spaceBetween = scaler.getHeight(2);
+    spaceBetween = Globals.scaler.getHeight(2);
     return Scaffold(
         appBar: appBar(),
         body: Builder(
@@ -88,27 +90,29 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                        padding: EdgeInsets.only(top: scaler.getHeight(1.5))),
+                        padding: EdgeInsets.only(
+                            top: Globals.scaler.getHeight(1.5))),
                     Container(
-                      width: scaler.getWidth(12),
-                      height: scaler.getHeight(5),
-                      child: imageProfile(scaler),
+                      width: Globals.scaler.getWidth(12),
+                      height: Globals.scaler.getHeight(5),
+                      child: imageProfile(),
                     ),
                     SizedBox(height: spaceBetween),
                     Container(
-                      child: checkIfShiur(scaler),
+                      child: checkIfShiur(),
                     ),
                     SizedBox(height: spaceBetween),
                     Stack(
                       children: [
                         SizedBox(height: spaceBetween),
                         Container(
-                            height: scaler.getHeight(2.5),
-                            width: scaler.getWidth(35),
+                            height: Globals.scaler.getHeight(2.5),
+                            width: Globals.scaler.getWidth(35),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                  color: Colors.teal[400], width: 1.0),
+                                  color: Colors.teal[400],
+                                  width: Globals.scaler.getWidth(0.1)),
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: new TextField(
@@ -118,10 +122,10 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 hintText: "קישור לשיעור",
                                 focusColor: Colors.teal,
                                 contentPadding: EdgeInsets.fromLTRB(
-                                    scaler.getWidth(2),
-                                    scaler.getHeight(0),
-                                    scaler.getWidth(2),
-                                    scaler.getHeight(0)),
+                                    Globals.scaler.getWidth(2),
+                                    Globals.scaler.getHeight(0),
+                                    Globals.scaler.getWidth(2),
+                                    Globals.scaler.getHeight(0)),
                               ),
                               maxLines: 1,
                               onChanged: (link) {
@@ -134,12 +138,13 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     Stack(
                       children: [
                         Container(
-                            height: scaler.getHeight(9),
-                            width: scaler.getWidth(35),
+                            height: Globals.scaler.getHeight(9),
+                            width: Globals.scaler.getWidth(35),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                  color: Colors.teal[400], width: 1.0),
+                                  color: Colors.teal[400],
+                                  width: Globals.scaler.getWidth(0.1)),
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: TextField(
@@ -150,10 +155,10 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 hintText: "פרטים נוספים",
                                 focusColor: Colors.blue,
                                 contentPadding: EdgeInsets.fromLTRB(
-                                    scaler.getWidth(2),
-                                    scaler.getHeight(0),
-                                    scaler.getWidth(2),
-                                    scaler.getHeight(0.5)),
+                                    Globals.scaler.getWidth(2),
+                                    Globals.scaler.getHeight(0),
+                                    Globals.scaler.getWidth(2),
+                                    Globals.scaler.getHeight(0.5)),
                               ),
                               onChanged: (description) {
                                 widget.event.description = description;
@@ -170,8 +175,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       children: [
                         Stack(children: [
                           Container(
-                              width: scaler.getWidth(28),
-                              height: scaler.getHeight(2.3),
+                              width: Globals.scaler.getWidth(28),
+                              height: Globals.scaler.getHeight(2.3),
                               decoration: BoxDecoration(
                                 color: Colors.teal[400],
                               ),
@@ -197,7 +202,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   child: new Text(
                                     "מצא לי חברותא",
                                     style: TextStyle(
-                                        fontSize: scaler.getTextSize(9),
+                                        fontSize: Globals.scaler.getTextSize(9),
                                         color: Colors.white),
                                   )))
                         ])
@@ -211,7 +216,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
         ));
   }
 
-  Widget imageProfile(ScreenScaler scaler) {
+  Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
         FlatButton(
@@ -229,8 +234,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
           ),
         ),
         Positioned(
-          bottom: scaler.getHeight(1.5),
-          right: scaler.getWidth(4.3),
+          bottom: Globals.scaler.getHeight(1.5),
+          right: Globals.scaler.getWidth(4.3),
           child: InkWell(
             onTap: () {
               showModalBottomSheet(
@@ -241,7 +246,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
             child: Icon(
               Icons.camera_alt,
               color: Colors.white,
-              size: scaler.getTextSize(11),
+              size: Globals.scaler.getTextSize(11),
             ),
           ),
         ),
@@ -251,22 +256,22 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
 
   Widget bottomSheet() {
     return Container(
-      height: 100.0,
+      height: Globals.scaler.getHeight(5.5),
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.symmetric(
-        horizontal: scaler.getWidth(3),
-        vertical: scaler.getHeight(1),
+        horizontal: Globals.scaler.getWidth(3),
+        vertical: Globals.scaler.getHeight(1),
       ),
       child: Column(
         children: <Widget>[
           Text(
             "בחר תמונה לחברותא",
             style: TextStyle(
-              fontSize: scaler.getTextSize(8.5),
+              fontSize: Globals.scaler.getTextSize(8.5),
             ),
           ),
           SizedBox(
-            height: scaler.getHeight(1),
+            height: Globals.scaler.getHeight(1),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             TextButton.icon(
@@ -322,9 +327,9 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
 
   appBar() {
     return AppBar(
-        leadingWidth: 20,
-        toolbarHeight: 40,
-        elevation: 10,
+        leadingWidth: Globals.scaler.getWidth(0),
+        toolbarHeight: Globals.scaler.getHeight(2),
+        elevation: Globals.scaler.getHeight(1),
         shadowColor: Colors.teal[400],
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
