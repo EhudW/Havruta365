@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:havruta_project/Screens/Login/ForgetPassword.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
@@ -249,21 +249,41 @@ class _HomePageState extends State<Login> {
                     ),
                     FadeAnimation(
                         2,
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:[ GestureDetector(
+                            onTap: () {
+                              Globals.db.updateUser(Globals.currentUser);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginDetails()),
+                              );
+                            },
+                            child: Center(
+                                child: Text(
+                              "משתמש חדש",
+                              style: TextStyle(color: Colors.blueAccent, fontSize: 15),
+                            )),
+                          ),
+                              SizedBox(
+                                width: Globals.scaler.getWidth(3),
+                              ),
                         GestureDetector(
                           onTap: () {
                             Globals.db.updateUser(Globals.currentUser);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => LoginDetails()),
+                                  builder: (context) => ForgetPassword()),
                             );
                           },
                           child: Center(
                               child: Text(
-                            "משתמש חדש",
-                            style: TextStyle(color: Colors.blueAccent, fontSize: 15),
-                          )),
-                        )),
+                                "?שכחת סיסמא",
+                                style: TextStyle(color: Colors.blueAccent, fontSize: 15),
+                              )),
+                        )])),
                     SizedBox(
                       height: Globals.scaler.getHeight(1),
                     ),
