@@ -144,7 +144,7 @@ class _HomePageState extends State<LoginDetails> {
                   )..show(context);
                   return;
                 }
-                if (password_str.length < 5) {
+                if (password_str.length < 6) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',

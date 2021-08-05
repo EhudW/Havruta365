@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:havruta_project/Globals.dart';
@@ -125,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.exit_to_app_outlined),
                 color: Colors.white54,
                 onPressed: () {
-                  SystemNavigator.pop();
+                  exit(0);
                 },
                 iconSize: scaler.getTextSize(10),
               ),

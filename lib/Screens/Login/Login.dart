@@ -261,7 +261,7 @@ class _HomePageState extends State<Login> {
                           child: Center(
                               child: Text(
                             "משתמש חדש",
-                            style: TextStyle(color: Colors.grey, fontSize: 15),
+                            style: TextStyle(color: Colors.blueAccent, fontSize: 15),
                           )),
                         )),
                     SizedBox(

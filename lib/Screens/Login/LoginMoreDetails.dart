@@ -129,7 +129,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                     description_str = description.text;
                     Globals.currentUser.yeshiva = yeshiva_str ?? "";
                     Globals.currentUser.description = description_str ?? "";
-                    Globals.currentUser.status = status_str ?? "";
+                    Globals.currentUser.status = status_str == "סטטוס משפחתי" ? "לא ידוע": status_str;
                     if (Globals.currentUser.avatar == null)
                       Globals.currentUser.avatar = 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
                     Globals.db.updateUser(Globals.currentUser);
