@@ -95,6 +95,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
               : "הצטרפ/ה לשיעור שלך!";
           NotificationUser notification = NotificationUser.fromJson({
             'creatorUser': Globals.currentUser.email,
+            'destinationUser': widget.event.creatorUser,
             'creationDate': DateTime.now(),
             'message': message,
             'type': 'join',
