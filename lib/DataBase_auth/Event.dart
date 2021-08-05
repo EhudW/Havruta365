@@ -7,6 +7,7 @@ class Event {
   Event(
       {
       this.creatorUser,
+        this.creatorName,
       this.creationDate,
         // type = {havruta = 'H', lesson = 'L'}
       this.type,
@@ -29,6 +30,7 @@ class Event {
   }
 
   String creatorUser,
+      creatorName,
       type,
       topic,
       book,
@@ -61,6 +63,7 @@ class Event {
   // Return JSON of the event
   Map<String, dynamic> toJson() => {
         'creatorUser': creatorUser,
+    'creatorName': creatorName,
         'creationDate': creationDate,
         'topic': topic,
         'book': book,
@@ -78,7 +81,8 @@ class Event {
   Event.fromJson(Map<String, dynamic> json)
       : _id = json['_id'],
         creatorUser = json['creatorUser'],
-        creationDate = json['creationDate'],
+        creatorName = json['creatorName'],
+      creationDate = json['creationDate'],
         topic = json['topic'],
         book = json['book'],
         type = json['type'],

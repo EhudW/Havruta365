@@ -20,7 +20,6 @@ class EventViewFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenScaler scaler = new ScreenScaler();
-    var user = Globals.db.getUser(event.creatorUser);
 
     return Material(
         child: InkWell(
@@ -83,7 +82,7 @@ class EventViewFeed extends StatelessWidget {
                                           //mainAxisAlignment: MainAxisAlignment.end,
                                           children: <Widget>[
                                             Text(
-                                              event.dates[0].toString().substring(0, 10),
+                                              event.dates[0].toString().substring(5, 10),
                                               textDirection: TextDirection.rtl,
                                               textAlign: TextAlign.right,
                                               style: TextStyle(
@@ -131,7 +130,7 @@ class EventViewFeed extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            this.event.type == 'L' ?event.lecturer: event.creatorUser.substring(0, event.creatorUser.indexOf('@')),
+                            this.event.type == "L" ?event.lecturer: event.creatorName,
      style: TextStyle(color: Colors.grey.shade600, fontSize: scaler.getTextSize(6)),
                               textAlign: TextAlign.center),
                         ],
