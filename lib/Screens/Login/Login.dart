@@ -263,7 +263,7 @@ class _HomePageState extends State<Login> {
                             child: Center(
                                 child: Text(
                               "משתמש חדש",
-                              style: TextStyle(color: Colors.blueAccent, fontSize: 15),
+                              style: TextStyle(color: Colors.blueAccent, fontSize: Globals.scaler.getTextSize(7)),
                             )),
                           ),
                               SizedBox(
@@ -281,7 +281,7 @@ class _HomePageState extends State<Login> {
                           child: Center(
                               child: Text(
                                 "שכחתי סיסמא",
-                                style: TextStyle(color: Colors.blueAccent, fontSize: 15),
+                                style: TextStyle(color: Colors.blueAccent, fontSize: Globals.scaler.getTextSize(7)),
                               )),
                         )])),
                     SizedBox(

@@ -36,7 +36,7 @@ class _HomePageState extends State<ForgetPassword> {
               child: Text(
                 "שלח את הסיסמא",
                 textAlign: TextAlign.center,
-                style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
+                style: GoogleFonts.abel(fontSize: Globals.scaler.getTextSize(8), color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
                   alignment: Alignment.center,
