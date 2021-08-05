@@ -5,8 +5,8 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
-import 'package:progress_state_button/progress_button.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
 
 class MyProgressButton extends StatefulWidget {
   MyProgressButton({Key key, this.event}) : super(key: key);
