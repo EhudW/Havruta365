@@ -92,7 +92,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
           String message;
           message = widget.event.type == 'H'
               ? "הצטרפ/ה לחברותא שלך"
-              : "הצטרפ/ה לשיעור שלך!";
+              : "הצטרפ/ה לשיעור שלך";
           NotificationUser notification = NotificationUser.fromJson({
             'creatorUser': Globals.currentUser.email,
             'destinationUser': widget.event.creatorUser,
