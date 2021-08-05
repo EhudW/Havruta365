@@ -180,6 +180,7 @@ class _HomePageState extends State<LoginDetails> {
                   return;
                 }
                 User user = new User();
+                user.name = name_str;
                 user.address = address_str;
                 user.email = mail_str;
                 user.gender = gender_str;
