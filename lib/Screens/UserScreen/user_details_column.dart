@@ -9,6 +9,12 @@ class UserDetailsColumn extends StatelessWidget {
 
   final User user;
 
+  gender (){
+    if (user.gender == 'M'){
+      return "גבר";
+    }
+    return "אשה";
+  }
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -55,7 +61,7 @@ class UserDetailsColumn extends StatelessWidget {
           ]),
           SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user.gender,
+            Text(gender(),
                 style: GoogleFonts.alef(
                     fontSize: size_field, fontWeight: FontWeight.bold),
                 textDirection: TextDirection.rtl),

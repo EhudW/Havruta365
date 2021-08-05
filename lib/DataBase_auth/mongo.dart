@@ -102,7 +102,6 @@ class Mongo {
 
   // Query all events that currents user register for them.
   Future<List<Event>> getEvents(String userMail) async {
-    print("start...");
     List<Event> events = [];
     var eventsColl = db.collection('Events');
     var allEvent = await eventsColl.find({"participants": Globals.currentUser.email}).toList();
@@ -152,6 +151,13 @@ class Mongo {
   Future<void> deleteNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     await collection.deleteOne({"_id": notification.id});
+  }
+
+  deleteFromEvent(ObjectId id, String email) async{
+    var collection = Globals.db.db.collection('Events');
+    // Get event by id and Add mail to participants array
+    var res = await collection.updateOne(
+        where.eq('_id', id), ModifierBuilder().pull('participants', email));
   }
 
   // Check if user exist
@@ -213,6 +219,13 @@ class Mongo {
     var collection = db.collection('Users');
     collection.remove(where.eq('mail', mail));
     await db.close();
+  }
+
+  Future<Event> getEventById(ObjectId id) async {
+    var collection = db.collection('Events');
+    var event = await collection.findOne(where.eq("_id", id));
+    var e = Event.fromJson(event);
+    return e;
   }
 
   getEvent(String _id) async {

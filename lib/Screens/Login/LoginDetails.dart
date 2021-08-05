@@ -184,6 +184,7 @@ class _HomePageState extends State<LoginDetails> {
                 user.address = address_str;
                 user.email = mail_str;
                 user.gender = gender_str;
+                user.name = name_str;
                 user.birthDate = _dateTime;
                 var bytes = utf8.encode(password_str);
                 var digest = sha1.convert(bytes);

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
 import 'package:havruta_project/Screens/EventScreen/datesList.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,6 +24,11 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
 
+  isNeedDeleteButton(){
+    if (widget.event.participants.contains(Globals.currentUser.email)) {
+      DeleteFromEventButton(widget.event);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +62,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             SizedBox(height: 8),
             MyProgressButton(event: widget.event),
             SizedBox(height: 20.0),
+            // widget.event.participants.contains(Globals.currentUser.email) ?
+            //   DeleteFromEventButton(widget.event) : SizedBox(),
             ParticipentsScroller(widget.event.participants),
             SizedBox(height: 10.0),
             // Link

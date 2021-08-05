@@ -62,20 +62,20 @@ class Event {
 
   // Return JSON of the event
   Map<String, dynamic> toJson() => {
-        'creatorUser': creatorUser,
-    'creatorName': creatorName,
-        'creationDate': creationDate,
-        'topic': topic,
-        'book': book,
-        'type': type,
-        'link': link,
-        'targetGender' : targetGender,
-        'description': description,
+        'creatorUser': creatorUser ?? "לא ידוע",
+    'creatorName': creatorName ?? "לא ידוע",
+        'creationDate': creationDate ?? DateTime.now(),
+        'topic': topic ?? "לא ידוע",
+        'book': book ?? "לא ידוע",
+        'type': type ?? "לא ידוע",
+        'link': link ?? "",
+        'targetGender' : targetGender ?? "לא ידוע",
+        'description': description ?? "לא ידוע",
         'eventImage': eventImage,
-        'lecturer': lecturer,
-        'participants': participants,
-        'maxParticipants': maxParticipants,
-        'dates': dates
+        'lecturer': lecturer ?? "לא ידוע",
+        'participants': participants ?? [],
+        'maxParticipants': maxParticipants ?? 100,
+        'dates': dates ?? []
       };
 
   Event.fromJson(Map<String, dynamic> json)

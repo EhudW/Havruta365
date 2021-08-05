@@ -78,7 +78,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             },
             child: Container(
               height: Globals.scaler.getHeight(3),
-              width: Globals.scaler.getWidth(32.5),
+              width: Globals.scaler.getWidth(26),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(width: Globals.scaler.getWidth(0.1), color: Colors.grey[350]),
@@ -123,7 +123,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             },
             child: Container(
               height: Globals.scaler.getHeight(3),
-              width: Globals.scaler.getWidth(32.5),
+              width: Globals.scaler.getWidth(26),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(width: Globals.scaler.getWidth(0.1), color: Colors.grey[350]),

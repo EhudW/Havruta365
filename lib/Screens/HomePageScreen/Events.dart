@@ -29,7 +29,6 @@ class _EventsState extends State<Events> {
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
-        print(events);
         events.loadMore();
       }
     });
