@@ -280,7 +280,7 @@ class _HomePageState extends State<Login> {
                           },
                           child: Center(
                               child: Text(
-                                "?שכחת סיסמא",
+                                "שכחתי סיסמא",
                                 style: TextStyle(color: Colors.blueAccent, fontSize: 15),
                               )),
                         )])),
