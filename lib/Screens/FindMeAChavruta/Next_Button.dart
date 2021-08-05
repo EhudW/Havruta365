@@ -22,7 +22,7 @@ class NextButton extends StatelessWidget {
   @override
   Widget build(context) {
     return Container(
-        width: Globals.scaler.getWidth(31),
+        width: Globals.scaler.getWidth(29),
         height: Globals.scaler.getHeight(3),
         child: ElevatedButton(
           onPressed: () {
