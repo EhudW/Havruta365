@@ -7,15 +7,12 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/LoginDetails.dart';
 import 'package:havruta_project/Screens/Login/LoginDetailsGmail.dart';
-import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
-
-import 'LoginMoreDetails.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -271,7 +268,6 @@ class _HomePageState extends State<Login> {
                               ),
                         GestureDetector(
                           onTap: () {
-                            Globals.db.updateUser(Globals.currentUser);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
