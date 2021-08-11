@@ -1,16 +1,17 @@
-# havruta_project
+# Havruta
 
-A new Flutter application.
+<img src="https://github.com/fe1493/Havruta365/blob/master/images/AppIcon2.png?raw=true" width="300" height="300">
 
-## Getting Started
+<img src="https://user-images.githubusercontent.com/47856585/128410434-000ad55d-dfa3-4cc7-ba26-3a589167e31b.png" width="250" height="500">
 
-This project is a starting point for a Flutter application.
+<img src="https://user-images.githubusercontent.com/47856585/128410446-d7df4c4b-da1d-4b71-bf0c-79ec2b6df517.png" width="250" height="500">
 
-A few resources to get you started if this is your first Flutter project:
+<img src="https://user-images.githubusercontent.com/47856585/128410457-909b5e88-2792-43e6-b4e4-24e95f4192e3.png" width="250" height="500">
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+<img src="https://user-images.githubusercontent.com/47856585/128410461-dc0d4eed-5347-4f48-a17f-8a6146eb5d99.png" width="250" height="500">
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+
+
+
+
