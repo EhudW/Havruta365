@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1013165410865-67fleviplt48ocns6io6ccrstaj57ol8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.havruta",
+            "certificate_hash": "f762022c0a3bab18f0c4a4b4febce12cfb5421fc"
+          }
+        },
+        {
           "client_id": "1013165410865-a0lnpts3e1bdet8kc2ptieivt071r9bh.apps.googleusercontent.com",
           "client_type": 3
         }

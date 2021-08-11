@@ -250,7 +250,6 @@ class _HomePageState extends State<Login> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children:[ GestureDetector(
                             onTap: () {
-                              Globals.db.updateUser(Globals.currentUser);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
