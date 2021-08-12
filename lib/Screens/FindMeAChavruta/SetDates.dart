@@ -132,7 +132,7 @@ class _SetDateCreateState extends State<SetDate> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
