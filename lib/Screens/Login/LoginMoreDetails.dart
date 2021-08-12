@@ -8,9 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mongo_dart_query/mongo_dart_query.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:objectid/objectid.dart';
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
@@ -240,10 +238,11 @@ class _HomePageState extends State<LoginMoreDetails> {
     }
     image = await picker.getImage(source: source);
     var file = File(image.path);
+    String fileName = ObjectId().toString();
     //check if an image was picked
     if (image != null) {
       var snapshot =
-          await _storage.ref().child('folderName/imageName').putFile(file);
+          await _storage.ref().child('Images/$fileName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
         Globals.currentUser.avatar = downloadUrl;

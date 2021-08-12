@@ -34,7 +34,7 @@ class _HomePageState extends State<LoginDetails> {
   final gender = TextEditingController();
   String gender_str = "";
 
-  DateTime _dateTime;
+  DateTime _dateTime = DateTime(1940, 1, 1);
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class _HomePageState extends State<LoginDetails> {
               height: 60,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                initialDateTime: DateTime(1969, 1, 1),
+                initialDateTime: DateTime(1940, 1, 1),
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
                   _dateTime = newDateTime;

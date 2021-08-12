@@ -127,7 +127,8 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.exit_to_app_outlined),
                 color: Colors.white54,
                 onPressed: () {
-                  exit(0);
+                  // exit(0);
+                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                 },
                 iconSize: scaler.getTextSize(10),
               ),

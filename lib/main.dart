@@ -14,6 +14,7 @@ import 'package:loading_animations/loading_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'Globals.dart';
+import 'Widgets/SplashScreen.dart';
 
 void main() async {
   runApp(MyApp());
@@ -64,13 +65,7 @@ class _MyAppState extends State<MyApp> {
                 return Text('none');
               case ConnectionState.active:
               case ConnectionState.waiting:
-                return Center(
-                  child: LoadingBouncingGrid.square(
-                    borderColor: Colors.teal[400],
-                    backgroundColor: Colors.teal[400],
-                    size: 80.0,
-                  ),
-                );
+                return SplashScreen();
               case ConnectionState.done:
                 _id = _prefs.then((prefs) {
                   return (prefs.getString('id') ?? "");

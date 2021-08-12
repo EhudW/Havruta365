@@ -12,6 +12,9 @@ class GoogleSignInApi {
   static Future getGoogleCurrentUser() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     var user = auth.currentUser;
+    if (user.email == null){
+      return null;
+    }
     return user;
   }
 

@@ -52,6 +52,8 @@ dependencies:
   loading_gifs: ^0.3.0
   objectid: 2.0.0
   change_app_package_name: ^1.0.0
+  loading_indicator: ^3.0.1
+  flutter_animation_set: ^0.0.4
   # flutter_svg: ^0.21.0+1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -83,6 +85,7 @@ flutter:
   #To add assets to your application, add an assets section, like this:
   assets:
     - images/user_avatar.png
+    - images/AppIcon2.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
