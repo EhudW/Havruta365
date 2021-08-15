@@ -33,7 +33,8 @@ class _HomePageState extends State<LoginMoreDetails> {
       onWillPop: () async => false,
       child: Center(
         child: Scaffold(
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           backgroundColor: Colors.teal[100],
           appBar: appBar(context),
           body: SingleChildScrollView(
@@ -45,8 +46,9 @@ class _HomePageState extends State<LoginMoreDetails> {
                     alignment: Alignment.centerRight,
                     child: Text(
                       "פרטים נוספים   ",
-                      style:
-                          GoogleFonts.alef(fontSize: Globals.scaler.getTextSize(8), color: Colors.teal[400]),
+                      style: GoogleFonts.alef(
+                          fontSize: Globals.scaler.getTextSize(8),
+                          color: Colors.teal[400]),
                     )),
                 imageProfile(),
                 SizedBox(height: Globals.scaler.getHeight(1)),
@@ -78,7 +80,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                         elevation: 100,
                         style: TextStyle(
                           color: Colors.red,
-                          fontSize:  Globals.scaler.getTextSize(8),
+                          fontSize: Globals.scaler.getTextSize(8),
                         ),
                         underline: Container(),
                         onChanged: (String newValue) {
@@ -95,13 +97,14 @@ class _HomePageState extends State<LoginMoreDetails> {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Center(
-                                child: Text(value, textAlign: TextAlign.center)),
+                                child:
+                                    Text(value, textAlign: TextAlign.center)),
                           );
                         }).toList(),
                       )),
                 ),
-                newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
-                    3.0),
+                newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה",
+                    FontAwesomeIcons.book, 3.0),
                 newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
                     FontAwesomeIcons.list, 8.0),
                 SizedBox(height: Globals.scaler.getHeight(1)),
@@ -109,12 +112,14 @@ class _HomePageState extends State<LoginMoreDetails> {
                   child: Text(
                     "מצא לי חברותא ",
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.abel(fontSize: Globals.scaler.getTextSize(9), color: Colors.white),
+                    style: GoogleFonts.abel(
+                        fontSize: Globals.scaler.getTextSize(9),
+                        color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
                       alignment: Alignment.center,
-                      minimumSize: Size(
-                          Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
+                      minimumSize: Size(Globals.scaler.getWidth(32),
+                          Globals.scaler.getHeight(3)),
                       shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(38.0),
                       ),
@@ -127,9 +132,11 @@ class _HomePageState extends State<LoginMoreDetails> {
                     description_str = description.text;
                     Globals.currentUser.yeshiva = yeshiva_str ?? "";
                     Globals.currentUser.description = description_str ?? "";
-                    Globals.currentUser.status = status_str == "סטטוס משפחתי" ? "לא ידוע": status_str;
+                    Globals.currentUser.status =
+                        status_str == "סטטוס משפחתי" ? "לא ידוע" : status_str;
                     if (Globals.currentUser.avatar == null)
-                      Globals.currentUser.avatar = 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
+                      Globals.currentUser.avatar =
+                          'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
                     Globals.db.updateUser(Globals.currentUser);
                     Navigator.push(
                       context,
@@ -186,6 +193,7 @@ class _HomePageState extends State<LoginMoreDetails> {
 
   Widget bottomSheet() {
     return Container(
+      height: Globals.scaler.getHeight(5.5),
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.symmetric(
         horizontal: Globals.scaler.getWidth(3),
@@ -363,13 +371,13 @@ appBar(BuildContext context) {
       shadowColor: Colors.teal[400],
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(0),
-          )),
+        bottom: Radius.circular(0),
+      )),
       backgroundColor: Colors.white,
       title: Container(
         width: scaler.getWidth(50),
         child:
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
             "משתמש חדש  ",
             textAlign: TextAlign.center,
@@ -378,7 +386,8 @@ appBar(BuildContext context) {
                 fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.userAlt, size: Globals.scaler.getTextSize(9), color: Colors.teal[400])
+          Icon(FontAwesomeIcons.userAlt,
+              size: Globals.scaler.getTextSize(9), color: Colors.teal[400])
         ]),
       ));
 }
