@@ -7,7 +7,7 @@ class FirstDotRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
@@ -17,7 +17,7 @@ class FirstDotRow extends StatelessWidget {
             children: <Widget>[
               Pinned.fromSize(
                 bounds: Rect.fromLTWH(
-                  Globals.scaler.getWidth(0.1),
+                  Globals.scaler.getWidth(0.04),
                   Globals.scaler.getHeight(0),
                   Globals.scaler.getWidth(0.5),
                   Globals.scaler.getWidth(0.5),
@@ -36,7 +36,7 @@ class FirstDotRow extends StatelessWidget {
               ),
               Pinned.fromSize(
                 bounds: Rect.fromLTWH(
-                    Globals.scaler.getWidth(1.5),
+                    Globals.scaler.getWidth(1.9),
                     Globals.scaler.getHeight(0),
                     Globals.scaler.getWidth(0.5),
                     Globals.scaler.getWidth(0.5)),
@@ -52,7 +52,7 @@ class FirstDotRow extends StatelessWidget {
               ),
               Pinned.fromSize(
                 bounds: Rect.fromLTWH(
-                    Globals.scaler.getWidth(3.5),
+                    Globals.scaler.getWidth(4),
                     Globals.scaler.getHeight(0),
                     Globals.scaler.getWidth(0.5),
                     Globals.scaler.getWidth(0.5)),

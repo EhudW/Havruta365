@@ -242,9 +242,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
       intializeEvent(this.event);
       this.counter += 1;
     }
-    spaceBetween = Globals.scaler.getHeight(2);
-    height = Globals.scaler.getHeight(3);
-    width = Globals.scaler.getWidth(29.5);
+    spaceBetween = Globals.scaler.getHeight(1.4);
+    height = Globals.scaler.getHeight(2.8);
+    width = Globals.scaler.getWidth(25);
     iconSize = Globals.scaler.getTextSize(10);
     loadGenderData();
     loadChoices();
@@ -271,44 +271,31 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             child: WavyHeader()),
                       ],
                     ),
-                    Column(
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: Globals.scaler.getHeight(2.5))),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    right: Globals.scaler.getWidth(0.8))),
-
-                            ///########### ----CHOICE DROPDOWN LIST----########
-                            dropDownList("בחרו האם זה שיעור או חברותא",
-                                choiceDrop, selectedChoice),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: Globals.scaler.getWidth(1.3),
-                                  right: Globals.scaler.getWidth(2.8)),
-                              child: Icon(
+                    Center(
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(height: Globals.scaler.getHeight(2.2)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              ///########### ----CHOICE DROPDOWN LIST----########
+                              dropDownList("בחרו האם זה שיעור או חברותא",
+                                  choiceDrop, selectedChoice),
+                              SizedBox(width: 8,),
+                              Icon(
                                 FontAwesomeIcons.questionCircle,
                                 color: Colors.red,
                                 //color: Colors.tealAccent[400],
                                 size: iconSize,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spaceBetween),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Stack(children: [
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: Globals.scaler.getWidth(20))),
+                            ],
+                          ),
+                          SizedBox(height: spaceBetween),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
                               Container(
                                   height: height,
                                   width: width,
@@ -318,7 +305,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                           color: Colors.grey.withOpacity(1),
                                           offset: const Offset(0, 2),
                                           blurRadius:
-                                              Globals.scaler.getHeight(.2)),
+                                          Globals.scaler.getHeight(.2)),
                                     ],
                                     color: Colors.white70,
                                     border: Border.all(
@@ -355,122 +342,85 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                         maxLines: 1,
                                         onChanged: (newVal) {
                                           var numOfParticapints =
-                                              int.parse(newVal);
+                                          int.parse(newVal);
                                           event.maxParticipants =
                                               numOfParticapints;
-                                          print(event.maxParticipants);
                                           if (event.maxParticipants == null) {
                                             event.maxParticipants = 1;
                                           }
                                         },
                                       ),
                                     ),
-                                  ))
-                            ]),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: Globals.scaler.getWidth(1.3),
-                                  right: Globals.scaler.getWidth(2.8)),
-                              child: Icon(
+                                  )),
+                              SizedBox(width: 8,),
+                              Icon(
                                 Icons.group,
                                 color: Colors.red,
                                 //color: Colors.tealAccent[400],
                                 size: iconSize,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spaceBetween),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                                padding: EdgeInsets.all(
-                                    Globals.scaler.getWidth(0.8))),
-                            dropDownList(
-                                "בחרו תחום", topicsDrop, selectedTopic),
-
-                            ///########### ----TOPIC DROPDOWN LIST----########
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: Globals.scaler.getWidth(1.2),
-                                  right: Globals.scaler.getWidth(2.4)),
-                              child: Icon(
+                            ],
+                          ),
+                          SizedBox(height: spaceBetween),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              dropDownList(
+                                  "בחרו תחום", topicsDrop, selectedTopic),
+                              ///########### ----TOPIC DROPDOWN LIST----########
+                              SizedBox(width: 8,),
+                              Icon(
                                 Icons.topic,
                                 color: Colors.red,
                                 //color: Colors.tealAccent[400],
                                 size: iconSize,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spaceBetween),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                                padding: EdgeInsets.all(
-                                    Globals.scaler.getWidth(0.8))),
-
-                            ///########### ----BOOKS DROPDOWN LIST----########
-                            dropDownList("בחרו ספר", booksDrop, selectedBook),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: Globals.scaler.getWidth(1.3),
-                                  right: Globals.scaler.getWidth(2.4)),
-                              child: Icon(
+                            ],
+                          ),
+                          SizedBox(height: spaceBetween),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              ///########### ----BOOKS DROPDOWN LIST----########
+                              dropDownList("בחרו ספר", booksDrop, selectedBook),
+                              SizedBox(width: 8,),
+                              Icon(
                                 FontAwesomeIcons.book,
                                 color: Colors.red,
                                 //color: Colors.tealAccent[400],
                                 size: iconSize,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spaceBetween),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                  padding: EdgeInsets.all(
-                                      Globals.scaler.getWidth(.8))),
-
-                              ///########### ----GENDER DROPDOWN LIST----########
-                              dropDownList("בחרו מין יעד", genderDrop, gender),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: Globals.scaler.getWidth(1.3),
-                                    right: Globals.scaler.getWidth(2.4)),
-                                child: Icon(
+                            ],
+                          ),
+                          SizedBox(height: spaceBetween),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                ///########### ----GENDER DROPDOWN LIST----########
+                                dropDownList("בחרו מין יעד", genderDrop, gender),
+                                SizedBox(width: 8,),
+                                Icon(
                                   Icons.face,
                                   color: Colors.red,
                                   //color: Colors.tealAccent[400],
                                   size: iconSize,
                                 ),
-                              ),
-                            ]),
-                        SizedBox(height: spaceBetween),
-                        FirstDotRow(),
-                        SizedBox(height: Globals.scaler.getHeight(0.7)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: Globals.scaler.getWidth(0),
-                                    right: Globals.scaler.getWidth(3))),
-                            NextButton(
+                              ]),
+                          SizedBox(height: Globals.scaler.getHeight(2.5)),
+                          Center(child: FirstDotRow()),
+                          SizedBox(height: Globals.scaler.getHeight(0.7)),
+                          Center(
+                            child: NextButton(
                                 context: context,
                                 event: this.event,
                                 whichPage: 2,
                                 isEmpty: false),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 );
@@ -505,6 +455,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
             child: ButtonTheme(
               //alignedDropdown: true,
               child: DropdownButton(
+                isExpanded: true,
                 dropdownColor: Colors.white,
                 iconEnabledColor: Colors.teal[400],
                 elevation: 1,
@@ -517,7 +468,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     child: TextField(
                         textAlign: TextAlign.center,
                         autocorrect: true,
-                        style: const TextStyle(color: Colors.teal),
+                        style: TextStyle(
+                            fontSize: Globals.scaler.getTextSize(7.2),
+                            color: Colors.teal),
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
