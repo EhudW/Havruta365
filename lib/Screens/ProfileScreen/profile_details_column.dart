@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProfileDetailsColumn extends StatefulWidget {
   ProfileDetailsColumn(this.user);
 
-  final User user;
+  var user;
 
   @override
   _ProfileDetailsColumnState createState() => _ProfileDetailsColumnState();
@@ -20,6 +21,17 @@ class ProfileDetailsColumn extends StatefulWidget {
 class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
   bool _lesson_expanded = false;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future getGoogleCurrentUser() async {
+    var user = auth.currentUser;
+    print(user);
+    if (!user.emailVerified) {
+      return null;
+    }
+    return user;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +86,16 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           ),
           GestureDetector(
             onTap: () {
-              // TODO open box with all events of the user
+              // TODO open box with all details of the user
             },
             child: Container(
               height: Globals.scaler.getHeight(3),
               width: Globals.scaler.getWidth(26),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
-                  border: Border.all(width: Globals.scaler.getWidth(0.1), color: Colors.grey[350]),
+                  border: Border.all(
+                      width: Globals.scaler.getWidth(0.1),
+                      color: Colors.grey[350]),
                   color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -94,7 +108,8 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                             fontSize: size_header,
                             fontWeight: FontWeight.bold,
                             textStyle: TextStyle(
-                                color: Colors.black, letterSpacing: Globals.scaler.getWidth(.5))),
+                                color: Colors.black,
+                                letterSpacing: Globals.scaler.getWidth(.5))),
                         textDirection: TextDirection.rtl),
                     SizedBox(width: Globals.scaler.getWidth(1.5)),
                     Icon(
@@ -110,23 +125,27 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           ),
           GestureDetector(
             onTap: () async {
-              if (await GoogleSignInApi.getGoogleCurrentUser() != null){
-                // Disconnect from gmail
-                await GoogleSignInApi.logout();
-              }
-              // Remove mail from local phone and go to Login page
-              final SharedPreferences prefs = await _prefs;
-              await prefs.setString('id', "");
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => Login())
-              );
-            },
+                var currentUser = FirebaseAuth.instance.currentUser;
+                print(currentUser);
+                if (currentUser != null) {
+                  // Disconnect from gmail
+                  print("Disconnect from gmail");
+                  await FirebaseAuth.instance.signOut();
+                }
+                // Remove mail from local phone and go to Login page
+                final SharedPreferences prefs = await _prefs;
+                await prefs.setString('id', "");
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => Login()));
+              },
             child: Container(
               height: Globals.scaler.getHeight(3),
               width: Globals.scaler.getWidth(26),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(0),
-                  border: Border.all(width: Globals.scaler.getWidth(0.1), color: Colors.grey[350]),
+                  border: Border.all(
+                      width: Globals.scaler.getWidth(0.1),
+                      color: Colors.grey[350]),
                   color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -151,6 +170,4 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
       ),
     );
   }
-
-
 }

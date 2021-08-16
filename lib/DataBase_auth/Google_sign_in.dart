@@ -9,14 +9,7 @@ class GoogleSignInApi {
 
   static Future logout() => _googleSignIn.disconnect();
 
-  static Future getGoogleCurrentUser() async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    var user = auth.currentUser;
-    if (user.email == null){
-      return null;
-    }
-    return user;
-  }
+
 
 }
 
