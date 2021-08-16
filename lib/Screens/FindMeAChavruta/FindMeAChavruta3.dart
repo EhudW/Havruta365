@@ -74,146 +74,145 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   Widget build(BuildContext context) {
     spaceBetween = Globals.scaler.getHeight(2);
     return Scaffold(
-        appBar: appBar(),
-        body: Builder(
-          builder: (context) => Center(
-            child: Stack(children: [
-              Column(
-                children: [
-                  // Padding(
-                  //     padding: EdgeInsets.only(bottom: scaler.getHeight(0)),
-                  WavyHeader(),
+      appBar: appBar(),
+      body: Builder(
+        builder: (context) => Center(
+          child: Stack(children: [
+            Column(
+              children: [
+                WavyHeader(),
+              ],
+            ),
+            //------Camera--------
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                      padding:
+                          EdgeInsets.only(top: Globals.scaler.getHeight(1.5))),
+                  Container(
+                    width: Globals.scaler.getWidth(12),
+                    height: Globals.scaler.getHeight(5),
+                    child: imageProfile(),
+                  ),
+                  SizedBox(height: spaceBetween),
+                  Container(
+                    child: checkIfShiur(),
+                  ),
+                  SizedBox(height: spaceBetween),
+                  Stack(
+                    children: [
+                      SizedBox(height: spaceBetween),
+                      Container(
+                          height: Globals.scaler.getHeight(2.5),
+                          width: Globals.scaler.getWidth(35),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color: Colors.teal[400],
+                                width: Globals.scaler.getWidth(0.1)),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: new TextField(
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "קישור לשיעור",
+                              focusColor: Colors.teal,
+                              contentPadding: EdgeInsets.fromLTRB(
+                                  Globals.scaler.getWidth(2),
+                                  Globals.scaler.getHeight(0),
+                                  Globals.scaler.getWidth(2),
+                                  Globals.scaler.getHeight(0)),
+                            ),
+                            maxLines: 1,
+                            onChanged: (link) {
+                              widget.event.link = link;
+                            },
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: spaceBetween),
+                  Stack(
+                    children: [
+                      Container(
+                          height: Globals.scaler.getHeight(9),
+                          width: Globals.scaler.getWidth(35),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color: Colors.teal[400],
+                                width: Globals.scaler.getWidth(0.1)),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: TextField(
+                            textAlign: TextAlign.center,
+                            textAlignVertical: TextAlignVertical.bottom,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "פרטים נוספים",
+                              focusColor: Colors.blue,
+                              contentPadding: EdgeInsets.fromLTRB(
+                                  Globals.scaler.getWidth(2),
+                                  Globals.scaler.getHeight(0),
+                                  Globals.scaler.getWidth(2),
+                                  Globals.scaler.getHeight(0.5)),
+                            ),
+                            onChanged: (description) {
+                              widget.event.description = description;
+                            },
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: spaceBetween),
+                  ThirdDotRow(),
+                  SizedBox(height: spaceBetween - 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Stack(children: [
+                        Container(
+                            width: Globals.scaler.getWidth(28),
+                            height: Globals.scaler.getHeight(2.3),
+                            decoration: BoxDecoration(
+                              color: Colors.teal[400],
+                            ),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.teal),
+                                onPressed: () {
+                                  widget.event.creationDate = DateTime.now();
+                                  widget.event.participants = [];
+                                  widget.event.creatorUser =
+                                      Globals.currentUser.email;
+                                  if (widget.event.eventImage == "") {
+                                    widget.event.eventImage =
+                                        'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+                                  }
+                                  mongoDB.insertEvent(widget.event).then(
+                                      (value) => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomePage())));
+                                },
+                                child: new Text(
+                                  "מצא לי חברותא",
+                                  style: TextStyle(
+                                      fontSize: Globals.scaler.getTextSize(9),
+                                      color: Colors.white),
+                                )))
+                      ])
+                    ],
+                  ),
                 ],
               ),
-              //------Camera--------
-              SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(
-                            top: Globals.scaler.getHeight(1.5))),
-                    Container(
-                      width: Globals.scaler.getWidth(12),
-                      height: Globals.scaler.getHeight(5),
-                      child: imageProfile(),
-                    ),
-                    SizedBox(height: spaceBetween),
-                    Container(
-                      child: checkIfShiur(),
-                    ),
-                    SizedBox(height: spaceBetween),
-                    Stack(
-                      children: [
-                        SizedBox(height: spaceBetween),
-                        Container(
-                            height: Globals.scaler.getHeight(2.5),
-                            width: Globals.scaler.getWidth(35),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: Colors.teal[400],
-                                  width: Globals.scaler.getWidth(0.1)),
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: new TextField(
-                              textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "קישור לשיעור",
-                                focusColor: Colors.teal,
-                                contentPadding: EdgeInsets.fromLTRB(
-                                    Globals.scaler.getWidth(2),
-                                    Globals.scaler.getHeight(0),
-                                    Globals.scaler.getWidth(2),
-                                    Globals.scaler.getHeight(0)),
-                              ),
-                              maxLines: 1,
-                              onChanged: (link) {
-                                widget.event.link = link;
-                              },
-                            )),
-                      ],
-                    ),
-                    SizedBox(height: spaceBetween),
-                    Stack(
-                      children: [
-                        Container(
-                            height: Globals.scaler.getHeight(9),
-                            width: Globals.scaler.getWidth(35),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: Colors.teal[400],
-                                  width: Globals.scaler.getWidth(0.1)),
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: TextField(
-                              textAlign: TextAlign.center,
-                              textAlignVertical: TextAlignVertical.bottom,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "פרטים נוספים",
-                                focusColor: Colors.blue,
-                                contentPadding: EdgeInsets.fromLTRB(
-                                    Globals.scaler.getWidth(2),
-                                    Globals.scaler.getHeight(0),
-                                    Globals.scaler.getWidth(2),
-                                    Globals.scaler.getHeight(0.5)),
-                              ),
-                              onChanged: (description) {
-                                widget.event.description = description;
-                              },
-                            )),
-                      ],
-                    ),
-                    SizedBox(height: spaceBetween),
-                    ThirdDotRow(),
-                    SizedBox(height: spaceBetween - 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Stack(children: [
-                          Container(
-                              width: Globals.scaler.getWidth(28),
-                              height: Globals.scaler.getHeight(2.3),
-                              decoration: BoxDecoration(
-                                color: Colors.teal[400],
-                              ),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.teal),
-                                  onPressed: () {
-                                    widget.event.creationDate = DateTime.now();
-                                    widget.event.participants = [];
-                                    widget.event.creatorUser =
-                                        Globals.currentUser.email;
-                                    if (widget.event.eventImage == "") {
-                                      widget.event.eventImage =
-                                          'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
-                                    }
-                                    mongoDB.insertEvent(widget.event).then(
-                                        (value) => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HomePage())));
-                                  },
-                                  child: new Text(
-                                    "מצא לי חברותא",
-                                    style: TextStyle(
-                                        fontSize: Globals.scaler.getTextSize(9),
-                                        color: Colors.white),
-                                  )))
-                        ])
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ]),
-          ),
-        ));
+            )
+          ]),
+        ),
+      ),
+    );
   }
 
   Widget imageProfile() {

@@ -249,7 +249,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     loadGenderData();
     loadChoices();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: appBar(),
       body: Container(
         child: FutureBuilder(
@@ -261,168 +261,230 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                   child: Image.asset(circularProgressIndicator, scale: 10),
                 ));
               } else {
-                return Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Padding(
-                            padding: EdgeInsets.only(
-                                bottom: Globals.scaler.getHeight(0)),
-                            child: WavyHeader()),
-                      ],
-                    ),
-                    Center(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: Globals.scaler.getHeight(2.2)),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              ///########### ----CHOICE DROPDOWN LIST----########
-                              dropDownList("בחרו האם זה שיעור או חברותא",
-                                  choiceDrop, selectedChoice),
-                              SizedBox(width: 8,),
-                              Icon(
-                                FontAwesomeIcons.questionCircle,
-                                color: Colors.red,
-                                //color: Colors.tealAccent[400],
-                                size: iconSize,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: spaceBetween),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                  height: height,
-                                  width: width,
-                                  decoration: BoxDecoration(
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                          color: Colors.grey.withOpacity(1),
-                                          offset: const Offset(0, 2),
-                                          blurRadius:
-                                          Globals.scaler.getHeight(.2)),
-                                    ],
-                                    color: Colors.white70,
-                                    border: Border.all(
-                                        color: Colors.white70,
-                                        width: Globals.scaler.getWidth(0.2)),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Material(
-                                    elevation: Globals.scaler.getHeight(2),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    child: Container(
-                                      width: Globals.scaler.getWidth(29),
-                                      child: TextField(
-                                        textAlign: TextAlign.center,
-                                        autocorrect: true,
-                                        style: TextStyle(
-                                            color: Colors.teal,
-                                            fontSize: Globals.scaler
-                                                .getTextSize(7.2)),
-                                        decoration: InputDecoration(
-                                          hintText: "מספר משתתפים",
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.fromLTRB(
-                                            Globals.scaler.getWidth(1.3),
-                                            Globals.scaler.getWidth(1.3),
-                                            Globals.scaler.getWidth(1.3),
-                                            Globals.scaler.getWidth(1.3),
-                                          ),
-                                        ),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ],
-                                        maxLines: 1,
-                                        onChanged: (newVal) {
-                                          var numOfParticapints =
-                                          int.parse(newVal);
-                                          event.maxParticipants =
-                                              numOfParticapints;
-                                          if (event.maxParticipants == null) {
-                                            event.maxParticipants = 1;
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  )),
-                              SizedBox(width: 8,),
-                              Icon(
-                                Icons.group,
-                                color: Colors.red,
-                                //color: Colors.tealAccent[400],
-                                size: iconSize,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: spaceBetween),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              dropDownList(
-                                  "בחרו תחום", topicsDrop, selectedTopic),
-                              ///########### ----TOPIC DROPDOWN LIST----########
-                              SizedBox(width: 8,),
-                              Icon(
-                                Icons.topic,
-                                color: Colors.red,
-                                //color: Colors.tealAccent[400],
-                                size: iconSize,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: spaceBetween),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              ///########### ----BOOKS DROPDOWN LIST----########
-                              dropDownList("בחרו ספר", booksDrop, selectedBook),
-                              SizedBox(width: 8,),
-                              Icon(
-                                FontAwesomeIcons.book,
-                                color: Colors.red,
-                                //color: Colors.tealAccent[400],
-                                size: iconSize,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: spaceBetween),
-                          Row(
+                return SingleChildScrollView(
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: Globals.scaler.getHeight(0)),
+                              child: WavyHeader()),
+                        ],
+                      ),
+                      Center(
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(height: Globals.scaler.getHeight(2.2)),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                ///########### ----GENDER DROPDOWN LIST----########
-                                dropDownList("בחרו מין יעד", genderDrop, gender),
-                                SizedBox(width: 8,),
+                                ///########### ----CHOICE DROPDOWN LIST----########
+                                dropDownList("בחרו האם זה שיעור או חברותא",
+                                    choiceDrop, selectedChoice),
+                                SizedBox(
+                                  width: 8,
+                                ),
                                 Icon(
-                                  Icons.face,
+                                  FontAwesomeIcons.questionCircle,
                                   color: Colors.red,
                                   //color: Colors.tealAccent[400],
                                   size: iconSize,
                                 ),
-                              ]),
-                          SizedBox(height: Globals.scaler.getHeight(2.5)),
-                          Center(child: FirstDotRow()),
-                          SizedBox(height: Globals.scaler.getHeight(0.7)),
-                          Center(
-                            child: NextButton(
-                                context: context,
-                                event: this.event,
-                                whichPage: 2,
-                                isEmpty: false),
-                          ),
-                        ],
+                              ],
+                            ),
+                            SizedBox(height: spaceBetween),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    height: height,
+                                    width: width,
+                                    decoration: BoxDecoration(
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(1),
+                                            offset: const Offset(0, 2),
+                                            blurRadius:
+                                                Globals.scaler.getHeight(.2)),
+                                      ],
+                                      color: Colors.white70,
+                                      border: Border.all(
+                                          color: Colors.white70,
+                                          width: Globals.scaler.getWidth(0.2)),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                    ),
+                                    child: Material(
+                                      elevation: Globals.scaler.getHeight(2),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      child: Container(
+                                        width: Globals.scaler.getWidth(29),
+                                        child: TextField(
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: TextStyle(
+                                              color: Colors.teal,
+                                              fontSize: Globals.scaler
+                                                  .getTextSize(7.2)),
+                                          decoration: InputDecoration(
+                                            hintText: "מספר משתתפים",
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.fromLTRB(
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                            ),
+                                          ),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          maxLines: 1,
+                                          onChanged: (newVal) {
+                                            var numOfParticapints =
+                                                int.parse(newVal);
+                                            event.maxParticipants =
+                                                numOfParticapints;
+                                            if (event.maxParticipants == null) {
+                                              event.maxParticipants = 1;
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    )),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Icon(
+                                  Icons.group,
+                                  color: Colors.red,
+                                  //color: Colors.tealAccent[400],
+                                  size: iconSize,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: spaceBetween),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                dropDownList(
+                                    "בחרו תחום", topicsDrop, selectedTopic),
+
+                                ///########### ----TOPIC DROPDOWN LIST----########
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Icon(
+                                  Icons.topic,
+                                  color: Colors.red,
+                                  //color: Colors.tealAccent[400],
+                                  size: iconSize,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: spaceBetween),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    height: height,
+                                    width: width,
+                                    decoration: BoxDecoration(
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(1),
+                                            offset: const Offset(0, 2),
+                                            blurRadius:
+                                                Globals.scaler.getHeight(.2)),
+                                      ],
+                                      color: Colors.white70,
+                                      border: Border.all(
+                                          color: Colors.white70,
+                                          width: Globals.scaler.getWidth(0.2)),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                    ),
+                                    child: Material(
+                                        elevation: Globals.scaler.getHeight(2),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        child: Container(
+                                            width: Globals.scaler.getWidth(29),
+                                            child: TextField(
+                                              textAlign: TextAlign.center,
+                                              autocorrect: true,
+                                              style: TextStyle(
+                                                  color: Colors.teal,
+                                                  fontSize: Globals.scaler
+                                                      .getTextSize(7.2)),
+                                              decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                  hintText: "בחרו ספר",
+                                                  focusColor: Colors.teal,
+                                                  contentPadding:
+                                                      EdgeInsets.fromLTRB(
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                  )),
+                                              maxLines: 1,
+                                              onChanged: (book) {
+                                                event.book = book;
+                                              },
+                                            )))),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Icon(
+                                  FontAwesomeIcons.book,
+                                  color: Colors.red,
+                                  //color: Colors.tealAccent[400],
+                                  size: iconSize,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: spaceBetween),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  ///########### ----GENDER DROPDOWN LIST----########
+                                  dropDownList(
+                                      "בחרו מין יעד", genderDrop, gender),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Icon(
+                                    Icons.face,
+                                    color: Colors.red,
+                                    //color: Colors.tealAccent[400],
+                                    size: iconSize,
+                                  ),
+                                ]),
+                            SizedBox(height: Globals.scaler.getHeight(2.5)),
+                            Center(child: FirstDotRow()),
+                            SizedBox(height: Globals.scaler.getHeight(0.7)),
+                            Center(
+                              child: NextButton(
+                                  context: context,
+                                  event: this.event,
+                                  whichPage: 2,
+                                  isEmpty: false),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               }
             }),

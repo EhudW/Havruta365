@@ -110,199 +110,183 @@ class _SetDateCreateState extends State<SetDate> {
     return Scaffold(
         appBar: appBar(),
         body: Builder(
-            builder: (context) => Center(
-                  child: Stack(children: [
+          builder: (context) => Center(
+            child: Stack(children: [
+              Column(
+                children: [
+                  WavyHeader(),
+                ],
+              ),
+              SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 50),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
                       children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                                padding:
+                                    EdgeInsets.all(Globals.scaler.getWidth(1))),
+                            Text(
+                              "תאריך",
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: Globals.scaler.getTextSize(8.3),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: Globals.scaler.getHeight(0.5),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ConstrainedBox(
+                              constraints: BoxConstraints.tightFor(
+                                  width: Globals.scaler.getWidth(26),
+                                  height: Globals.scaler.getHeight(3)),
+                              child: ElevatedButton(
+                                onPressed: () => pickDate(context),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.teal,
+                                    shape: StadiumBorder(),
+                                    shadowColor: Colors.grey.withOpacity(1)),
+                                child: Text(getDateText(this.date),
+                                    style: TextStyle(
+                                        fontSize:
+                                            Globals.scaler.getTextSize(8.5))),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: spaceBetweenTimes,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "זמן התחלה",
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Globals.scaler.getTextSize(8.3),
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: Globals.scaler.getHeight(0.5),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints.tightFor(
+                              width: Globals.scaler.getWidth(26),
+                              height: Globals.scaler.getHeight(3)),
+                          child: ElevatedButton(
+                            onPressed: () => pickStartTime(context),
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.teal,
+                                shape: StadiumBorder(),
+                                shadowColor: Colors.grey.withOpacity(1)),
+                            child: Text(getStartTimeText(),
+                                style: TextStyle(
+                                    fontSize: Globals.scaler.getTextSize(8.5))),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: spaceBetweenTimes,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "זמן סיום",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Globals.scaler.getTextSize(8.3),
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: Globals.scaler.getHeight(0.5),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints.tightFor(
+                              width: Globals.scaler.getWidth(26),
+                              height: Globals.scaler.getHeight(3)),
+                          child: ElevatedButton(
+                            onPressed: () => pickEndTime(context),
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.teal,
+                                shape: StadiumBorder(),
+                                shadowColor: Colors.grey.withOpacity(1)),
+                            child: Text(getEndTimeText(),
+                                style: TextStyle(
+                                    fontSize: Globals.scaler.getTextSize(8.5))),
+                          ),
+                        )
+                      ],
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(2.0),
+                    // ),
+                    SizedBox(height: spaceBetween),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.red,
+                              //shape: (),
+                              shadowColor: Colors.grey.withOpacity(1)),
+                          child: Text("בטל"),
+                        ),
                         Padding(
                             padding: EdgeInsets.only(
-                                bottom: Globals.scaler.getHeight(0)),
-                            child: WavyHeader()),
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        // Padding(
-                        //     padding: EdgeInsets.only(top: scaler.getHeight(1))),
-                        SizedBox(
-                          height: spaceBetween,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        right: Globals.scaler.getWidth(28))),
-                                Text(
-                                  "תאריך",
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: Globals.scaler.getTextSize(8.8),
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: Globals.scaler.getHeight(0.5),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ConstrainedBox(
-                                  constraints: BoxConstraints.tightFor(
-                                      width: Globals.scaler.getWidth(31),
-                                      height: Globals.scaler.getHeight(3.5)),
-                                  child: ElevatedButton(
-                                    onPressed: () => pickDate(context),
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.teal,
-                                        shape: StadiumBorder(),
-                                        shadowColor:
-                                            Colors.grey.withOpacity(1)),
-                                    child: Text(getDateText(this.date),
-                                        style: TextStyle(
-                                            fontSize: Globals.scaler
-                                                .getTextSize(8.8))),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: spaceBetweenTimes,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    right: Globals.scaler.getWidth(23.5))),
-                            Text(
-                              "זמן התחלה",
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: Globals.scaler.getTextSize(8.8),
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: Globals.scaler.getHeight(0.5),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ConstrainedBox(
-                              constraints: BoxConstraints.tightFor(
-                                  width: Globals.scaler.getWidth(31),
-                                  height: Globals.scaler.getHeight(3.5)),
-                              child: ElevatedButton(
-                                onPressed: () => pickStartTime(context),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.teal,
-                                    shape: StadiumBorder(),
-                                    shadowColor: Colors.grey.withOpacity(1)),
-                                child: Text(getStartTimeText(),
-                                    style: TextStyle(
-                                        fontSize:
-                                            Globals.scaler.getTextSize(8.8))),
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: spaceBetweenTimes,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    right: Globals.scaler.getWidth(26.5))),
-                            Text(
-                              "זמן סיום",
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: Globals.scaler.getTextSize(8.8),
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: Globals.scaler.getHeight(0.5),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ConstrainedBox(
-                              constraints: BoxConstraints.tightFor(
-                                  width: Globals.scaler.getWidth(31),
-                                  height: Globals.scaler.getHeight(3.5)),
-                              child: ElevatedButton(
-                                onPressed: () => pickEndTime(context),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.teal,
-                                    shape: StadiumBorder(),
-                                    shadowColor: Colors.grey.withOpacity(1)),
-                                child: Text(getEndTimeText(),
-                                    style: TextStyle(
-                                        fontSize:
-                                            Globals.scaler.getTextSize(8.8))),
-                              ),
-                            )
-                          ],
-                        ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(2.0),
-                        // ),
-                        SizedBox(height: spaceBetween),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.all(
-                                    Globals.scaler.getHeight(0.7))),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.red,
-                                  //shape: (),
-                                  shadowColor: Colors.grey.withOpacity(1)),
-                              child: Text("בטל"),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    right: Globals.scaler.getWidth(21))),
-                            ElevatedButton(
-                              onPressed: () => saveData(),
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.red,
-                                  shadowColor: Colors.grey.withOpacity(1)),
-                              child: Text("שמור"),
-                            ),
-                          ],
+                                right: Globals.scaler.getWidth(13))),
+                        ElevatedButton(
+                          onPressed: () => saveData(),
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.red,
+                              shadowColor: Colors.grey.withOpacity(1)),
+                          child: Text("שמור"),
                         ),
                       ],
                     ),
-                  ]),
-                )));
+                  ],
+                ),
+              ),
+            ]),
+          ),
+        ));
   }
 
   appBar() {

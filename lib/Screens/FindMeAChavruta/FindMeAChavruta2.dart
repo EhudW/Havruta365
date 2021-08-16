@@ -35,7 +35,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
         appBar: appBar(),
         body: Builder(
             builder: (context) => Center(
-                  child: Stack(children: [
+                  child: (Stack(children: [
                     Column(
                       children: <Widget>[
                         Padding(
@@ -52,110 +52,97 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                               Material(
                                 shadowColor: Colors.teal,
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.all(Globals.scaler.getWidth(0)),
-                              ),
+                              // Padding(
+                              //   padding:
+                              //       EdgeInsets.all(Globals.scaler.getWidth(0)),
+                              // ),
                               Expanded(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(
-                                          Globals.scaler.getWidth(0)),
-                                      child: ListView.builder(
-                                          itemCount: this.dateTimes.length,
-                                          shrinkWrap: true,
-                                          physics:
-                                              AlwaysScrollableScrollPhysics(),
-                                          padding: const EdgeInsets.all(15.0),
-                                          itemBuilder: (context, index) {
-                                            final item = this.dateTimes[index];
-                                            var chavrutaInfoMessage =
-                                                ('${this.dateTimes[index]}');
-                                            return Dismissible(
-                                              key: Key(item),
-                                              direction:
-                                                  DismissDirection.endToStart,
-                                              onDismissed: (direction) {
-                                                setState(() {
-                                                  print(dateTimes);
-                                                  this
-                                                      .dateTimes
-                                                      .removeAt(index);
-                                                  widget.event.dates.removeAt(
-                                                      indexForDbList - 1);
-                                                  widget.event.dates.removeAt(
-                                                      indexForDbList - 2);
-                                                  indexForDbList -= 2;
-                                                  return widget.event.dates;
-                                                });
-                                              },
-                                              background:
-                                                  buildSwipeActionRight(),
-                                              child: Card(
-                                                shape: Border(
-                                                    right: BorderSide(
-                                                        color: Colors.green,
-                                                        width: Globals.scaler
-                                                            .getWidth(0.5))),
-                                                child: Material(
-                                                  elevation: 15,
-                                                  shadowColor: Colors.black,
-                                                  child: ListTile(
-                                                    title: Text(
-                                                      chavrutaInfoMessage,
-                                                      style: TextStyle(
-                                                          fontSize: Globals
-                                                              .scaler
-                                                              .getTextSize(7)),
-                                                    ),
-                                                    leading: const Icon(
-                                                      Icons.perm_contact_cal,
-                                                      color: Colors.green,
-                                                    ),
-                                                    trailing: IconButton(
-                                                        icon: const Icon(
-                                                          Icons.delete,
-                                                          color: Colors.red,
-                                                        ),
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            this
-                                                                .dateTimes
-                                                                .removeAt(
-                                                                    index);
-                                                            widget.event.dates
-                                                                .removeAt(
-                                                                    indexForDbList -
-                                                                        1);
-                                                            widget.event.dates
-                                                                .removeAt(
-                                                                    indexForDbList -
-                                                                        2);
-                                                            indexForDbList -= 2;
-                                                            return widget
-                                                                .event.dates;
-                                                          });
-                                                        }),
-                                                  ),
+                                  // child: Padding(
+                                  //     padding: EdgeInsets.all(
+                                  //         Globals.scaler.getWidth(0)),
+                                  child: ListView.builder(
+                                      itemCount: this.dateTimes.length,
+                                      shrinkWrap: true,
+                                      physics: AlwaysScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.all(15.0),
+                                      itemBuilder: (context, index) {
+                                        final item = this.dateTimes[index];
+                                        var chavrutaInfoMessage =
+                                            ('${this.dateTimes[index]}');
+                                        return Dismissible(
+                                          key: Key(item),
+                                          direction:
+                                              DismissDirection.endToStart,
+                                          onDismissed: (direction) {
+                                            setState(() {
+                                              print(dateTimes);
+                                              this.dateTimes.removeAt(index);
+                                              widget.event.dates
+                                                  .removeAt(indexForDbList - 1);
+                                              widget.event.dates
+                                                  .removeAt(indexForDbList - 2);
+                                              indexForDbList -= 2;
+                                              return widget.event.dates;
+                                            });
+                                          },
+                                          background: buildSwipeActionRight(),
+                                          child: Card(
+                                            shape: Border(
+                                                right: BorderSide(
+                                                    color: Colors.green,
+                                                    width: Globals.scaler
+                                                        .getWidth(0.5))),
+                                            child: Material(
+                                              elevation: 15,
+                                              shadowColor: Colors.black,
+                                              child: ListTile(
+                                                title: Text(
+                                                  chavrutaInfoMessage,
+                                                  style: TextStyle(
+                                                      fontSize: Globals.scaler
+                                                          .getTextSize(7)),
                                                 ),
+                                                leading: const Icon(
+                                                  Icons.perm_contact_cal,
+                                                  color: Colors.green,
+                                                ),
+                                                trailing: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.delete,
+                                                      color: Colors.red,
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        this
+                                                            .dateTimes
+                                                            .removeAt(index);
+                                                        widget.event.dates
+                                                            .removeAt(
+                                                                indexForDbList -
+                                                                    1);
+                                                        widget.event.dates
+                                                            .removeAt(
+                                                                indexForDbList -
+                                                                    2);
+                                                        indexForDbList -= 2;
+                                                        return widget
+                                                            .event.dates;
+                                                      });
+                                                    }),
                                               ),
-                                            );
-                                          })))
+                                            ),
+                                          ),
+                                        );
+                                      }))
                             ],
                           ),
                         ),
                         SizedBox(height: Globals.scaler.getHeight(2)),
                         //Padding(padding: EdgeInsets.fromLTRB(80, 7, 80, 0)),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    Globals.scaler.getWidth(10),
-                                    Globals.scaler.getHeight(0),
-                                    Globals.scaler.getWidth(7.3),
-                                    Globals.scaler.getHeight(0))),
-                            //Padding(padding: padding)
                             FloatingActionButton(
                               backgroundColor: Colors.green,
                               onPressed: () async {
@@ -189,26 +176,16 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                           ],
                         ),
 
-                        // Padding(
-                        //   padding: EdgeInsets.fromLTRB(
-                        //       scaler.getWidth(10), scaler.getHeight(0), 10, 0),
-                        //),
                         SizedBox(height: Globals.scaler.getHeight(0.5)),
-
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [SecondDotRow()],
                         ),
                         //########### ----NEXT ARROW----########
-                        // Padding(
-                        //   padding: EdgeInsets.fromLTRB(
-                        //       scaler.getWidth(10), scaler.getHeight(1), 0, 0),
-                        // ),
                         SizedBox(height: Globals.scaler.getHeight(0.7)),
-
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             widget.event.dates.isEmpty
@@ -227,7 +204,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                         SizedBox(height: Globals.scaler.getHeight(0.4))
                       ],
                     ),
-                  ]),
+                  ])),
                 )));
   }
 
