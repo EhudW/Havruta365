@@ -11,7 +11,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
 
@@ -30,7 +29,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async => false,
+      onWillPop: () async {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        return;
+      },
       child: Center(
         child: Scaffold(
             body: Scaffold(
@@ -44,7 +46,8 @@ class _HomePageState extends State<HomePage> {
                         ])))),
             backgroundColor: Colors.white,
             appBar: appBar(context),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
             resizeToAvoidBottomInset: false,
             floatingActionButton: floatingActionButton(),
             bottomNavigationBar: bottomAppBar()),
@@ -55,11 +58,14 @@ class _HomePageState extends State<HomePage> {
   appBar(BuildContext context) {
     return new AppBar(
         leadingWidth: Globals.scaler.getWidth(3),
-        toolbarHeight: Globals.scaler.getHeight(2),
+        toolbarHeight: Globals.scaler.getHeight(2.2),
         elevation: 10,
         leading: Builder(
             builder: (context) => new IconButton(
-                  icon: Icon(Icons.notifications, color: Colors.teal[400],size: scaler.getTextSize(9)),
+                  icon: Center(
+                    child: Icon(Icons.notifications,
+                        color: Colors.teal[400], size: scaler.getTextSize(10)),
+                  ),
                   tooltip:
                       MaterialLocalizations.of(context).openAppDrawerTooltip,
                   onPressed: () {
@@ -79,19 +85,45 @@ class _HomePageState extends State<HomePage> {
           bottom: Radius.circular(0),
         )),
         backgroundColor: Colors.white,
-        title: Container(
-          width: scaler.getWidth(28),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-            Text(
-            "Havruta  ",
-            textAlign: TextAlign.center,
-            style: GoogleFonts.alef(fontWeight: FontWeight.bold,  fontSize: Globals.scaler.getTextSize(8), color:Colors.teal[400]),
+        actions: [
+          Row(
+            children: [
+              Center(
+                child: Text(
+                  'חברותא',
+                  style: TextStyle(
+                    fontFamily: 'Yiddish',
+                    color: Colors.teal,
+                    fontSize: Globals.scaler.getTextSize(10),
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 8,
+                  ),
+                ),
+              ),
+              SizedBox(width: Globals.scaler.getWidth(0.8),)
+            ],
           ),
-                Icon(FontAwesomeIcons.book, size: Globals.scaler.getTextSize(8), color: Colors.teal[400])
-              ]),
-        ));
+        ],
+        // title: Container(
+        //   width: scaler.getWidth(28),
+          // child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: <Widget>[
+          //       Text(
+          //         "חברותא",
+          //         textAlign: TextAlign.center,
+          //         style: GoogleFonts.alef(
+          //             fontWeight: FontWeight.bold,
+          //             fontSize: Globals.scaler.getTextSize(9),
+          //             color: Colors.teal[400],
+          //         letterSpacing: 8),
+          //       ),
+          //       SizedBox(width: Globals.scaler.getWidth(1),),
+          //       Icon(FontAwesomeIcons.book,
+          //           size: Globals.scaler.getTextSize(8),
+          //           color: Colors.teal[400])
+          //     ]),
+        );
   }
 
   floatingActionButton() {

@@ -9,8 +9,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
 
 class MyProgressButton extends StatefulWidget {
-  MyProgressButton({Key key, this.event}) : super(key: key);
-
+  MyProgressButton({Key key, this.event, @required this.notifyParent})
+      : super(key: key);
+  final Function() notifyParent;
   final Event event;
 
   @override
@@ -22,20 +23,42 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   // if user is signed --> stateOnlyText = ButtonState.success;
 
   ButtonState stateOnlyText = ButtonState.idle;
+  List<dynamic> dates = [];
 
   @override
   void initState() {
     super.initState();
+    List<dynamic> datesDB = widget.event.dates;
+    // Create fix list of dates - every node: [start, end]
+    for (var i = 0; i < datesDB.length; i += 2) {
+      dates.add([datesDB[i], datesDB[i + 1]]);
+    }
     if (widget.event.participants.contains(Globals.currentUser.email)) {
-      stateOnlyText = ButtonState.success;
+      // Check if there is event NOW
+      if (isNow(dates)) {
+        stateOnlyText = ButtonState.success;
+      }
+      stateOnlyText = ButtonState.fail;
     } else if (widget.event.participants.length >=
         widget.event.maxParticipants) {
       stateOnlyText = ButtonState.full;
     }
   }
 
-  Widget buildCustomButton() {
+  // Check if there is a event that happen right now
+  bool isNow(List<dynamic> dates) {
+    DateTime now = DateTime.now();
+    for (var i = 0; i < dates.length; ++i) {
+      if ((now.isAfter(dates[i][0]) && now.isBefore(dates[i][1])) ||
+          now.isAtSameMomentAs(dates[i][0]) ||
+          now.isAtSameMomentAs(dates[i][1])) {
+        return true;
+      }
+    }
+    return false;
+  }
 
+  Widget buildCustomButton() {
     TextStyle textStyle = TextStyle(
         color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20);
     var progressTextButton = Column(children: [
@@ -50,7 +73,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
             style: textStyle,
           ),
           ButtonState.fail: Text(
-            "הרשמה נכשלה",
+            "לא מתקיים שיעור כעת",
             style: textStyle,
           ),
           ButtonState.success: Text(
@@ -74,7 +97,12 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         padding: EdgeInsets.all(8.0),
       ),
       widget.event.participants.contains(Globals.currentUser.email)
-          ? DeleteFromEventButton(widget.event)
+          ? Column(
+            children: [
+              SizedBox(height: Globals.scaler.getHeight(1)),
+              DeleteFromEventButton(widget.event),
+            ],
+          )
           : SizedBox(),
     ]);
     return progressTextButton;
@@ -111,8 +139,14 @@ class _MyProgressButtonState extends State<MyProgressButton> {
               'האירוע נוסף בהצלחה לפרופיל האישי',
               textAlign: TextAlign.center,
             )));
+            // ------------------------ Maybe need to DELETE --------------
+            widget.event.participants.add(Globals.currentUser.email);
+            widget.notifyParent();
             setState(() {
-              stateOnlyText = ButtonState.success;
+              if (isNow(dates)) {
+                stateOnlyText = ButtonState.success;
+              }
+              stateOnlyText = ButtonState.fail;
             });
           });
           stateOnlyText = ButtonState.loading;
@@ -124,7 +158,11 @@ class _MyProgressButtonState extends State<MyProgressButton> {
           _launchURL();
           break;
         case ButtonState.fail:
-          // stateOnlyText = ButtonState.success;
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'אין שיעור בזמן הנוכחי',
+            textAlign: TextAlign.center,
+          )));
           break;
         case ButtonState.full:
           Flushbar(

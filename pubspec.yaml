@@ -98,8 +98,10 @@ flutter:
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
-  # example:
-
+  fonts:
+    - family: Yiddish
+      fonts:
+        - asset: fonts/Yiddish-Bold.otf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

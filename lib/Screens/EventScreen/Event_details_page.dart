@@ -29,6 +29,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       DeleteFromEventButton(widget.event);
     }
   }
+  // To make setState from children
+  refresh() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +64,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               ],
             ),
             SizedBox(height: 8),
-            MyProgressButton(event: widget.event),
+            MyProgressButton(event: widget.event, notifyParent: refresh),
             SizedBox(height: 20.0),
+            Divider(),
             // widget.event.participants.contains(Globals.currentUser.email) ?
             //   DeleteFromEventButton(widget.event) : SizedBox(),
             ParticipentsScroller(widget.event.participants),

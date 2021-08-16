@@ -5,44 +5,42 @@ import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'Event_details_page.dart';
 
-class EventScreen extends StatelessWidget {
+class EventScreen extends StatefulWidget {
   final Event event;
-  Future<Event> eventUpdate;
 
   EventScreen(this.event);
 
   @override
+  _EventScreenState createState() => _EventScreenState();
+}
+
+class _EventScreenState extends State<EventScreen> {
+  Future<Event> eventUpdate;
+
+  @override
   Widget build(BuildContext context) {
-    eventUpdate = Globals.db.getEventById(this.event.id);
-    return new WillPopScope(
-        onWillPop: () async {
-          return Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        },
-        child: Scaffold(
-            body: FutureBuilder(
-                future: eventUpdate,
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                      return Text('none');
-                    case ConnectionState.active:
-                    case ConnectionState.waiting:
-                      return Center(
-                        child: LoadingBouncingGrid.square(
-                          borderColor: Colors.teal[400],
-                          backgroundColor: Colors.teal[400],
-                          size: 80.0,
-                        ),
-                      );
-                    case ConnectionState.done:
-                      print(snapshot.data);
-                      return EventDetailsPage(snapshot.data);
-                    default:
-                      return Text('default');
-                  }
-                })));
+    eventUpdate = Globals.db.getEventById(this.widget.event.id);
+    return Scaffold(
+        body: FutureBuilder(
+            future: eventUpdate,
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Text('none');
+                case ConnectionState.active:
+                case ConnectionState.waiting:
+                  return Center(
+                    child: LoadingBouncingGrid.square(
+                      borderColor: Colors.teal[400],
+                      backgroundColor: Colors.teal[400],
+                      size: 80.0,
+                    ),
+                  );
+                case ConnectionState.done:
+                  return EventDetailsPage(snapshot.data);
+                default:
+                  return Text('default');
+              }
+            }));
   }
 }
