@@ -39,10 +39,14 @@ class _SetDateCreateState extends State<SetDate> {
     final newDate = await showDatePicker(
       context: context,
       initialDate: date ?? initialDate,
-      firstDate: DateTime(DateTime.now().year - 5),
-      lastDate: DateTime(DateTime.now().year + 5),
+      firstDate: DateTime(DateTime.now().day),
+      lastDate: DateTime(DateTime.now().year + 2),
     );
     if (newDate == null) return null;
+    if (DateTime.now().isAfter(newDate) && DateTime.now().day > newDate.day ){
+      alertMessage("אי אפשר לבחור תאריך שעבר");
+      return null;
+    }
     setState(() => date = newDate);
   }
 
@@ -56,6 +60,11 @@ class _SetDateCreateState extends State<SetDate> {
           : initialTime,
     );
     if (newTime == null) return null;
+    if (((newTime.hour < DateTime.now().hour) ||
+        ((newTime.hour == DateTime.now().hour) && newTime.minute < DateTime.now().minute))){
+      alertMessage("אי אפשר לבחור תאריך שעבר");
+      return null;
+    }
     setState(() => startTime = newTime);
   }
 

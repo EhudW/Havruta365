@@ -4,8 +4,10 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
-import 'package:intl/intl.dart' as intl;
+import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 
 class EventViewFeed extends StatelessWidget {
@@ -43,7 +45,7 @@ class EventViewFeed extends StatelessWidget {
                         SizedBox(height: scaler.getHeight(0.5)),
                         Text(
                           event.topic,
-                          textDirection: TextDirection.rtl,
+                          // textDirection: TextDirection.RTL,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: scaler.getTextSize(7),
@@ -66,7 +68,7 @@ class EventViewFeed extends StatelessWidget {
                                       Expanded(
                                           child: Text(
                                         event.participants.length.toString() + "/" + event.maxParticipants.toString(),
-                                        textDirection: TextDirection.rtl,
+                                        // textDirection: TextDirection.rtl,
                                         textAlign: TextAlign.right,
                                         style: TextStyle(
                                             fontSize: scaler.getTextSize(6)),
@@ -82,8 +84,8 @@ class EventViewFeed extends StatelessWidget {
                                           //mainAxisAlignment: MainAxisAlignment.end,
                                           children: <Widget>[
                                             Text(
-                                              event.dates[0].toString().substring(5, 10),
-                                              textDirection: TextDirection.rtl,
+                                              DateFormat('d-M-yyyy').format(event.dates[0]),
+                                              //textDirection: TextDirection.rtl,
                                               textAlign: TextAlign.right,
                                               style: TextStyle(
                                                   fontSize:

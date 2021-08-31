@@ -59,6 +59,9 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   }
 
   Widget buildCustomButton() {
+    var message = widget.event.type == 'H'
+        ? "הנך רשומ/ה לחברותא זו"
+        : "הנך רשומ/ה לשיעור זה";
     TextStyle textStyle = TextStyle(
         color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20);
     var progressTextButton = Column(children: [
@@ -73,7 +76,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
             style: textStyle,
           ),
           ButtonState.fail: Text(
-            "לא מתקיים שיעור כעת",
+            message,
             style: textStyle,
           ),
           ButtonState.success: Text(
@@ -88,7 +91,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         stateColors: {
           ButtonState.idle: Colors.teal[400],
           ButtonState.loading: Colors.grey,
-          ButtonState.fail: Colors.red.shade300,
+          ButtonState.fail: Colors.lightGreenAccent,
           ButtonState.success: Colors.green,
           ButtonState.full: Colors.redAccent
         },
