@@ -142,7 +142,7 @@ class _SetDateCreateState extends State<SetDate> {
                                 padding:
                                     EdgeInsets.all(Globals.scaler.getWidth(1))),
                             Text(
-                              "תאריך",
+                              "תאריך     ",
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                   color: Colors.black,
@@ -186,7 +186,7 @@ class _SetDateCreateState extends State<SetDate> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          "זמן התחלה",
+                          "זמן התחלה     ",
                           textAlign: TextAlign.end,
                           style: TextStyle(
                               color: Colors.black,
@@ -227,7 +227,7 @@ class _SetDateCreateState extends State<SetDate> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          "זמן סיום",
+                          "זמן סיום     ",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Colors.black,

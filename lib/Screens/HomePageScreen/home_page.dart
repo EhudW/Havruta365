@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:havruta_project/Globals.dart';
@@ -7,9 +6,9 @@ import 'package:havruta_project/Screens/HomePageScreen/notifications.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
 import 'Events.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -20,7 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentStateAppBar = 0;
-
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   ScreenScaler scaler = new ScreenScaler();
 
@@ -158,9 +157,20 @@ class _HomePageState extends State<HomePage> {
               IconButton(
                 icon: Icon(Icons.exit_to_app_outlined),
                 color: Colors.white54,
-                onPressed: () {
+                onPressed: () async {
                   // exit(0);
-                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  var currentUser = FirebaseAuth.instance.currentUser;
+                  print(currentUser);
+                  if (currentUser != null) {
+                    // Disconnect from gmail
+                    await FirebaseAuth.instance.signOut();
+                  }
+                  // Remove mail from local phone and go to Login page
+                  final SharedPreferences prefs = await _prefs;
+                  await prefs.setString('id', "");
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => Login()));
                 },
                 iconSize: scaler.getTextSize(10),
               ),

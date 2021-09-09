@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
-import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/ProfileScreen/Events_scroller.dart';
@@ -31,6 +29,36 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
       return null;
     }
     return user;
+  }
+
+  alertMessage(String text) {
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "!הודעת מערכת",
+        style: TextStyle(
+          color: Colors.red,
+        ),
+      ),
+      content: Text(text),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   @override
@@ -87,6 +115,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           GestureDetector(
             onTap: () {
               // TODO open box with all details of the user
+              alertMessage("כאן בונים");
             },
             child: Container(
               height: Globals.scaler.getHeight(3),
@@ -129,7 +158,6 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                 print(currentUser);
                 if (currentUser != null) {
                   // Disconnect from gmail
-                  print("Disconnect from gmail");
                   await FirebaseAuth.instance.signOut();
                 }
                 // Remove mail from local phone and go to Login page
