@@ -60,16 +60,18 @@ class _SetDateCreateState extends State<SetDate> {
           : initialTime,
     );
     if (newTime == null) return null;
-    if (((newTime.hour < DateTime.now().hour) ||
-        ((newTime.hour == DateTime.now().hour) && newTime.minute < DateTime.now().minute))){
-      alertMessage("אי אפשר לבחור תאריך שעבר");
-      return null;
+    if (date.day == DateTime.now().day){
+      if (((newTime.hour < DateTime.now().hour) ||
+          ((newTime.hour == DateTime.now().hour) && newTime.minute < DateTime.now().minute))){
+        alertMessage("אי אפשר לבחור תאריך שעבר");
+        return null;
+      }
     }
     setState(() => startTime = newTime);
   }
 
   Future<TimeOfDay> pickEndTime(BuildContext context) async {
-    final initialTime = TimeOfDay(hour: 9, minute: 0);
+    final initialTime = TimeOfDay(hour: 10, minute: 0);
     final newTime = await showTimePicker(
       context: context,
       helpText: 'Select End Time',
