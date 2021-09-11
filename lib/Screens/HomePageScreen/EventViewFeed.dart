@@ -9,7 +9,6 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
-
 class EventViewFeed extends StatelessWidget {
   final Event event;
 
@@ -36,7 +35,8 @@ class EventViewFeed extends StatelessWidget {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Expanded(child:Container(
+                  Expanded(
+                      child: Container(
                     width: scaler.getWidth(12),
                     height: scaler.getHeight(4),
                     child: Column(
@@ -67,14 +67,15 @@ class EventViewFeed extends StatelessWidget {
                                     children: <Widget>[
                                       Expanded(
                                           child: Text(
-                                        event.participants.length.toString() + "/" + event.maxParticipants.toString(),
+                                        event.participants.length.toString() +
+                                            "/" +
+                                            event.maxParticipants.toString(),
                                         // textDirection: TextDirection.rtl,
                                         textAlign: TextAlign.right,
                                         style: TextStyle(
                                             fontSize: scaler.getTextSize(6)),
                                       )),
-                                          SizedBox(
-                                              width: scaler.getWidth(0.5)),
+                                      SizedBox(width: scaler.getWidth(0.5)),
                                       Expanded(
                                           child: Icon(FontAwesomeIcons.users,
                                               size: scaler.getTextSize(8),
@@ -84,7 +85,8 @@ class EventViewFeed extends StatelessWidget {
                                           //mainAxisAlignment: MainAxisAlignment.end,
                                           children: <Widget>[
                                             Text(
-                                              DateFormat('d-M-yyyy').format(event.dates[0]),
+                                              DateFormat('d-M-yyyy')
+                                                  .format(event.dates[0]),
                                               //textDirection: TextDirection.rtl,
                                               textAlign: TextAlign.right,
                                               style: TextStyle(
@@ -132,14 +134,18 @@ class EventViewFeed extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            this.event.type == "L" ?event.lecturer: event.creatorName,
-     style: TextStyle(color: Colors.grey.shade600, fontSize: scaler.getTextSize(6)),
+                              this.event.type == "L"
+                                  ? event.lecturer
+                                  : event.creatorName,
+                              style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: scaler.getTextSize(6)),
                               textAlign: TextAlign.center),
                         ],
                       ),
                     ),
-                  ])
-                  ,SizedBox(width: scaler.getWidth(1))
+                  ]),
+                  SizedBox(width: scaler.getWidth(1))
                 ])));
   }
 }
