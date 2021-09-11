@@ -80,11 +80,24 @@ class Mongo {
 
   Future<List<Event>> getSomeEvents(int len) async {
     List<Event> data = List<Event>();
+    int flag = 0;
+    DateTime timeNow = DateTime.now();
     var collection = db.collection('Events');
     final events =
         await collection.find(where.sortBy('_id').skip(len).limit(10)).toList();
     for (var i in events) {
       data.add(new Event.fromJson(i));
+    }
+    for (Event e in data){
+      for (DateTime d in e.dates){
+        if(d.day >= timeNow.day){
+          flag = 1;
+        }
+      }
+      if (flag == 0){
+        //data.remove(e);
+      }
+      flag = 0;
     }
     return data;
   }
