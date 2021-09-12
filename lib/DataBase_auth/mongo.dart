@@ -207,7 +207,7 @@ class Mongo {
     // Get the Users Collection
     var collection = db.collection('Users');
     // Check if the user exist
-    var user = await collection.findOne(where.eq('email', '$mail'));
+    var user = await collection.findOne(where.eq('email', mail));
     if (user == null) {
       return false;
     }

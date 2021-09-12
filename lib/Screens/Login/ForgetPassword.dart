@@ -56,7 +56,11 @@ class _HomePageState extends State<ForgetPassword> {
                   onPrimary: Colors.teal),
               onPressed: () async {
                 address_str = address.text;
-                print(address_str);
+                if(!(address_str.contains("@")&&address_str.contains("."))){
+                  Toast.show('כתובת המייל לא חוקית', context,
+                      duration: Toast.CENTER, gravity: 30);
+                  return;
+                }
                 bool check = await Globals.db.isUserExist(address_str);
                 if (check == true){
                   bool checkPass = await Globals.db.isPassNull(address_str);
@@ -74,7 +78,7 @@ class _HomePageState extends State<ForgetPassword> {
 
                 }
                 else{
-                  Toast.show('כתובת המייל לא נמצאה', context,duration: Toast.CENTER,gravity: 30);
+                  Toast.show('כתובת המייל לא קיימת', context,duration: Toast.CENTER,gravity: 30);
                 }
 
               },
