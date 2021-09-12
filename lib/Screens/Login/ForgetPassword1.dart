@@ -1,28 +1,39 @@
 import 'dart:convert';
-import 'dart:math';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:crypto/crypto.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 
-import 'ForgetPassword1.dart';
+import 'Login.dart';
 
-class ForgetPassword extends StatefulWidget {
+class ForgetPassword1 extends StatefulWidget {
+
+  String code;
+  String mail;
+
+  ForgetPassword1(this.code,this.mail);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<ForgetPassword> {
-  final address = TextEditingController();
-  String address_str = "";
+class _HomePageState extends State<ForgetPassword1> {
+  final code = TextEditingController();
+  String code_str = "";
+  final password = TextEditingController();
+  String password_str = "";
+  final password_con = TextEditingController();
+  String password_con_str = "";
+
+
 
 
   @override
@@ -36,12 +47,16 @@ class _HomePageState extends State<ForgetPassword> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: Globals.scaler.getHeight(4)),
-            newFiled(address, address_str, "כתובת המייל",
-                FontAwesomeIcons.mailBulk, false),
+            newFiled(code, code_str, "הקוד שנשלח למייל",
+                FontAwesomeIcons.code, true),
+            newFiled(password, password_str, "סיסמא חדשה",
+                FontAwesomeIcons.key, true),
+            newFiled(password_con, password_con_str, "אישור סיסמא",
+                FontAwesomeIcons.check, true),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
-                "שנה את הסיסמא שלי",
+                "שנה את הסיסמא",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.abel(fontSize: Globals.scaler.getTextSize(8), color: Colors.white),
               ),
@@ -52,40 +67,66 @@ class _HomePageState extends State<ForgetPassword> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
-                  primary: Colors.teal,
+                  primary: Colors.red,
                   // <-- Button color
-                  onPrimary: Colors.teal),
+                  onPrimary: Colors.red),
               onPressed: () async {
-                address_str = address.text;
-                if(!(address_str.contains("@")&&address_str.contains("."))){
-                  Toast.show('כתובת המייל לא חוקית', context,
-                      duration: Toast.CENTER, gravity: 30);
+                code_str = code.text;
+                password_str = password.text;
+                password_con_str = password_con.text;
+                if(code_str != this.widget.code){
+                  Flushbar(
+                    title: 'שגיאה בהחלפת סיסמא',
+                    messageText: Text('הקוד לא תואם ',
+                        textAlign: TextAlign.center,
+                        style:
+                        TextStyle(color: Colors.teal[400], fontSize: 20)),
+                    duration: Duration(seconds: 3),
+                  )..show(context);
                   return;
                 }
-                bool check = await Globals.db.isUserExist(address_str);
-                if (check == true){
-                  bool checkPass = await Globals.db.isPassNull(address_str);
-                  if(checkPass== true) {
-                    var code = getRandString(6);
-                    sendMail(address_str, code);
-                    Toast.show('נשלח מייל לכתובת זו עם קוד לשינוי הסיסמא', context,
-                        duration: Toast.BOTTOM, gravity: 30);
+                if (password_str.length < 6) {
+                  Flushbar(
+                    title: 'שגיאה בהחלפת סיסמא ',
+                    messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
+                        textAlign: TextAlign.center,
+                        style:
+                        TextStyle(color: Colors.teal[400], fontSize: 20)),
+                    duration: Duration(seconds: 3),
+                  )..show(context);
+                  return;
+                }
+                // Check if the passwords are equals
+                if (password_str != password_con_str) {
+                  Flushbar(
+                    title: 'שגיאה בהחלפת סיסמא',
+                    messageText: Text('סיסמאות לא תואמות',
+                        textAlign: TextAlign.center,
+                        style:
+                        TextStyle(color: Colors.teal[400], fontSize: 20)),
+                    duration: Duration(seconds: 3),
+                  )..show(context);
+                  return;
+                }
+                Globals.db.changePasswordUser(this.widget.mail, password_str);
+                Flushbar(
+                  title: 'בוצע החלפת סיסמא',
+                  messageText: Text('הסיסמא שונתה בהצלחה !',
+                      textAlign: TextAlign.center,
+                      style:
+                      TextStyle(color: Colors.teal[400], fontSize: 20)),
+                  duration: Duration(seconds: 3),
+                )..show(context);
+                Future.delayed(Duration(seconds: 3),()
+                {
+                  setState(() {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ForgetPassword1(code,address_str)),
+                          builder: (context) => Login()),
                     );
-                  }
-                  else{
-                    Toast.show('Google'+'יש לשנות את הסיסמא בפרופיל ', context,
-                        duration: Toast.CENTER, gravity: 30);
-                  }
-
-                }
-                else{
-                  Toast.show('כתובת המייל לא קיימת', context,duration: Toast.CENTER,gravity: 30);
-                }
-
+                  });
+                });
               },
             ),
             SizedBox(height: Globals.scaler.getHeight(1))
@@ -95,11 +136,7 @@ class _HomePageState extends State<ForgetPassword> {
     );
   }
 }
-String getRandString(int len) {
-  var random = Random.secure();
-  var values = List<int>.generate(len, (i) =>  random.nextInt(255));
-  return base64UrlEncode(values);
-}
+
 newFiled(controller, str, text, icon, cover) {
   return new  FadeAnimation(
       1.7, Column(children: <Widget>[
@@ -147,24 +184,6 @@ newFiled(controller, str, text, icon, cover) {
   ]));
 }
 
-sendMail(String mailUser, String code ) async {
-  var url =
-  Uri.parse('http://yonatangat.pythonanywhere.com/mail');
-  var x =
-    {
-      "subject": "שינוי סיסמא - פרוייקט חברותא",
-      "body": "הקוד שלך לשינוי סיסמא הוא :    " +  code ,
-      "src": "havrutaproject@gmail.com",
-      "src_pass": "havruta365",
-      "dst": mailUser
-    };
-  print(x);
-  var response = await http.post(url,
-      body: json.encode(x),
-      headers: {'Content-Type': 'application/json'});
-  print('Response status: ${response.statusCode}');
-  print('Response body: ${response.body}');
-}
 
 appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();

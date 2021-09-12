@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Topic.dart';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
+import 'package:http/http.dart' as http;
 
 String CONNECT_TO_DB =
     "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havruta?retryWrites=true&w=majority";
@@ -188,6 +189,20 @@ class Mongo {
     var collection = db.collection('Notifications');
     var e = notification.toJson();
     await collection.insertOne(e);
+    var url =
+    Uri.parse('http://yonatangat.pythonanywhere.com/mail');
+    var x =
+    {
+      "subject": "פרוייקט חברותא",
+      "body": notification.name  + "  "+ notification.message ,
+      "src": "havrutaproject@gmail.com",
+      "src_pass": "havruta365",
+      "dst": notification.destinationUser
+    };
+    print(x);
+    var response = await http.post(url,
+        body: json.encode(x),
+        headers: {'Content-Type': 'application/json'});
   }
 
   Future<void> deleteNotification(NotificationUser notification) async {
@@ -262,10 +277,9 @@ class Mongo {
         where.eq('email', user.email), modify.set('avatar' ?? "", user.avatar));
     }
 
-  changePasswordUser(String email) async {
+  changePasswordUser(String email, String newPassword) async {
     var collection = db.collection('Users');
     // Check if the user exist
-    var newPassword = getRandString(6);
     var bytes = utf8.encode(newPassword);
     var digest = sha1.convert(bytes);
     await collection.updateOne(
