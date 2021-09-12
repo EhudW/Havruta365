@@ -8,6 +8,8 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Topic.dart';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 
 String CONNECT_TO_DB =
     "mongodb+srv://admin:admin@havruta.c4xko.mongodb.net/Havruta?retryWrites=true&w=majority";
@@ -212,6 +214,16 @@ class Mongo {
     return true;
   }
 
+  Future<bool> isPassNull(String mail) async {
+    var coll = Globals.db.db.collection('Users');
+    var user_json = await coll.findOne(where.eq('email', '$mail'));
+    User user = User.fromJson(user_json);
+    if (user.password == null ||user.password == "") {
+      return false;
+    }
+    return true;
+  }
+
   // Check if the user is exist.
   // If not - throw error. O.W - return the user object.
   checkNewUser(String mail) async {
@@ -250,6 +262,22 @@ class Mongo {
         where.eq('email', user.email), modify.set('avatar' ?? "", user.avatar));
     }
 
+  changePasswordUser(String email) async {
+    var collection = db.collection('Users');
+    // Check if the user exist
+    var newPassword = getRandString(6);
+    var bytes = utf8.encode(newPassword);
+    var digest = sha1.convert(bytes);
+    await collection.updateOne(
+        where.eq('email', email), modify.set('password' ?? "", digest.toString()));
+    return newPassword;
+  }
+
+  String getRandString(int len) {
+    var random = Random.secure();
+    var values = List<int>.generate(len, (i) =>  random.nextInt(255));
+    return base64UrlEncode(values);
+  }
   /*
   Remove user from the DB according to the mail.
    */

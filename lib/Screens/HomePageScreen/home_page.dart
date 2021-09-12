@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   ScreenScaler scaler = new ScreenScaler();
+  var events = Events();
 
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
 
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage> {
       child: Center(
         child: Scaffold(
             body: Scaffold(
-                body: Column(children: <Widget>[Expanded(child: Events())]),
+                body: Column(children: <Widget>[Expanded(child: events)]),
                 key: _scaffoldKey,
                 drawer: Drawer(
                     child: Container(
@@ -157,18 +158,19 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.exit_to_app_outlined),
                 color: Colors.white54,
                 onPressed: () async {
-                  var currentUser;
-                  if (await GoogleSignInApi.isSignedIn()) {
-                    currentUser = GoogleSignInApi.currentUser();
-                    print("Signed in");
-                    print(currentUser);
-                    await GoogleSignInApi.logout();
-                  }
-                  // Remove mail from local phone and go to Login page
-                  final SharedPreferences prefs = await _prefs;
-                  await prefs.setString('id', "");
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => Login()));
+                  // var currentUser;
+                  // if (await GoogleSignInApi.isSignedIn()) {
+                  //   currentUser = GoogleSignInApi.currentUser();
+                  //   print("Signed in");
+                  //   print(currentUser);
+                  //   await GoogleSignInApi.logout();
+                  // }
+                  // // Remove mail from local phone and go to Login page
+                  // final SharedPreferences prefs = await _prefs;
+                  // await prefs.setString('id', "");
+                  // Navigator.of(context).pushReplacement(
+                  //     MaterialPageRoute(builder: (context) => Login()));
+
                 },
                 iconSize: scaler.getTextSize(10),
               ),
