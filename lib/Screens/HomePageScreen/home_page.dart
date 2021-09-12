@@ -30,10 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-        return;
-      },
+      onWillPop: () async => false,
       child: Center(
         child: Scaffold(
             body: Scaffold(

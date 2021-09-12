@@ -91,7 +91,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         stateColors: {
           ButtonState.idle: Colors.teal[400],
           ButtonState.loading: Colors.grey,
-          ButtonState.fail: Colors.lightGreenAccent,
+          ButtonState.fail: Colors.green[300],
           ButtonState.success: Colors.green,
           ButtonState.full: Colors.redAccent
         },

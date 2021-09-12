@@ -35,7 +35,6 @@ class _EventsState extends State<Events> {
     scrollControllerOnline.addListener(() {
       if (scrollControllerOnline.position.maxScrollExtent ==
           scrollControllerOnline.offset) {
-        print(eventsOnline.runtimeType);
         eventsOnline.loadMore();
       }
     });
@@ -170,7 +169,7 @@ class _EventsState extends State<Events> {
     return Center(
         //padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 20),
         child: Column(children: <Widget>[
-          SizedBox(height: Globals.scaler.getHeight(1)),
+          SizedBox(height: Globals.scaler.getHeight(0.3)),
       Row(
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),

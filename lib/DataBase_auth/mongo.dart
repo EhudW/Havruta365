@@ -63,6 +63,7 @@ class Mongo {
 
   Future<List<Event>> searchEvents(String s) async {
     List<Event> data = List<Event>();
+    DateTime timeNow = DateTime.now();
     var collection = db.collection('Events');
     final events = await collection
         .find(where
@@ -73,7 +74,19 @@ class Mongo {
             .limit(10))
         .toList();
     for (var i in events) {
-      data.add(new Event.fromJson(i));
+      Event e = new Event.fromJson(i);
+      var len = e.dates.length;
+      for (int j=0; j<len; j++){
+        if(timeNow.isAfter(e.dates[j])){
+          print(e.dates[j]);
+          e.dates.remove(e.dates[j]);
+          len -= 1;
+          j--;
+        }
+      }
+      if (e.dates.isNotEmpty) {
+        data.add(e);
+      }
     }
     return data;
   }

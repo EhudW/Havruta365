@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:english_words/english_words.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'dart:math';
-import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/Globals.dart';
 
 
