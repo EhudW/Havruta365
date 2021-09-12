@@ -7,9 +7,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 
 class Events extends StatefulWidget {
-  const Events({
-    Key key,
-  }) : super(key: key);
+  EventsModel events;
+  EventsModel eventsOnline;
+
+  Events(this.events, this.eventsOnline);
 
   @override
   _EventsState createState() => _EventsState();
@@ -19,23 +20,26 @@ class _EventsState extends State<Events> {
   final scrollController = ScrollController();
   final scrollControllerOnline = ScrollController();
 
-  EventsModel events;
-  EventsModel eventsOnline;
-
+ // EventsModel events;
+  //EventsModel eventsOnline;
+  refresh(){
+    this.widget.events.refresh();
+    this.widget.eventsOnline.refresh();
+  }
   @override
   void initState() {
-    events = EventsModel(false);
-    eventsOnline = EventsModel(true);
+    //this.widget.events = EventsModel(false);
+    //this.widget.eventsOnline = EventsModel(true);
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
-        events.loadMore();
+        this.widget.events.loadMore();
       }
     });
     scrollControllerOnline.addListener(() {
       if (scrollControllerOnline.position.maxScrollExtent ==
           scrollControllerOnline.offset) {
-        eventsOnline.loadMore();
+        this.widget.eventsOnline.loadMore();
       }
     });
     super.initState();
@@ -57,13 +61,13 @@ class _EventsState extends State<Events> {
   eventsScroll() {
     return Scrollbar(
         child: StreamBuilder(
-      stream: events.stream,
+      stream: this.widget.events.stream,
       builder: (BuildContext _context, AsyncSnapshot _snapshot) {
         if (!_snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         } else {
           return RefreshIndicator(
-            onRefresh: events.refresh,
+            onRefresh: this.widget.events.refresh,
             child: ListView.separated(
               padding: EdgeInsets.symmetric(vertical: 1.0),
               controller: scrollController,
@@ -74,7 +78,7 @@ class _EventsState extends State<Events> {
               itemBuilder: (BuildContext _context, int index) {
                 if (index < _snapshot.data.length) {
                   return EventViewFeed(event: _snapshot.data[index]);
-                } else if (events.hasMore) {
+                } else if (this.widget.events.hasMore) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 32.0),
                     child: Center(
@@ -99,13 +103,13 @@ class _EventsState extends State<Events> {
     return new Stack(children: <Widget>[
       Scrollbar(
           child: StreamBuilder(
-        stream: eventsOnline.stream,
+        stream: this.widget.eventsOnline.stream,
         builder: (BuildContext _context, AsyncSnapshot _snapshot) {
           if (!_snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
             return RefreshIndicator(
-              onRefresh: eventsOnline.refresh,
+              onRefresh: this.widget.eventsOnline.refresh,
               child: ListView.separated(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
@@ -118,7 +122,7 @@ class _EventsState extends State<Events> {
                 itemBuilder: (BuildContext _context, int index) {
                   if (index < _snapshot.data.length) {
                     return EventOnlineFeed(event: _snapshot.data[index]);
-                  } else if (eventsOnline.hasMore) {
+                  } else if (this.widget.eventsOnline.hasMore) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 32.0),
                       child: Center(
@@ -205,12 +209,12 @@ class _EventsState extends State<Events> {
                     print(text);
                     text.replaceAll(new RegExp(r"\s+"), "");
                     if (text == "") {
-                      events.searchData = null;
+                      this.widget.events.searchData = null;
                     } else {
                       searchBarString = text.toLowerCase();
-                      events.searchData = searchBarString;
+                      this.widget.events.searchData = searchBarString;
                     }
-                    events.refresh();
+                    this.widget.events.refresh();
                   }),
             ),
           ),

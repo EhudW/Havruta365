@@ -11,6 +11,8 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
 
+import 'modelsHomePages.dart';
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -24,12 +26,13 @@ class _HomePageState extends State<HomePage> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   ScreenScaler scaler = new ScreenScaler();
-  var events = Events();
+  Events events = Events(new EventsModel(false), new EventsModel(true));
 
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Center(
@@ -49,7 +52,55 @@ class _HomePageState extends State<HomePage> {
                 FloatingActionButtonLocation.centerDocked,
             resizeToAvoidBottomInset: false,
             floatingActionButton: floatingActionButton(),
-            bottomNavigationBar: bottomAppBar()),
+            bottomNavigationBar: BottomAppBar(
+              color: Colors.teal[400],
+              shape: CircularNotchedRectangle(),
+              notchMargin: scaler.getTextSize(5),
+              child: Container(
+                height: scaler.getHeight(2.5),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.replay_circle_filled),
+                        color: Colors.white54,
+                        onPressed: () async {
+                          // var currentUser;
+                          // if (await GoogleSignInApi.isSignedIn()) {
+                          //   currentUser = GoogleSignInApi.currentUser();
+                          //   print("Signed in");
+                          //   print(currentUser);
+                          //   await GoogleSignInApi.logout();
+                          // }
+                          // // Remove mail from local phone and go to Login page
+                          // final SharedPreferences prefs = await _prefs;
+                          // await prefs.setString('id', "");
+                          // Navigator.of(context).pushReplacement(
+                          //     MaterialPageRoute(builder: (context) => Login()));
+                          this.events.events.refresh();
+                          this.events.eventsOnline.refresh();
+
+                        },
+                        iconSize: scaler.getTextSize(10),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.person),
+                        color: Colors.white54,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ProfileScreen()),
+                          );
+                        },
+                        iconSize: scaler.getTextSize(10),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )),
       ),
     );
   }

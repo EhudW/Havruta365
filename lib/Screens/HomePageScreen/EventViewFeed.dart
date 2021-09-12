@@ -48,14 +48,14 @@ class EventViewFeed extends StatelessWidget {
                           // textDirection: TextDirection.RTL,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: scaler.getTextSize(7),
+                              fontSize: scaler.getTextSize(7.5),
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           event.book,
                           style: TextStyle(
                               color: Colors.grey.shade600,
-                              fontSize: scaler.getTextSize(6)),
+                              fontSize: scaler.getTextSize(6.5)),
                         ),
                         SizedBox(height: scaler.getHeight(0.5)),
                         Expanded(
