@@ -80,22 +80,49 @@ class Mongo {
 
   Future<List<Event>> getSomeEvents(int len) async {
     List<Event> data = List<Event>();
+    DateTime timeNow = DateTime.now();
+
     var collection = db.collection('Events');
     final events =
         await collection.find(where.sortBy('_id').skip(len).limit(10)).toList();
     for (var i in events) {
-      data.add(new Event.fromJson(i));
+      Event e = new Event.fromJson(i);
+      var len = e.dates.length;
+      for (int j=0; j<len; j++){
+        if(timeNow.isAfter(e.dates[j])){
+          print(e.dates[j]);
+           e.dates.remove(e.dates[j]);
+           len -= 1;
+           j--;
+        }
+      }
+      if (e.dates.isNotEmpty) {
+        data.add(e);
+      }
     }
     return data;
   }
 
   Future<List<Event>> getSomeEventsOnline(int len) async {
     List<Event> data = List<Event>();
+    DateTime timeNow = DateTime.now();
     var collection = db.collection('Events');
     final events =
         await collection.find(where.eq('type', 'L').sortBy('_id').skip(len).limit(10)).toList();
-    for (var i in events) {
-      data.add(new Event.fromJson(i));
+      for (var i in events) {
+        Event e = new Event.fromJson(i);
+        var len = e.dates.length;
+        for (int j=0; j<len; j++){
+          if(timeNow.isAfter(e.dates[j])){
+            print(e.dates[j]);
+            e.dates.remove(e.dates[j]);
+            len -= 1;
+            j--;
+          }
+        }
+        if (e.dates.isNotEmpty) {
+          data.add(e);
+        }
     }
     return data;
   }
@@ -223,8 +250,18 @@ class Mongo {
 
   Future<Event> getEventById(ObjectId id) async {
     var collection = db.collection('Events');
+    DateTime timeNow = DateTime.now();
     var event = await collection.findOne(where.eq("_id", id));
     var e = Event.fromJson(event);
+    var len = e.dates.length;
+    for (int j=0; j<len; j++) {
+      if (timeNow.isAfter(e.dates[j])) {
+        print(e.dates[j]);
+        e.dates.remove(e.dates[j]);
+        len -= 1;
+        j--;
+      }
+    }
     return e;
   }
 

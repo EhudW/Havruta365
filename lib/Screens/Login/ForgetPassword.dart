@@ -2,11 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mailer/smtp_server.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
-import 'package:another_flushbar/flushbar.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
+import 'package:toast/toast.dart';
 
 class ForgetPassword extends StatefulWidget {
   @override
@@ -49,6 +52,16 @@ class _HomePageState extends State<ForgetPassword> {
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
+                address_str = address.text;
+                print(address_str);
+                bool check = await Globals.db.isUserExist(address_str);
+                if (check == true){
+                  print(address_str);
+                  sendMail1(address_str);
+                }
+                else{
+                  Toast.show('כתובת המייל לא נמצאה', context,duration: Toast.CENTER,gravity: 3);
+                }
 
               },
             ),
@@ -107,7 +120,65 @@ newFiled(controller, str, text, icon, cover) {
   ]));
 }
 
+sendMail(BuildContext context, String mailUser ) async {
+  String username = 'havrutaproject@gmail.com';
+  String password = 'havruta365'; //passsword
 
+
+  final smtpServer = gmail(username, password);
+
+  // Creating the Gmail server
+
+  // Create our email message.
+  final message = new Message()
+    ..from = new Address(username, 'Your name')
+    ..recipients.add(mailUser)
+    ..subject = 'Test Dart Mailer library :: 😀 :: ${new DateTime.now()}'
+    ..text = 'This is the plain text.\nThis is line 2 of the text part.';
+
+  try {
+    final sendReport = await send(message, smtpServer);
+    Toast.show('Message Send Check your mail', context,duration: Toast.CENTER,gravity: 3);
+    print('Message sent: ' +
+        sendReport.toString()); //print if the email is sent
+  } on MailerException catch (e) {
+    print('Message not sent. \n' +
+        e.toString()); //print if the email is not sent
+    // e.toString() will show why the email is not sending
+  }
+}
+sendMail1(String mailUser) async {
+
+  String username = 'havrutaproject@gmail.com';
+  String password = 'havruta365';
+  String domainSmtp = 'gmail.com';
+
+  //also use for gmail smtp
+  //final smtpServer = gmail(username, password);
+
+  //user for your own domain
+  final smtpServer = SmtpServer(
+      domainSmtp, username: username, password: password, port: 587);
+
+  final message = Message()
+    ..from = Address(username, 'Your name')
+    ..recipients.add(mailUser)
+  //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
+  //..bccRecipients.add(Address('bccAddress@example.com'))
+    ..subject = 'Dart Mailer library :: 😀 :: ${DateTime.now()}'
+    ..text = 'This is the plain text.\nThis is line 2 of the text part.'
+    ..html = "<h1>Shawon</h1>\n<p>Hey! Here's some HTML content</p>";
+
+  try {
+    final sendReport = await send(message, smtpServer);
+    print('Message sent: ' + sendReport.toString());
+  } on MailerException catch (e) {
+    print('Message not sent.');
+    for (var p in e.problems) {
+      print('Problem: ${p.code}: ${p.msg}');
+    }
+  }
+}
 
 appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();

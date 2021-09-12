@@ -47,6 +47,7 @@ class EventsModel {
       return Globals.db.getSomeEvents(length);
     });
   }
+
   Future<void> refresh() {
     return loadMore(clearCachedData: true);
   }
