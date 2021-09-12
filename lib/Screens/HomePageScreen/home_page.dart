@@ -9,6 +9,8 @@ import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -158,13 +160,12 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.exit_to_app_outlined),
                 color: Colors.white54,
                 onPressed: () async {
-                  // exit(0);
-                  // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                  var currentUser = FirebaseAuth.instance.currentUser;
-                  print(currentUser);
-                  if (currentUser != null) {
-                    // Disconnect from gmail
-                    await FirebaseAuth.instance.signOut();
+                  var currentUser;
+                  if (await GoogleSignInApi.isSignedIn()) {
+                    currentUser = GoogleSignInApi.currentUser();
+                    print("Signed in");
+                    print(currentUser);
+                    await GoogleSignInApi.logout();
                   }
                   // Remove mail from local phone and go to Login page
                   final SharedPreferences prefs = await _prefs;
