@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/Screens/ChatScreen/SendScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactButtons extends StatelessWidget {
@@ -23,6 +24,7 @@ class ContactButtons extends StatelessWidget {
           )),
       backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[300]));
 
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -30,7 +32,10 @@ class ContactButtons extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SendScreen(user.email, user.name)));
+          },
           style: buttonStyleMessage,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,

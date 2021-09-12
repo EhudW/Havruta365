@@ -168,7 +168,6 @@ sendMail(String mailUser, String code ) async {
 
 appBar(BuildContext context) {
   ScreenScaler scaler = new ScreenScaler();
-
   return new AppBar(
       leadingWidth: 0,
       toolbarHeight: 40,

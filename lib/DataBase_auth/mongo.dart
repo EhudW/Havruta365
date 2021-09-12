@@ -4,6 +4,7 @@ import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -337,7 +338,27 @@ class Mongo {
     await prefs.setString('id', id.toString());
   }
 
+  // Get message and insert it to the DB
+  Future<bool> sendMessage(ChatMessage message) async{
+    var collection = Globals.db.db.collection('Chats');
+    var m = message.toJson();
+    await collection.insertOne(m);
+    return true;
+  }
+
+  Future<List<ChatMessage>> getAllMyMessages(String dstMail) async{
+    List<ChatMessage> listMessages = [];
+    var collection = Globals.db.db.collection('Chats');
+    var messages = await collection.find(where.eq('dst_mail', dstMail)).toList();
+    for (var i in messages) {
+      listMessages.add(new ChatMessage.fromJson(i));
+    }
+    return listMessages;
+  }
+
   void disconnect() async {
     await db.close();
   }
+
+
 }

@@ -28,10 +28,10 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
             UserDetailHeader(widget.user),
             SizedBox(height: Globals.scaler.getHeight(0.5)),
             // Contact buttons
-            // Center(
-            //   child: ContactButtons(widget.user),
-            // ),
-            // SizedBox(height: Globals.scaler.getHeight(0.5)),
+            Center(
+              child: ContactButtons(widget.user),
+            ),
+            SizedBox(height: Globals.scaler.getHeight(0.5)),
             Divider(
               thickness: 2.0,
               indent: 10,
