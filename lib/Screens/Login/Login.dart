@@ -293,22 +293,23 @@ class _HomePageState extends State<Login> {
   }
 
   Future signIn() async {
+    // Try to connect via Google_Sign_In
     final google_user = await GoogleSignInApi.login();
-    print(google_user);
     if (google_user == null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('התחברות נכשלה')));
     } else {
-      // if user exist => homepage
+      // if user exist --> HomePage
       bool userExist = await Globals.db.isUserExist(google_user.email);
       if (userExist) {
         // Update current user
         Globals.currentUser = await Globals.db.getUser(google_user.email);
+        // Save a token in user device
         Globals.db.saveIdLocally();
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => HomePage()));
+        // New user --> LoginDetailsGmail
       } else {
-        // else - new user
         GoogleSignInAccount g_user = google_user;
         User user = new User();
         user.avatar = g_user.photoUrl;

@@ -1,11 +1,14 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
 import 'package:havruta_project/Screens/EventScreen/datesList.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Partcipients_scroller.dart';
 import 'Event_detail_header.dart';
@@ -34,10 +37,79 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     setState(() {});
   }
 
+  isCreatorWidget(){
+    if (Globals.currentUser.email == widget.event.creatorUser){
+      return Container(
+          height: Globals.scaler.getHeight(4.5),
+          width: Globals.scaler.getWidth(4.5),
+          child: FittedBox(
+            child: FloatingActionButton(
+                backgroundColor: Colors.redAccent,
+                tooltip: "מחק אירוע",
+                child: Icon(FontAwesomeIcons.trashAlt),
+                onPressed: () async{
+                  var succeed = await Globals.db.deleteEvent(widget.event.id);
+                  if (!succeed) {
+                    Flushbar(
+                      title: 'מחיקת אירוע',
+                      messageText: Text('אירעה שגיאה בתהליך המחיקה !',
+                          textAlign: TextAlign.center,
+                          style:
+                          TextStyle(color: Colors.teal[400], fontSize: 20)),
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                  }
+                  Flushbar(
+                    title: 'האירוע נמחק',
+                    messageText: Text('מיד תועבר לעמוד הבית !',
+                        textAlign: TextAlign.center,
+                        style:
+                        TextStyle(color: Colors.teal[400], fontSize: 20)),
+                    duration: Duration(seconds: 2),
+                  )..show(context);
+                  Future.delayed(Duration(seconds: 2),()
+                  {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePage()),
+                      );
+                    });
+                  });
+                })
+          )
+      );
+    }
+    return null;
+  }
+
+  deleteButton() {
+    if (Globals.currentUser.email == widget.event.creatorUser){
+      return ElevatedButton.icon(
+        onPressed: () {
+          Globals.db.deleteFromEvent(widget.event.id, Globals.currentUser.email);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomePage()),
+          );
+        },
+        icon: Icon(FontAwesomeIcons.trashAlt, size: 18),
+        label: Text("מחק אירוע"),
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.red[700])),
+      );
+    }
+    return SizedBox();
+  }
+
   @override
   Widget build(BuildContext context) {
     var num = widget.event.maxParticipants - widget.event.participants.length;
     return Scaffold(
+      // floatingActionButton: isCreatorWidget(),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -65,12 +137,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             ),
             SizedBox(height: 8),
             MyProgressButton(event: widget.event, notifyParent: refresh),
-            SizedBox(height: 20.0),
+            SizedBox(height: 8.0),
             Divider(),
             // widget.event.participants.contains(Globals.currentUser.email) ?
             //   DeleteFromEventButton(widget.event) : SizedBox(),
             ParticipentsScroller(widget.event.participants),
-            SizedBox(height: 10.0),
+            SizedBox(height: Globals.scaler.getHeight(1)),
+            deleteButton(),
             // Link
           ],
         ),

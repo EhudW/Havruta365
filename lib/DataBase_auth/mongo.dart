@@ -331,10 +331,12 @@ class Mongo {
   // for next session - automatic connect
   saveIdLocally() async{
     var coll = Globals.db.db.collection('Users');
+    // Find user document via email
     var user_json = await coll.findOne(where.eq('email', Globals.currentUser.email));
-    // This is ObjectID!!
+    // This is ObjectID
     var id = user_json['_id'];
     final SharedPreferences prefs = await Globals.prefs;
+    // Save to device
     await prefs.setString('id', id.toString());
   }
 
@@ -354,6 +356,15 @@ class Mongo {
       listMessages.add(new ChatMessage.fromJson(i));
     }
     return listMessages;
+  }
+
+  deleteEvent(ObjectId id) async{
+    var collection = Globals.db.db.collection('Events');
+    WriteResult result = await collection.deleteOne(where.eq('_id', id));
+    if (result.hasWriteErrors){
+      return false;
+    }
+    return true;
   }
 
   void disconnect() async {

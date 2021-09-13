@@ -47,19 +47,19 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
               ),
               child: UserDetailsColumn(widget.user),
             ),
-            Divider(
-              thickness: 2.0,
-              indent: 10,
-              endIndent: 10,
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                  Globals.scaler.getWidth(2),
-                  Globals.scaler.getHeight(0),
-                  Globals.scaler.getWidth(2),
-                  Globals.scaler.getHeight(0)),
-              child: InterestsList(widget.user.interestList),
-            ),
+            // Divider(
+            //   thickness: 2.0,
+            //   indent: 10,
+            //   endIndent: 10,
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.fromLTRB(
+            //       Globals.scaler.getWidth(2),
+            //       Globals.scaler.getHeight(0),
+            //       Globals.scaler.getWidth(2),
+            //       Globals.scaler.getHeight(0)),
+            //   child: InterestsList(widget.user.interestList),
+            // ),
             // MyProgressButton(id: widget.event.id, link: widget.event.link),
             // SizedBox(height: 20.0),
             // ParticipentsScroller(widget.event.participants),
