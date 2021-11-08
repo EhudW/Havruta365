@@ -32,7 +32,7 @@ class PhotoScroller extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
             'Photos',
-            style: textTheme.subhead.copyWith(fontSize: 18.0),
+            style: TextStyle(fontSize: 18),
           ),
         ),
         SizedBox.fromSize(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -88,7 +87,7 @@ class ParticipentsScroller extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 50),
             child: Text(
               'משתתפים',
-              style: textTheme.subhead.copyWith(fontSize: 18.0),
+              style: TextStyle(fontSize: 18),
             ),
           ),
         ),

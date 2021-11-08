@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:flutter_animation_set/animation_set.dart';
-import 'package:flutter_animation_set/animator.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key key}) : super(key: key);
@@ -58,24 +54,11 @@ class _SplashScreenState extends State<SplashScreen> {
               Container(
                 width: 200,
                 height: 200,
-                child: AnimatorSet(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(Globals.scaler.getTextSize(12)),
-                    child: Image(
-                        image: AssetImage("images/AppIcon2.png"),
-                        alignment: Alignment.center,
-                        width: 160,
-                        height: 160,),
-                  ),
-                  animatorSet: [
-                    //SX(from: 0.1, to: 2, duration: 2000, delay: 0, curve: Curves.bounceInOut),
-                    //SY(from: 0.1, to: 2, duration: 2000, delay: 0, curve: Curves.bounceInOut),
-                    O(from: 0.3, to: 1, duration: 1500, delay: 0, curve: Curves.easeInOut),
-                    O(from: 1, to: 0, duration: 1500, delay: 0, curve: Curves.easeInOut),
-                  ],
-                  animationType: AnimationType.repeat,
-                  debug: false,
-                ),
+                child: Image(
+                  image: AssetImage("images/AppIcon2.png"),
+                  alignment: Alignment.center,
+                  width: 160,
+                  height: 160,)
               ),
               SizedBox(height: 150,),
               Text(

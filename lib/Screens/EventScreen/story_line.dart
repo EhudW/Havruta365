@@ -23,10 +23,7 @@ class Storyline extends StatelessWidget {
           storyline,
           textAlign: TextAlign.right,
           textDirection: TextDirection.rtl,
-          style: textTheme.body1.copyWith(
-            color: Colors.grey[600],
-            fontSize: 16.0,
-          ),
+          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
         ),
       ],
     );
