@@ -156,7 +156,7 @@ class Mongo {
   }
 
   Future<List<NotificationUser>> getNotifications() async {
-    List<NotificationUser> data = List<NotificationUser>();
+    List<NotificationUser> data = <NotificationUser>[];
     var collection = db.collection('Notifications');
     final notifications = await collection
         .find(where

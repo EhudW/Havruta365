@@ -6,6 +6,7 @@ import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/ProfileScreen/Events_scroller.dart';
+import 'package:havruta_project/Screens/UserChanges/ChangesDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileDetailsColumn extends StatefulWidget {
@@ -115,8 +116,9 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           ),
           GestureDetector(
             onTap: () {
-              // TODO open box with all details of the user
-              alertMessage("כאן בונים");
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChangesDetails()));
+
             },
             child: Container(
               height: Globals.scaler.getHeight(3),

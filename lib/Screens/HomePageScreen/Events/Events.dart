@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'modelsHomePages.dart';
-import 'package:havruta_project/Screens/HomePageScreen/EventViewFeed.dart';
+import 'package:havruta_project/Screens/HomePageScreen/Events/EventViewFeed.dart';
 import 'EventOnlineFeed.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
@@ -125,10 +125,7 @@ class _EventsState extends State<Events> {
                   } else if (this.widget.eventsOnline.hasMore) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 32.0),
-                      child: Center(
-                          child: _snapshot.data.length == 0
-                              ? Text("לא נמצאה חברותא מתאימה")
-                              : Text("")),
+
                     );
                   } else {
                     return Padding(

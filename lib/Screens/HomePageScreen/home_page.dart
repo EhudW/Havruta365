@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatScreen.dart';
-import 'package:havruta_project/Screens/HomePageScreen/notifications.dart';
+import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notifications.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
 import 'package:havruta_project/Widgets/SplashScreen.dart';
-import 'Events.dart';
+import 'Events/Events.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
@@ -15,7 +15,7 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
 
-import 'modelsHomePages.dart';
+import 'Events/modelsHomePages.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);

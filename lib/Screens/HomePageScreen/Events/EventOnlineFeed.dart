@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 
-import '../../Globals.dart';
+import '../../../Globals.dart';
 
 class EventOnlineFeed extends StatelessWidget {
   final Event event;

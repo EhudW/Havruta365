@@ -11,28 +11,28 @@ import 'package:gender_picker/source/gender_picker.dart';
 import 'package:crypto/crypto.dart';
 
 import '../../Globals.dart';
-import 'FadeAnimation.dart';
+import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
-class LoginDetails extends StatefulWidget {
+class ChangesDetails extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<LoginDetails> {
+class _HomePageState extends State<ChangesDetails> {
   final name = TextEditingController();
   String name_str = "";
-  final mail = TextEditingController();
-  String mail_str = "";
-  final password = TextEditingController();
-  String password_str = "";
-  final password_con = TextEditingController();
-  String password_con_str = "";
   final address = TextEditingController();
   String address_str = "";
   final gender = TextEditingController();
   String gender_str = "";
+  final yeshiva = TextEditingController();
+  String yeshiva_str = " ";
+  final description = TextEditingController();
+  String description_str = " ";
+  final status = TextEditingController();
+  String status_str = Globals.currentUser.status;
 
   DateTime _dateTime = DateTime(1940, 1, 1);
 
@@ -69,7 +69,7 @@ class _HomePageState extends State<LoginDetails> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 minimumDate:DateTime(1980, 1, 1),
-                initialDateTime: DateTime(1980, 1, 1),
+                initialDateTime: Globals.currentUser.birthDate,
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
                   _dateTime = newDateTime;
@@ -78,27 +78,71 @@ class _HomePageState extends State<LoginDetails> {
             ),
             SizedBox(height: Globals.scaler.getHeight(1)),
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
-                false),
+                3.0,Globals.currentUser.name),
             newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.home, false),
-            newFiled(mail, mail_str, "כתובת המייל", FontAwesomeIcons.mailBulk,
-                false),
+                FontAwesomeIcons.home, 3.0, Globals.currentUser.address),
             SizedBox(height: Globals.scaler.getHeight(1)),
-            Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "אבטחה   ",
-                  style:
-                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
-                )),
-            newFiled(
-                password, password_str, "סיסמא", FontAwesomeIcons.key, true),
-            newFiled(password_con, password_con_str, "אישור סיסמא",
-                FontAwesomeIcons.check, true),
+            FadeAnimation(
+              1.7,
+              Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  width: Globals.scaler.getWidth(32),
+                  height: Globals.scaler.getHeight(3),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(30.0),
+                    ),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                          color: Colors.grey.withOpacity(1),
+                          offset: const Offset(0, 2),
+                          blurRadius: 8.0),
+                    ],
+                  ),
+                  child: DropdownButton<String>(
+                    iconDisabledColor: Colors.teal,
+                    isExpanded: true,
+                    value: status_str,
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: Globals.scaler.getTextSize(11),
+                    // this increase the size
+                    elevation: 100,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: Globals.scaler.getTextSize(8),
+                    ),
+                    underline: Container(),
+                    onChanged: (String newValue) {
+                      setState(() {
+                        status_str = newValue;
+                      });
+                    },
+                    items: <String>[
+                      "סטטוס משפחתי",
+                      "רווק/ה",
+                      'נשוי/אה',
+                      'גרוש/ה'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Center(
+                            child:
+                            Text(value, textAlign: TextAlign.center)),
+                      );
+                    }).toList(),
+                  )),
+            ),
+            newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה",
+                FontAwesomeIcons.book, 3.0, Globals.currentUser.yeshiva),
+            newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
+                FontAwesomeIcons.list, 8.0, Globals.currentUser.description),
+            SizedBox(height: Globals.scaler.getHeight(1)),
+
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
-                "תרשום אותי",
+                "שמור שינויים",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
               ),
@@ -122,15 +166,7 @@ class _HomePageState extends State<LoginDetails> {
                 ;
                 address_str = address.text;
                 name_str = name.text;
-                password_str = password.text;
-                password_con_str = password_con.text;
-                mail_str = mail.text;
-                if (password_con_str.isEmpty ||
-                    password_con_str == null ||
-                    password_str.isEmpty ||
-                    password_str == null ||
-                    mail_str.isEmpty ||
-                    mail_str == null ||
+                if (
                     address_str.isEmpty ||
                     address_str == null ||
                     name_str.isEmpty ||
@@ -145,54 +181,15 @@ class _HomePageState extends State<LoginDetails> {
                   )..show(context);
                   return;
                 }
-                if (password_str.length < 6) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
-                        textAlign: TextAlign.center,
-                        style:
-                            TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                // Check if the passwords are equals
-                if (password_str != password_con_str) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('סיסמאות לא תואמות',
-                        textAlign: TextAlign.center,
-                        style:
-                            TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
-                bool userExist = await Globals.db.isUserExist(mail_str);
-                if (userExist) {
-                  Flushbar(
-                    title: 'שגיאה בהרשמה',
-                    messageText: Text('קיים חשבון עבור מייל זה',
-                        textAlign: TextAlign.center,
-                        style:
-                            TextStyle(color: Colors.teal[400], fontSize: 20)),
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  return;
-                }
+
+
                 User user = new User();
                 user.name = name_str;
                 user.address = address_str;
-                user.email = mail_str;
                 user.gender = gender_str;
                 user.name = name_str;
                 user.birthDate = _dateTime;
-                var bytes = utf8.encode(password_str);
-                var digest = sha1.convert(bytes);
-                // print("Digest as bytes: ${digest.bytes}");
-                // print("Digest as hex string: $digest");
-                user.password = digest.toString();
-                //user.password = password_str;
+
                 Globals.currentUser = user;
                 var res = Globals.db.insertNewUser(user);
                 print("Registration Succeeded");
@@ -210,7 +207,7 @@ class _HomePageState extends State<LoginDetails> {
   }
 }
 
-newFiled(controller, str, text, icon, cover) {
+newFiled(controller, str, text, icon, size,init) {
   return new FadeAnimation(
       1.7,
       Column(children: <Widget>[
@@ -219,7 +216,7 @@ newFiled(controller, str, text, icon, cover) {
           child: Container(
             alignment: AlignmentDirectional.center,
             width: Globals.scaler.getWidth(32),
-            height: Globals.scaler.getHeight(3),
+            height: Globals.scaler.getHeight(size),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: const BorderRadius.all(
@@ -234,8 +231,7 @@ newFiled(controller, str, text, icon, cover) {
             ),
             child: TextField(
                 textAlign: TextAlign.center,
-                controller: controller,
-                obscureText: cover,
+                controller: controller..text = init,
                 style: TextStyle(fontSize: 18),
                 decoration: InputDecoration(
                     suffixIcon: Icon(
@@ -251,13 +247,61 @@ newFiled(controller, str, text, icon, cover) {
                     hintText: text),
                 onChanged: (text) {
                   str = controller.text;
-                  print(text);
+                  print(str);
                 }),
           ),
         ),
       ]));
 }
-
+newFiled1(controller, str, text, icon, size, init) {
+  return FadeAnimation(
+    1.7,
+    new Column(children: <Widget>[
+      SizedBox(height: Globals.scaler.getHeight(1)),
+      Center(
+        child: Container(
+          alignment: AlignmentDirectional.center,
+          width: Globals.scaler.getWidth(32),
+          height: Globals.scaler.getHeight(size),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.all(
+              Radius.circular(30.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.withOpacity(1),
+                  offset: const Offset(0, 2),
+                  blurRadius: 8.0),
+            ],
+          ),
+          child: TextField(
+              maxLines: null,
+              expands: true,
+              textAlign: TextAlign.center,
+              controller: controller..text = init,
+              style: TextStyle(fontSize: Globals.scaler.getTextSize(7.5)),
+              decoration: InputDecoration(
+                  suffixIcon: Icon(
+                    icon,
+                    size: Globals.scaler.getTextSize(8),
+                    color: Colors.red,
+                  ),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  hintText: text),
+              onChanged: (text) {
+                str = controller.text;
+                print(text);
+              }),
+        ),
+      ),
+    ]),
+  );
+}
 Widget genderField(gender_str) {
   return Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
     SizedBox(width: Globals.scaler.getWidth(4)),
@@ -323,7 +367,7 @@ appBar(BuildContext context) {
         child:
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
-            "משתמש חדש  ",
+            "עדכון פרטי משתמש  ",
             textAlign: TextAlign.center,
             style: GoogleFonts.alef(
                 fontWeight: FontWeight.bold,
