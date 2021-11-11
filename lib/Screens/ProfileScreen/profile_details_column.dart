@@ -26,7 +26,6 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
 
   Future getGoogleCurrentUser() async {
     var user = auth.currentUser;
-    print(user);
     if (!user.emailVerified) {
       return null;
     }
@@ -161,7 +160,6 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                 if (await GoogleSignInApi.isSignedIn()) {
                   currentUser = GoogleSignInApi.currentUser();
                   print("Signed in");
-                  print(currentUser);
                   await GoogleSignInApi.logout();
                 }
                 // if (currentUser != null) {

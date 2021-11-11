@@ -75,7 +75,6 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                               DismissDirection.endToStart,
                                           onDismissed: (direction) {
                                             setState(() {
-                                              print(dateTimes);
                                               this.dateTimes.removeAt(index);
                                               widget.event.dates
                                                   .removeAt(indexForDbList - 1);

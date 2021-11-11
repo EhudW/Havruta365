@@ -149,7 +149,6 @@ newFiled(controller, str, text, icon, cover) {
                 hintText: text),
             onChanged: (text) {
               str = controller.text;
-              print(text);
             }),
       ),
     ),

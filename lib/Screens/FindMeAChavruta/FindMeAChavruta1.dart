@@ -588,10 +588,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     setState(() {
                       if (selectedChoice == "שיעור") {
                         event.type = "L";
-                        print(event.type);
                       } else {
                         event.type = "H";
-                        print(event.type);
                       }
                     });
                   }

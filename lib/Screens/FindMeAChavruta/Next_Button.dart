@@ -33,7 +33,6 @@ class NextButton extends StatelessWidget {
                     this.event.targetGender == "" ||
                     // this.event.book == "" ||
                     this.event.maxParticipants == 0)) {
-                  print("Event" + this.event.type);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -44,7 +43,6 @@ class NextButton extends StatelessWidget {
                       context, 'צריך למלאות את השדות לפני שמתקדמים');
                 }
               } else {
-                print(this.event.type);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

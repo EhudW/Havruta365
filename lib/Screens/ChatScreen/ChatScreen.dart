@@ -78,7 +78,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               );
             default:
-              print("default");
               return Text('default');
           }
         });

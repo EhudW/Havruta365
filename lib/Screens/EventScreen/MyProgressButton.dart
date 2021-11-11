@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/EventScreen/Add2Calendar.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
@@ -102,8 +103,15 @@ class _MyProgressButtonState extends State<MyProgressButton> {
       widget.event.participants.contains(Globals.currentUser.email)
           ? Column(
             children: [
-              SizedBox(height: Globals.scaler.getHeight(1)),
-              DeleteFromEventButton(widget.event),
+              SizedBox(height: Globals.scaler.getHeight(0.5)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  DeleteFromEventButton(widget.event),
+                  SizedBox(width: Globals.scaler.getWidth(1)),
+                  Add2Calendar(widget.event)
+                ],
+              ),
             ],
           )
           : SizedBox(),

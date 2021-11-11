@@ -242,7 +242,6 @@ class _HomePageState extends State<LoginMoreDetails> {
       print("error signing in");
     } else {
       print('signed in');
-      print(result.uid);
     }
     image = await picker.getImage(source: source);
     var file = File(image.path);
@@ -304,7 +303,6 @@ newFiled(controller, str, text, icon, size) {
                   hintText: text),
               onChanged: (text) {
                 str = controller.text;
-                print(text);
               }),
         ),
       ),
@@ -354,7 +352,6 @@ newFiled1(controller, str, text, icon, size) {
                   hintText: text),
               onChanged: (text) {
                 str = controller.text;
-                print(text);
               }),
         ),
       ),

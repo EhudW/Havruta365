@@ -195,7 +195,6 @@ class _HomePageState extends State<LoginDetails> {
                 //user.password = password_str;
                 Globals.currentUser = user;
                 var res = Globals.db.insertNewUser(user);
-                print("Registration Succeeded");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginMoreDetails()),
@@ -251,7 +250,6 @@ newFiled(controller, str, text, icon, cover) {
                     hintText: text),
                 onChanged: (text) {
                   str = controller.text;
-                  print(text);
                 }),
           ),
         ),

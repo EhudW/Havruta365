@@ -203,7 +203,6 @@ class _EventsState extends State<Events> {
                       disabledBorder: InputBorder.none,
                       hintText: 'חפש חברותא'),
                   onChanged: (text) {
-                    print(text);
                     text.replaceAll(new RegExp(r"\s+"), "");
                     if (text == "") {
                       this.widget.events.searchData = null;

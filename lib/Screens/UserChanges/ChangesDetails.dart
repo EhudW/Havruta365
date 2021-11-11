@@ -247,7 +247,6 @@ newFiled(controller, str, text, icon, size,init) {
                     hintText: text),
                 onChanged: (text) {
                   str = controller.text;
-                  print(str);
                 }),
           ),
         ),
@@ -295,7 +294,6 @@ newFiled1(controller, str, text, icon, size, init) {
                   hintText: text),
               onChanged: (text) {
                 str = controller.text;
-                print(text);
               }),
         ),
       ),

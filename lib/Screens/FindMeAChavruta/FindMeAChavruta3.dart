@@ -59,10 +59,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
           ),
           onChanged: (lecturer) {
             widget.event.lecturer = lecturer;
-            print(widget.event.lecturer);
             if (widget.event.lecturer == null) {
               widget.event.lecturer = "";
-              print(widget.event.lecturer);
             }
           },
         ),
@@ -304,7 +302,6 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
       print("error signing in");
     } else {
       print('signed in');
-      print(result.uid);
     }
     image = await picker.getImage(source: source);
     var file = File(image.path);

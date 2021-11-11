@@ -140,7 +140,6 @@ newFiled(controller, str, text, icon, cover) {
                 hintText: text),
             onChanged: (text) {
               str = controller.text;
-              print(text);
             }),
       ),
     ),
@@ -158,7 +157,6 @@ sendMail(String mailUser, String code ) async {
       "src_pass": "havruta365",
       "dst": mailUser
     };
-  print(x);
   var response = await http.post(url,
       body: json.encode(x),
       headers: {'Content-Type': 'application/json'});
