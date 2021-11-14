@@ -1,19 +1,22 @@
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
-import 'package:gender_picker/source/enums.dart';
-import 'package:gender_picker/source/gender_picker.dart';
-import 'package:crypto/crypto.dart';
 
 import '../../Globals.dart';
 import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:objectid/objectid.dart';
 
 class ChangesDetails extends StatefulWidget {
   @override
@@ -25,14 +28,13 @@ class _HomePageState extends State<ChangesDetails> {
   String name_str = "";
   final address = TextEditingController();
   String address_str = "";
-  final gender = TextEditingController();
-  String gender_str = "";
   final yeshiva = TextEditingController();
   String yeshiva_str = " ";
   final description = TextEditingController();
   String description_str = " ";
   final status = TextEditingController();
   String status_str = Globals.currentUser.status;
+  final AuthService authenticate = AuthService();
 
   DateTime _dateTime = DateTime(1940, 1, 1);
 
@@ -47,15 +49,7 @@ class _HomePageState extends State<ChangesDetails> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: Globals.scaler.getHeight(1)),
-            Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "פרטים אישיים   ",
-                  style:
-                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
-                )),
-            genderField(gender),
-            SizedBox(height: Globals.scaler.getHeight(1)),
+            imageProfile(),
             Align(
                 alignment: Alignment.centerRight,
                 child: Text(
@@ -139,7 +133,7 @@ class _HomePageState extends State<ChangesDetails> {
                 FontAwesomeIcons.list, 8.0, Globals.currentUser.description),
             SizedBox(height: Globals.scaler.getHeight(1)),
 
-            SizedBox(height: Globals.scaler.getHeight(2)),
+            SizedBox(height: Globals.scaler.getHeight(1)),
             ElevatedButton(
               child: Text(
                 "שמור שינויים",
@@ -157,15 +151,14 @@ class _HomePageState extends State<ChangesDetails> {
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
-                gender.text == 'Gender.Female'
-                    ? gender_str = 'F'
-                    : gender_str = 'M';
                 if (_dateTime == null) {
                   _dateTime = DateTime.now();
                 }
                 ;
-                address_str = address.text;
                 name_str = name.text;
+                yeshiva_str = yeshiva.text;
+                address_str = address.text;
+                description_str = description.text;
                 if (
                     address_str.isEmpty ||
                     address_str == null ||
@@ -182,20 +175,23 @@ class _HomePageState extends State<ChangesDetails> {
                   return;
                 }
 
-
-                User user = new User();
-                user.name = name_str;
+                User user = Globals.currentUser;
                 user.address = address_str;
-                user.gender = gender_str;
                 user.name = name_str;
+                user.status = status_str;
+                user.yeshiva = yeshiva_str;
+                user.description = description_str;
                 user.birthDate = _dateTime;
+                Globals.db.changeDeatailsUser(user);
+               // user.name = name_str;
+               // user.birthDate = _dateTime;
+               // Globals.currentUser = user;
+                //var res = Globals.db.insertNewUser(user);
+                print("change details Succeeded");
 
-                Globals.currentUser = user;
-                var res = Globals.db.insertNewUser(user);
-                print("Registration Succeeded");
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginMoreDetails()),
+                  MaterialPageRoute(builder: (context) => HomePage()),
                 );
               },
             ),
@@ -204,6 +200,116 @@ class _HomePageState extends State<ChangesDetails> {
         ),
       ),
     );
+  }
+
+  Widget imageProfile() {
+    return Center(
+      child: Stack(children: <Widget>[
+        FlatButton(
+          color: Colors.transparent,
+          onPressed: () {
+            showModalBottomSheet(
+                context: context, builder: ((builder) => bottomSheet()));
+          },
+          child: CircleAvatar(
+            radius: 60.0,
+            backgroundColor: Colors.teal,
+            backgroundImage: (Globals.currentUser.avatar != null)
+                ? NetworkImage(Globals.currentUser.avatar)
+                : null,
+          ),
+        ),
+        Positioned(
+          bottom: Globals.scaler.getHeight(2.2),
+          right: Globals.scaler.getWidth(5.3),
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: ((builder) => bottomSheet()),
+              );
+            },
+            child: Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+              size: Globals.scaler.getTextSize(11),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget bottomSheet() {
+    return Container(
+      height: Globals.scaler.getHeight(5.5),
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: Globals.scaler.getWidth(3),
+        vertical: Globals.scaler.getHeight(1),
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            "בחר תמונה",
+            style: TextStyle(
+              fontSize: Globals.scaler.getTextSize(8.5),
+            ),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(1),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            TextButton.icon(
+              icon: Icon(Icons.camera),
+              onPressed: () async {
+                uploadImage(ImageSource.camera);
+                Navigator.pop(context);
+              },
+              label: Text("מצלמה"),
+            ),
+            TextButton.icon(
+              icon: Icon(Icons.image),
+              onPressed: () {
+                uploadImage(ImageSource.gallery);
+                Navigator.pop(context);
+              },
+              label: Text("גלריה"),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+
+  Future<File> uploadImage(source) async {
+    final _storage = FirebaseStorage.instance;
+    PickedFile image;
+    final picker = ImagePicker();
+    dynamic result = await authenticate.signInAnon();
+    if (result == null) {
+      print("error signing in");
+    } else {
+      print('signed in');
+      print(result.uid);
+    }
+    image = await picker.getImage(source: source);
+    var file = File(image.path);
+    String fileName = ObjectId().toString();
+    //check if an image was picked
+    if (image != null) {
+      var snapshot =
+      await _storage.ref().child('Images/$fileName').putFile(file);
+      var downloadUrl = await snapshot.ref.getDownloadURL();
+      setState(() {
+        Globals.currentUser.avatar = downloadUrl;
+      });
+    } else {
+      setState(() {
+        Globals.currentUser.avatar =
+        'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
+      });
+    }
   }
 }
 
@@ -246,6 +352,7 @@ newFiled(controller, str, text, icon, size,init) {
                     disabledBorder: InputBorder.none,
                     hintText: text),
                 onChanged: (text) {
+                  controller.text = text;
                   str = controller.text;
                 }),
           ),
@@ -299,37 +406,6 @@ newFiled1(controller, str, text, icon, size, init) {
       ),
     ]),
   );
-}
-Widget genderField(gender_str) {
-  return Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-    SizedBox(width: Globals.scaler.getWidth(4)),
-    Expanded(
-      child: GenderPickerWithImage(
-        maleText: 'גבר',
-        femaleText: 'אישה',
-        maleImage: NetworkImage(
-            'https://image.flaticon.com/icons/png/512/180/180644.png'),
-        femaleImage: NetworkImage(
-            'https://image.flaticon.com/icons/png/512/180/180678.png'),
-        verticalAlignedText: true,
-        selectedGenderTextStyle: TextStyle(
-            color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
-        unSelectedGenderTextStyle:
-            TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
-        onChanged: (Gender gender) {
-          gender_str.text = gender.toString();
-        },
-
-        equallyAligned: true,
-        animationDuration: Duration(milliseconds: 300),
-        isCircular: true,
-        // default : true,
-        opacityOfGradient: 0.4,
-        padding: const EdgeInsets.all(1),
-        size: 100, //default : 40
-      ),
-    ),
-  ]);
 }
 
 button(name_str) {

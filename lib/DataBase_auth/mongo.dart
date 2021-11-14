@@ -272,6 +272,28 @@ class Mongo {
         where.eq('email', user.email), modify.set('avatar' ?? "", user.avatar));
     }
 
+  changeDeatailsUser(User user) async {
+    var collection = db.collection('Users');
+    // Check if the user exist
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('name' ?? "", user.name));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('address' ?? "", user.address));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('status' ?? "", user.status));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('yeshiva' ?? "", user.yeshiva));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('description' ?? "", user.description));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('status' ?? "", user.status));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('avatar' ?? "", user.avatar));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('birthDate' ?? "", user.birthDate));
+
+  }
+
   changePasswordUser(String email, String newPassword) async {
     var collection = db.collection('Users');
     // Check if the user exist
