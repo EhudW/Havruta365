@@ -159,7 +159,6 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                 var currentUser;
                 if (await GoogleSignInApi.isSignedIn()) {
                   currentUser = GoogleSignInApi.currentUser();
-                  print("Signed in");
                   await GoogleSignInApi.logout();
                 }
                 // if (currentUser != null) {

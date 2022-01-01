@@ -39,6 +39,10 @@ class Mongo {
   }
 
   Future<void> insertEvent(Event event) async {
+    // MondoDB decrease to hour from the time, because he using UTC. here we fix it.
+    for (DateTime date in event.dates) {
+      date.add(Duration(hours: 2));
+    }
     var collection = db.collection('Events');
     var e = event.toJson();
     await collection.insertOne(e);

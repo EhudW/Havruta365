@@ -24,19 +24,17 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   // if user is signed --> stateOnlyText = ButtonState.success;
 
   ButtonState stateOnlyText = ButtonState.idle;
-  List<dynamic> dates = [];
 
   @override
   void initState() {
     super.initState();
-    List<dynamic> datesDB = widget.event.dates;
     // Create fix list of dates - every node: [start, end]
-    for (var i = 0; i < datesDB.length; i += 2) {
-      dates.add([datesDB[i], datesDB[i + 1]]);
-    }
+    // for (var i = 0; i < datesDB.length; i += 2) {
+    //   dates.add([datesDB[i], datesDB[i + 1]]);
+    // }
     if (widget.event.participants.contains(Globals.currentUser.email)) {
       // Check if there is event NOW
-      if (isNow(dates)) {
+      if (isNow(widget.event.dates[0])) {
         stateOnlyText = ButtonState.success;
       }
       stateOnlyText = ButtonState.fail;
@@ -47,15 +45,13 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   }
 
   // Check if there is a event that happen right now
-  bool isNow(List<dynamic> dates) {
+  bool isNow(dynamic date) {
     DateTime now = DateTime.now();
-    for (var i = 0; i < dates.length; ++i) {
-      if ((now.isAfter(dates[i][0]) && now.isBefore(dates[i][1])) ||
-          now.isAtSameMomentAs(dates[i][0]) ||
-          now.isAtSameMomentAs(dates[i][1])) {
+      if ((now.isAfter(date) && now.isBefore(date) ||
+          now.isAtSameMomentAs(date) ||
+          now.isAtSameMomentAs(date))) {
         return true;
       }
-    }
     return false;
   }
 
@@ -154,7 +150,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
             widget.event.participants.add(Globals.currentUser.email);
             widget.notifyParent();
             setState(() {
-              if (isNow(dates)) {
+              if (isNow(widget.event.dates[0])) {
                 stateOnlyText = ButtonState.success;
               }
               stateOnlyText = ButtonState.fail;

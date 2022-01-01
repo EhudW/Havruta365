@@ -1,9 +1,8 @@
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:flutter/material.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta3.dart';
-import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/ChooseDates.dart';
 
 class NextButton extends StatelessWidget {
   final Event event;
@@ -37,10 +36,10 @@ class NextButton extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              FindMeAChavruta2(event: this.event)));
+                              ChooseDates(event: this.event)));
                 } else {
                   showErrorSnackBar(
-                      context, 'צריך למלאות את השדות לפני שמתקדמים');
+                      context, 'צריך למלא את כל השדות לפני שמתקדמים');
                 }
               } else {
                 Navigator.push(
@@ -52,7 +51,7 @@ class NextButton extends StatelessWidget {
             } else {
               if (this.whichPage == 2)
                 showErrorSnackBar(
-                    context, 'צריך למלאות את השדות לפני שמתקדמים');
+                    context, 'צריך למלא את כל השדות לפני שמתקדמים');
               else {
                 showErrorSnackBar(context, "צריך להוסיף לפחות זמן אחד");
               }

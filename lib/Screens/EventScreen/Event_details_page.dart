@@ -7,12 +7,12 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
-import 'package:havruta_project/Screens/EventScreen/datesList.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'Partcipients_scroller.dart';
 import 'Event_detail_header.dart';
 import 'story_line.dart';
+import 'package:intl/intl.dart';
+import 'dart:ui' as ui;
 
 
 class EventDetailsPage extends StatefulWidget {
@@ -104,6 +104,37 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return SizedBox();
   }
 
+  dates(Event event){
+    var nextEvent = DateFormat('dd - MM - yyyy').format(event.dates[0]);
+    var time = DateFormat('HH:mm').format(event.dates[0]);
+    return Column(
+      children: [
+        Divider(),
+        Text("   האירוע הקרוב יתקיים ב: ${nextEvent}",
+          style: GoogleFonts.secularOne(fontSize: 20.0),
+          textAlign: TextAlign.end,
+        ),
+        Text("   בשעה  ${time}",
+          style: GoogleFonts.secularOne(fontSize: 20.0),
+          textAlign: TextAlign.end,
+        ),
+        Text("משך השיעור: " + event.duration.toString() + " דקות",
+          style: GoogleFonts.secularOne(fontSize: 20.0),
+          textDirection: ui.TextDirection.rtl,
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            // TODO Go to Yaniv page!!
+          },
+          icon: Icon(FontAwesomeIcons.clock, size: 18),
+          label: Text("לוח זמנים מלא"),
+          style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.amber)),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var num = widget.event.maxParticipants - widget.event.participants.length;
@@ -115,13 +146,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           children: [
             EventDetailHeader(widget.event),
             Storyline(widget.event.description),
-            Divider(),
-            Text(
-              'זמני לימוד',
-              style: GoogleFonts.secularOne(fontSize: 20.0),
-              textAlign: TextAlign.end,
-            ),
-            DatesList(widget.event.dates),
+            dates(widget.event),
             Divider(),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

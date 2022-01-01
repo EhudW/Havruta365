@@ -35,6 +35,8 @@ add2calendar(Event event) {
     location: "Online - Link in the description",
     startDate: event.dates[0],
     endDate: event.dates[1],
+    // TODO add recurrence
+    // recurrence:
   );
   // Open calendar
   ADD2CALENDAR.Add2Calendar.addEvent2Cal(add2cal_event);
