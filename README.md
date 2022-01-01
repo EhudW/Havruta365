@@ -13,5 +13,5 @@
 
 
 
-This is an app that allows people to conenct with each other to study together. Additionally, the app holds the deatails of various lectures that people can sign up for and join.
+This is an app that allows people to conenct with each other to study together. Additionally, the app holds the details of various lectures that people can sign up for and join.
 
