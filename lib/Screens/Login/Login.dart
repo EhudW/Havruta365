@@ -157,9 +157,14 @@ class _HomePageState extends State<Login> {
                             borderRadius: BorderRadius.circular(50),
                             color: Colors.red,
                           ),
-                          child: OutlineButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40)),
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                              ),
+                            ),
                             onPressed: () async {
                               FocusScope.of(context).requestFocus(FocusNode());
                               var coll = Globals.db.db.collection('Users');
@@ -205,12 +210,14 @@ class _HomePageState extends State<Login> {
                     ),
                     FadeAnimation(
                         1.9,
-                        OutlineButton(
-                          splashColor: Colors.grey,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40)),
-                          highlightElevation: 0,
-                          borderSide: BorderSide(color: Colors.grey),
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            // not suppurted:  splashColor: Colors.grey,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40)),
+                            elevation: 0,
+                            side: BorderSide(color: Colors.grey),
+                          ),
                           onPressed: () {
                             FocusScope.of(context).requestFocus(FocusNode());
                             signIn();
@@ -248,37 +255,43 @@ class _HomePageState extends State<Login> {
                         2,
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children:[ GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginDetails()),
-                              );
-                            },
-                            child: Center(
-                                child: Text(
-                              "משתמש חדש",
-                              style: TextStyle(color: Colors.blueAccent, fontSize: Globals.scaler.getTextSize(7)),
-                            )),
-                          ),
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginDetails()),
+                                  );
+                                },
+                                child: Center(
+                                    child: Text(
+                                  "משתמש חדש",
+                                  style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: Globals.scaler.getTextSize(7)),
+                                )),
+                              ),
                               SizedBox(
                                 width: Globals.scaler.getWidth(3),
                               ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ForgetPassword()),
-                            );
-                          },
-                          child: Center(
-                              child: Text(
-                                "שכחתי סיסמא",
-                                style: TextStyle(color: Colors.blueAccent, fontSize: Globals.scaler.getTextSize(7)),
-                              )),
-                        )])),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ForgetPassword()),
+                                  );
+                                },
+                                child: Center(
+                                    child: Text(
+                                  "שכחתי סיסמא",
+                                  style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: Globals.scaler.getTextSize(7)),
+                                )),
+                              )
+                            ])),
                     SizedBox(
                       height: Globals.scaler.getHeight(1),
                     ),

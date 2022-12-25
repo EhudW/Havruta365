@@ -156,8 +156,10 @@ class _HomePageState extends State<LoginMoreDetails> {
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-        FlatButton(
-          color: Colors.transparent,
+        TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+          ),
           onPressed: () {
             showModalBottomSheet(
                 context: context, builder: ((builder) => bottomSheet()));

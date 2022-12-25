@@ -38,10 +38,11 @@ class _HomePageState extends State<LoginDetailsGmail> {
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
                 alignment: Alignment.centerRight,
-                child:Text("פרטים אישיים   " ,style: GoogleFonts.alef(
-                fontSize: 18,
-                color: Colors.teal[400]),
-    )),
+                child: Text(
+                  "פרטים אישיים   ",
+                  style:
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
+                )),
             genderField(gender),
             SizedBox(height: Globals.scaler.getHeight(1)),
             Container(
@@ -66,8 +67,8 @@ class _HomePageState extends State<LoginDetailsGmail> {
               ),
               style: ElevatedButton.styleFrom(
                   alignment: Alignment.center,
-                  minimumSize:
-                  Size(Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
+                  minimumSize: Size(
+                      Globals.scaler.getWidth(32), Globals.scaler.getHeight(3)),
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
@@ -75,7 +76,9 @@ class _HomePageState extends State<LoginDetailsGmail> {
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
-                gender.text == 'Gender.Female' ? gender_str = 'F' : gender_str = 'M';
+                gender.text == 'Gender.Female'
+                    ? gender_str = 'F'
+                    : gender_str = 'M';
                 if (_dateTime == null) {
                   _dateTime = DateTime.now();
                 }
@@ -85,7 +88,8 @@ class _HomePageState extends State<LoginDetailsGmail> {
                     title: 'שגיאה בהרשמה',
                     messageText: Text('יש להכניס כתובת מגורים',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+                        style:
+                            TextStyle(color: Colors.teal[400], fontSize: 20)),
                     duration: Duration(seconds: 3),
                   )..show(context);
                   return;
@@ -110,49 +114,50 @@ class _HomePageState extends State<LoginDetailsGmail> {
 }
 
 newFiled(controller, str, text, icon, cover) {
-  return new  FadeAnimation(
-      1.7, Column(children: <Widget>[
-    SizedBox(height: Globals.scaler.getHeight(1)),
-    Center(
-      child: Container(
-        alignment: AlignmentDirectional.center,
-        width: Globals.scaler.getWidth(32),
-        height: Globals.scaler.getHeight(3),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(30.0),
+  return new FadeAnimation(
+      1.7,
+      Column(children: <Widget>[
+        SizedBox(height: Globals.scaler.getHeight(1)),
+        Center(
+          child: Container(
+            alignment: AlignmentDirectional.center,
+            width: Globals.scaler.getWidth(32),
+            height: Globals.scaler.getHeight(3),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(30.0),
+              ),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.withOpacity(1),
+                    offset: const Offset(0, 2),
+                    blurRadius: 8.0),
+              ],
+            ),
+            child: TextField(
+                textAlign: TextAlign.center,
+                controller: controller,
+                obscureText: cover,
+                style: TextStyle(fontSize: 18),
+                decoration: InputDecoration(
+                    suffixIcon: Icon(
+                      icon,
+                      size: Globals.scaler.getTextSize(8),
+                      color: Colors.red,
+                    ),
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    hintText: text),
+                onChanged: (text) {
+                  str = controller.text;
+                }),
           ),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.withOpacity(1),
-                offset: const Offset(0, 2),
-                blurRadius: 8.0),
-          ],
         ),
-        child: TextField(
-            textAlign: TextAlign.center,
-            controller: controller,
-            obscureText: cover,
-            style: TextStyle(fontSize: 18),
-            decoration: InputDecoration(
-                suffixIcon: Icon(
-                  icon,
-                  size: Globals.scaler.getTextSize(8),
-                  color: Colors.red,
-                ),
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                hintText: text),
-            onChanged: (text) {
-              str = controller.text;
-            }),
-      ),
-    ),
-  ]));
+      ]));
 }
 
 Widget genderField(gender_str) {
@@ -167,8 +172,8 @@ Widget genderField(gender_str) {
         femaleImage: NetworkImage(
             'https://image.flaticon.com/icons/png/512/180/180678.png'),
         verticalAlignedText: true,
-        selectedGenderTextStyle:
-            TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),
+        selectedGenderTextStyle: TextStyle(
+            color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
         unSelectedGenderTextStyle:
             TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
         onChanged: (Gender gender) {
@@ -188,8 +193,14 @@ Widget genderField(gender_str) {
 }
 
 button(name_str) {
-  return OutlineButton(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+  return OutlinedButton(
+    style: ButtonStyle(
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(40),
+        ),
+      ),
+    ),
     onPressed: () async {
       print(name_str);
     },

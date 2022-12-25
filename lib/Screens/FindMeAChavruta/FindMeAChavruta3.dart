@@ -216,8 +216,10 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-        FlatButton(
-          color: Colors.transparent,
+        TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+          ),
           onPressed: () {
             showModalBottomSheet(
                 context: context, builder: ((builder) => bottomSheet()));

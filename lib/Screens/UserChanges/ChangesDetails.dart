@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -62,7 +61,7 @@ class _HomePageState extends State<ChangesDetails> {
               height: 60,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                minimumDate:DateTime(1980, 1, 1),
+                minimumDate: DateTime(1980, 1, 1),
                 initialDateTime: Globals.currentUser.birthDate,
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
@@ -72,7 +71,7 @@ class _HomePageState extends State<ChangesDetails> {
             ),
             SizedBox(height: Globals.scaler.getHeight(1)),
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
-                3.0,Globals.currentUser.name),
+                3.0, Globals.currentUser.name),
             newFiled(address, address_str, "כתובת מגורים",
                 FontAwesomeIcons.home, 3.0, Globals.currentUser.address),
             SizedBox(height: Globals.scaler.getHeight(1)),
@@ -121,18 +120,16 @@ class _HomePageState extends State<ChangesDetails> {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Center(
-                            child:
-                            Text(value, textAlign: TextAlign.center)),
+                            child: Text(value, textAlign: TextAlign.center)),
                       );
                     }).toList(),
                   )),
             ),
-            newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה",
-                FontAwesomeIcons.book, 3.0, Globals.currentUser.yeshiva),
+            newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
+                3.0, Globals.currentUser.yeshiva),
             newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
                 FontAwesomeIcons.list, 8.0, Globals.currentUser.description),
             SizedBox(height: Globals.scaler.getHeight(1)),
-
             SizedBox(height: Globals.scaler.getHeight(1)),
             ElevatedButton(
               child: Text(
@@ -159,8 +156,7 @@ class _HomePageState extends State<ChangesDetails> {
                 yeshiva_str = yeshiva.text;
                 address_str = address.text;
                 description_str = description.text;
-                if (
-                    address_str.isEmpty ||
+                if (address_str.isEmpty ||
                     address_str == null ||
                     name_str.isEmpty ||
                     name_str == null) {
@@ -183,9 +179,9 @@ class _HomePageState extends State<ChangesDetails> {
                 user.description = description_str;
                 user.birthDate = _dateTime;
                 Globals.db.changeDeatailsUser(user);
-               // user.name = name_str;
-               // user.birthDate = _dateTime;
-               // Globals.currentUser = user;
+                // user.name = name_str;
+                // user.birthDate = _dateTime;
+                // Globals.currentUser = user;
                 //var res = Globals.db.insertNewUser(user);
                 print("change details Succeeded");
 
@@ -205,8 +201,10 @@ class _HomePageState extends State<ChangesDetails> {
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-        FlatButton(
-          color: Colors.transparent,
+        TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+          ),
           onPressed: () {
             showModalBottomSheet(
                 context: context, builder: ((builder) => bottomSheet()));
@@ -299,7 +297,7 @@ class _HomePageState extends State<ChangesDetails> {
     //check if an image was picked
     if (image != null) {
       var snapshot =
-      await _storage.ref().child('Images/$fileName').putFile(file);
+          await _storage.ref().child('Images/$fileName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
         Globals.currentUser.avatar = downloadUrl;
@@ -307,13 +305,13 @@ class _HomePageState extends State<ChangesDetails> {
     } else {
       setState(() {
         Globals.currentUser.avatar =
-        'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
+            'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
       });
     }
   }
 }
 
-newFiled(controller, str, text, icon, size,init) {
+newFiled(controller, str, text, icon, size, init) {
   return new FadeAnimation(
       1.7,
       Column(children: <Widget>[
@@ -359,6 +357,7 @@ newFiled(controller, str, text, icon, size,init) {
         ),
       ]));
 }
+
 newFiled1(controller, str, text, icon, size, init) {
   return FadeAnimation(
     1.7,
@@ -409,8 +408,14 @@ newFiled1(controller, str, text, icon, size, init) {
 }
 
 button(name_str) {
-  return OutlineButton(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+  return OutlinedButton(
+    style: ButtonStyle(
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(40),
+        ),
+      ),
+    ),
     onPressed: () async {
       print(name_str);
     },

@@ -84,7 +84,7 @@ class NextButton extends StatelessWidget {
       duration: Duration(seconds: 1),
       behavior: SnackBarBehavior.fixed,
     );
-    Scaffold.of(context)
+    ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
   }

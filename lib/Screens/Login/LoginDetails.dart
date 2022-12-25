@@ -68,7 +68,7 @@ class _HomePageState extends State<LoginDetails> {
               height: 60,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                minimumDate:DateTime(1980, 1, 1),
+                minimumDate: DateTime(1980, 1, 1),
                 initialDateTime: DateTime(1980, 1, 1),
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
@@ -289,8 +289,14 @@ Widget genderField(gender_str) {
 }
 
 button(name_str) {
-  return OutlineButton(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+  return OutlinedButton(
+    style: ButtonStyle(
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(40),
+        ),
+      ),
+    ),
     onPressed: () async {
       print(name_str);
     },
