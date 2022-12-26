@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// https://pub.dev/packages/sa4_migration_kit
 import 'package:simple_animations/simple_animations.dart';
 
 class FadeAnimation extends StatelessWidget {
@@ -9,24 +10,23 @@ class FadeAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tween = MultiTrackTween([
-      Track("opacity").add(Duration(milliseconds: 500), Tween(begin: 0.0, end: 1.0)),
-      Track("translateY").add(
-          Duration(milliseconds: 500), Tween(begin: -30.0, end: 0.0),
-          curve: Curves.easeOut)
-    ]);
+    final movieTween = MovieTween()
+      ..tween('opacity', Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut)
+          .thenTween('translateY', Tween(begin: -30.0, end: 0.0),
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut);
 
-    return ControlledAnimation(
+    return PlayAnimationBuilder(
       delay: Duration(milliseconds: (500 * delay).round()),
-      duration: tween.duration,
-      tween: tween,
+      duration: movieTween.duration,
+      tween: movieTween,
       child: child,
-      builderWithChild: (context, child, animation) => Opacity(
+      builder: (context, animation, child) => Opacity(
         opacity: animation["opacity"],
         child: Transform.translate(
-            offset: Offset(0, animation["translateY"]),
-            child: child
-        ),
+            offset: Offset(0, animation["translateY"]), child: child),
       ),
     );
   }

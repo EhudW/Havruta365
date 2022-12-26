@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
-import 'package:mongo_dart_query/mongo_dart_query.dart';
+import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 
 class ParticipentsScroller extends StatelessWidget {
   ParticipentsScroller(List<dynamic> usersMail) {
@@ -56,7 +56,9 @@ class ParticipentsScroller extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => UserScreen(snapshot.data['email'])),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    UserScreen(snapshot.data['email'])),
                           );
                         }),
                   ),

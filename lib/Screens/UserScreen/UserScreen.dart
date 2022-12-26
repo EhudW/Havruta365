@@ -4,7 +4,7 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:loading_animations/loading_animations.dart';
-import 'package:mongo_dart_query/mongo_dart_query.dart';
+import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 import 'User_details_page.dart';
 
 Future<User> getUser(String userMail) async {
@@ -44,5 +44,4 @@ class UserScreen extends StatelessWidget {
           }
         });
   }
-
 }
