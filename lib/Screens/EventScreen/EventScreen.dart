@@ -36,7 +36,7 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                   );
                 case ConnectionState.done:
-                  return EventDetailsPage(snapshot.data);
+                  return EventDetailsPage(snapshot.data as Event?);
                 default:
                   return Text('default');
               }

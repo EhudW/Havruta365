@@ -1,7 +1,9 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -123,15 +125,15 @@ class _HomePageState extends State<LoginMoreDetails> {
                       shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(38.0),
                       ),
-                      primary: Colors.red,
+                      backgroundColor: Colors.red,
                       // <-- Button color
-                      onPrimary: Colors.teal),
+                      foregroundColor: Colors.teal),
                   onPressed: () async {
                     Globals.db!.saveIdLocally();
                     yeshiva_str = yeshiva.text;
                     description_str = description.text;
-                    Globals.currentUser!.yeshiva = yeshiva_str ?? "";
-                    Globals.currentUser!.description = description_str ?? "";
+                    Globals.currentUser!.yeshiva = yeshiva_str;
+                    Globals.currentUser!.description = description_str;
                     Globals.currentUser!.status =
                         status_str == "סטטוס משפחתי" ? "לא ידוע" : status_str;
                     if (Globals.currentUser!.avatar == null)
@@ -235,9 +237,10 @@ class _HomePageState extends State<LoginMoreDetails> {
     );
   }
 
-  Future<File> uploadImage(source) async {
+  // TODO: ?? Future<File> uploadImage(ImageSource source) async {
+  Future<void> uploadImage(ImageSource source) async {
     final _storage = FirebaseStorage.instance;
-    PickedFile? image;
+    XFile? image;
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
@@ -245,8 +248,8 @@ class _HomePageState extends State<LoginMoreDetails> {
     } else {
       print('signed in');
     }
-    image = await picker.getImage(source: source);
-    var file = File(image!.path);
+    image = await picker.pickImage(source: source);
+    var file = File(image?.path ?? "");
     String fileName = ObjectId().toString();
     //check if an image was picked
     if (image != null) {
@@ -385,7 +388,7 @@ appBar(BuildContext context) {
                 fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.userAlt,
+          Icon(FontAwesomeIcons.userLarge,
               size: Globals.scaler.getTextSize(9), color: Colors.teal[400])
         ]),
       ));

@@ -1,16 +1,17 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Second_Dot_Row.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:flutter/rendering.dart';
+//import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'Next_Button.dart';
 import 'SetDates.dart';
 import 'arc_banner_image.dart';
-import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+//import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
+// ignore: must_be_immutable
 class FindMeAChavruta2 extends StatefulWidget {
   Event? event;
 

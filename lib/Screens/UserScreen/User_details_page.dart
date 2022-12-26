@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/UserScreen/contact_buttons.dart';
 import 'package:havruta_project/Screens/UserScreen/user_details_column.dart';
 import 'User_detail_header.dart';
-import 'interestsList.dart';
+//import 'interestsList.dart';
 import 'package:havruta_project/Globals.dart';
 
+// ignore: must_be_immutable
 class UserDetailsPage extends StatefulWidget {
   User? user;
 

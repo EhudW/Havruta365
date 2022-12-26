@@ -23,6 +23,7 @@ class PhotoScroller extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -32,7 +33,7 @@ class PhotoScroller extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
             'Photos',
-              style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 18),
           ),
         ),
         SizedBox.fromSize(

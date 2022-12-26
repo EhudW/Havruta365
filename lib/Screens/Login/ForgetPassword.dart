@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:crypto/crypto.dart';
+//import 'package:crypto/crypto.dart';
 
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
@@ -22,6 +22,7 @@ class ForgetPassword extends StatefulWidget {
 
 class _HomePageState extends State<ForgetPassword> {
   final address = TextEditingController();
+  // ignore: non_constant_identifier_names
   String address_str = "";
 
   @override
@@ -36,7 +37,7 @@ class _HomePageState extends State<ForgetPassword> {
           children: <Widget>[
             SizedBox(height: Globals.scaler.getHeight(4)),
             newFiled(address, address_str, "כתובת המייל",
-                FontAwesomeIcons.mailBulk, false),
+                FontAwesomeIcons.envelopesBulk, false),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(

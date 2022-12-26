@@ -58,7 +58,7 @@ class NextButton extends StatelessWidget {
             }
           },
           style: ElevatedButton.styleFrom(
-              primary: Colors.teal,
+              backgroundColor: Colors.teal,
               shape: StadiumBorder(),
               shadowColor: Colors.grey.withOpacity(1)),
           child: Icon(Icons.arrow_forward_outlined),

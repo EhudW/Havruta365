@@ -1,5 +1,7 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:another_flushbar/flushbar.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +9,7 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../Globals.dart';
-import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
+//import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'ChooseDatesAlgo.dart';
@@ -32,22 +34,23 @@ class _ChooseDates extends State<ChooseDates> {
   double? eventDuration = 30;
 
   Future<void> _selectFirstDate(BuildContext context) async {
-    final DateTime picked = await (showDatePicker(
+    final DateTime? picked = await (showDatePicker(
         context: context,
         initialDate: firstDate,
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101)) as FutureOr<DateTime>);
+        lastDate: DateTime(2101)));
     DateTime now = DateTime.now();
-    if (now.isAfter(picked)) {
+    // TODO: check logic
+    if (picked == null || now.isAfter(picked)) {
       Flushbar(
         title: 'שגיאה',
         message: 'לא ניתן לבחור תאריך שעבר',
         duration: Duration(seconds: 3),
-      )
-        ..show(context);
+      )..show(context);
       return;
     }
-    if (picked != null && picked != firstDate)
+    //if (picked != null && picked != firstDate)
+    if (picked != firstDate)
       setState(() {
         firstDate = picked;
       });
@@ -55,7 +58,7 @@ class _ChooseDates extends State<ChooseDates> {
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked =
-    await showTimePicker(context: context, initialTime: time);
+        await showTimePicker(context: context, initialTime: time);
     if (picked != null && picked != time)
       setState(() {
         time = picked;
@@ -68,29 +71,26 @@ class _ChooseDates extends State<ChooseDates> {
         context: context,
         initialDate: lastDate!,
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101)) as FutureOr<DateTime>);
-    final difference = picked
-        .difference(firstDate)
-        .inDays;
+        lastDate: DateTime(2101)));
+    final difference = picked?.difference(firstDate).inDays ?? 400;
     if (difference > 365) {
       Flushbar(
         title: 'שגיאה',
         message: 'לא ניתן לקבוע שיעורים ליותר משנה',
         duration: Duration(seconds: 3),
-      )
-        ..show(context);
+      )..show(context);
       return;
     }
-    if (picked.isBefore(firstDate)) {
+    // in this line, picked != null
+    if (picked == null || picked.isBefore(firstDate)) {
       Flushbar(
         title: 'שגיאה',
         message: 'תאריך אחרון חייב להיות לאחר תאריך ראשון',
         duration: Duration(seconds: 3),
-      )
-        ..show(context);
+      )..show(context);
       return;
     }
-    if (picked != null && picked != lastDate)
+    if (picked != lastDate)
       setState(() {
         lastDate = picked;
       });
@@ -113,7 +113,7 @@ class _ChooseDates extends State<ChooseDates> {
                 child: Text(
                   "בחר תאריך לאירוע   ",
                   style:
-                  GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),
             SizedBox(height: Globals.scaler.getHeight(0.5)),
             InkWell(
@@ -149,7 +149,7 @@ class _ChooseDates extends State<ChooseDates> {
                 child: Text(
                   "בחר שעה לאירוע   ",
                   style:
-                  GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),
             SizedBox(height: Globals.scaler.getHeight(0.5)),
             InkWell(
@@ -185,7 +185,7 @@ class _ChooseDates extends State<ChooseDates> {
                 child: Text(
                   "בחר את משך השיעור (דקות)   ",
                   style:
-                  GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),
             SizedBox(height: Globals.scaler.getHeight(0.5)),
             SfSlider(
@@ -210,52 +210,52 @@ class _ChooseDates extends State<ChooseDates> {
                 child: Text(
                   "בחר תדירות לאירוע   ",
                   style:
-                  GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),
             SizedBox(height: Globals.scaler.getHeight(0.5)),
             InkWell(
                 child: Container(
-                  alignment: AlignmentDirectional.center,
-                  width: Globals.scaler.getWidth(32),
-                  height: Globals.scaler.getHeight(3),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(30.0),
+              alignment: AlignmentDirectional.center,
+              width: Globals.scaler.getWidth(32),
+              height: Globals.scaler.getHeight(3),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(30.0),
+                ),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.grey.withOpacity(1),
+                      offset: const Offset(0, 2),
+                      blurRadius: 8.0),
+                ],
+              ),
+              child: DropdownButton<String>(
+                value: frequency,
+                isExpanded: true,
+                borderRadius: BorderRadius.circular(50),
+                elevation: 100,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    frequency = newValue;
+                  });
+                },
+                items: <String>['יומי', 'שבועי', 'חודשי', 'ללא']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Center(
+                      child: Text(value,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.varelaRound(
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepOrangeAccent)),
                     ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(1),
-                          offset: const Offset(0, 2),
-                          blurRadius: 8.0),
-                    ],
-                  ),
-                  child: DropdownButton<String>(
-                    value: frequency,
-                    isExpanded: true,
-                    borderRadius: BorderRadius.circular(50),
-                    elevation: 100,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        frequency = newValue;
-                      });
-                    },
-                    items: <String>['יומי', 'שבועי', 'חודשי', 'ללא']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Center(
-                          child: Text(value,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.varelaRound(
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepOrangeAccent)),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                )),
+                  );
+                }).toList(),
+              ),
+            )),
             SizedBox(height: Globals.scaler.getHeight(1)),
             // Last date
             Align(
@@ -263,7 +263,7 @@ class _ChooseDates extends State<ChooseDates> {
                 child: Text(
                   "בחר תאריך אחרון לאירוע   ",
                   style:
-                  GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),
             SizedBox(height: Globals.scaler.getHeight(0.5)),
             InkWell(
@@ -306,14 +306,15 @@ class _ChooseDates extends State<ChooseDates> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
-                  primary: Colors.teal,
+                  backgroundColor: Colors.teal,
                   // <-- Button color
-                  onPrimary: Colors.teal),
+                  foregroundColor: Colors.teal),
               onPressed: () async {
                 if (isDatesValid(firstDate, time, lastDate!, context)) {
                   // Calculate dates
                   int frequencyInt = convertFrquency2Int(frequency);
-                  List<DateTime> dates = calcDates(firstDate, time, lastDate!, frequencyInt);
+                  List<DateTime> dates =
+                      calcDates(firstDate, time, lastDate!, frequencyInt);
                   widget.event!.dates = dates;
                   widget.event!.duration = eventDuration!.round();
                   Navigator.push(
@@ -339,22 +340,23 @@ int convertFrquency2Int(String? frequency) {
       {
         return 1;
       }
-      break;
+    //break;
     case 'שבועי':
       {
         return 7;
       }
-      break;
+    //break;
     case 'חודשי':
       {
         return 30;
       }
-      break;
+    //break;
     case 'ללא':
       {
         return 0;
       }
   }
+  return 0; // TODO : check if correct logic
 }
 
 isDatesValid(DateTime firstDate, TimeOfDay time, DateTime lastDate,
@@ -364,8 +366,7 @@ isDatesValid(DateTime firstDate, TimeOfDay time, DateTime lastDate,
       title: 'שגיאה',
       message: 'תאריך אחרון חייב להיות לאחר תאריך ראשון',
       duration: Duration(seconds: 3),
-    )
-      ..show(context);
+    )..show(context);
     return false;
   }
   return true;
@@ -381,13 +382,13 @@ appBar(BuildContext context) {
       shadowColor: Colors.teal[400],
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(0),
-          )),
+        bottom: Radius.circular(0),
+      )),
       backgroundColor: Colors.white,
       title: Container(
         width: scaler.getWidth(50),
         child:
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
             "?מתי תרצו ללמוד  ",
             textAlign: TextAlign.center,

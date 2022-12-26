@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,12 +11,13 @@ class UserDetailsColumn extends StatelessWidget {
 
   final User? user;
 
-  gender (){
-    if (user!.gender == 'M'){
+  gender() {
+    if (user!.gender == 'M') {
       return "גבר";
     }
     return "אשה";
   }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -54,7 +57,7 @@ class UserDetailsColumn extends StatelessWidget {
                 textDirection: TextDirection.rtl),
             SizedBox(width: 10.0),
             Icon(
-              FontAwesomeIcons.mapMarkerAlt,
+              FontAwesomeIcons.locationDot,
               size: 26.0,
               color: Colors.grey[600],
             ),
@@ -93,7 +96,7 @@ class UserDetailsColumn extends StatelessWidget {
                 textDirection: TextDirection.rtl),
             SizedBox(width: 10.0),
             Icon(
-              FontAwesomeIcons.infoCircle,
+              FontAwesomeIcons.circleInfo,
               size: 26.0,
               color: Colors.grey[600],
             ),

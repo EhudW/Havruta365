@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'package:havruta_project/Screens/Login/ForgetPassword.dart';
 import 'package:google_fonts/google_fonts.dart';

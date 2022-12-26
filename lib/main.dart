@@ -1,16 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+//import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
+//import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
+//import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
-import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
-import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
-import 'package:loading_animations/loading_animations.dart';
+//import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
+//import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
+//import 'package:loading_animations/loading_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'Globals.dart';
@@ -87,6 +87,7 @@ class _MyAppState extends State<MyApp> {
                             }
                             // Connected - update current_user and go to home page
                             else {
+                              // ignore: non_constant_identifier_names
                               var current_user =
                                   Globals.db!.getUserByID(snapshot.data!);
                               return FutureBuilder(
@@ -99,19 +100,19 @@ class _MyAppState extends State<MyApp> {
                                       case ConnectionState.done:
                                         Globals.currentUser = snapshot.data;
                                         return HomePage();
-                                        break;
+                                      //break;
                                       default:
                                         return Text('default');
                                     }
                                   });
                             }
                           }
-                          break;
+                        //break;
                         default:
                           return Text('default');
                       }
                     });
-                break;
+              //break;
               default:
                 return Text('default');
             }

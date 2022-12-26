@@ -23,10 +23,10 @@ class FadeAnimation extends StatelessWidget {
       duration: movieTween.duration,
       tween: movieTween,
       child: child,
-      builder: (context, dynamic animation, child) => Opacity(
-        opacity: animation["opacity"],
+      builder: (context, Movie animation, child) => Opacity(
+        opacity: animation.get("opacity"),
         child: Transform.translate(
-            offset: Offset(0, animation["translateY"]), child: child),
+            offset: Offset(0, animation.get("translateY")), child: child),
       ),
     );
   }

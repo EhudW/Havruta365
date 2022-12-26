@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 
 import 'NotificationScroll.dart';
@@ -34,5 +34,4 @@ class _NotificationsState extends State<Notifications> {
   Widget build(BuildContext context) {
     return Scaffold(body: new notificationsScroll(model));
   }
-
 }

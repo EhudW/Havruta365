@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
@@ -6,8 +6,9 @@ import 'package:havruta_project/Globals.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide Center;
 import 'arc_banner_image.dart';
-import 'poster.dart';
+//import 'poster.dart';
 
+// ignore: must_be_immutable
 class EventDetailHeader extends StatelessWidget {
   EventDetailHeader(Event? event) {
     this.event = event;
@@ -51,7 +52,7 @@ class EventDetailHeader extends StatelessWidget {
     );
     return FutureBuilder(
         future: creator,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot<dynamic> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
               return Text('none');

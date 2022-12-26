@@ -1,8 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
+//import 'dart:convert';
+//import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:havruta_project/DataBase_auth/mongo.dart';
+//import 'package:havruta_project/DataBase_auth/mongo.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -28,18 +28,15 @@ class _SignupScreenState extends State<SignupScreen> {
           children: <Widget>[
             TextField(
               controller: nameController,
-              decoration: InputDecoration(
-                  hintText: 'Enter a name'),
+              decoration: InputDecoration(hintText: 'Enter a name'),
             ),
             TextField(
               controller: mailController,
-              decoration: InputDecoration(
-                  hintText: 'Enter a mail'),
+              decoration: InputDecoration(hintText: 'Enter a mail'),
             ),
             TextField(
               controller: passwordController,
-              decoration: InputDecoration(
-                  hintText: 'Enter a password'),
+              decoration: InputDecoration(hintText: 'Enter a password'),
             ),
             FloatingActionButton(
               onPressed: () {

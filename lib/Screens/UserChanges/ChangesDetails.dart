@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, unnecessary_null_comparison
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
-import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
+//import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
 
 import '../../Globals.dart';
 import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
@@ -73,7 +75,7 @@ class _HomePageState extends State<ChangesDetails> {
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
                 3.0, Globals.currentUser!.name),
             newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.home, 3.0, Globals.currentUser!.address),
+                FontAwesomeIcons.house, 3.0, Globals.currentUser!.address),
             SizedBox(height: Globals.scaler.getHeight(1)),
             FadeAnimation(
               1.7,
@@ -144,14 +146,14 @@ class _HomePageState extends State<ChangesDetails> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
-                  primary: Colors.teal,
+                  backgroundColor: Colors.teal,
                   // <-- Button color
-                  onPrimary: Colors.teal),
+                  foregroundColor: Colors.teal),
               onPressed: () async {
                 if (_dateTime == null) {
                   _dateTime = DateTime.now();
                 }
-                ;
+
                 name_str = name.text;
                 yeshiva_str = yeshiva.text;
                 address_str = address.text;
@@ -280,9 +282,9 @@ class _HomePageState extends State<ChangesDetails> {
     );
   }
 
-  Future<File> uploadImage(source) async {
+  Future<void> uploadImage(ImageSource source) async {
     final _storage = FirebaseStorage.instance;
-    PickedFile? image;
+    XFile? image;
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
@@ -291,8 +293,8 @@ class _HomePageState extends State<ChangesDetails> {
       print('signed in');
       print(result.uid);
     }
-    image = await picker.getImage(source: source);
-    var file = File(image!.path);
+    image = await picker.pickImage(source: source);
+    var file = File(image?.path ?? "");
     String fileName = ObjectId().toString();
     //check if an image was picked
     if (image != null) {
@@ -453,7 +455,7 @@ appBar(BuildContext context) {
                 fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.userAlt, size: 20, color: Colors.teal[400])
+          Icon(FontAwesomeIcons.userLarge, size: 20, color: Colors.teal[400])
         ]),
       ));
 }

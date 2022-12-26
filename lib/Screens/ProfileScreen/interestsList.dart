@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:date_time_format/date_time_format.dart';
+//import 'package:date_time_format/date_time_format.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: must_be_immutable
 class InterestsList extends StatelessWidget {
   List<dynamic> interests;
 

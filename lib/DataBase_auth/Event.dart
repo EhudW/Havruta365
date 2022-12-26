@@ -1,7 +1,7 @@
 // ------------------------------ Event CLASS ------------------------------
 
-import 'package:havruta_project/DataBase_auth/User.dart';
-import 'package:mongo_dart/mongo_dart.dart';
+//import 'package:havruta_project/DataBase_auth/User.dart';
+//import 'package:mongo_dart/mongo_dart.dart';
 
 class Event {
   Event(
@@ -23,6 +23,7 @@ class Event {
 
   var _id;
 
+  // ignore: unnecessary_getters_setters
   get id => _id;
 
   set id(value) {

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, unnecessary_null_comparison
+
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -80,9 +82,9 @@ class _HomePageState extends State<LoginDetails> {
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
                 false),
             newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.home, false),
-            newFiled(mail, mail_str, "כתובת המייל", FontAwesomeIcons.mailBulk,
-                false),
+                FontAwesomeIcons.house, false),
+            newFiled(mail, mail_str, "כתובת המייל",
+                FontAwesomeIcons.envelopesBulk, false),
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
                 alignment: Alignment.centerRight,
@@ -109,9 +111,9 @@ class _HomePageState extends State<LoginDetails> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
-                  primary: Colors.teal,
+                  backgroundColor: Colors.teal,
                   // <-- Button color
-                  onPrimary: Colors.teal),
+                  foregroundColor: Colors.teal),
               onPressed: () async {
                 gender.text == 'Gender.Female'
                     ? gender_str = 'F'
@@ -119,7 +121,7 @@ class _HomePageState extends State<LoginDetails> {
                 if (_dateTime == null) {
                   _dateTime = DateTime.now();
                 }
-                ;
+
                 address_str = address.text;
                 name_str = name.text;
                 password_str = password.text;
@@ -194,6 +196,7 @@ class _HomePageState extends State<LoginDetails> {
                 user.password = digest.toString();
                 //user.password = password_str;
                 Globals.currentUser = user;
+                // ignore: unused_local_variable
                 var res = Globals.db!.insertNewUser(user);
                 Navigator.push(
                   context,
@@ -334,7 +337,7 @@ appBar(BuildContext context) {
                 fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.userAlt, size: 20, color: Colors.teal[400])
+          Icon(FontAwesomeIcons.userLarge, size: 20, color: Colors.teal[400])
         ]),
       ));
 }

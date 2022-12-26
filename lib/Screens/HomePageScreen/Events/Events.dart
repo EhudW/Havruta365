@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'modelsHomePages.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Events/EventViewFeed.dart';
 import 'EventOnlineFeed.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 
+// ignore: must_be_immutable
 class Events extends StatefulWidget {
   EventsModel events;
   EventsModel eventsOnline;
@@ -20,12 +21,13 @@ class _EventsState extends State<Events> {
   final scrollController = ScrollController();
   final scrollControllerOnline = ScrollController();
 
- // EventsModel events;
+  // EventsModel events;
   //EventsModel eventsOnline;
-  refresh(){
+  refresh() {
     this.widget.events.refresh();
     this.widget.eventsOnline.refresh();
   }
+
   @override
   void initState() {
     //this.widget.events = EventsModel(false);
@@ -125,7 +127,6 @@ class _EventsState extends State<Events> {
                   } else if (this.widget.eventsOnline.hasMore) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 32.0),
-
                     );
                   } else {
                     return Padding(
@@ -170,7 +171,7 @@ class _EventsState extends State<Events> {
     return Center(
         //padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 20),
         child: Column(children: <Widget>[
-          SizedBox(height: Globals.scaler.getHeight(0.3)),
+      SizedBox(height: Globals.scaler.getHeight(0.3)),
       Row(
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),
@@ -194,8 +195,10 @@ class _EventsState extends State<Events> {
                   textInputAction: TextInputAction.go,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                      suffixIcon: Icon(FontAwesomeIcons.search,
-                          size: Globals.scaler.getTextSize(8), color: Colors.red , textDirection: TextDirection.rtl),
+                      suffixIcon: Icon(FontAwesomeIcons.magnifyingGlass,
+                          size: Globals.scaler.getTextSize(8),
+                          color: Colors.red,
+                          textDirection: TextDirection.rtl),
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,

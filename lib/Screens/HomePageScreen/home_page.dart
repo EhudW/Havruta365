@@ -1,19 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatScreen.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notifications.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
-import 'package:havruta_project/Widgets/SplashScreen.dart';
+//import 'package:havruta_project/Widgets/SplashScreen.dart';
 import 'Events/Events.dart';
-import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
+//import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
-import 'package:havruta_project/Screens/Login/Login.dart';
+//import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
+//import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
 
 import 'Events/modelsHomePages.dart';
 
@@ -26,6 +26,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentStateAppBar = 0;
+  // ignore: unused_field
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   ScreenScaler scaler = new ScreenScaler();

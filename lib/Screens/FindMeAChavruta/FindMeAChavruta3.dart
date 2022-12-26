@@ -1,14 +1,16 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/rendering.dart';
+//import 'package:flutter/rendering.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
-import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+//import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'Wavy_Header.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -178,7 +180,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             ),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.teal),
+                                    backgroundColor: Colors.teal),
                                 onPressed: () {
                                   widget.event!.creationDate = DateTime.now();
                                   widget.event!.participants = [];
@@ -295,9 +297,10 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     );
   }
 
-  Future<File> uploadImage(source) async {
+  // TODO : ?? Future<File> uploadImage(ImageSource source) async {
+  Future<void> uploadImage(ImageSource source) async {
     final _storage = FirebaseStorage.instance;
-    PickedFile? image;
+    XFile? image;
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
@@ -305,8 +308,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     } else {
       print('signed in');
     }
-    image = await picker.getImage(source: source);
-    var file = File(image!.path);
+    image = await picker.pickImage(source: source);
+    var file = File(image?.path ?? "");
     //check if an image was picked
     if (image != null) {
       var snapshot =

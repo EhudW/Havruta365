@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/NotificationView.dart';
 import 'package:havruta_project/Globals.dart';
 
+// ignore: must_be_immutable, camel_case_types
 class notificationsScroll extends StatefulWidget {
   notificationModel? model;
 
@@ -13,8 +14,8 @@ class notificationsScroll extends StatefulWidget {
   _notificationsScrollState createState() => _notificationsScrollState();
 }
 
+// ignore: camel_case_types
 class _notificationsScrollState extends State<notificationsScroll> {
-
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
@@ -59,6 +60,5 @@ class _notificationsScrollState extends State<notificationsScroll> {
                 }
               },
             )));
-    }
   }
-
+}

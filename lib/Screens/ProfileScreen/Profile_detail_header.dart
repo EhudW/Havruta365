@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'arc_banner_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: must_be_immutable
 class ProfileDetailHeader extends StatelessWidget {
   ProfileDetailHeader(User? user) {
     this.user = user;
@@ -14,6 +15,7 @@ class ProfileDetailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
 
     var userInformation = Align(

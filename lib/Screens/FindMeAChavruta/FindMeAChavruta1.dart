@@ -6,10 +6,10 @@ import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
 import 'package:havruta_project/DataBase_auth/Topic.dart';
-import 'MyData.dart';
-import 'package:flutter/cupertino.dart';
+//import 'MyData.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/rendering.dart';
+//import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "dart:async";
 import 'Next_Button.dart';
@@ -287,7 +287,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   width: 8,
                                 ),
                                 Icon(
-                                  FontAwesomeIcons.questionCircle,
+                                  FontAwesomeIcons.circleQuestion,
                                   color: Colors.red,
                                   //color: Colors.tealAccent[400],
                                   size: iconSize,

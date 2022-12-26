@@ -4,9 +4,9 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:havruta_project/DataBase_auth/User.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
+//import 'package:havruta_project/DataBase_auth/User.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 class EventViewFeed extends StatelessWidget {
@@ -15,8 +15,7 @@ class EventViewFeed extends StatelessWidget {
   const EventViewFeed({
     Key? key,
     required this.event,
-  })  : assert(event != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

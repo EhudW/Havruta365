@@ -1,9 +1,16 @@
-import 'package:havruta_project/Globals.dart';
-import 'package:mongo_dart_query/mongo_dart_query.dart';
+//import 'package:havruta_project/Globals.dart';
+//import 'package:mongo_dart_query/mongo_dart_query.dart';
+
+// ignore_for_file: non_constant_identifier_names
 
 class ChatMessage {
-
-  ChatMessage({this.name, this.avatar, this.src_mail, this.datetime, this.message, this.dst_mail});
+  ChatMessage(
+      {this.name,
+      this.avatar,
+      this.src_mail,
+      this.datetime,
+      this.message,
+      this.dst_mail});
 
   // SrcUser details
   String? name;
@@ -17,9 +24,7 @@ class ChatMessage {
   // Dst of message - mail of user
   String? dst_mail;
 
-
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'avatar': avatar ?? "",
         'name': name ?? "",
         'src_mail': src_mail ?? "",
@@ -29,12 +34,10 @@ class ChatMessage {
       };
 
   ChatMessage.fromJson(Map<String, dynamic> json)
-    :
-        name = json['name'],
+      : name = json['name'],
         avatar = json['avatar'],
         src_mail = json['src_mail'],
         datetime = json['datetime'],
         message = json['message'],
         dst_mail = json['dst_mail'];
 }
-

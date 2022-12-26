@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+//import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:flutter/rendering.dart';
+//import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'Wavy_Header.dart';
 
+// ignore: must_be_immutable
 class SetDate extends StatefulWidget {
   Event? event;
 
@@ -30,7 +31,7 @@ class _SetDateCreateState extends State<SetDate> {
 
   Future<DateTime?> pickDay(BuildContext context) {
     final date = pickDate(context);
-    if (date == null) return null;
+    //if (date == null) return null;
     return date;
   }
 
@@ -43,11 +44,12 @@ class _SetDateCreateState extends State<SetDate> {
       lastDate: DateTime(DateTime.now().year + 2),
     );
     if (newDate == null) return null;
-    if (DateTime.now().isAfter(newDate) && DateTime.now().day > newDate.day ){
+    if (DateTime.now().isAfter(newDate) && DateTime.now().day > newDate.day) {
       alertMessage("אי אפשר לבחור תאריך שעבר");
       return null;
     }
     setState(() => date = newDate);
+    return newDate; // TODO : CHECK ????
   }
 
   Future<TimeOfDay?> pickStartTime(BuildContext context) async {
@@ -60,14 +62,16 @@ class _SetDateCreateState extends State<SetDate> {
           : initialTime,
     );
     if (newTime == null) return null;
-    if (date!.day == DateTime.now().day){
+    if (date!.day == DateTime.now().day) {
       if (((newTime.hour < DateTime.now().hour) ||
-          ((newTime.hour == DateTime.now().hour) && newTime.minute < DateTime.now().minute))){
+          ((newTime.hour == DateTime.now().hour) &&
+              newTime.minute < DateTime.now().minute))) {
         alertMessage("אי אפשר לבחור תאריך שעבר");
         return null;
       }
     }
     setState(() => startTime = newTime);
+    return newTime; // TODO : ??
   }
 
   Future<TimeOfDay?> pickEndTime(BuildContext context) async {
@@ -84,11 +88,13 @@ class _SetDateCreateState extends State<SetDate> {
       alertMessage("זמן התחלה צריך להיות לפני זמן סיום");
       return null;
     }
-    if (startTime!.hour == newTime.hour && startTime!.minute >= newTime.minute) {
+    if (startTime!.hour == newTime.hour &&
+        startTime!.minute >= newTime.minute) {
       alertMessage("זמן התחלה צריך להיות לפני זמן סיום");
       return null;
     }
     setState(() => endTime = newTime);
+    return newTime;
   }
 
   void saveData() {
@@ -97,8 +103,8 @@ class _SetDateCreateState extends State<SetDate> {
       return null;
     } else {
       setState(() {
-        start = DateTime(
-            date!.year, date!.month, date!.day, startTime!.hour, startTime!.minute);
+        start = DateTime(date!.year, date!.month, date!.day, startTime!.hour,
+            startTime!.minute);
         end = DateTime(
             date!.year, date!.month, date!.day, endTime!.hour, endTime!.minute);
         //   dateTimeListForMongo.add(start);
@@ -167,7 +173,7 @@ class _SetDateCreateState extends State<SetDate> {
                               child: ElevatedButton(
                                 onPressed: () => pickDate(context),
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.teal,
+                                    backgroundColor: Colors.teal,
                                     shape: StadiumBorder(),
                                     shadowColor: Colors.grey.withOpacity(1)),
                                 child: Text(getDateText(this.date),
@@ -211,7 +217,7 @@ class _SetDateCreateState extends State<SetDate> {
                           child: ElevatedButton(
                             onPressed: () => pickStartTime(context),
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.teal,
+                                backgroundColor: Colors.teal,
                                 shape: StadiumBorder(),
                                 shadowColor: Colors.grey.withOpacity(1)),
                             child: Text(getStartTimeText(),
@@ -252,7 +258,7 @@ class _SetDateCreateState extends State<SetDate> {
                           child: ElevatedButton(
                             onPressed: () => pickEndTime(context),
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.teal,
+                                backgroundColor: Colors.teal,
                                 shape: StadiumBorder(),
                                 shadowColor: Colors.grey.withOpacity(1)),
                             child: Text(getEndTimeText(),
@@ -275,7 +281,7 @@ class _SetDateCreateState extends State<SetDate> {
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red,
+                              backgroundColor: Colors.red,
                               //shape: (),
                               shadowColor: Colors.grey.withOpacity(1)),
                           child: Text("בטל"),
@@ -286,7 +292,7 @@ class _SetDateCreateState extends State<SetDate> {
                         ElevatedButton(
                           onPressed: () => saveData(),
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red,
+                              backgroundColor: Colors.red,
                               shadowColor: Colors.grey.withOpacity(1)),
                           child: Text("שמור"),
                         ),

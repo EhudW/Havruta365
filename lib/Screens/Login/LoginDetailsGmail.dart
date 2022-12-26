@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -57,7 +59,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
               ),
             ),
             newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.home, false),
+                FontAwesomeIcons.house, false),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
@@ -72,9 +74,9 @@ class _HomePageState extends State<LoginDetailsGmail> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(38.0),
                   ),
-                  primary: Colors.teal,
+                  backgroundColor: Colors.teal,
                   // <-- Button color
-                  onPrimary: Colors.teal),
+                  foregroundColor: Colors.teal),
               onPressed: () async {
                 gender.text == 'Gender.Female'
                     ? gender_str = 'F'
@@ -83,7 +85,8 @@ class _HomePageState extends State<LoginDetailsGmail> {
                   _dateTime = DateTime.now();
                 }
                 address_str = address.text;
-                if (address_str.isEmpty || address_str == null) {
+                if (address_str.isEmpty) {
+                  //|| address_str == null) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('יש להכניס כתובת מגורים',
@@ -98,6 +101,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
                 user.address = address_str;
                 user.gender = gender_str;
                 user.birthDate = _dateTime;
+                // ignore: unused_local_variable
                 var res = Globals.db!.insertNewUser(user);
                 Navigator.push(
                   context,
@@ -238,7 +242,7 @@ appBar(BuildContext context) {
                 fontSize: Globals.scaler.getTextSize(9),
                 color: Colors.teal[400]),
           ),
-          Icon(FontAwesomeIcons.userAlt, size: 20, color: Colors.teal[400])
+          Icon(FontAwesomeIcons.userLarge, size: 20, color: Colors.teal[400])
         ]),
       ));
 }

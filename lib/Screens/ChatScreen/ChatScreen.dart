@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:havruta_project/DataBase_auth/User.dart';
+//import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Widgets/SplashScreen.dart';
 import '../../Globals.dart';
 import 'ChatMessage.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class ChatScreen extends StatefulWidget {
-
   Future<List<ChatMessage>>? chatMessagesList;
 
   @override
@@ -17,19 +17,19 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   @override
   void initState() {
     super.initState();
-    widget.chatMessagesList = Globals.db!
-        .getAllMyMessages(Globals.currentUser!.email);
+    widget.chatMessagesList =
+        Globals.db!.getAllMyMessages(Globals.currentUser!.email);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: widget.chatMessagesList,
-        builder: (BuildContext context, AsyncSnapshot<List<ChatMessage>> snapshot) {
+        builder:
+            (BuildContext context, AsyncSnapshot<List<ChatMessage>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return SplashScreen();
@@ -81,7 +81,6 @@ class _ChatScreenState extends State<ChatScreen> {
               return Text('default');
           }
         });
-
   }
 
   appBar(BuildContext context) {
@@ -93,24 +92,29 @@ class _ChatScreenState extends State<ChatScreen> {
         shadowColor: Colors.teal[400],
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(0),
-            )),
+          bottom: Radius.circular(0),
+        )),
         backgroundColor: Colors.white,
         title: Container(
           width: scaler.getWidth(50),
-          child:
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            Text(
-              "הודעות",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.alef(
-                  fontWeight: FontWeight.bold,
-                  fontSize: Globals.scaler.getTextSize(9),
-                  color: Colors.teal[400]),
-            ),
-            SizedBox(width: Globals.scaler.getWidth(1),),
-            Icon(FontAwesomeIcons.envelope, size: Globals.scaler.getTextSize(8), color: Colors.teal[400])
-          ]),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "הודעות",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.alef(
+                      fontWeight: FontWeight.bold,
+                      fontSize: Globals.scaler.getTextSize(9),
+                      color: Colors.teal[400]),
+                ),
+                SizedBox(
+                  width: Globals.scaler.getWidth(1),
+                ),
+                Icon(FontAwesomeIcons.envelope,
+                    size: Globals.scaler.getTextSize(8),
+                    color: Colors.teal[400])
+              ]),
         ));
   }
 }

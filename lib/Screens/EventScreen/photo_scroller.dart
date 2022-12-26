@@ -23,6 +23,7 @@ class PhotoScroller extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
 
     return Column(

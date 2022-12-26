@@ -5,6 +5,7 @@ import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 
+// ignore: must_be_immutable
 class ParticipentsScroller extends StatelessWidget {
   ParticipentsScroller(List<dynamic>? usersMail) {
     this.usersMail = usersMail;
@@ -28,7 +29,7 @@ class ParticipentsScroller extends StatelessWidget {
     Future user = getUser(userMail);
     return FutureBuilder(
       future: user,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<dynamic> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
             return Text('none');
@@ -78,6 +79,7 @@ class ParticipentsScroller extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
 
     return Column(

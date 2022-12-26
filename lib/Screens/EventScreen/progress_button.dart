@@ -22,7 +22,8 @@ class ProgressButton extends StatefulWidget {
 
   ProgressButton(
       {Key? key,
-      required this.stateWidgets, required this.stateColors,
+      required this.stateWidgets,
+      required this.stateColors,
       this.state = ButtonState.idle,
       this.onPressed,
       this.onAnimationEnd,
@@ -36,13 +37,11 @@ class ProgressButton extends StatefulWidget {
       this.padding = EdgeInsets.zero,
       this.minWidthStates = const <ButtonState>[ButtonState.loading]})
       : assert(
-          stateWidgets != null &&
-              stateWidgets.keys.toSet().containsAll(ButtonState.values.toSet()),
+          stateWidgets.keys.toSet().containsAll(ButtonState.values.toSet()),
           'Must be non-null widgetds provided in map of stateWidgets. Missing keys => ${ButtonState.values.toSet().difference(stateWidgets.keys.toSet())}',
         ),
         assert(
-          stateColors != null &&
-              stateColors.keys.toSet().containsAll(ButtonState.values.toSet()),
+          stateColors.keys.toSet().containsAll(ButtonState.values.toSet()),
           'Must be non-null widgetds provided in map of stateWidgets. Missing keys => ${ButtonState.values.toSet().difference(stateColors.keys.toSet())}',
         ),
         super(key: key);
@@ -70,8 +69,7 @@ class ProgressButton extends StatefulWidget {
     List<ButtonState> minWidthStates = const <ButtonState>[ButtonState.loading],
   }) {
     assert(
-      iconedButtons != null &&
-          iconedButtons.keys.toSet().containsAll(ButtonState.values.toSet()),
+      iconedButtons.keys.toSet().containsAll(ButtonState.values.toSet()),
       'Must be non-null widgets provided in map of stateWidgets. Missing keys => ${ButtonState.values.toSet().difference(iconedButtons.keys.toSet())}',
     );
 

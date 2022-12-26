@@ -10,8 +10,7 @@ class EventOnlineFeed extends StatelessWidget {
   const EventOnlineFeed({
     Key? key,
     required this.event,
-  })  : assert(event != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,35 +18,33 @@ class EventOnlineFeed extends StatelessWidget {
       children: <Widget>[
         Stack(children: <Widget>[
           Container(
-            width: Globals.scaler.getWidth(10),
-            height: Globals.scaler.getHeight(6),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(event.eventImage!)),
-              borderRadius: BorderRadius.all(Radius.circular(0.0)),
-              color: Colors.redAccent,
-            ),
-            child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.7),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 10,
-                          offset: Offset(0, 1),
-                        )
-                      ]),
-                  width: Globals.scaler.getWidth(10),
-                  child: Text(event.book!,
-                      textAlign: TextAlign.center,
-
-                      style: TextStyle(
-    fontWeight: FontWeight.bold,
-                          fontSize: Globals.scaler.getTextSize(6),
-                          color: Colors.white)),
-                ))
-          ),
+              width: Globals.scaler.getWidth(10),
+              height: Globals.scaler.getHeight(6),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.cover, image: NetworkImage(event.eventImage!)),
+                borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                color: Colors.redAccent,
+              ),
+              child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.7),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 10,
+                            offset: Offset(0, 1),
+                          )
+                        ]),
+                    width: Globals.scaler.getWidth(10),
+                    child: Text(event.book!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: Globals.scaler.getTextSize(6),
+                            color: Colors.white)),
+                  ))),
         ]),
         Positioned.fill(
           child: Material(
@@ -58,8 +55,10 @@ class EventOnlineFeed extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.0),
               ),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => EventScreen(event)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EventScreen(event)));
               },
             ),
           ),

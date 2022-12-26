@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'dart:math';
+//import 'dart:math';
 import 'package:havruta_project/Globals.dart';
-
-
 
 class EventsModel {
   Stream<List<Event>>? stream;
@@ -14,9 +12,8 @@ class EventsModel {
   late StreamController<List<Event>?> _controller;
   bool? onlineBit;
 
-
   EventsModel(bool online) {
-    _data = List<Event>();
+    _data = [];
     _controller = StreamController<List<Event>?>.broadcast();
     _isLoading = false;
     stream = _controller.stream.map((List<Event>? postsData) {
@@ -29,14 +26,14 @@ class EventsModel {
     refresh();
   }
 
-  Future<List<Event>>  _getExampleServerData(int length) async {
-   // print(searchData + 'db');
+  Future<List<Event>> _getExampleServerData(int length) async {
+    // print(searchData + 'db');
     if (searchData != null) {
       return Future.delayed(Duration(seconds: 1), () {
         return Globals.db!.searchEvents(searchData);
       });
     }
-    if (onlineBit == true){
+    if (onlineBit == true) {
       return Future.delayed(Duration(seconds: 1), () {
         return Globals.db!.getSomeEventsOnline(length);
       });
@@ -52,20 +49,18 @@ class EventsModel {
 
   Future<void> loadMore({bool clearCachedData = false}) {
     if (clearCachedData || searchData != null) {
-      _data = List<Event>();
+      _data = [];
       hasMore = true;
     }
-    if ((_isLoading || !hasMore)&& searchData != null) {
+    if ((_isLoading || !hasMore) && searchData != null) {
       return Future.value();
     }
     _isLoading = true;
     return _getExampleServerData(_data!.length).then((postsData) {
       _isLoading = false;
       _data!.addAll(postsData);
-      hasMore =  true;
+      hasMore = true;
       _controller.add(_data);
     });
   }
 }
-
-

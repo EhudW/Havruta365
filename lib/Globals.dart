@@ -10,7 +10,12 @@ class Globals {
   static User? currentUser;
   static BuildContext? context;
   static ScreenScaler scaler = new ScreenScaler();
-  static CustomAppBar customAppBar = new CustomAppBar();
+  // ?????
+  static CustomAppBar customAppBar = new CustomAppBar(
+    gradientBegin: Colors.green,
+    gradientEnd: Colors.blue,
+    title: "",
+  );
   static Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   static String maleAvatar =
       'https://mpng.subpng.com/20180418/whw/kisspng-computer-icons-professional-clipart-5ad7f6c3aafc17.2777946215241028517004.jpg';
@@ -22,16 +27,15 @@ class Globals {
       'https://png.pngtree.com/element_our/20190529/ourmid/pngtree-circular-pattern-user-cartoon-avatar-image_1200102.jpg';
 }
 
-
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double _pefferedHeight = 80.0;
-  String title;
-  Color gradientBegin, gradientEnd;
+  final String title;
+  final Color gradientBegin, gradientEnd;
 
-  CustomAppBar({required this.title, required this.gradientBegin, required this.gradientEnd})
-      : assert(title != null),
-        assert(gradientBegin != null),
-        assert(gradientEnd != null);
+  CustomAppBar(
+      {required this.title,
+      required this.gradientBegin,
+      required this.gradientEnd});
 
   Widget build(BuildContext context) {
     return Container(
@@ -40,7 +44,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       padding: EdgeInsets.only(top: 20.0),
       decoration: BoxDecoration(
           gradient:
-          LinearGradient(colors: <Color>[gradientBegin, gradientEnd])),
+              LinearGradient(colors: <Color>[gradientBegin, gradientEnd])),
       child: Text(
         title,
         style: TextStyle(

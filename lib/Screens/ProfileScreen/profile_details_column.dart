@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,6 +11,7 @@ import 'package:havruta_project/Screens/ProfileScreen/Events_scroller.dart';
 import 'package:havruta_project/Screens/UserChanges/ChangesDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class ProfileDetailsColumn extends StatefulWidget {
   ProfileDetailsColumn(this.user);
 
@@ -117,7 +120,6 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChangesDetails()));
-
             },
             child: Container(
               height: Globals.scaler.getHeight(3),
@@ -144,7 +146,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                         textDirection: TextDirection.rtl),
                     SizedBox(width: Globals.scaler.getWidth(1.5)),
                     Icon(
-                      FontAwesomeIcons.userEdit,
+                      FontAwesomeIcons.userPen,
                       size: icon_size,
                       color: Colors.brown[400],
                     ),
@@ -156,22 +158,23 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           ),
           GestureDetector(
             onTap: () async {
-                var currentUser;
-                if (await (GoogleSignInApi.isSignedIn() as FutureOr<bool>)) {
-                  currentUser = GoogleSignInApi.currentUser();
-                  await GoogleSignInApi.logout();
-                }
-                // if (currentUser != null) {
-                //   // Disconnect from gmail
-                //   // await FirebaseAuth.instance.signOut();
-                //   await GoogleSignInApi.logout();
-                // }
-                // Remove mail from local phone and go to Login page
-                final SharedPreferences prefs = await _prefs;
-                await prefs.setString('id', "");
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => Login()));
-              },
+              // ignore: unused_local_variable
+              var currentUser;
+              if (await (GoogleSignInApi.isSignedIn())) {
+                currentUser = GoogleSignInApi.currentUser();
+                await GoogleSignInApi.logout();
+              }
+              // if (currentUser != null) {
+              //   // Disconnect from gmail
+              //   // await FirebaseAuth.instance.signOut();
+              //   await GoogleSignInApi.logout();
+              // }
+              // Remove mail from local phone and go to Login page
+              final SharedPreferences prefs = await _prefs;
+              await prefs.setString('id', "");
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => Login()));
+            },
             child: Container(
               height: Globals.scaler.getHeight(3),
               width: Globals.scaler.getWidth(26),
@@ -193,7 +196,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                         textDirection: TextDirection.rtl),
                     SizedBox(width: Globals.scaler.getWidth(5)),
                     Icon(
-                      FontAwesomeIcons.signOutAlt,
+                      FontAwesomeIcons.rightFromBracket,
                       size: icon_size,
                       color: Colors.brown[400],
                     ),

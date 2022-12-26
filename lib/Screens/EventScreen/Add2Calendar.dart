@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,6 +29,7 @@ class _Add2CalendarState extends State<Add2Calendar> {
 }
 
 add2calendar(Event event) {
+  // ignore: non_constant_identifier_names
   final ADD2CALENDAR.Event add2cal_event = ADD2CALENDAR.Event(
     title: event.topic!,
     description: "${event.description} \n${event.link}",

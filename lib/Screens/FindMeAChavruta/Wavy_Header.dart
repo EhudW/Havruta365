@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class WavyHeader extends StatelessWidget {
   List<Color> colorGradients = [Colors.tealAccent, Colors.teal];
   @override

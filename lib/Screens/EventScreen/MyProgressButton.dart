@@ -1,5 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
@@ -47,11 +47,11 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   // Check if there is a event that happen right now
   bool isNow(dynamic date) {
     DateTime now = DateTime.now();
-      if ((now.isAfter(date) && now.isBefore(date) ||
-          now.isAtSameMomentAs(date) ||
-          now.isAtSameMomentAs(date))) {
-        return true;
-      }
+    if ((now.isAfter(date) && now.isBefore(date) ||
+        now.isAtSameMomentAs(date) ||
+        now.isAtSameMomentAs(date))) {
+      return true;
+    }
     return false;
   }
 
@@ -98,18 +98,18 @@ class _MyProgressButtonState extends State<MyProgressButton> {
       ),
       widget.event!.participants!.contains(Globals.currentUser!.email)
           ? Column(
-            children: [
-              SizedBox(height: Globals.scaler.getHeight(0.5)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  DeleteFromEventButton(widget.event),
-                  SizedBox(width: Globals.scaler.getWidth(1)),
-                  Add2Calendar(widget.event)
-                ],
-              ),
-            ],
-          )
+              children: [
+                SizedBox(height: Globals.scaler.getHeight(0.5)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DeleteFromEventButton(widget.event),
+                    SizedBox(width: Globals.scaler.getWidth(1)),
+                    Add2Calendar(widget.event)
+                  ],
+                ),
+              ],
+            )
           : SizedBox(),
     ]);
     return progressTextButton;
@@ -124,6 +124,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     setState(() {
       switch (stateOnlyText) {
         case ButtonState.idle:
+          // ignore: non_constant_identifier_names
           var add_future = Globals.db!
               .addParticipant(Globals.currentUser!.email, widget.event!.id);
           String message;
@@ -182,17 +183,18 @@ class _MyProgressButtonState extends State<MyProgressButton> {
             duration: Duration(seconds: 3),
           )..show(context);
           return;
-          break;
+        //break;
       }
     });
   }
 
   _launchURL() async {
-    var url = widget.event!.link!;
-    if (await canLaunch(url)) {
-      await launch(url);
+    var urlStr = widget.event!.link!;
+    var uri = Uri.parse(urlStr); // throw on format error
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $urlStr';
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:havruta_project/DataBase_auth/Event.dart';
+//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -9,12 +9,14 @@ import 'User_details_page.dart';
 
 Future<User> getUser(String? userMail) async {
   var coll = Globals.db!.db.collection('Users');
+  // ignore: non_constant_identifier_names
   var user_json = await coll.findOne(where.eq('email', '$userMail'));
   User user = User.fromJson(user_json);
   return user;
 }
 
 class UserScreen extends StatelessWidget {
+  // ignore: non_constant_identifier_names
   final String? user_mail;
   UserScreen(this.user_mail);
   @override
@@ -37,7 +39,7 @@ class UserScreen extends StatelessWidget {
               );
             case ConnectionState.done:
               return Scaffold(
-                body: UserDetailsPage(snapshot.data),
+                body: UserDetailsPage(snapshot.data as User),
               );
             default:
               return Text('default');
