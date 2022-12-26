@@ -135,7 +135,7 @@ class BasicTimeField extends StatelessWidget {
       DateTimeField(
         format: format,
         onShowPicker: (context, currentValue) async {
-          final TimeOfDay time = await showTimePicker(
+          final TimeOfDay? time = await showTimePicker(
             context: context,
             initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
           );
@@ -183,7 +183,7 @@ class IosStylePickers extends StatefulWidget {
 
 class _IosStylePickersState extends State<IosStylePickers> {
   final format = DateFormat("yyyy-MM-dd HH:mm");
-  DateTime value;
+  DateTime? value;
 
   @override
   Widget build(BuildContext context) {
@@ -234,9 +234,9 @@ class _ComplexDateTimeFieldState extends State<ComplexDateTimeField> {
   final initialValue = DateTime.now();
 
   AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
-  bool readOnly = true;
-  bool showResetIcon = true;
-  DateTime value = DateTime.now();
+  bool? readOnly = true;
+  bool? showResetIcon = true;
+  DateTime? value = DateTime.now();
   int changedCount = 0;
   int savedCount = 0;
 
@@ -274,8 +274,8 @@ class _ComplexDateTimeFieldState extends State<ComplexDateTimeField> {
           value = date;
           savedCount++;
         }),
-        resetIcon: showResetIcon ? Icon(Icons.delete) : null,
-        readOnly: readOnly,
+        resetIcon: showResetIcon! ? Icon(Icons.delete) : null,
+        readOnly: readOnly!,
         decoration: InputDecoration(
             helperText: 'Changed: $changedCount, Saved: $savedCount, $value'),
       ),
@@ -314,7 +314,7 @@ class Clock24Example extends StatelessWidget {
             builder: (context, child) => MediaQuery(
                 data: MediaQuery.of(context)
                     .copyWith(alwaysUse24HourFormat: true),
-                child: child),
+                child: child!),
           );
           return DateTimeField.convert(time);
         },

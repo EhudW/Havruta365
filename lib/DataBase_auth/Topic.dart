@@ -7,9 +7,9 @@ class Topic {
   });
 
   // type = new_event, join_event
-  String title;
-  List<dynamic> tags;
-  ObjectId id;
+  String? title;
+  List<dynamic>? tags;
+  ObjectId? id;
 
   factory Topic.fromServerMap(Map data) {
     return Topic(title: data['Title'], tags: data['tags']);

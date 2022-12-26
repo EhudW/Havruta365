@@ -25,7 +25,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future getGoogleCurrentUser() async {
-    var user = auth.currentUser;
+    var user = auth.currentUser!;
     if (!user.emailVerified) {
       return null;
     }
@@ -102,7 +102,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                       ],
                     );
                   },
-                  body: EventsScroller(Globals.currentUser.email),
+                  body: EventsScroller(Globals.currentUser!.email),
                   isExpanded: _lesson_expanded,
                   canTapOnHeader: true,
                 ),
@@ -126,7 +126,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(
                       width: Globals.scaler.getWidth(0.1),
-                      color: Colors.grey[350]),
+                      color: Colors.grey[350]!),
                   color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -157,7 +157,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           GestureDetector(
             onTap: () async {
                 var currentUser;
-                if (await GoogleSignInApi.isSignedIn()) {
+                if (await (GoogleSignInApi.isSignedIn() as FutureOr<bool>)) {
                   currentUser = GoogleSignInApi.currentUser();
                   await GoogleSignInApi.logout();
                 }
@@ -179,7 +179,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(
                       width: Globals.scaler.getWidth(0.1),
-                      color: Colors.grey[350]),
+                      color: Colors.grey[350]!),
                   color: Colors.white),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

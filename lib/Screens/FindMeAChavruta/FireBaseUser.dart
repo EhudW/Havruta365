@@ -1,5 +1,5 @@
 class FireBaseUser {
-  final String uid;
+  final String? uid;
 
   FireBaseUser({this.uid});
 }

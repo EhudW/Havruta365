@@ -106,7 +106,7 @@ class _HomePageState extends State<Login> {
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
-                                            color: Colors.grey[200]))),
+                                            color: Colors.grey[200]!))),
                                 child: TextField(
                                     controller: mail,
                                     textAlign: TextAlign.center,
@@ -167,7 +167,7 @@ class _HomePageState extends State<Login> {
                             ),
                             onPressed: () async {
                               FocusScope.of(context).requestFocus(FocusNode());
-                              var coll = Globals.db.db.collection('Users');
+                              var coll = Globals.db!.db.collection('Users');
                               var bytes = utf8.encode(password_str);
                               password_str = sha1.convert(bytes).toString();
                               var user_json = await coll.findOne({
@@ -313,12 +313,12 @@ class _HomePageState extends State<Login> {
           .showSnackBar(SnackBar(content: Text('התחברות נכשלה')));
     } else {
       // if user exist --> HomePage
-      bool userExist = await Globals.db.isUserExist(google_user.email);
+      bool userExist = await Globals.db!.isUserExist(google_user.email);
       if (userExist) {
         // Update current user
-        Globals.currentUser = await Globals.db.getUser(google_user.email);
+        Globals.currentUser = await Globals.db!.getUser(google_user.email);
         // Save a token in user device
-        Globals.db.saveIdLocally();
+        Globals.db!.saveIdLocally();
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => HomePage()));
         // New user --> LoginDetailsGmail

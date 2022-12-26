@@ -7,7 +7,7 @@ import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 class NotificationView extends StatelessWidget {
   final NotificationUser notification;
 
-  const NotificationView({Key key, @required this.notification})
+  const NotificationView({Key? key, required this.notification})
       : assert(notification != null),
         super(key: key);
 
@@ -46,13 +46,13 @@ class NotificationView extends StatelessWidget {
                           Center(
                               child: Row(children: <Widget>[
                             Text(
-                              notification.message,
+                              notification.message!,
                               textDirection: TextDirection.rtl,
                               textAlign: TextAlign.start,
                               style: TextStyle(fontSize: Globals.scaler.getTextSize(7)),
                             ),
                             Text(
-                              notification.name + " ",
+                              notification.name! + " ",
                               textDirection: TextDirection.rtl,
                               textAlign: TextAlign.start,
                               style: TextStyle(

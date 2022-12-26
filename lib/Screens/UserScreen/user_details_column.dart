@@ -7,10 +7,10 @@ import 'package:havruta_project/Globals.dart';
 class UserDetailsColumn extends StatelessWidget {
   UserDetailsColumn(this.user);
 
-  final User user;
+  final User? user;
 
   gender (){
-    if (user.gender == 'M'){
+    if (user!.gender == 'M'){
       return "גבר";
     }
     return "אשה";
@@ -27,7 +27,7 @@ class UserDetailsColumn extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user.yeshiva,
+            Text(user!.yeshiva!,
                 style: GoogleFonts.alef(
                     fontSize: size_field, fontWeight: FontWeight.bold),
                 textDirection: TextDirection.rtl),
@@ -44,7 +44,7 @@ class UserDetailsColumn extends StatelessWidget {
           ]),
           SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user.address,
+            Text(user!.address!,
                 style: GoogleFonts.alef(
                     fontSize: size_field, fontWeight: FontWeight.bold),
                 textDirection: TextDirection.rtl),
@@ -74,7 +74,7 @@ class UserDetailsColumn extends StatelessWidget {
           ]),
           SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user.status,
+            Text(user!.status!,
                 style: GoogleFonts.alef(
                     fontSize: size_field, fontWeight: FontWeight.bold),
                 textDirection: TextDirection.rtl),
@@ -87,7 +87,7 @@ class UserDetailsColumn extends StatelessWidget {
           ]),
           SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user.description,
+            Text(user!.description!,
                 style: GoogleFonts.alef(
                     fontSize: size_field, fontWeight: FontWeight.bold),
                 textDirection: TextDirection.rtl),

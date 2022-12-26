@@ -13,9 +13,9 @@ class NotificationUser {
       });
 
   // type = new_event, join_event
-  String creatorUser, destinationUser, name, type, message;
-  ObjectId id, idEvent;
-  DateTime creationDate;
+  String? creatorUser, destinationUser, name, type, message;
+  ObjectId? id, idEvent;
+  DateTime? creationDate;
 
   factory NotificationUser.fromServerMap(Map data) {
     return NotificationUser(

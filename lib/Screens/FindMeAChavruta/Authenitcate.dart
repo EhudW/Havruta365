@@ -8,14 +8,14 @@ class AuthService {
 
   //create fire based user obj based on firebase user
 
-  FireBaseUser _userFromFireBaseUser(User user) {
+  FireBaseUser? _userFromFireBaseUser(User? user) {
     return user != null ? FireBaseUser(uid: user.uid) : null;
   }
 
   Future signInAnon() async {
     try {
       UserCredential result = await _auth.signInAnonymously();
-      User user = result.user;
+      User? user = result.user;
       return _userFromFireBaseUser(user);
     } catch (e) {
       return null;

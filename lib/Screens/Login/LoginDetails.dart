@@ -168,7 +168,7 @@ class _HomePageState extends State<LoginDetails> {
                   )..show(context);
                   return;
                 }
-                bool userExist = await Globals.db.isUserExist(mail_str);
+                bool userExist = await Globals.db!.isUserExist(mail_str);
                 if (userExist) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
@@ -194,7 +194,7 @@ class _HomePageState extends State<LoginDetails> {
                 user.password = digest.toString();
                 //user.password = password_str;
                 Globals.currentUser = user;
-                var res = Globals.db.insertNewUser(user);
+                var res = Globals.db!.insertNewUser(user);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginMoreDetails()),
@@ -272,7 +272,7 @@ Widget genderField(gender_str) {
             color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
         unSelectedGenderTextStyle:
             TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
-        onChanged: (Gender gender) {
+        onChanged: (Gender? gender) {
           gender_str.text = gender.toString();
         },
 

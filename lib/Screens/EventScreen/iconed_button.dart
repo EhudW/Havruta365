@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class IconedButton {
-  final String text;
-  final Icon icon;
-  final Color color;
+  final String? text;
+  final Icon? icon;
+  final Color? color;
 
   const IconedButton({
     this.text,
@@ -19,7 +19,7 @@ Widget buildChildWithIcon(
 }
 
 Widget buildChildWithIC(
-    String text, Icon icon, double gap, TextStyle textStyle) {
+    String? text, Icon? icon, double gap, TextStyle textStyle) {
   var children = <Widget>[];
   children.add(icon ?? Container());
   if (text != null) {

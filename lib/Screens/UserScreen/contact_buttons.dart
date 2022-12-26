@@ -8,21 +8,21 @@ import 'package:url_launcher/url_launcher.dart';
 class ContactButtons extends StatelessWidget {
   ContactButtons(this.user);
 
-  final User user;
+  final User? user;
   ButtonStyle buttonStyleMessage = ButtonStyle(
     padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(80.0, 5.0, 80.0, 5.0)),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
       )),
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[300]));
+      backgroundColor: MaterialStateProperty.all<Color?>(Colors.grey[300]));
   ButtonStyle buttonStyleIcon = ButtonStyle(
       padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 5.0)),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           )),
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[300]));
+      backgroundColor: MaterialStateProperty.all<Color?>(Colors.grey[300]));
 
 
   @override
@@ -34,7 +34,7 @@ class ContactButtons extends StatelessWidget {
         ElevatedButton(
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SendScreen(user.email, user.name)));
+                MaterialPageRoute(builder: (context) => SendScreen(user!.email, user!.name)));
           },
           style: buttonStyleMessage,
           child: Row(

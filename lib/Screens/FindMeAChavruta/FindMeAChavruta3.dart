@@ -12,12 +12,12 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'Wavy_Header.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-PickedFile image;
+PickedFile? image;
 
 class FindMeAChavruta3 extends StatefulWidget {
-  final Event event;
+  final Event? event;
 
-  FindMeAChavruta3({Key key, @required this.event}) : super(key: key);
+  FindMeAChavruta3({Key? key, required this.event}) : super(key: key);
 
   @override
   _FindMeAChavruta3CreateState createState() => _FindMeAChavruta3CreateState();
@@ -26,23 +26,23 @@ class FindMeAChavruta3 extends StatefulWidget {
 class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   final AuthService authenticate = AuthService();
   var mongoDB = Globals.db;
-  File image;
+  File? image;
   final yeshiva = TextEditingController();
   String yeshiva_str = "";
   final details = TextEditingController();
   String details_str = "";
-  String link;
-  double spaceBetween;
+  String? link;
+  double? spaceBetween;
 
   Widget checkIfShiur() {
-    if (widget.event.type == 'L') {
+    if (widget.event!.type == 'L') {
       return Container(
         height: Globals.scaler.getHeight(2.5),
         width: Globals.scaler.getWidth(35),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
-              color: Colors.teal[400], width: Globals.scaler.getWidth(.1)),
+              color: Colors.teal[400]!, width: Globals.scaler.getWidth(.1)),
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: new TextField(
@@ -58,9 +58,9 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                 Globals.scaler.getHeight(0)),
           ),
           onChanged: (lecturer) {
-            widget.event.lecturer = lecturer;
-            if (widget.event.lecturer == null) {
-              widget.event.lecturer = "";
+            widget.event!.lecturer = lecturer;
+            if (widget.event!.lecturer == null) {
+              widget.event!.lecturer = "";
             }
           },
         ),
@@ -107,7 +107,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                                color: Colors.teal[400],
+                                color: Colors.teal[400]!,
                                 width: Globals.scaler.getWidth(0.1)),
                             borderRadius: BorderRadius.circular(20.0),
                           ),
@@ -125,7 +125,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             ),
                             maxLines: 1,
                             onChanged: (link) {
-                              widget.event.link = link;
+                              widget.event!.link = link;
                             },
                           )),
                     ],
@@ -139,7 +139,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                                color: Colors.teal[400],
+                                color: Colors.teal[400]!,
                                 width: Globals.scaler.getWidth(0.1)),
                             borderRadius: BorderRadius.circular(20.0),
                           ),
@@ -157,14 +157,14 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   Globals.scaler.getHeight(0.5)),
                             ),
                             onChanged: (description) {
-                              widget.event.description = description;
+                              widget.event!.description = description;
                             },
                           )),
                     ],
                   ),
                   SizedBox(height: spaceBetween),
                   ThirdDotRow(),
-                  SizedBox(height: spaceBetween - 20),
+                  SizedBox(height: spaceBetween! - 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -180,15 +180,15 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.teal),
                                 onPressed: () {
-                                  widget.event.creationDate = DateTime.now();
-                                  widget.event.participants = [];
-                                  widget.event.creatorUser =
-                                      Globals.currentUser.email;
-                                  if (widget.event.eventImage == "") {
-                                    widget.event.eventImage =
+                                  widget.event!.creationDate = DateTime.now();
+                                  widget.event!.participants = [];
+                                  widget.event!.creatorUser =
+                                      Globals.currentUser!.email;
+                                  if (widget.event!.eventImage == "") {
+                                    widget.event!.eventImage =
                                         'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
                                   }
-                                  mongoDB.insertEvent(widget.event).then(
+                                  mongoDB!.insertEvent(widget.event!).then(
                                       (value) => Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -227,8 +227,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
           child: CircleAvatar(
             radius: 60.0,
             backgroundColor: Colors.teal,
-            backgroundImage: (widget.event.eventImage.isNotEmpty)
-                ? NetworkImage(widget.event.eventImage)
+            backgroundImage: (widget.event!.eventImage!.isNotEmpty)
+                ? NetworkImage(widget.event!.eventImage!)
                 : null,
           ),
         ),
@@ -297,7 +297,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
 
   Future<File> uploadImage(source) async {
     final _storage = FirebaseStorage.instance;
-    PickedFile image;
+    PickedFile? image;
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
@@ -306,18 +306,18 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
       print('signed in');
     }
     image = await picker.getImage(source: source);
-    var file = File(image.path);
+    var file = File(image!.path);
     //check if an image was picked
     if (image != null) {
       var snapshot =
           await _storage.ref().child('folderName/imageName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
-        widget.event.eventImage = downloadUrl;
+        widget.event!.eventImage = downloadUrl;
       });
     } else {
       setState(() {
-        widget.event.eventImage =
+        widget.event!.eventImage =
             'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
       });
     }

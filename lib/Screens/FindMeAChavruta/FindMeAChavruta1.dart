@@ -36,8 +36,8 @@ List<String> booksDrop = [];
 class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   var db = Globals.db;
   final format = DateFormat("yyyy-MM-dd");
-  DateTime val;
-  String value,
+  DateTime? val;
+  String? value,
       selectedTopic,
       gender,
       selectedBook,
@@ -48,7 +48,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
       topicsDrop = [],
       booksDrop = [],
       genderDrop = [];
-  double spaceBetween, height, width, iconSize;
+  double? spaceBetween, height, width, iconSize;
   int counter = 0;
   List<String> choice = MyData().choice;
   List<String> genderList = MyData().gender;
@@ -56,7 +56,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   Event event = Event();
 
   Future<List<Topic>> getTopics() async {
-    final topicsList = await Globals.db.getTopics();
+    final topicsList = await Globals.db!.getTopics();
     topics = [];
     humashBooks = [];
     neviimBooks = [];
@@ -69,39 +69,39 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     for (var i in topicsList) {
       final title = i.title;
       if (title == "תחומים") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           topics.add(j);
         }
       } else if (title == "תורה") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           humashBooks.add(j);
         }
       } else if (title == "נביאים") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           neviimBooks.add(j);
         }
       } else if (title == "כתובים") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           ketuvimBooks.add(j);
         }
       } else if (title == "תלמוד בבלי") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           talmudBavliBooks.add(j);
         }
       } else if (title == "תלמוד ירושלמי") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           talmudYerushalmiBooks.add(j);
         }
       } else if (title == "הלכה") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           halachaBooks.add(j);
         }
       } else if (title == "חסידות") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           chasidutBooks.add(j);
         }
       } else if (title == "מחשבת ישראל") {
-        for (var j in i.tags) {
+        for (var j in i.tags!) {
           machsehvetBooks.add(j);
         }
       }
@@ -219,8 +219,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     event.description = '';
     event.lecturer = '';
     event.dates = [];
-    event.creatorName = Globals.currentUser.name;
-    event.creatorUser = Globals.currentUser.email;
+    event.creatorName = Globals.currentUser!.name;
+    event.creatorUser = Globals.currentUser!.email;
     event.eventImage = '';
     event.participants = [];
     event.link = '';
@@ -541,7 +541,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             disabledBorder: InputBorder.none,
                             hintText: text))),
                 items: listDrop,
-                onChanged: (value) {
+                onChanged: (dynamic value) {
                   if (text == "בחרו מין יעד") {
                     gender = value;
                     event.targetGender = gender;

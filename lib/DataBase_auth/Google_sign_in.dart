@@ -5,7 +5,7 @@ class GoogleSignInApi {
 
   static final _googleSignIn = GoogleSignIn();
 
-  static Future<GoogleSignInAccount> login() async => await _googleSignIn.signIn();
+  static Future<GoogleSignInAccount?> login() async => await _googleSignIn.signIn();
 
   // static Future<GoogleSignInAccount> login() async{
   //   if (await _googleSignIn.isSignedIn()) {

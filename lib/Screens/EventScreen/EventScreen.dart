@@ -14,11 +14,11 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  Future<Event> eventUpdate;
+  Future<Event>? eventUpdate;
 
   @override
   Widget build(BuildContext context) {
-    eventUpdate = Globals.db.getEventById(this.widget.event.id);
+    eventUpdate = Globals.db!.getEventById(this.widget.event.id);
     return Scaffold(
         body: FutureBuilder(
             future: eventUpdate,
@@ -30,8 +30,8 @@ class _EventScreenState extends State<EventScreen> {
                 case ConnectionState.waiting:
                   return Center(
                     child: LoadingBouncingGrid.square(
-                      borderColor: Colors.teal[400],
-                      backgroundColor: Colors.teal[400],
+                      borderColor: Colors.teal[400]!,
+                      backgroundColor: Colors.teal[400]!,
                       size: 80.0,
                     ),
                   );

@@ -13,8 +13,8 @@ class EventViewFeed extends StatelessWidget {
   final Event event;
 
   const EventViewFeed({
-    Key key,
-    @required this.event,
+    Key? key,
+    required this.event,
   })  : assert(event != null),
         super(key: key);
 
@@ -44,7 +44,7 @@ class EventViewFeed extends StatelessWidget {
                       children: <Widget>[
                         SizedBox(height: scaler.getHeight(0.5)),
                         Text(
-                          event.topic,
+                          event.topic!,
                           // textDirection: TextDirection.RTL,
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -52,7 +52,7 @@ class EventViewFeed extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          event.book,
+                          event.book!,
                           style: TextStyle(
                               color: Colors.grey.shade600,
                               fontSize: scaler.getTextSize(6.5)),
@@ -67,7 +67,7 @@ class EventViewFeed extends StatelessWidget {
                                     children: <Widget>[
                                       Expanded(
                                           child: Text(
-                                        event.participants.length.toString() +
+                                        event.participants!.length.toString() +
                                             "/" +
                                             event.maxParticipants.toString(),
                                         // textDirection: TextDirection.rtl,
@@ -86,7 +86,7 @@ class EventViewFeed extends StatelessWidget {
                                           children: <Widget>[
                                             Text(
                                               DateFormat('d-M-yyyy')
-                                                  .format(event.dates[0]),
+                                                  .format(event.dates![0]),
                                               //textDirection: TextDirection.rtl,
                                               textAlign: TextAlign.right,
                                               style: TextStyle(
@@ -115,7 +115,7 @@ class EventViewFeed extends StatelessWidget {
                         ),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                              color: Colors.teal[400],
+                              color: Colors.teal[400]!,
                               offset: const Offset(2, 0),
                               blurRadius: 10.0),
                         ],
@@ -123,7 +123,7 @@ class EventViewFeed extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(60),
                         child: Image.network(
-                          event.eventImage,
+                          event.eventImage!,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -135,8 +135,8 @@ class EventViewFeed extends StatelessWidget {
                         children: <Widget>[
                           Text(
                               this.event.type == "L"
-                                  ? event.lecturer
-                                  : event.creatorName,
+                                  ? event.lecturer!
+                                  : event.creatorName!,
                               style: TextStyle(
                                   color: Colors.grey.shade600,
                                   fontSize: scaler.getTextSize(6)),

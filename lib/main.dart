@@ -27,8 +27,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<String> _id;
-  Future mongoConnectFuture;
+  Future<String>? _id;
+  Future? mongoConnectFuture;
 
   void initFirebase() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -41,14 +41,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     Globals.db = new Mongo();
-    mongoConnectFuture = Globals.db.connect();
+    mongoConnectFuture = Globals.db!.connect();
     initFirebase();
   }
 
   @override
   void dispose() {
     super.dispose();
-    Globals.db.db.close();
+    Globals.db!.db.close();
   }
 
   @override
@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> {
                             // Connected - update current_user and go to home page
                             else {
                               var current_user =
-                                  Globals.db.getUserByID(snapshot.data);
+                                  Globals.db!.getUserByID(snapshot.data!);
                               return FutureBuilder(
                                   future: current_user,
                                   builder: (BuildContext context,

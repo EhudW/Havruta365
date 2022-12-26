@@ -12,7 +12,7 @@ import 'arc_banner_image.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
 class FindMeAChavruta2 extends StatefulWidget {
-  Event event;
+  Event? event;
 
   FindMeAChavruta2({this.event});
 
@@ -22,10 +22,10 @@ class FindMeAChavruta2 extends StatefulWidget {
 
 class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
   var db = Globals.db;
-  double spaceBetween;
-  List<String> dateTimes = [];
+  double? spaceBetween;
+  List<String?> dateTimes = [];
   List<DateTime> dateTimeListForMongo = [];
-  String text = "בחרו זמנים ללמוד", dayStr, startDate, endDate, fullDate;
+  String? text = "בחרו זמנים ללמוד", dayStr, startDate, endDate, fullDate;
   int indexForDbList = 0;
 
   @override
@@ -66,7 +66,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                       physics: AlwaysScrollableScrollPhysics(),
                                       padding: const EdgeInsets.all(15.0),
                                       itemBuilder: (context, index) {
-                                        final item = this.dateTimes[index];
+                                        final item = this.dateTimes[index]!;
                                         var chavrutaInfoMessage =
                                             ('${this.dateTimes[index]}');
                                         return Dismissible(
@@ -76,12 +76,12 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                           onDismissed: (direction) {
                                             setState(() {
                                               this.dateTimes.removeAt(index);
-                                              widget.event.dates
+                                              widget.event!.dates!
                                                   .removeAt(indexForDbList - 1);
-                                              widget.event.dates
+                                              widget.event!.dates!
                                                   .removeAt(indexForDbList - 2);
                                               indexForDbList -= 2;
-                                              return widget.event.dates;
+                                              return widget.event!.dates;
                                             });
                                           },
                                           background: buildSwipeActionRight(),
@@ -115,17 +115,17 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                         this
                                                             .dateTimes
                                                             .removeAt(index);
-                                                        widget.event.dates
+                                                        widget.event!.dates!
                                                             .removeAt(
                                                                 indexForDbList -
                                                                     1);
-                                                        widget.event.dates
+                                                        widget.event!.dates!
                                                             .removeAt(
                                                                 indexForDbList -
                                                                     2);
                                                         indexForDbList -= 2;
                                                         return widget
-                                                            .event.dates;
+                                                            .event!.dates;
                                                       });
                                                     }),
                                               ),
@@ -145,7 +145,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                             FloatingActionButton(
                               backgroundColor: Colors.green,
                               onPressed: () async {
-                                final List<DateTime> dTList =
+                                final List<DateTime>? dTList =
                                     await Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -153,15 +153,15 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                 SetDate(event: widget.event)));
                                 this.indexForDbList += 2;
                                 setState(() {
-                                  widget.event.dates.add(dTList[0]);
-                                  widget.event.dates.add(dTList[1]);
+                                  widget.event!.dates!.add(dTList![0]);
+                                  widget.event!.dates!.add(dTList[1]);
                                   this.startDate =
                                       DateFormat('MM-dd-yyyy: kk:mm')
                                           .format(dTList[0]);
                                   this.endDate =
                                       DateFormat('kk:mm').format(dTList[1]);
                                   this.fullDate =
-                                      startDate + " - " + this.endDate;
+                                      startDate! + " - " + this.endDate!;
                                   this.dateTimes.add(fullDate);
                                 });
                               },
@@ -187,7 +187,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            widget.event.dates.isEmpty
+                            widget.event!.dates!.isEmpty
                                 ? NextButton(
                                     context: context,
                                     event: widget.event,

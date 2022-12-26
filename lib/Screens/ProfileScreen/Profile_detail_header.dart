@@ -6,11 +6,11 @@ import 'arc_banner_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProfileDetailHeader extends StatelessWidget {
-  ProfileDetailHeader(User user) {
+  ProfileDetailHeader(User? user) {
     this.user = user;
   }
 
-  User user;
+  User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class ProfileDetailHeader extends StatelessWidget {
 
     var userInformation = Align(
       alignment: AlignmentDirectional.center,
-      child: Text(user.name,
+      child: Text(user!.name!,
           style: GoogleFonts.alef(
               fontSize: Globals.scaler.getTextSize(10),
               textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
@@ -45,7 +45,7 @@ class ProfileDetailHeader extends StatelessWidget {
               Center(
                 child: CircleAvatar(
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(user.avatar),
+                    backgroundImage: NetworkImage(user!.avatar!),
                     radius: 80.0,
                   ),
                   backgroundColor: Colors.white,

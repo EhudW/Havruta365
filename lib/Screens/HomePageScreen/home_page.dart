@@ -18,7 +18,7 @@ import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
 import 'Events/modelsHomePages.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -113,10 +113,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
                 onPressed: () {
-                  if (_scaffoldKey.currentState.isDrawerOpen == false) {
-                    _scaffoldKey.currentState.openDrawer();
+                  if (_scaffoldKey.currentState!.isDrawerOpen == false) {
+                    _scaffoldKey.currentState!.openDrawer();
                   } else {
-                    _scaffoldKey.currentState.openEndDrawer();
+                    _scaffoldKey.currentState!.openEndDrawer();
                   }
                   setState(() {
                     currentStateAppBar = 1;

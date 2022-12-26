@@ -12,30 +12,30 @@ import 'package:loading_animations/loading_animations.dart';
 class EventsScroller extends StatefulWidget {
   EventsScroller(this.userMail);
 
-  String userMail;
+  String? userMail;
 
   @override
   _EventsScrollerState createState() => _EventsScrollerState();
 }
 
 class _EventsScrollerState extends State<EventsScroller> {
-  Future eventsList;
-  List<Event> events;
+  Future? eventsList;
+  List<Event>? events;
 
   @override
   void initState() {
     super.initState();
-    eventsList = Globals.db.getEvents(widget.userMail);
+    eventsList = Globals.db!.getEvents(widget.userMail);
   }
 
   Widget _buildEvent(BuildContext ctx, int index) {
-    var event = events[index];
+    var event = events![index];
     return Padding(
       padding: EdgeInsets.only(right: Globals.scaler.getWidth(1.5)),
       child: Column(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(event.eventImage),
+            backgroundImage: NetworkImage(event.eventImage!),
             radius: 30.0,
             child: IconButton(
                 icon: Icon(FontAwesomeIcons.houseUser),
@@ -53,11 +53,11 @@ class _EventsScrollerState extends State<EventsScroller> {
             padding: EdgeInsets.only(top: Globals.scaler.getHeight(0)),
             child: Column(
               children: [
-                Text(event.book,
+                Text(event.book!,
                     style: GoogleFonts.secularOne(
                         fontSize: 12, fontWeight: FontWeight.bold),
                     textDirection: TextDirection.rtl),
-                Text(event.lecturer)
+                Text(event.lecturer!)
               ],
             ),
           ),
@@ -79,8 +79,8 @@ class _EventsScrollerState extends State<EventsScroller> {
             case ConnectionState.waiting:
               return Center(
                 child: LoadingBouncingGrid.circle(
-                  borderColor: Colors.teal[400],
-                  backgroundColor: Colors.teal[400],
+                  borderColor: Colors.teal[400]!,
+                  backgroundColor: Colors.teal[400]!,
                   size: 40.0,
                 ),
               );
@@ -92,7 +92,7 @@ class _EventsScrollerState extends State<EventsScroller> {
                   SizedBox.fromSize(
                     size: Size.fromHeight(Globals.scaler.getHeight(5)),
                     child: ListView.builder(
-                      itemCount: events.length,
+                      itemCount: events!.length,
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.only(top: 0, left: 20.0),
                       itemBuilder: _buildEvent,

@@ -108,7 +108,7 @@ class _HomePageState extends State<ForgetPassword1> {
                   )..show(context);
                   return;
                 }
-                Globals.db.changePasswordUser(this.widget.mail, password_str);
+                Globals.db!.changePasswordUser(this.widget.mail, password_str);
                 Flushbar(
                   title: 'בוצע החלפת סיסמא',
                   messageText: Text('הסיסמא שונתה בהצלחה !',

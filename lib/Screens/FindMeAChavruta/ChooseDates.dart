@@ -14,7 +14,7 @@ import 'ChooseDatesAlgo.dart';
 import 'FindMeAChavruta3.dart';
 
 class ChooseDates extends StatefulWidget {
-  final Event event;
+  final Event? event;
 
   ChooseDates({this.event});
 
@@ -27,16 +27,16 @@ class _ChooseDates extends State<ChooseDates> {
 
   DateTime firstDate = DateTime.now();
   TimeOfDay time = TimeOfDay.now();
-  DateTime lastDate = DateTime.now();
-  String frequency = "יומי";
-  double eventDuration = 30;
+  DateTime? lastDate = DateTime.now();
+  String? frequency = "יומי";
+  double? eventDuration = 30;
 
   Future<void> _selectFirstDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+    final DateTime picked = await (showDatePicker(
         context: context,
         initialDate: firstDate,
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        lastDate: DateTime(2101)) as FutureOr<DateTime>);
     DateTime now = DateTime.now();
     if (now.isAfter(picked)) {
       Flushbar(
@@ -54,7 +54,7 @@ class _ChooseDates extends State<ChooseDates> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay picked =
+    final TimeOfDay? picked =
     await showTimePicker(context: context, initialTime: time);
     if (picked != null && picked != time)
       setState(() {
@@ -63,12 +63,12 @@ class _ChooseDates extends State<ChooseDates> {
   }
 
   Future<void> _selectLastDate(BuildContext context) async {
-    DateTime picked = firstDate;
-    picked = await showDatePicker(
+    DateTime? picked = firstDate;
+    picked = await (showDatePicker(
         context: context,
-        initialDate: lastDate,
+        initialDate: lastDate!,
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        lastDate: DateTime(2101)) as FutureOr<DateTime>);
     final difference = picked
         .difference(firstDate)
         .inDays;
@@ -235,7 +235,7 @@ class _ChooseDates extends State<ChooseDates> {
                     isExpanded: true,
                     borderRadius: BorderRadius.circular(50),
                     elevation: 100,
-                    onChanged: (String newValue) {
+                    onChanged: (String? newValue) {
                       setState(() {
                         frequency = newValue;
                       });
@@ -284,7 +284,7 @@ class _ChooseDates extends State<ChooseDates> {
                         blurRadius: 8.0),
                   ],
                 ),
-                child: Text(DateFormat('dd - MM - yyyy').format(lastDate),
+                child: Text(DateFormat('dd - MM - yyyy').format(lastDate!),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.varelaRound(
                         fontSize: 21,
@@ -310,12 +310,12 @@ class _ChooseDates extends State<ChooseDates> {
                   // <-- Button color
                   onPrimary: Colors.teal),
               onPressed: () async {
-                if (isDatesValid(firstDate, time, lastDate, context)) {
+                if (isDatesValid(firstDate, time, lastDate!, context)) {
                   // Calculate dates
                   int frequencyInt = convertFrquency2Int(frequency);
-                  List<DateTime> dates = calcDates(firstDate, time, lastDate, frequencyInt);
-                  widget.event.dates = dates;
-                  widget.event.duration = eventDuration.round();
+                  List<DateTime> dates = calcDates(firstDate, time, lastDate!, frequencyInt);
+                  widget.event!.dates = dates;
+                  widget.event!.duration = eventDuration!.round();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -333,7 +333,7 @@ class _ChooseDates extends State<ChooseDates> {
   }
 }
 
-int convertFrquency2Int(String frequency) {
+int convertFrquency2Int(String? frequency) {
   switch (frequency) {
     case 'יומי':
       {

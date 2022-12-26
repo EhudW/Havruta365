@@ -8,11 +8,11 @@ import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
 
 class SendScreen extends StatefulWidget {
-  SendScreen(String dstMail, String dstName){
+  SendScreen(String? dstMail, String? dstName){
     this.dstMail = dstMail;
     this.dstName = dstName;
   }
-  String dstMail,  dstName;
+  String? dstMail,  dstName;
   @override
   _SendScreenState createState() => _SendScreenState();
 }
@@ -25,10 +25,10 @@ class _SendScreenState extends State<SendScreen> {
 
   @override
   Widget build(BuildContext context) {
-    chatMessage.src_mail = Globals.currentUser.email;
+    chatMessage.src_mail = Globals.currentUser!.email;
     chatMessage.dst_mail = widget.dstMail;
-    chatMessage.avatar = Globals.currentUser.avatar;
-    chatMessage.name = Globals.currentUser.name;
+    chatMessage.avatar = Globals.currentUser!.avatar;
+    chatMessage.name = Globals.currentUser!.name;
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: Colors.teal[100],
@@ -117,7 +117,7 @@ class _SendScreenState extends State<SendScreen> {
                 return;
               }
               chatMessage.message = message.text;
-              bool isSend = await Globals.db.sendMessage(chatMessage);
+              bool isSend = await Globals.db!.sendMessage(chatMessage);
               if (!isSend){
                 Flushbar(
                   title: 'שליחת הודעה',

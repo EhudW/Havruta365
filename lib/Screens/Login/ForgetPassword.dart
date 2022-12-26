@@ -64,9 +64,9 @@ class _HomePageState extends State<ForgetPassword> {
                   //duration: Toast.center, gravity: 30);
                   return;
                 }
-                bool check = await Globals.db.isUserExist(address_str);
+                bool check = await Globals.db!.isUserExist(address_str);
                 if (check == true) {
-                  bool checkPass = await Globals.db.isPassNull(address_str);
+                  bool checkPass = await Globals.db!.isPassNull(address_str);
                   if (checkPass == true) {
                     var code = getRandString(6);
                     sendMail(address_str, code);

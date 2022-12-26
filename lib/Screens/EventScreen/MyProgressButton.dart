@@ -10,10 +10,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
 
 class MyProgressButton extends StatefulWidget {
-  MyProgressButton({Key key, this.event, @required this.notifyParent})
+  MyProgressButton({Key? key, this.event, required this.notifyParent})
       : super(key: key);
   final Function() notifyParent;
-  final Event event;
+  final Event? event;
 
   @override
   _MyProgressButtonState createState() => _MyProgressButtonState();
@@ -32,14 +32,14 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     // for (var i = 0; i < datesDB.length; i += 2) {
     //   dates.add([datesDB[i], datesDB[i + 1]]);
     // }
-    if (widget.event.participants.contains(Globals.currentUser.email)) {
+    if (widget.event!.participants!.contains(Globals.currentUser!.email)) {
       // Check if there is event NOW
-      if (isNow(widget.event.dates[0])) {
+      if (isNow(widget.event!.dates![0])) {
         stateOnlyText = ButtonState.success;
       }
       stateOnlyText = ButtonState.fail;
-    } else if (widget.event.participants.length >=
-        widget.event.maxParticipants) {
+    } else if (widget.event!.participants!.length >=
+        widget.event!.maxParticipants!) {
       stateOnlyText = ButtonState.full;
     }
   }
@@ -56,7 +56,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   }
 
   Widget buildCustomButton() {
-    var message = widget.event.type == 'H'
+    var message = widget.event!.type == 'H'
         ? "הנך רשומ/ה לחברותא זו"
         : "הנך רשומ/ה לשיעור זה";
     TextStyle textStyle = TextStyle(
@@ -96,7 +96,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         state: stateOnlyText,
         padding: EdgeInsets.all(8.0),
       ),
-      widget.event.participants.contains(Globals.currentUser.email)
+      widget.event!.participants!.contains(Globals.currentUser!.email)
           ? Column(
             children: [
               SizedBox(height: Globals.scaler.getHeight(0.5)),
@@ -124,22 +124,22 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     setState(() {
       switch (stateOnlyText) {
         case ButtonState.idle:
-          var add_future = Globals.db
-              .addParticipant(Globals.currentUser.email, widget.event.id);
+          var add_future = Globals.db!
+              .addParticipant(Globals.currentUser!.email, widget.event!.id);
           String message;
-          message = widget.event.type == 'H'
+          message = widget.event!.type == 'H'
               ? "הצטרפ/ה לחברותא שלך"
               : "הצטרפ/ה לשיעור שלך";
           NotificationUser notification = NotificationUser.fromJson({
-            'creatorUser': Globals.currentUser.email,
-            'destinationUser': widget.event.creatorUser,
+            'creatorUser': Globals.currentUser!.email,
+            'destinationUser': widget.event!.creatorUser,
             'creationDate': DateTime.now(),
             'message': message,
             'type': 'join',
-            'idEvent': widget.event.id,
-            'name': Globals.currentUser.name,
+            'idEvent': widget.event!.id,
+            'name': Globals.currentUser!.name,
           });
-          Globals.db.insertNotification(notification);
+          Globals.db!.insertNotification(notification);
           add_future.then((value) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
@@ -147,10 +147,10 @@ class _MyProgressButtonState extends State<MyProgressButton> {
               textAlign: TextAlign.center,
             )));
             // ------------------------ Maybe need to DELETE --------------
-            widget.event.participants.add(Globals.currentUser.email);
+            widget.event!.participants!.add(Globals.currentUser!.email);
             widget.notifyParent();
             setState(() {
-              if (isNow(widget.event.dates[0])) {
+              if (isNow(widget.event!.dates![0])) {
                 stateOnlyText = ButtonState.success;
               }
               stateOnlyText = ButtonState.fail;
@@ -188,7 +188,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   }
 
   _launchURL() async {
-    var url = widget.event.link;
+    var url = widget.event!.link!;
     if (await canLaunch(url)) {
       await launch(url);
     } else {

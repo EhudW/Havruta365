@@ -6,7 +6,7 @@ import 'NotificationScroll.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -16,7 +16,7 @@ class Notifications extends StatefulWidget {
 class _NotificationsState extends State<Notifications> {
   final scrollController = ScrollController();
 
-  notificationModel model;
+  notificationModel? model;
 
   @override
   void initState() {
@@ -24,7 +24,7 @@ class _NotificationsState extends State<Notifications> {
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
-        model.loadMore();
+        model!.loadMore();
       }
     });
     super.initState();

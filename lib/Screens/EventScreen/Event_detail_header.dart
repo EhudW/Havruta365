@@ -9,22 +9,22 @@ import 'arc_banner_image.dart';
 import 'poster.dart';
 
 class EventDetailHeader extends StatelessWidget {
-  EventDetailHeader(Event event) {
+  EventDetailHeader(Event? event) {
     this.event = event;
-    this.userColl = Globals.db.db.collection('Users');
+    this.userColl = Globals.db!.db.collection('Users');
   }
 
-  Event event;
+  Event? event;
   var userColl;
 
-  Future getUser(String userMail) async {
+  Future getUser(String? userMail) async {
     var user = await userColl.findOne(where.eq('email', '$userMail'));
     return user;
   }
 
   @override
   Widget build(BuildContext context) {
-    Future creator = getUser(event.creatorUser);
+    Future creator = getUser(event!.creatorUser);
     var movieInformation = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       //crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,17 +33,17 @@ class EventDetailHeader extends StatelessWidget {
           height: 50,
         ),
         Text(
-          event.topic,
+          event!.topic!,
           style: GoogleFonts.secularOne(fontSize: 26.0),
           textAlign: TextAlign.center,
         ),
         Text(
-          event.book,
+          event!.book!,
           style: GoogleFonts.secularOne(fontSize: 22.0),
           textAlign: TextAlign.center,
         ),
         Text(
-          event.lecturer,
+          event!.lecturer!,
           style: GoogleFonts.secularOne(fontSize: 22.0),
           textAlign: TextAlign.center,
         ),
@@ -59,8 +59,8 @@ class EventDetailHeader extends StatelessWidget {
             case ConnectionState.waiting:
               return Center(
                 child: LoadingBouncingGrid.square(
-                  borderColor: Colors.teal[400],
-                  backgroundColor: Colors.teal[400],
+                  borderColor: Colors.teal[400]!,
+                  backgroundColor: Colors.teal[400]!,
                   size: 20.0,
                 ),
               );
@@ -69,7 +69,7 @@ class EventDetailHeader extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 100.0),
-                    child: ArcBannerImage(event.eventImage),
+                    child: ArcBannerImage(event!.eventImage),
                   ),
                   Positioned(
                     bottom: 0.0,

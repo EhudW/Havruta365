@@ -8,8 +8,8 @@ class EventOnlineFeed extends StatelessWidget {
   final Event event;
 
   const EventOnlineFeed({
-    Key key,
-    @required this.event,
+    Key? key,
+    required this.event,
   })  : assert(event != null),
         super(key: key);
 
@@ -23,7 +23,7 @@ class EventOnlineFeed extends StatelessWidget {
             height: Globals.scaler.getHeight(6),
             decoration: BoxDecoration(
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(event.eventImage)),
+                  fit: BoxFit.cover, image: NetworkImage(event.eventImage!)),
               borderRadius: BorderRadius.all(Radius.circular(0.0)),
               color: Colors.redAccent,
             ),
@@ -39,7 +39,7 @@ class EventOnlineFeed extends StatelessWidget {
                         )
                       ]),
                   width: Globals.scaler.getWidth(10),
-                  child: Text(event.book,
+                  child: Text(event.book!,
                       textAlign: TextAlign.center,
 
                       style: TextStyle(

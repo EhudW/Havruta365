@@ -8,9 +8,9 @@ import 'interestsList.dart';
 import 'package:havruta_project/Globals.dart';
 
 class UserDetailsPage extends StatefulWidget {
-  User user;
+  User? user;
 
-  UserDetailsPage(User user) {
+  UserDetailsPage(User? user) {
     this.user = user;
   }
 

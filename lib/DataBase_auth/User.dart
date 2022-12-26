@@ -17,7 +17,7 @@ class User {
       this.gender,
       this.status});
 
-  String name,
+  String? name,
       email,
       password,
       phone,
@@ -27,8 +27,8 @@ class User {
       description,
       gender,
       status;
-  DateTime birthDate;
-  List<dynamic> interestList;
+  DateTime? birthDate;
+  List<dynamic>? interestList;
 
   // Constructor
   User.fromUser(String name, String email, String gender) {
@@ -42,7 +42,7 @@ class User {
 
   // Add interest to the list
   void addInterest(List<String> interest) {
-    interestList.add(interest);
+    interestList!.add(interest);
   }
 
   // Return JSON of the user

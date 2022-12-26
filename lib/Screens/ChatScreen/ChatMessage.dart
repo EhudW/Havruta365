@@ -6,16 +6,16 @@ class ChatMessage {
   ChatMessage({this.name, this.avatar, this.src_mail, this.datetime, this.message, this.dst_mail});
 
   // SrcUser details
-  String name;
-  String avatar;
+  String? name;
+  String? avatar;
   // Src of message - mail of user
-  String src_mail;
+  String? src_mail;
   // Date time of sending
-  DateTime datetime;
+  DateTime? datetime;
   // Body of message
-  String message;
+  String? message;
   // Dst of message - mail of user
-  String dst_mail;
+  String? dst_mail;
 
 
   Map<String, dynamic> toJson() =>

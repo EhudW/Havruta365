@@ -29,7 +29,7 @@ class Event {
     _id = value;
   }
 
-  String creatorUser,
+  String? creatorUser,
       creatorName,
       type,
       topic,
@@ -39,10 +39,10 @@ class Event {
       eventImage,
       targetGender,
       lecturer;
-  int maxParticipants, duration;
-  DateTime creationDate;
-  List<dynamic> participants;
-  List<dynamic> dates;
+  int? maxParticipants, duration;
+  DateTime? creationDate;
+  List<dynamic>? participants;
+  List<dynamic>? dates;
 
   // Return JSON of the event
   Map<String, dynamic> toJson() => {

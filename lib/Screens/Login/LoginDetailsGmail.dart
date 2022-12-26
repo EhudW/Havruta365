@@ -23,7 +23,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
   final gender = TextEditingController();
   String gender_str = "";
 
-  DateTime _dateTime;
+  DateTime? _dateTime;
 
   @override
   Widget build(BuildContext context) {
@@ -94,11 +94,11 @@ class _HomePageState extends State<LoginDetailsGmail> {
                   )..show(context);
                   return;
                 }
-                User user = Globals.currentUser;
+                User user = Globals.currentUser!;
                 user.address = address_str;
                 user.gender = gender_str;
                 user.birthDate = _dateTime;
-                var res = Globals.db.insertNewUser(user);
+                var res = Globals.db!.insertNewUser(user);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginMoreDetails()),
@@ -176,7 +176,7 @@ Widget genderField(gender_str) {
             color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
         unSelectedGenderTextStyle:
             TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
-        onChanged: (Gender gender) {
+        onChanged: (Gender? gender) {
           gender_str.text = gender.toString();
         },
 

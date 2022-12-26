@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
 
-  Future<List<ChatMessage>> chatMessagesList;
+  Future<List<ChatMessage>>? chatMessagesList;
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -21,8 +21,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    widget.chatMessagesList = Globals.db
-        .getAllMyMessages(Globals.currentUser.email);
+    widget.chatMessagesList = Globals.db!
+        .getAllMyMessages(Globals.currentUser!.email);
   }
 
   @override
@@ -34,7 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
             case ConnectionState.waiting:
               return SplashScreen();
             case ConnectionState.done:
-              var list = snapshot.data;
+              var list = snapshot.data!;
               return Scaffold(
                 appBar: appBar(context),
                 body: Container(
@@ -50,22 +50,22 @@ class _ChatScreenState extends State<ChatScreen> {
                           ListTile(
                             leading: CircleAvatar(
                               radius: 24.0,
-                              backgroundImage: NetworkImage(message.avatar),
+                              backgroundImage: NetworkImage(message.avatar!),
                             ),
                             title: Row(
                               children: <Widget>[
-                                Text(message.name),
+                                Text(message.name!),
                                 SizedBox(
                                   width: 16.0,
                                 ),
                                 Text(
                                   DateFormat('d-M-yyyy')
-                                      .format(message.datetime),
+                                      .format(message.datetime!),
                                   style: TextStyle(fontSize: 12.0),
                                 ),
                               ],
                             ),
-                            subtitle: Text(message.message),
+                            subtitle: Text(message.message!),
                             trailing: Icon(
                               Icons.arrow_forward_ios,
                               size: 14.0,

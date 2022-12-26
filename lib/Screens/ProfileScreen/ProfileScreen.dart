@@ -5,7 +5,7 @@ import 'Profile_details_page.dart';
 
 class ProfileScreen extends StatelessWidget {
 
-  final User curr_user = Globals.currentUser;
+  final User? curr_user = Globals.currentUser;
 
   @override
   Widget build(BuildContext context) {

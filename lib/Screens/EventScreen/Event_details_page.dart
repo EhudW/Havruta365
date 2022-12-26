@@ -16,8 +16,8 @@ import 'dart:ui' as ui;
 
 
 class EventDetailsPage extends StatefulWidget {
-  Event event;
-  EventDetailsPage(Event event){
+  Event? event;
+  EventDetailsPage(Event? event){
     this.event = event;
   }
 
@@ -28,7 +28,7 @@ class EventDetailsPage extends StatefulWidget {
 class _EventDetailsPageState extends State<EventDetailsPage> {
 
   isNeedDeleteButton(){
-    if (widget.event.participants.contains(Globals.currentUser.email)) {
+    if (widget.event!.participants!.contains(Globals.currentUser!.email)) {
       DeleteFromEventButton(widget.event);
     }
   }
@@ -38,7 +38,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   isCreatorWidget(){
-    if (Globals.currentUser.email == widget.event.creatorUser){
+    if (Globals.currentUser!.email == widget.event!.creatorUser){
       return Container(
           height: Globals.scaler.getHeight(4.5),
           width: Globals.scaler.getWidth(4.5),
@@ -48,7 +48,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 tooltip: "מחק אירוע",
                 child: Icon(FontAwesomeIcons.trashAlt),
                 onPressed: () async{
-                  var succeed = await Globals.db.deleteEvent(widget.event.id);
+                  var succeed = await Globals.db!.deleteEvent(widget.event!.id);
                   if (!succeed) {
                     Flushbar(
                       title: 'מחיקת אירוע',
@@ -85,10 +85,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   deleteButton() {
-    if (Globals.currentUser.email == widget.event.creatorUser){
+    if (Globals.currentUser!.email == widget.event!.creatorUser){
       return ElevatedButton.icon(
         onPressed: () {
-          Globals.db.deleteFromEvent(widget.event.id, Globals.currentUser.email);
+          Globals.db!.deleteFromEvent(widget.event!.id, Globals.currentUser!.email);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -105,8 +105,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   dates(Event event){
-    var nextEvent = DateFormat('dd - MM - yyyy').format(event.dates[0]);
-    var time = DateFormat('HH:mm').format(event.dates[0]);
+    var nextEvent = DateFormat('dd - MM - yyyy').format(event.dates![0]);
+    var time = DateFormat('HH:mm').format(event.dates![0]);
     return Column(
       children: [
         Divider(),
@@ -137,7 +137,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    var num = widget.event.maxParticipants - widget.event.participants.length;
+    var num = widget.event!.maxParticipants! - widget.event!.participants!.length;
     return Scaffold(
       // floatingActionButton: isCreatorWidget(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
@@ -145,8 +145,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         child: Column(
           children: [
             EventDetailHeader(widget.event),
-            Storyline(widget.event.description),
-            dates(widget.event),
+            Storyline(widget.event!.description),
+            dates(widget.event!),
             Divider(),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +166,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             Divider(),
             // widget.event.participants.contains(Globals.currentUser.email) ?
             //   DeleteFromEventButton(widget.event) : SizedBox(),
-            ParticipentsScroller(widget.event.participants),
+            ParticipentsScroller(widget.event!.participants),
             SizedBox(height: Globals.scaler.getHeight(1)),
             deleteButton(),
             // Link

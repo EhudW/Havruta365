@@ -24,7 +24,7 @@ class _HomePageState extends State<LoginMoreDetails> {
   final description = TextEditingController();
   String description_str = " ";
   final status = TextEditingController();
-  String status_str = "סטטוס משפחתי";
+  String? status_str = "סטטוס משפחתי";
   final AuthService authenticate = AuthService();
 
   @override
@@ -83,7 +83,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                           fontSize: Globals.scaler.getTextSize(8),
                         ),
                         underline: Container(),
-                        onChanged: (String newValue) {
+                        onChanged: (String? newValue) {
                           setState(() {
                             status_str = newValue;
                           });
@@ -127,17 +127,17 @@ class _HomePageState extends State<LoginMoreDetails> {
                       // <-- Button color
                       onPrimary: Colors.teal),
                   onPressed: () async {
-                    Globals.db.saveIdLocally();
+                    Globals.db!.saveIdLocally();
                     yeshiva_str = yeshiva.text;
                     description_str = description.text;
-                    Globals.currentUser.yeshiva = yeshiva_str ?? "";
-                    Globals.currentUser.description = description_str ?? "";
-                    Globals.currentUser.status =
+                    Globals.currentUser!.yeshiva = yeshiva_str ?? "";
+                    Globals.currentUser!.description = description_str ?? "";
+                    Globals.currentUser!.status =
                         status_str == "סטטוס משפחתי" ? "לא ידוע" : status_str;
-                    if (Globals.currentUser.avatar == null)
-                      Globals.currentUser.avatar =
+                    if (Globals.currentUser!.avatar == null)
+                      Globals.currentUser!.avatar =
                           'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
-                    Globals.db.updateUser(Globals.currentUser);
+                    Globals.db!.updateUser(Globals.currentUser!);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomePage()),
@@ -167,8 +167,8 @@ class _HomePageState extends State<LoginMoreDetails> {
           child: CircleAvatar(
             radius: 60.0,
             backgroundColor: Colors.teal,
-            backgroundImage: (Globals.currentUser.avatar != null)
-                ? NetworkImage(Globals.currentUser.avatar)
+            backgroundImage: (Globals.currentUser!.avatar != null)
+                ? NetworkImage(Globals.currentUser!.avatar!)
                 : null,
           ),
         ),
@@ -237,7 +237,7 @@ class _HomePageState extends State<LoginMoreDetails> {
 
   Future<File> uploadImage(source) async {
     final _storage = FirebaseStorage.instance;
-    PickedFile image;
+    PickedFile? image;
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
@@ -246,7 +246,7 @@ class _HomePageState extends State<LoginMoreDetails> {
       print('signed in');
     }
     image = await picker.getImage(source: source);
-    var file = File(image.path);
+    var file = File(image!.path);
     String fileName = ObjectId().toString();
     //check if an image was picked
     if (image != null) {
@@ -254,11 +254,11 @@ class _HomePageState extends State<LoginMoreDetails> {
           await _storage.ref().child('Images/$fileName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
-        Globals.currentUser.avatar = downloadUrl;
+        Globals.currentUser!.avatar = downloadUrl;
       });
     } else {
       setState(() {
-        Globals.currentUser.avatar =
+        Globals.currentUser!.avatar =
             'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
       });
     }

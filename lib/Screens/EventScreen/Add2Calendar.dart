@@ -7,7 +7,7 @@ import 'package:add_2_calendar/add_2_calendar.dart' as ADD2CALENDAR;
 class Add2Calendar extends StatefulWidget {
   Add2Calendar(this.event);
 
-  final Event event;
+  final Event? event;
 
   @override
   _Add2CalendarState createState() => _Add2CalendarState();
@@ -18,7 +18,7 @@ class _Add2CalendarState extends State<Add2Calendar> {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        add2calendar(widget.event);
+        add2calendar(widget.event!);
       },
       icon: Icon(FontAwesomeIcons.calendarCheck, size: 18),
       label: Text("הוסף ליומן"),
@@ -30,11 +30,11 @@ class _Add2CalendarState extends State<Add2Calendar> {
 
 add2calendar(Event event) {
   final ADD2CALENDAR.Event add2cal_event = ADD2CALENDAR.Event(
-    title: event.topic,
+    title: event.topic!,
     description: "${event.description} \n${event.link}",
     location: "Online - Link in the description",
-    startDate: event.dates[0],
-    endDate: event.dates[1],
+    startDate: event.dates![0],
+    endDate: event.dates![1],
     // TODO add recurrence
     // recurrence:
   );

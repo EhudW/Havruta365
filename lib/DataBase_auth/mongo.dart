@@ -28,7 +28,7 @@ String CONNECT_TO_DB =
         for example: return this.name("tani") && this.age > 25;
  */
 class Mongo {
-  var db;
+  late var db;
 
   // Connect to the DB.
   Future<User> connect() async {
@@ -40,7 +40,7 @@ class Mongo {
 
   Future<void> insertEvent(Event event) async {
     // MondoDB decrease to hour from the time, because he using UTC. here we fix it.
-    for (DateTime date in event.dates) {
+    for (DateTime date in event.dates as Iterable<DateTime>) {
       date.add(Duration(hours: 2));
     }
     var collection = db.collection('Events');
@@ -49,14 +49,14 @@ class Mongo {
   }
 
   Future<User> getUser(String userMail) async {
-    var coll = Globals.db.db.collection('Users');
+    var coll = Globals.db!.db.collection('Users');
     var user_json = await coll.findOne(where.eq('email', '$userMail'));
     User user = User.fromJson(user_json);
     return user;
   }
 
   Future<User> getUserByID(String id) async {
-    var coll = Globals.db.db.collection('Users');
+    var coll = Globals.db!.db.collection('Users');
     String sub = id.substring(10,34);
     ObjectId obj_id = ObjectId.fromHexString(sub);
     var user_json = await coll.findOne(where.eq('_id', obj_id));
@@ -67,7 +67,7 @@ class Mongo {
 
 
 
-  Future<List<Event>> searchEvents(String s) async {
+  Future<List<Event>> searchEvents(String? s) async {
     List<Event> data = List<Event>();
     DateTime timeNow = DateTime.now();
     var collection = db.collection('Events');
@@ -81,15 +81,15 @@ class Mongo {
         .toList();
     for (var i in events) {
       Event e = new Event.fromJson(i);
-      var len = e.dates.length;
+      var len = e.dates!.length;
       for (int j=0; j<len; j++){
-        if(timeNow.isAfter(e.dates[j])){
-          e.dates.remove(e.dates[j]);
+        if(timeNow.isAfter(e.dates![j])){
+          e.dates!.remove(e.dates![j]);
           len -= 1;
           j--;
         }
       }
-      if (e.dates.isNotEmpty) {
+      if (e.dates!.isNotEmpty) {
         data.add(e);
       }
     }
@@ -105,15 +105,15 @@ class Mongo {
         await collection.find(where.sortBy('_id').skip(len).limit(10)).toList();
     for (var i in events) {
       Event e = new Event.fromJson(i);
-      var len = e.dates.length;
+      var len = e.dates!.length;
       for (int j=0; j<len; j++){
-        if(timeNow.isAfter(e.dates[j])){
-           e.dates.remove(e.dates[j]);
+        if(timeNow.isAfter(e.dates![j])){
+           e.dates!.remove(e.dates![j]);
            len -= 1;
            j--;
         }
       }
-      if (e.dates.isNotEmpty) {
+      if (e.dates!.isNotEmpty) {
         data.add(e);
       }
     }
@@ -128,15 +128,15 @@ class Mongo {
         await collection.find(where.eq('type', 'L').sortBy('_id').skip(len).limit(10)).toList();
       for (var i in events) {
         Event e = new Event.fromJson(i);
-        var len = e.dates.length;
+        var len = e.dates!.length;
         for (int j=0; j<len; j++){
-          if(timeNow.isAfter(e.dates[j])){
-            e.dates.remove(e.dates[j]);
+          if(timeNow.isAfter(e.dates![j])){
+            e.dates!.remove(e.dates![j]);
             len -= 1;
             j--;
           }
         }
-        if (e.dates.isNotEmpty) {
+        if (e.dates!.isNotEmpty) {
           data.add(e);
         }
     }
@@ -144,10 +144,10 @@ class Mongo {
   }
 
   // Query all events that currents user register for them.
-  Future<List<Event>> getEvents(String userMail) async {
+  Future<List<Event>> getEvents(String? userMail) async {
     List<Event> events = [];
     var eventsColl = db.collection('Events');
-    var allEvent = await eventsColl.find({"participants": Globals.currentUser.email}).toList();
+    var allEvent = await eventsColl.find({"participants": Globals.currentUser!.email}).toList();
     for (var i in allEvent) {
       events.add(new Event.fromJson(i));
     }
@@ -159,7 +159,7 @@ class Mongo {
     var collection = db.collection('Notifications');
     final notifications = await collection
         .find(where
-            .eq('destinationUser', Globals.currentUser.email)
+            .eq('destinationUser', Globals.currentUser!.email)
             .sortBy('_id'))
         .toList();
     for (var i in notifications) {
@@ -178,8 +178,8 @@ class Mongo {
     return data;
   }
 
-  Future<void> addParticipant(String mail, ObjectId id) async {
-    var collection = Globals.db.db.collection('Events');
+  Future<void> addParticipant(String? mail, ObjectId? id) async {
+    var collection = Globals.db!.db.collection('Events');
     // Get event by id and Add mail to participants array
     var res = await collection.updateOne(
         where.eq('_id', id), ModifierBuilder().push('participants', mail));
@@ -194,7 +194,7 @@ class Mongo {
     var x =
     {
       "subject": "פרוייקט חברותא",
-      "body": notification.name  + "  "+ notification.message ,
+      "body": notification.name!  + "  "+ notification.message! ,
       "src": "havrutaproject@gmail.com",
       "src_pass": "havruta365",
       "dst": notification.destinationUser
@@ -209,8 +209,8 @@ class Mongo {
     await collection.deleteOne({"_id": notification.id});
   }
 
-  deleteFromEvent(ObjectId id, String email) async{
-    var collection = Globals.db.db.collection('Events');
+  deleteFromEvent(ObjectId? id, String? email) async{
+    var collection = Globals.db!.db.collection('Events');
     // Get event by id and Add mail to participants array
     var res = await collection.updateOne(
         where.eq('_id', id), ModifierBuilder().pull('participants', email));
@@ -229,7 +229,7 @@ class Mongo {
   }
 
   Future<bool> isPassNull(String mail) async {
-    var coll = Globals.db.db.collection('Users');
+    var coll = Globals.db!.db.collection('Users');
     var user_json = await coll.findOne(where.eq('email', '$mail'));
     User user = User.fromJson(user_json);
     if (user.password == null ||user.password == "") {
@@ -324,15 +324,15 @@ class Mongo {
     await db.close();
   }
 
-  Future<Event> getEventById(ObjectId id) async {
+  Future<Event> getEventById(ObjectId? id) async {
     var collection = db.collection('Events');
     DateTime timeNow = DateTime.now();
     var event = await collection.findOne(where.eq("_id", id));
     var e = Event.fromJson(event);
-    var len = e.dates.length;
+    var len = e.dates!.length;
     for (int j=0; j<len; j++) {
-      if (timeNow.isAfter(e.dates[j])) {
-        e.dates.remove(e.dates[j]);
+      if (timeNow.isAfter(e.dates![j])) {
+        e.dates!.remove(e.dates![j]);
         len -= 1;
         j--;
       }
@@ -349,9 +349,9 @@ class Mongo {
   // Save the id of the current user locally in the user phone.
   // for next session - automatic connect
   saveIdLocally() async{
-    var coll = Globals.db.db.collection('Users');
+    var coll = Globals.db!.db.collection('Users');
     // Find user document via email
-    var user_json = await coll.findOne(where.eq('email', Globals.currentUser.email));
+    var user_json = await coll.findOne(where.eq('email', Globals.currentUser!.email));
     // This is ObjectID
     var id = user_json['_id'];
     final SharedPreferences prefs = await Globals.prefs;
@@ -361,15 +361,15 @@ class Mongo {
 
   // Get message and insert it to the DB
   Future<bool> sendMessage(ChatMessage message) async{
-    var collection = Globals.db.db.collection('Chats');
+    var collection = Globals.db!.db.collection('Chats');
     var m = message.toJson();
     await collection.insertOne(m);
     return true;
   }
 
-  Future<List<ChatMessage>> getAllMyMessages(String dstMail) async{
+  Future<List<ChatMessage>> getAllMyMessages(String? dstMail) async{
     List<ChatMessage> listMessages = [];
-    var collection = Globals.db.db.collection('Chats');
+    var collection = Globals.db!.db.collection('Chats');
     var messages = await collection.find(where.eq('dst_mail', dstMail)).toList();
     for (var i in messages) {
       listMessages.add(new ChatMessage.fromJson(i));
@@ -377,8 +377,8 @@ class Mongo {
     return listMessages;
   }
 
-  deleteEvent(ObjectId id) async{
-    var collection = Globals.db.db.collection('Events');
+  deleteEvent(ObjectId? id) async{
+    var collection = Globals.db!.db.collection('Events');
     WriteResult result = await collection.deleteOne(where.eq('_id', id));
     if (result.hasWriteErrors){
       return false;

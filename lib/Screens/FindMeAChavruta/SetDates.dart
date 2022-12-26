@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'Wavy_Header.dart';
 
 class SetDate extends StatefulWidget {
-  Event event;
+  Event? event;
 
   SetDate({this.event});
 
@@ -19,22 +19,22 @@ class SetDate extends StatefulWidget {
 
 class _SetDateCreateState extends State<SetDate> {
   var db = Globals.db;
-  double spaceBetween, spaceBetweenTimes;
-  String dateTime;
+  double? spaceBetween, spaceBetweenTimes;
+  String? dateTime;
   List<DateTime> dateTimeListForMongo = [];
-  String text = "בחרו זמנים ללמוד", dayStr;
-  TimeOfDay startTime, endTime;
-  DateTime date, start, end;
-  String startDate, endDate, fullDate;
+  String? text = "בחרו זמנים ללמוד", dayStr;
+  TimeOfDay? startTime, endTime;
+  DateTime? date, start, end;
+  String? startDate, endDate, fullDate;
   int howManyChosen = 0;
 
-  Future<DateTime> pickDay(BuildContext context) {
+  Future<DateTime?> pickDay(BuildContext context) {
     final date = pickDate(context);
     if (date == null) return null;
     return date;
   }
 
-  Future<DateTime> pickDate(BuildContext context) async {
+  Future<DateTime?> pickDate(BuildContext context) async {
     final initialDate = DateTime.now();
     final newDate = await showDatePicker(
       context: context,
@@ -50,17 +50,17 @@ class _SetDateCreateState extends State<SetDate> {
     setState(() => date = newDate);
   }
 
-  Future<TimeOfDay> pickStartTime(BuildContext context) async {
+  Future<TimeOfDay?> pickStartTime(BuildContext context) async {
     final initialTime = TimeOfDay(hour: 9, minute: 0);
     final newTime = await showTimePicker(
       context: context,
       helpText: 'Select Start Time',
       initialTime: startTime != null
-          ? TimeOfDay(hour: startTime.hour, minute: startTime.minute)
+          ? TimeOfDay(hour: startTime!.hour, minute: startTime!.minute)
           : initialTime,
     );
     if (newTime == null) return null;
-    if (date.day == DateTime.now().day){
+    if (date!.day == DateTime.now().day){
       if (((newTime.hour < DateTime.now().hour) ||
           ((newTime.hour == DateTime.now().hour) && newTime.minute < DateTime.now().minute))){
         alertMessage("אי אפשר לבחור תאריך שעבר");
@@ -70,21 +70,21 @@ class _SetDateCreateState extends State<SetDate> {
     setState(() => startTime = newTime);
   }
 
-  Future<TimeOfDay> pickEndTime(BuildContext context) async {
+  Future<TimeOfDay?> pickEndTime(BuildContext context) async {
     final initialTime = TimeOfDay(hour: 10, minute: 0);
     final newTime = await showTimePicker(
       context: context,
       helpText: 'Select End Time',
       initialTime: endTime != null
-          ? TimeOfDay(hour: endTime.hour, minute: endTime.minute)
+          ? TimeOfDay(hour: endTime!.hour, minute: endTime!.minute)
           : initialTime,
     );
     if (newTime == null) return null;
-    if (startTime.hour > newTime.hour) {
+    if (startTime!.hour > newTime.hour) {
       alertMessage("זמן התחלה צריך להיות לפני זמן סיום");
       return null;
     }
-    if (startTime.hour == newTime.hour && startTime.minute >= newTime.minute) {
+    if (startTime!.hour == newTime.hour && startTime!.minute >= newTime.minute) {
       alertMessage("זמן התחלה צריך להיות לפני זמן סיום");
       return null;
     }
@@ -98,9 +98,9 @@ class _SetDateCreateState extends State<SetDate> {
     } else {
       setState(() {
         start = DateTime(
-            date.year, date.month, date.day, startTime.hour, startTime.minute);
+            date!.year, date!.month, date!.day, startTime!.hour, startTime!.minute);
         end = DateTime(
-            date.year, date.month, date.day, endTime.hour, endTime.minute);
+            date!.year, date!.month, date!.day, endTime!.hour, endTime!.minute);
         //   dateTimeListForMongo.add(start);
         //   dateTimeListForMongo.add(end);
         //   this.startDate = DateFormat('MM-dd-yyyy: kk:mm').format(start);
@@ -365,8 +365,8 @@ class _SetDateCreateState extends State<SetDate> {
     if (startTime == null) {
       return "בחר זמן התחלה";
     } else {
-      final hours = startTime.hour.toString().padLeft(2, '0');
-      final minutes = startTime.minute.toString().padLeft(2, '0');
+      final hours = startTime!.hour.toString().padLeft(2, '0');
+      final minutes = startTime!.minute.toString().padLeft(2, '0');
       return '$hours:$minutes';
     }
   }
@@ -375,8 +375,8 @@ class _SetDateCreateState extends State<SetDate> {
     if (endTime == null) {
       return "בחר זמן סיום";
     } else {
-      final hours = endTime.hour.toString().padLeft(2, '0');
-      final minutes = endTime.minute.toString().padLeft(2, '0');
+      final hours = endTime!.hour.toString().padLeft(2, '0');
+      final minutes = endTime!.minute.toString().padLeft(2, '0');
       return '$hours:$minutes';
     }
   }

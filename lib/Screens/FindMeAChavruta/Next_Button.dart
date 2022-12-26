@@ -5,17 +5,17 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/ChooseDates.dart';
 
 class NextButton extends StatelessWidget {
-  final Event event;
+  final Event? event;
   final int whichPage;
   final BuildContext context;
   final bool isEmpty;
 
   NextButton(
-      {Key key,
-      @required this.context,
-      @required this.event,
-      @required this.whichPage,
-      @required this.isEmpty})
+      {Key? key,
+      required this.context,
+      required this.event,
+      required this.whichPage,
+      required this.isEmpty})
       : super(key: key);
 
   @override
@@ -27,11 +27,11 @@ class NextButton extends StatelessWidget {
           onPressed: () {
             if (!this.isEmpty) {
               if (this.whichPage == 2) {
-                if (!(this.event.type == "" ||
-                    this.event.topic == '' ||
-                    this.event.targetGender == "" ||
+                if (!(this.event!.type == "" ||
+                    this.event!.topic == '' ||
+                    this.event!.targetGender == "" ||
                     // this.event.book == "" ||
-                    this.event.maxParticipants == 0)) {
+                    this.event!.maxParticipants == 0)) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(

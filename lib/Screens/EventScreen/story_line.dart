@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Storyline extends StatelessWidget {
   Storyline(this.storyline);
-  final String storyline;
+  final String? storyline;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class Storyline extends StatelessWidget {
         ),
         SizedBox(height: 2.0),
         Text(
-          storyline,
+          storyline!,
           textAlign: TextAlign.right,
           textDirection: TextDirection.rtl,
           style: TextStyle(fontSize: 16, color: Colors.grey[600]),

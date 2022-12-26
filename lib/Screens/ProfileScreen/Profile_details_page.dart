@@ -8,9 +8,9 @@ import 'Profile_detail_header.dart';
 import 'package:havruta_project/Globals.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
-  User user;
+  User? user;
 
-  ProfileDetailsPage(User user) {
+  ProfileDetailsPage(User? user) {
     this.user = user;
   }
 

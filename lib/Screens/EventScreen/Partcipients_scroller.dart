@@ -6,15 +6,15 @@ import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 
 class ParticipentsScroller extends StatelessWidget {
-  ParticipentsScroller(List<dynamic> usersMail) {
+  ParticipentsScroller(List<dynamic>? usersMail) {
     this.usersMail = usersMail;
-    this.userColl = Globals.db.db.collection('Users');
+    this.userColl = Globals.db!.db.collection('Users');
   }
 
   var usersMail;
   var userColl;
 
-  Future getUser(String userMail) async {
+  Future getUser(String? userMail) async {
     var user = await userColl.findOne(where.eq('email', '$userMail'));
     return user;
   }
@@ -36,8 +36,8 @@ class ParticipentsScroller extends StatelessWidget {
           case ConnectionState.waiting:
             return Center(
               child: LoadingBouncingGrid.square(
-                borderColor: Colors.teal[400],
-                backgroundColor: Colors.teal[400],
+                borderColor: Colors.teal[400]!,
+                backgroundColor: Colors.teal[400]!,
                 size: 20.0,
               ),
             );

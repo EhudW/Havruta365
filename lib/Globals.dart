@@ -5,10 +5,10 @@ import 'DataBase_auth/User.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 
 class Globals {
-  static Mongo db;
+  static Mongo? db;
   static bool isDbConnect = false;
-  static User currentUser;
-  static BuildContext context;
+  static User? currentUser;
+  static BuildContext? context;
   static ScreenScaler scaler = new ScreenScaler();
   static CustomAppBar customAppBar = new CustomAppBar();
   static Future<SharedPreferences> prefs = SharedPreferences.getInstance();
@@ -28,7 +28,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   String title;
   Color gradientBegin, gradientEnd;
 
-  CustomAppBar({this.title, this.gradientBegin, this.gradientEnd})
+  CustomAppBar({required this.title, required this.gradientBegin, required this.gradientEnd})
       : assert(title != null),
         assert(gradientBegin != null),
         assert(gradientEnd != null);

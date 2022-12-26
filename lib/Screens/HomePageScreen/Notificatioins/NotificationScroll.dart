@@ -5,7 +5,7 @@ import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/Notificati
 import 'package:havruta_project/Globals.dart';
 
 class notificationsScroll extends StatefulWidget {
-  notificationModel model;
+  notificationModel? model;
 
   notificationsScroll(this.model);
 
@@ -21,13 +21,13 @@ class _notificationsScrollState extends State<notificationsScroll> {
         child: Material(
             color: Colors.grey.withOpacity(0.8),
             child: StreamBuilder(
-              stream: this.widget.model.stream,
+              stream: this.widget.model!.stream,
               builder: (BuildContext _context, AsyncSnapshot _snapshot) {
                 if (!_snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 } else {
                   return RefreshIndicator(
-                    onRefresh: this.widget.model.refresh,
+                    onRefresh: this.widget.model!.refresh,
                     child: ListView.builder(
                       itemCount: _snapshot.data.length + 1,
                       itemBuilder: (BuildContext _context, int index) {
@@ -37,7 +37,7 @@ class _notificationsScrollState extends State<notificationsScroll> {
                               resizeDuration: Duration(milliseconds: 200),
                               key: ObjectKey(_snapshot.data[index]),
                               onDismissed: (direction) async {
-                                await Globals.db
+                                await Globals.db!
                                     .deleteNotification(_snapshot.data[index]);
                               },
                               child: NotificationView(

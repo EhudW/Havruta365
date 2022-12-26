@@ -10,7 +10,7 @@ class DeleteFromEventButton extends StatefulWidget {
 
   DeleteFromEventButton(this.event);
 
-  final Event event;
+  final Event? event;
 
   @override
   _DeleteFromEventButtonState createState() => _DeleteFromEventButtonState();
@@ -21,7 +21,7 @@ class _DeleteFromEventButtonState extends State<DeleteFromEventButton> {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        Globals.db.deleteFromEvent(widget.event.id, Globals.currentUser.email);
+        Globals.db!.deleteFromEvent(widget.event!.id, Globals.currentUser!.email);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

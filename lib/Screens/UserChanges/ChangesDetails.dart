@@ -32,7 +32,7 @@ class _HomePageState extends State<ChangesDetails> {
   final description = TextEditingController();
   String description_str = " ";
   final status = TextEditingController();
-  String status_str = Globals.currentUser.status;
+  String? status_str = Globals.currentUser!.status;
   final AuthService authenticate = AuthService();
 
   DateTime _dateTime = DateTime(1940, 1, 1);
@@ -62,7 +62,7 @@ class _HomePageState extends State<ChangesDetails> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 minimumDate: DateTime(1980, 1, 1),
-                initialDateTime: Globals.currentUser.birthDate,
+                initialDateTime: Globals.currentUser!.birthDate,
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
                   _dateTime = newDateTime;
@@ -71,9 +71,9 @@ class _HomePageState extends State<ChangesDetails> {
             ),
             SizedBox(height: Globals.scaler.getHeight(1)),
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
-                3.0, Globals.currentUser.name),
+                3.0, Globals.currentUser!.name),
             newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.home, 3.0, Globals.currentUser.address),
+                FontAwesomeIcons.home, 3.0, Globals.currentUser!.address),
             SizedBox(height: Globals.scaler.getHeight(1)),
             FadeAnimation(
               1.7,
@@ -106,7 +106,7 @@ class _HomePageState extends State<ChangesDetails> {
                       fontSize: Globals.scaler.getTextSize(8),
                     ),
                     underline: Container(),
-                    onChanged: (String newValue) {
+                    onChanged: (String? newValue) {
                       setState(() {
                         status_str = newValue;
                       });
@@ -126,9 +126,9 @@ class _HomePageState extends State<ChangesDetails> {
                   )),
             ),
             newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
-                3.0, Globals.currentUser.yeshiva),
+                3.0, Globals.currentUser!.yeshiva),
             newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
-                FontAwesomeIcons.list, 8.0, Globals.currentUser.description),
+                FontAwesomeIcons.list, 8.0, Globals.currentUser!.description),
             SizedBox(height: Globals.scaler.getHeight(1)),
             SizedBox(height: Globals.scaler.getHeight(1)),
             ElevatedButton(
@@ -171,14 +171,14 @@ class _HomePageState extends State<ChangesDetails> {
                   return;
                 }
 
-                User user = Globals.currentUser;
+                User user = Globals.currentUser!;
                 user.address = address_str;
                 user.name = name_str;
                 user.status = status_str;
                 user.yeshiva = yeshiva_str;
                 user.description = description_str;
                 user.birthDate = _dateTime;
-                Globals.db.changeDeatailsUser(user);
+                Globals.db!.changeDeatailsUser(user);
                 // user.name = name_str;
                 // user.birthDate = _dateTime;
                 // Globals.currentUser = user;
@@ -212,8 +212,8 @@ class _HomePageState extends State<ChangesDetails> {
           child: CircleAvatar(
             radius: 60.0,
             backgroundColor: Colors.teal,
-            backgroundImage: (Globals.currentUser.avatar != null)
-                ? NetworkImage(Globals.currentUser.avatar)
+            backgroundImage: (Globals.currentUser!.avatar != null)
+                ? NetworkImage(Globals.currentUser!.avatar!)
                 : null,
           ),
         ),
@@ -282,7 +282,7 @@ class _HomePageState extends State<ChangesDetails> {
 
   Future<File> uploadImage(source) async {
     final _storage = FirebaseStorage.instance;
-    PickedFile image;
+    PickedFile? image;
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
@@ -292,7 +292,7 @@ class _HomePageState extends State<ChangesDetails> {
       print(result.uid);
     }
     image = await picker.getImage(source: source);
-    var file = File(image.path);
+    var file = File(image!.path);
     String fileName = ObjectId().toString();
     //check if an image was picked
     if (image != null) {
@@ -300,11 +300,11 @@ class _HomePageState extends State<ChangesDetails> {
           await _storage.ref().child('Images/$fileName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
-        Globals.currentUser.avatar = downloadUrl;
+        Globals.currentUser!.avatar = downloadUrl;
       });
     } else {
       setState(() {
-        Globals.currentUser.avatar =
+        Globals.currentUser!.avatar =
             'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
       });
     }
