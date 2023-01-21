@@ -82,7 +82,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                               widget.event!.dates!
                                                   .removeAt(indexForDbList - 2);
                                               indexForDbList -= 2;
-                                              return widget.event!.dates;
+                                              return;
                                             });
                                           },
                                           background: buildSwipeActionRight(),
@@ -125,8 +125,7 @@ class _FindMeAChavruta2CreateState extends State<FindMeAChavruta2> {
                                                                 indexForDbList -
                                                                     2);
                                                         indexForDbList -= 2;
-                                                        return widget
-                                                            .event!.dates;
+                                                        return;
                                                       });
                                                     }),
                                               ),
