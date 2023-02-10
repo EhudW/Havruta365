@@ -145,22 +145,26 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 width: Globals.scaler.getWidth(0.1)),
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            textAlignVertical: TextAlignVertical.bottom,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "פרטים נוספים",
-                              focusColor: Colors.blue,
-                              contentPadding: EdgeInsets.fromLTRB(
-                                  Globals.scaler.getWidth(2),
-                                  Globals.scaler.getHeight(0),
-                                  Globals.scaler.getWidth(2),
-                                  Globals.scaler.getHeight(0.5)),
+                          child: Center(
+                            child: TextField(
+                              textDirection: TextDirection.rtl,
+                              maxLines: 4,
+                              textAlign: TextAlign.center,
+                              textAlignVertical: TextAlignVertical.center,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "פרטים נוספים",
+                                focusColor: Colors.blue,
+                                contentPadding: EdgeInsets.fromLTRB(
+                                    Globals.scaler.getWidth(2),
+                                    Globals.scaler.getHeight(0),
+                                    Globals.scaler.getWidth(2),
+                                    Globals.scaler.getHeight(0.5)),
+                              ),
+                              onChanged: (description) {
+                                widget.event!.description = description;
+                              },
                             ),
-                            onChanged: (description) {
-                              widget.event!.description = description;
-                            },
                           )),
                     ],
                   ),

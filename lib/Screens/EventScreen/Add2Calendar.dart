@@ -28,17 +28,58 @@ class _Add2CalendarState extends State<Add2Calendar> {
   }
 }
 
-add2calendar(Event event) {
+add2calendar(Event event, {bool ignorePast = true}) {
+  //copy list
+  List<DateTime> future = [];
+  future.addAll(event.dates!.map((e) => e)); // no need to add +2 from utc
+
+  // keep only dates that aren't older than yestarday
+  if (ignorePast == true) {
+    future.retainWhere((element) =>
+        DateTime.now().subtract(Duration(days: 1)).isBefore(element));
+  }
+  // left events?
+  if (future.isEmpty) {
+    return;
+  }
+  // sort from early to late
+  future.sort();
+
+  ADD2CALENDAR.Frequency frequency = ADD2CALENDAR.Frequency.daily;
+  if (future.length > 1 && future[1].difference(future.first).inDays > 2) {
+    frequency = ADD2CALENDAR.Frequency.weekly;
+  }
+  if (future.length > 1 && future[1].difference(future.first).inDays > 8) {
+    frequency = ADD2CALENDAR.Frequency.monthly;
+  }
+
+  String topic = event.topic ?? "";
+  String book = event.book ?? "";
+  String type = event.type == "H" ? "חברותא" : "שיעור";
+  String link = event.link ?? "";
+  String description = event.description ?? "";
+  String lecturer = event.lecturer ?? "";
+  int minutesPerMeeting = event.duration ?? 30;
+  String title = book;
+  title = title.trim() != "" ? title : topic;
+  title = "$type: $title";
+
+  String formattedDescription =
+      "$type: $topic\n$book\n\n$lecturer\n$link\n------\n$description\n------";
   // ignore: non_constant_identifier_names
   final ADD2CALENDAR.Event add2cal_event = ADD2CALENDAR.Event(
-    title: event.topic!,
-    description: "${event.description} \n${event.link}",
-    location: "Online - Link in the description",
-    startDate: event.dates![0],
-    endDate: event.dates![1],
-    // TODO add recurrence
-    // recurrence:
-  );
+      title: title,
+      description: formattedDescription,
+      location: event.link?.trim() == "" ? null : event.link,
+      startDate: future.first,
+      endDate: future.first.add(Duration(minutes: minutesPerMeeting)),
+      recurrence: future.first == future.last
+          ? null
+          : ADD2CALENDAR.Recurrence(
+              frequency: frequency,
+              endDate: future.last,
+              interval: 1,
+              ocurrences: null));
   // Open calendar
   ADD2CALENDAR.Add2Calendar.addEvent2Cal(add2cal_event);
 }

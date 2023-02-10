@@ -102,8 +102,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   dates(Event event) {
-    var nextEvent = DateFormat('dd - MM - yyyy').format(event.dates![0]);
-    var time = DateFormat('HH:mm').format(event.dates![0]);
+    var nextEvent = DateFormat('dd - MM - yyyy')
+        .format((event.dates![0] as DateTime).toLocal());
+    var time =
+        DateFormat('HH:mm').format((event.dates![0] as DateTime).toLocal());
     return Column(
       children: [
         Divider(),
