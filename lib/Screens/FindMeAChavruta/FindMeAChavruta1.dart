@@ -338,6 +338,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                               Globals.scaler.getWidth(1.3),
                                             ),
                                           ),
+                                          keyboardType: TextInputType.number,
                                           inputFormatters: [
                                             FilteringTextInputFormatter
                                                 .digitsOnly,

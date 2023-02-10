@@ -20,7 +20,7 @@ class Events extends StatefulWidget {
 class _EventsState extends State<Events> {
   final scrollController = ScrollController();
   final scrollControllerOnline = ScrollController();
-
+  final TextEditingController searchTextController = TextEditingController();
   // EventsModel events;
   //EventsModel eventsOnline;
   refresh() {
@@ -167,7 +167,7 @@ class _EventsState extends State<Events> {
   }
 
   searchBar() {
-    String searchBarString;
+    bool isSearchTextEmpty = searchTextController.text == "";
     return Center(
         //padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 20),
         child: Column(children: <Widget>[
@@ -193,12 +193,38 @@ class _EventsState extends State<Events> {
               ),
               child: TextField(
                   textInputAction: TextInputAction.go,
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.center, //
+                  controller: searchTextController, //
+                  textDirection: TextDirection.rtl, //
                   decoration: InputDecoration(
-                      suffixIcon: Icon(FontAwesomeIcons.magnifyingGlass,
-                          size: Globals.scaler.getTextSize(8),
-                          color: Colors.red,
-                          textDirection: TextDirection.rtl),
+                      prefixIcon: IconButton(
+                        onPressed: isSearchTextEmpty
+                            ? null
+                            : () {
+                                if (!isSearchTextEmpty) {
+                                  setState(() {
+                                    searchTextController.clear();
+                                    this.widget.events.searchData = null;
+                                    this.widget.events.refresh();
+                                  });
+                                }
+                              }, // Does the widget build for setState() ??
+                        icon: Icon(Icons.clear,
+                            size: Globals.scaler.getTextSize(8),
+                            color: isSearchTextEmpty
+                                ? Colors.transparent
+                                : Colors.grey,
+                            textDirection: TextDirection.rtl),
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        }, //MediaQuery.of(context).ke,
+                        icon: Icon(FontAwesomeIcons.magnifyingGlass,
+                            size: Globals.scaler.getTextSize(8),
+                            color: Colors.red,
+                            textDirection: TextDirection.rtl),
+                      ),
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
@@ -206,14 +232,17 @@ class _EventsState extends State<Events> {
                       disabledBorder: InputBorder.none,
                       hintText: 'חפש חברותא'),
                   onChanged: (text) {
-                    text.replaceAll(new RegExp(r"\s+"), "");
-                    if (text == "") {
-                      this.widget.events.searchData = null;
-                    } else {
-                      searchBarString = text.toLowerCase();
-                      this.widget.events.searchData = searchBarString;
-                    }
-                    this.widget.events.refresh();
+                    // ??if we have 2 words?   text = text.replaceAll(new RegExp(r"\s+"), "");
+                    text = text.trim();
+                    setState(() {
+                      // Does the widget build for setState() ??
+                      if (text == "") {
+                        this.widget.events.searchData = null;
+                      } else {
+                        this.widget.events.searchData = text.toLowerCase();
+                      }
+                      this.widget.events.refresh();
+                    });
                   }),
             ),
           ),
