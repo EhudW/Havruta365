@@ -65,7 +65,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
       ProgressButton(
         stateWidgets: {
           ButtonState.idle: Text(
-            "!הירשם לשיעור",
+            widget.event!.type == 'H' ? "!הירשם לחברותא" : "!הירשם לשיעור",
             style: textStyle,
           ),
           ButtonState.loading: Text(
@@ -77,11 +77,13 @@ class _MyProgressButtonState extends State<MyProgressButton> {
             style: textStyle,
           ),
           ButtonState.success: Text(
-            "!היכנס לשיעור",
+            widget.event!.type == 'H' ? "!היכנס לחברותא" : "!היכנס לשיעור",
             style: textStyle,
           ),
           ButtonState.full: Text(
-            "השיעור בתפוסה מלאה! לא ניתן להירשם",
+            widget.event!.type == 'H'
+                ? "החברותא בתפוסה מלאה! לא ניתן להירשם"
+                : "השיעור בתפוסה מלאה! לא ניתן להירשם",
             style: textStyle,
           )
         },
@@ -168,14 +170,19 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         case ButtonState.fail:
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-            'אין שיעור בזמן הנוכחי',
+            widget.event!.type == 'H'
+                ? 'אין חברותא בזמן הנוכחי'
+                : 'אין שיעור בזמן הנוכחי',
             textAlign: TextAlign.center,
           )));
           break;
         case ButtonState.full:
           Flushbar(
             title: 'שגיאה בהרשמה',
-            messageText: Text('השיעור בתפוסה מלאה! לא ניתן להצטרף!',
+            messageText: Text(
+                widget.event!.type == 'H'
+                    ? 'החברותא בתפוסה מלאה! לא ניתן להצטרף!'
+                    : 'השיעור בתפוסה מלאה! לא ניתן להצטרף!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.teal[400],

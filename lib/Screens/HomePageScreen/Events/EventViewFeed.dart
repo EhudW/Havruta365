@@ -108,7 +108,11 @@ class EventViewFeed extends StatelessWidget {
                                       )),
                                       SizedBox(width: scaler.getWidth(0.5)),
                                       Expanded(
-                                          child: Icon(FontAwesomeIcons.users,
+                                          child: Icon(
+                                              event.type == 'L'
+                                                  ? FontAwesomeIcons
+                                                      .graduationCap
+                                                  : FontAwesomeIcons.users,
                                               size: scaler.getTextSize(8),
                                               color: Colors.red)),
                                       SizedBox(width: scaler.getWidth(3)),

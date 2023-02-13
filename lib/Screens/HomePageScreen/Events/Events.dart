@@ -21,6 +21,7 @@ class _EventsState extends State<Events> {
   final scrollController = ScrollController();
   final scrollControllerOnline = ScrollController();
   final TextEditingController searchTextController = TextEditingController();
+  String? typeFilter;
   // EventsModel events;
   //EventsModel eventsOnline;
   refresh() {
@@ -55,7 +56,7 @@ class _EventsState extends State<Events> {
           body: Column(children: <Widget>[
             this.widget.eventsOnline == null
                 ? SizedBox(
-                    height: 10,
+                    height: Globals.scaler.getHeight(2),
                   )
                 : Expanded(flex: 2, child: eventsOnlineScroll()),
             searchBar(),
@@ -92,7 +93,8 @@ class _EventsState extends State<Events> {
                     padding: EdgeInsets.symmetric(vertical: 32.0),
                     child: Center(
                         child: _snapshot.data.length == 0
-                            ? Text("לא נמצאה חברותא מתאימה")
+                            //? Text("לא נמצאה חברותא מתאימה")
+                            ? Text("לא נמצאה תוצאה מתאימה")
                             : Text("")),
                   );
                 } else {
@@ -175,6 +177,12 @@ class _EventsState extends State<Events> {
 
   searchBar() {
     bool isSearchTextEmpty = searchTextController.text == "";
+    IconData typeFilterIcon = FontAwesomeIcons.filter;
+    if (typeFilter == 'L') {
+      typeFilterIcon = FontAwesomeIcons.graduationCap;
+    } else if (typeFilter == 'H') {
+      typeFilterIcon = FontAwesomeIcons.users;
+    }
     return Center(
         //padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 20),
         child: Column(children: <Widget>[
@@ -182,6 +190,16 @@ class _EventsState extends State<Events> {
       Row(
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),
+          IconButton(
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              builder: ((builder) => bottomSheet()),
+            ),
+            icon: Icon(typeFilterIcon,
+                size: Globals.scaler.getTextSize(8),
+                color: Colors.red,
+                textDirection: TextDirection.rtl),
+          ),
           SizedBox(width: Globals.scaler.getWidth(1)),
           Expanded(
             child: Container(
@@ -237,7 +255,8 @@ class _EventsState extends State<Events> {
                       enabledBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      hintText: 'חפש חברותא'),
+                      //hintText: 'חפש חברותא'),
+                      hintText: 'חפש'),
                   onChanged: (text) {
                     // ??if we have 2 words?   text = text.replaceAll(new RegExp(r"\s+"), "");
                     text = text.trim();
@@ -258,5 +277,67 @@ class _EventsState extends State<Events> {
       ),
       SizedBox(height: Globals.scaler.getHeight(1))
     ]));
+  }
+
+  Widget bottomSheet() {
+    return Container(
+      height: Globals.scaler.getHeight(5.5),
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: Globals.scaler.getWidth(3),
+        vertical: Globals.scaler.getHeight(1),
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            "בחר סוג",
+            style: TextStyle(
+              fontSize: Globals.scaler.getTextSize(8.5),
+            ),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(1),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            TextButton.icon(
+              icon: Icon(FontAwesomeIcons.users),
+              onPressed: () {
+                setState(() {
+                  this.typeFilter = 'H';
+                  this.widget.events.typeFilter = 'H';
+                  this.widget.events.refresh();
+                  Navigator.pop(context);
+                });
+              },
+              label: Text("חברותא"),
+            ),
+            TextButton.icon(
+              icon: Icon(FontAwesomeIcons.graduationCap),
+              onPressed: () {
+                setState(() {
+                  this.typeFilter = 'L';
+                  this.widget.events.typeFilter = 'L';
+                  this.widget.events.refresh();
+                  Navigator.pop(context);
+                });
+              },
+              label: Text("שיעור"),
+            ),
+            TextButton.icon(
+              icon: Icon(FontAwesomeIcons.filterCircleXmark),
+              onPressed: () {
+                setState(() {
+                  this.typeFilter = null;
+                  this.widget.events.typeFilter = null;
+                  this.widget.events.refresh();
+                  Navigator.pop(context);
+                });
+              },
+              label: Text("לא משנה"),
+            ),
+          ])
+        ],
+      ),
+    );
   }
 }

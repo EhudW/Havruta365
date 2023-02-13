@@ -9,6 +9,7 @@ class EventsModel {
   Stream<List<Event>>? stream;
   late bool hasMore;
   String? searchData;
+  String? typeFilter;
   late bool _isLoading;
   List<Event>? _data;
   late StreamController<List<Event>?> _controller;
@@ -38,16 +39,16 @@ class EventsModel {
         if (tmp == null) {
           return Future.value([]);
         }
-        return this.pullingLogic.search(length, tmp);
+        return this.pullingLogic.search(length, tmp, typeFilter);
       });
     }
     if (onlineBit == true) {
       return Future.delayed(Duration(seconds: 1), () {
-        return this.pullingLogic.nextOnline(length);
+        return this.pullingLogic.nextOnline(length, typeFilter);
       });
     }
     return Future.delayed(Duration(seconds: 1), () {
-      return this.pullingLogic.next(length, this);
+      return this.pullingLogic.next(length, this, typeFilter);
     });
   }
 
@@ -79,31 +80,46 @@ class EventsModel {
 // helper class to decide how to pull the data about events from the db
 // for now, old events are filtered if this is general, and not filtered if it's specific for the user
 class PullingLogic {
-  String? emailFilter;
-  PullingLogic({this.emailFilter}) {
+  String? withParticipant; // email
+  String? createdBy; // email
+  PullingLogic({this.withParticipant, this.createdBy})
+      : assert(createdBy == null || withParticipant == null) {
     //print("constructor as $emailFilter");
   }
-  Future<List<Event>> search(int length, String searchData) {
+  Future<List<Event>> search(
+      int length, String searchData, String? typeFilter) {
     //print("search as $emailFilter");
     return Globals.db!.searchEvents(searchData,
-        filterOldEvents: this.emailFilter == null,
+        filterOldEvents: this.withParticipant == null && this.createdBy == null,
         maxEvents: 10,
         startFrom: length,
-        withParticipant: this.emailFilter);
+        withParticipant: this.withParticipant,
+        createdBy: this.createdBy,
+        typeFilter: typeFilter);
   }
 
-  Future<List<Event>> next(int length, EventsModel model) {
-    if (emailFilter != null) {
+  Future<List<Event>> next(int length, EventsModel model, String? typeFilter) {
+    if (withParticipant != null) {
       // right now, get events returns ALL events,with no filter for time
       // so in order to avoid infinite addition to the stream:
       model.hasMore = false;
       // even if getEvens will return only few, still there is race problem
-      return Globals.db!.getEvents(emailFilter, false);
+      return Globals.db!.getEvents(withParticipant, false, typeFilter);
+    } else if (createdBy != null) {
+      model.hasMore = false;
+
+      var query = (collection) async =>
+          await collection.find({"creatorUser": createdBy}).toList();
+      if (typeFilter != null) {
+        query = (collection) async => await collection
+            .find({"creatorUser": createdBy, "type": typeFilter}).toList();
+      }
+      return Globals.db!.getEventsByQuery(query: query, filterOldEvents: false);
     }
-    return Globals.db!.getSomeEvents(length);
+    return Globals.db!.getSomeEvents(length, typeFilter);
   }
 
-  Future<List<Event>> nextOnline(int length) {
-    return Globals.db!.getSomeEventsOnline(length);
+  Future<List<Event>> nextOnline(int length, String? typeFilter) {
+    return Globals.db!.getSomeEventsOnline(length, typeFilter);
   }
 }

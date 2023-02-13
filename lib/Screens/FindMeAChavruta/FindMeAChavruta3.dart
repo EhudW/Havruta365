@@ -117,7 +117,9 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "קישור לשיעור",
+                              hintText: widget.event!.type == 'L'
+                                  ? "קישור לשיעור"
+                                  : "קישור לחברותא",
                               focusColor: Colors.teal,
                               contentPadding: EdgeInsets.fromLTRB(
                                   Globals.scaler.getWidth(2),
@@ -202,7 +204,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                                   HomePage())));
                                 },
                                 child: new Text(
-                                  "מצא לי חברותא",
+                                  //"מצא לי חברותא",
+                                  "אישור",
                                   style: TextStyle(
                                       fontSize: Globals.scaler.getTextSize(9),
                                       color: Colors.white),
@@ -270,7 +273,9 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
       child: Column(
         children: <Widget>[
           Text(
-            "בחר תמונה לחברותא",
+            widget.event!.type == 'L'
+                ? "בחר תמונה לשיעור"
+                : "בחר תמונה לחברותא",
             style: TextStyle(
               fontSize: Globals.scaler.getTextSize(8.5),
             ),

@@ -183,7 +183,9 @@ class _ChooseDates extends State<ChooseDates> {
             Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  "בחר את משך השיעור (דקות)   ",
+                  this.widget.event!.type == "L"
+                      ? "בחר את משך השיעור (דקות)   "
+                      : "בחר את משך החברותא (דקות)   ",
                   style:
                       GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),

@@ -96,14 +96,21 @@ class Mongo {
       {bool filterOldEvents = true,
       int maxEvents = 10,
       int startFrom = 0,
-      String? withParticipant}) async {
+      String? withParticipant, //email
+      String? createdBy, //email
+      String? typeFilter}) async {
     var query = (collection) async {
       var prefix = where
           .match('book', s)
           .or(where.match('topic', s))
           .or(where.match('lecturer', s));
+      if (typeFilter != null) {
+        prefix = prefix.eq('type', typeFilter);
+      }
       if (withParticipant != null) {
         prefix = prefix.eq("participants", withParticipant);
+      } else if (createdBy != null) {
+        prefix = prefix.eq("creatorUser", createdBy);
       }
       return await collection
           //.find(prefix.sortBy('_id').skip(startFrom).limit(maxEvents))
@@ -113,13 +120,24 @@ class Mongo {
     return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 
-  Future<List<Event>> getSomeEvents(int len) async {
-    var query = (collection) async =>
-        await collection.find(where.sortBy('_id').skip(len).limit(10)).toList();
+  Future<List<Event>> getSomeEvents(int len, String? typeFilter) async {
+    var query = (collection) async {
+      if (typeFilter == null) {
+        return await collection
+            .find(where.sortBy('_id').skip(len).limit(10))
+            .toList();
+      } else {
+        return await collection
+            .find(
+                where.eq('type', typeFilter).sortBy('_id').skip(len).limit(10))
+            .toList();
+      }
+    };
     return getEventsByQuery(query: query, filterOldEvents: true);
   }
 
-  Future<List<Event>> getSomeEventsOnline(int len) async {
+  Future<List<Event>> getSomeEventsOnline(int len, String? typeFilter) async {
+    assert(typeFilter == null); //for now online is for type = 'L'
     var query = (collection) async => await collection
         .find(where.eq('type', 'L').sortBy('_id').skip(len).limit(10))
         .toList();
@@ -127,9 +145,16 @@ class Mongo {
   }
 
   // Query all events that currents user register for them.
-  Future<List<Event>> getEvents(String? userMail, bool filterOldEvents) async {
-    var query = (collection) async => await collection
-        .find({"participants": Globals.currentUser!.email}).toList();
+  Future<List<Event>> getEvents(
+      String? userMail, bool filterOldEvents, String? typeFilter) async {
+    var query = (collection) async => await collection.find(
+        {"participants": userMail ?? Globals.currentUser!.email}).toList();
+    if (typeFilter != null) {
+      query = (collection) async => await collection.find({
+            "participants": userMail ?? Globals.currentUser!.email,
+            "type": typeFilter
+          }).toList();
+    }
     return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 

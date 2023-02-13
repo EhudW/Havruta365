@@ -120,7 +120,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           textAlign: TextAlign.end,
         ),
         Text(
-          "משך השיעור: " + event.duration.toString() + " דקות",
+          widget.event!.type == 'L'
+              ? "משך השיעור: " + event.duration.toString() + " דקות"
+              : "משך החברותא: " + event.duration.toString() + " דקות",
           style: GoogleFonts.secularOne(fontSize: 20.0),
           textDirection: ui.TextDirection.rtl,
         ),

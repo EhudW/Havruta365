@@ -6,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/HomePageScreen/Events/MyEventsPage.dart';
+import 'package:havruta_project/Screens/HomePageScreen/Events/modelsHomePages.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/ProfileScreen/Events_scroller.dart';
 import 'package:havruta_project/Screens/UserChanges/ChangesDetails.dart';
@@ -72,7 +74,104 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
     return Expanded(
       child: SingleChildScrollView(
         child: Column(children: [
-          Container(
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MyEventsPage(
+                            title: "נרשמתי ל",
+                            logic: PullingLogic(
+                                withParticipant: Globals.currentUser!.email,
+                                createdBy: null),
+                            icon: FontAwesomeIcons.bookBookmark,
+                          )));
+            },
+            child: Container(
+              height: Globals.scaler.getHeight(3),
+              width: Globals.scaler.getWidth(26),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(0),
+                  border: Border.all(
+                      width: Globals.scaler.getWidth(0.1),
+                      color: Colors.grey[350]!),
+                  color: Colors.white),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                        padding:
+                            EdgeInsets.only(left: Globals.scaler.getWidth(0))),
+                    Text("נרשמתי ל...",
+                        style: GoogleFonts.secularOne(
+                            fontSize: size_header,
+                            fontWeight: FontWeight.bold,
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                letterSpacing: Globals.scaler.getWidth(.5))),
+                        textDirection: TextDirection.rtl),
+                    SizedBox(width: Globals.scaler.getWidth(1.5)),
+                    Icon(
+                      FontAwesomeIcons.bookBookmark,
+                      size: icon_size,
+                      color: Colors.brown[400],
+                    ),
+                  ]),
+            ),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(0.8),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MyEventsPage(
+                            title: "יזמתי את",
+                            logic: PullingLogic(
+                              withParticipant: null,
+                              createdBy: Globals.currentUser!.email,
+                            ),
+                            icon: FontAwesomeIcons.personChalkboard,
+                          )));
+            },
+            child: Container(
+              height: Globals.scaler.getHeight(3),
+              width: Globals.scaler.getWidth(26),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(0),
+                  border: Border.all(
+                      width: Globals.scaler.getWidth(0.1),
+                      color: Colors.grey[350]!),
+                  color: Colors.white),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                        padding:
+                            EdgeInsets.only(left: Globals.scaler.getWidth(0))),
+                    Text("יזמתי את...",
+                        style: GoogleFonts.secularOne(
+                            fontSize: size_header,
+                            fontWeight: FontWeight.bold,
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                letterSpacing: Globals.scaler.getWidth(.5))),
+                        textDirection: TextDirection.rtl),
+                    SizedBox(width: Globals.scaler.getWidth(1.5)),
+                    Icon(
+                      FontAwesomeIcons.personChalkboard,
+                      size: icon_size,
+                      color: Colors.brown[400],
+                    ),
+                  ]),
+            ),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(0.8),
+          ),
+          /*Container(
             margin: EdgeInsets.fromLTRB(
                 Globals.scaler.getWidth(2.5),
                 Globals.scaler.getHeight(0),
@@ -115,7 +214,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                 setState(() {});
               },
             ),
-          ),
+          ),*/
           GestureDetector(
             onTap: () {
               Navigator.push(context,

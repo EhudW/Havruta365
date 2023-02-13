@@ -28,7 +28,7 @@ class _EventsScrollerState extends State<EventsScroller> {
   @override
   void initState() {
     super.initState();
-    eventsList = Globals.db!.getEvents(widget.userMail, true);
+    eventsList = Globals.db!.getEvents(widget.userMail, true, null);
   }
 
   Widget _buildEvent(BuildContext ctx, int index) {
@@ -52,7 +52,7 @@ class _EventsScrollerState extends State<EventsScroller> {
                           builder: (context) => Events(
                               EventsModel(false,
                                   logic: PullingLogic(
-                                      emailFilter: this.widget.userMail)),
+                                      withParticipant: this.widget.userMail)),
                               null),
                         ));
                   }),
