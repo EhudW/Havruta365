@@ -11,11 +11,39 @@ import 'package:intl/intl.dart';
 
 class EventViewFeed extends StatelessWidget {
   final Event event;
+  final String? search;
+  const EventViewFeed({Key? key, required this.event, this.search})
+      : super(key: key);
 
-  const EventViewFeed({
-    Key? key,
-    required this.event,
-  }) : super(key: key);
+  dynamic highlightedText(Text txt, BuildContext ctx, {bool ignore = false}) {
+    var fullString = txt.data ?? txt.textSpan!.toPlainText();
+    var style = txt.style ?? txt.textSpan!.style;
+
+    var defaultTxt = txt;
+    if (ignore || search == null) {
+      return defaultTxt;
+    }
+    var bold = search!.trim();
+    if (bold == "" || !fullString.contains(bold)) {
+      return defaultTxt;
+    }
+    var notUsedStr = "###@@@###";
+    fullString = fullString.replaceFirst(bold, notUsedStr);
+    var strings = fullString.split(notUsedStr);
+    return RichText(
+      text: TextSpan(
+        text: '',
+        style: DefaultTextStyle.of(ctx).style,
+        children: <TextSpan>[
+          TextSpan(text: strings[0], style: style),
+          TextSpan(
+              text: bold,
+              style: style!.merge(TextStyle(backgroundColor: Colors.yellow))),
+          TextSpan(text: strings[1], style: style),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,20 +70,24 @@ class EventViewFeed extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         SizedBox(height: scaler.getHeight(0.5)),
-                        Text(
-                          event.topic!,
-                          // textDirection: TextDirection.RTL,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: scaler.getTextSize(7.5),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          event.book!,
-                          style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: scaler.getTextSize(6.5)),
-                        ),
+                        highlightedText(
+                            Text(
+                              event.topic!,
+                              // textDirection: TextDirection.RTL,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: scaler.getTextSize(7.5),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            context),
+                        highlightedText(
+                            Text(
+                              event.book!,
+                              style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: scaler.getTextSize(6.5)),
+                            ),
+                            context),
                         SizedBox(height: scaler.getHeight(0.5)),
                         Expanded(
                             child: Container(
@@ -132,14 +164,17 @@ class EventViewFeed extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                              this.event.type == "L"
-                                  ? event.lecturer!
-                                  : event.creatorName!,
-                              style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: scaler.getTextSize(6)),
-                              textAlign: TextAlign.center),
+                          highlightedText(
+                              Text(
+                                  this.event.type == "L"
+                                      ? event.lecturer!
+                                      : event.creatorName!,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: scaler.getTextSize(6)),
+                                  textAlign: TextAlign.center),
+                              context,
+                              ignore: this.event.type == "H"),
                         ],
                       ),
                     ),

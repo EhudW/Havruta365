@@ -67,18 +67,14 @@ class Mongo {
     return user;
   }
 
-  Future<List<Event>> searchEvents(String? s) async {
+  Future<List<Event>> getEventsByQuery(
+      {required Future<dynamic> Function(dynamic events) query,
+      required bool filterOldEvents}) async {
     List<Event> data = [];
-    DateTime timeNow = DateTime.now();
+    DateTime timeNow = filterOldEvents ? DateTime.now() : DateTime(1900);
+
     var collection = db.collection('Events');
-    final events = await collection
-        .find(where
-            .eq('book', s)
-            .or(where.eq('topic', s))
-            .sortBy('id')
-            .skip(0)
-            .limit(10))
-        .toList();
+    final events = await query(collection);
     for (var i in events) {
       Event e = new Event.fromJson(i);
       var len = e.dates!.length;
@@ -94,66 +90,47 @@ class Mongo {
       }
     }
     return data;
+  }
+
+  Future<List<Event>> searchEvents(String s,
+      {bool filterOldEvents = true,
+      int maxEvents = 10,
+      int startFrom = 0,
+      String? withParticipant}) async {
+    var query = (collection) async {
+      var prefix = where
+          .match('book', s)
+          .or(where.match('topic', s))
+          .or(where.match('lecturer', s));
+      if (withParticipant != null) {
+        prefix = prefix.eq("participants", withParticipant);
+      }
+      return await collection
+          //.find(prefix.sortBy('_id').skip(startFrom).limit(maxEvents))
+          .find(prefix.sortBy('_id').skip(startFrom).limit(maxEvents))
+          .toList();
+    };
+    return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 
   Future<List<Event>> getSomeEvents(int len) async {
-    List<Event> data = [];
-    DateTime timeNow = DateTime.now();
-
-    var collection = db.collection('Events');
-    final events =
+    var query = (collection) async =>
         await collection.find(where.sortBy('_id').skip(len).limit(10)).toList();
-    for (var i in events) {
-      Event e = new Event.fromJson(i);
-      var len = e.dates!.length;
-      for (int j = 0; j < len; j++) {
-        if (timeNow.isAfter(e.dates![j])) {
-          e.dates!.remove(e.dates![j]);
-          len -= 1;
-          j--;
-        }
-      }
-      if (e.dates!.isNotEmpty) {
-        data.add(e);
-      }
-    }
-    return data;
+    return getEventsByQuery(query: query, filterOldEvents: true);
   }
 
   Future<List<Event>> getSomeEventsOnline(int len) async {
-    List<Event> data = [];
-    DateTime timeNow = DateTime.now();
-    var collection = db.collection('Events');
-    final events = await collection
+    var query = (collection) async => await collection
         .find(where.eq('type', 'L').sortBy('_id').skip(len).limit(10))
         .toList();
-    for (var i in events) {
-      Event e = new Event.fromJson(i);
-      var len = e.dates!.length;
-      for (int j = 0; j < len; j++) {
-        if (timeNow.isAfter(e.dates![j])) {
-          e.dates!.remove(e.dates![j]);
-          len -= 1;
-          j--;
-        }
-      }
-      if (e.dates!.isNotEmpty) {
-        data.add(e);
-      }
-    }
-    return data;
+    return getEventsByQuery(query: query, filterOldEvents: true);
   }
 
   // Query all events that currents user register for them.
-  Future<List<Event>> getEvents(String? userMail) async {
-    List<Event> events = [];
-    var eventsColl = db.collection('Events');
-    var allEvent = await eventsColl
+  Future<List<Event>> getEvents(String? userMail, bool filterOldEvents) async {
+    var query = (collection) async => await collection
         .find({"participants": Globals.currentUser!.email}).toList();
-    for (var i in allEvent) {
-      events.add(new Event.fromJson(i));
-    }
-    return events;
+    return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 
   Future<List<NotificationUser>> getNotifications() async {

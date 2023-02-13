@@ -5,6 +5,8 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 //import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
+import 'package:havruta_project/Screens/HomePageScreen/Events/Events.dart';
+import 'package:havruta_project/Screens/HomePageScreen/Events/modelsHomePages.dart';
 //import 'package:havruta_project/Screens/EventScreen/Event_api.dart';
 //import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -26,11 +28,52 @@ class _EventsScrollerState extends State<EventsScroller> {
   @override
   void initState() {
     super.initState();
-    eventsList = Globals.db!.getEvents(widget.userMail);
+    eventsList = Globals.db!.getEvents(widget.userMail, true);
   }
 
   Widget _buildEvent(BuildContext ctx, int index) {
+    if (index == 0) {
+      return Padding(
+        padding: EdgeInsets.only(right: Globals.scaler.getWidth(1.5)),
+        child: Column(
+          children: [
+            CircleAvatar(
+              //backgroundImage: NetworkImage(event.eventImage!),
+              backgroundColor: Colors.grey.withOpacity(0.2),
+              radius: 30.0,
+              child: IconButton(
+                  icon: Icon(Icons.list),
+                  iconSize: Globals.scaler.getWidth(3),
+                  color: Colors.teal.withOpacity(1),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Events(
+                              EventsModel(false,
+                                  logic: PullingLogic(
+                                      emailFilter: this.widget.userMail)),
+                              null),
+                        ));
+                  }),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: Globals.scaler.getHeight(0)),
+              child: Text("רשימה מלאה",
+                  style: GoogleFonts.secularOne(
+                      fontSize: 12, fontWeight: FontWeight.bold),
+                  textDirection: TextDirection.rtl),
+            ),
+          ],
+        ),
+      );
+    }
+    index = index - 1;
     var event = events![index];
+    String subject = event.book!;
+    subject = subject.trim() == "" ? event.topic! : subject;
+    String teacher = event.lecturer!;
+    teacher = teacher.trim() == "" ? event.creatorName! : teacher;
     return Padding(
       padding: EdgeInsets.only(right: Globals.scaler.getWidth(1.5)),
       child: Column(
@@ -54,11 +97,11 @@ class _EventsScrollerState extends State<EventsScroller> {
             padding: EdgeInsets.only(top: Globals.scaler.getHeight(0)),
             child: Column(
               children: [
-                Text(event.book!,
+                Text(subject,
                     style: GoogleFonts.secularOne(
                         fontSize: 12, fontWeight: FontWeight.bold),
                     textDirection: TextDirection.rtl),
-                Text(event.lecturer!)
+                Text(teacher)
               ],
             ),
           ),

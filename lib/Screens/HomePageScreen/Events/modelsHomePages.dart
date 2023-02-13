@@ -3,6 +3,8 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 //import 'dart:math';
 import 'package:havruta_project/Globals.dart';
 
+/// class to get events(lessons) data as stream-like object
+/// pullingLogic is control what functions will be called, if needed (when refreshing, for example)
 class EventsModel {
   Stream<List<Event>>? stream;
   late bool hasMore;
@@ -11,8 +13,10 @@ class EventsModel {
   List<Event>? _data;
   late StreamController<List<Event>?> _controller;
   bool? onlineBit;
+  late PullingLogic pullingLogic;
 
-  EventsModel(bool online) {
+  EventsModel(bool online, {PullingLogic? logic}) {
+    this.pullingLogic = logic ?? PullingLogic();
     _data = [];
     _controller = StreamController<List<Event>?>.broadcast();
     _isLoading = false;
@@ -30,16 +34,20 @@ class EventsModel {
     // print(searchData + 'db');
     if (searchData != null) {
       return Future.delayed(Duration(seconds: 1), () {
-        return Globals.db!.searchEvents(searchData);
+        final String? tmp = searchData;
+        if (tmp == null) {
+          return Future.value([]);
+        }
+        return this.pullingLogic.search(length, tmp);
       });
     }
     if (onlineBit == true) {
       return Future.delayed(Duration(seconds: 1), () {
-        return Globals.db!.getSomeEventsOnline(length);
+        return this.pullingLogic.nextOnline(length);
       });
     }
     return Future.delayed(Duration(seconds: 1), () {
-      return Globals.db!.getSomeEvents(length);
+      return this.pullingLogic.next(length, this);
     });
   }
 
@@ -48,19 +56,54 @@ class EventsModel {
   }
 
   Future<void> loadMore({bool clearCachedData = false}) {
-    if (clearCachedData || searchData != null) {
+    if (clearCachedData) {
+      //|| searchData != null) {
       _data = [];
       hasMore = true;
     }
-    if ((_isLoading || !hasMore) && searchData != null) {
+    if ((_isLoading || !hasMore)) {
+      //&& searchData != null) {
       return Future.value();
     }
     _isLoading = true;
+
     return _getExampleServerData(_data!.length).then((postsData) {
       _isLoading = false;
       _data!.addAll(postsData);
-      hasMore = true;
+      hasMore = hasMore && postsData.length > 0;
       _controller.add(_data);
     });
+  }
+}
+
+// helper class to decide how to pull the data about events from the db
+// for now, old events are filtered if this is general, and not filtered if it's specific for the user
+class PullingLogic {
+  String? emailFilter;
+  PullingLogic({this.emailFilter}) {
+    //print("constructor as $emailFilter");
+  }
+  Future<List<Event>> search(int length, String searchData) {
+    //print("search as $emailFilter");
+    return Globals.db!.searchEvents(searchData,
+        filterOldEvents: this.emailFilter == null,
+        maxEvents: 10,
+        startFrom: length,
+        withParticipant: this.emailFilter);
+  }
+
+  Future<List<Event>> next(int length, EventsModel model) {
+    if (emailFilter != null) {
+      // right now, get events returns ALL events,with no filter for time
+      // so in order to avoid infinite addition to the stream:
+      model.hasMore = false;
+      // even if getEvens will return only few, still there is race problem
+      return Globals.db!.getEvents(emailFilter, false);
+    }
+    return Globals.db!.getSomeEvents(length);
+  }
+
+  Future<List<Event>> nextOnline(int length) {
+    return Globals.db!.getSomeEventsOnline(length);
   }
 }

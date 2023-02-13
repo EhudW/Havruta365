@@ -9,7 +9,7 @@ import 'package:havruta_project/Globals.dart';
 // ignore: must_be_immutable
 class Events extends StatefulWidget {
   EventsModel events;
-  EventsModel eventsOnline;
+  EventsModel? eventsOnline;
 
   Events(this.events, this.eventsOnline);
 
@@ -25,7 +25,7 @@ class _EventsState extends State<Events> {
   //EventsModel eventsOnline;
   refresh() {
     this.widget.events.refresh();
-    this.widget.eventsOnline.refresh();
+    this.widget.eventsOnline?.refresh();
   }
 
   @override
@@ -41,7 +41,7 @@ class _EventsState extends State<Events> {
     scrollControllerOnline.addListener(() {
       if (scrollControllerOnline.position.maxScrollExtent ==
           scrollControllerOnline.offset) {
-        this.widget.eventsOnline.loadMore();
+        this.widget.eventsOnline?.loadMore();
       }
     });
     super.initState();
@@ -53,7 +53,11 @@ class _EventsState extends State<Events> {
       child: Scaffold(
           resizeToAvoidBottomInset: true,
           body: Column(children: <Widget>[
-            Expanded(flex: 2, child: eventsOnlineScroll()),
+            this.widget.eventsOnline == null
+                ? SizedBox(
+                    height: 10,
+                  )
+                : Expanded(flex: 2, child: eventsOnlineScroll()),
             searchBar(),
             Expanded(flex: 7, child: eventsScroll())
           ])),
@@ -79,7 +83,10 @@ class _EventsState extends State<Events> {
               itemCount: _snapshot.data.length + 1,
               itemBuilder: (BuildContext _context, int index) {
                 if (index < _snapshot.data.length) {
-                  return EventViewFeed(event: _snapshot.data[index]);
+                  return EventViewFeed(
+                    event: _snapshot.data[index],
+                    search: searchTextController.text,
+                  );
                 } else if (this.widget.events.hasMore) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 32.0),
@@ -105,13 +112,13 @@ class _EventsState extends State<Events> {
     return new Stack(children: <Widget>[
       Scrollbar(
           child: StreamBuilder(
-        stream: this.widget.eventsOnline.stream,
+        stream: this.widget.eventsOnline!.stream,
         builder: (BuildContext _context, AsyncSnapshot _snapshot) {
           if (!_snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
             return RefreshIndicator(
-              onRefresh: this.widget.eventsOnline.refresh,
+              onRefresh: this.widget.eventsOnline!.refresh,
               child: ListView.separated(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
@@ -124,7 +131,7 @@ class _EventsState extends State<Events> {
                 itemBuilder: (BuildContext _context, int index) {
                   if (index < _snapshot.data.length) {
                     return EventOnlineFeed(event: _snapshot.data[index]);
-                  } else if (this.widget.eventsOnline.hasMore) {
+                  } else if (this.widget.eventsOnline!.hasMore) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 32.0),
                     );
