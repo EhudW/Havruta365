@@ -109,10 +109,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return Column(
       children: [
         Divider(),
-        Text(
-          "   האירוע הקרוב יתקיים ב: $nextEvent",
-          style: GoogleFonts.secularOne(fontSize: 20.0),
-          textAlign: TextAlign.end,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              nextEvent,
+              style: GoogleFonts.secularOne(fontSize: 20.0),
+              //textAlign: TextAlign.end,
+            ),
+            Text(
+              "   האירוע הקרוב יתקיים ב:    ",
+              style: GoogleFonts.secularOne(fontSize: 20.0),
+              //textAlign: TextAlign.end,
+              textDirection: ui.TextDirection.rtl,
+            ),
+          ],
         ),
         Text(
           "   בשעה  $time",

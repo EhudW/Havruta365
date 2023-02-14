@@ -178,7 +178,8 @@ class EventViewFeed extends StatelessWidget {
                                       fontSize: scaler.getTextSize(6)),
                                   textAlign: TextAlign.center),
                               context,
-                              ignore: this.event.type == "H"),
+                              // even when this.event.type == "H" the search will work, so dont ignore
+                              ignore: false),
                         ],
                       ),
                     ),

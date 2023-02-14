@@ -103,6 +103,7 @@ class Mongo {
       var prefix = where
           .match('book', s)
           .or(where.match('topic', s))
+          .or(where.eq('type', 'H').and(where.match("creatorName", s)))
           .or(where.match('lecturer', s));
       if (typeFilter != null) {
         prefix = prefix.eq('type', typeFilter);
