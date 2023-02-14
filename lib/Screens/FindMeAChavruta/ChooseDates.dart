@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Second_Dot_Row.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../Globals.dart';
 //import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'ChooseDatesAlgo.dart';
 import 'FindMeAChavruta3.dart';
+import 'dart:ui' as UI;
 
 class ChooseDates extends StatefulWidget {
   final Event? event;
@@ -294,13 +296,18 @@ class _ChooseDates extends State<ChooseDates> {
                         color: Colors.deepOrangeAccent)),
               ),
             ),
-            SizedBox(height: Globals.scaler.getHeight(2)),
+            SizedBox(height: Globals.scaler.getHeight(1.4)),
+            SecondDotRow(),
+            SizedBox(height: Globals.scaler.getHeight(0.6)),
             ElevatedButton(
-              child: Text(
+              child: Icon(Icons.arrow_forward_outlined,
+                  textDirection: UI.TextDirection.rtl, color: Colors.white),
+
+              /*Text(
                 "המשך",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
-              ),
+              )*/
               style: ElevatedButton.styleFrom(
                   alignment: Alignment.center,
                   minimumSize: Size(

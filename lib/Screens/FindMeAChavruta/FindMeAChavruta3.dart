@@ -2,9 +2,11 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/First_Dot_Row.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 //import 'package:flutter/rendering.dart';
@@ -171,7 +173,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     ],
                   ),
                   SizedBox(height: spaceBetween),
-                  ThirdDotRow(),
+                  FirstDotRow(),
                   SizedBox(height: spaceBetween! - 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -185,31 +187,35 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                               color: Colors.teal[400],
                             ),
                             child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.teal),
-                                onPressed: () {
-                                  widget.event!.creationDate = DateTime.now();
-                                  widget.event!.participants = [];
-                                  widget.event!.creatorUser =
-                                      Globals.currentUser!.email;
-                                  if (widget.event!.eventImage == "") {
-                                    widget.event!.eventImage =
-                                        'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
-                                  }
-                                  mongoDB!.insertEvent(widget.event!).then(
-                                      (value) => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  HomePage())));
-                                },
-                                child: new Text(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal),
+                              onPressed: () {
+                                widget.event!.creationDate = DateTime.now();
+                                widget.event!.participants = [];
+                                widget.event!.creatorUser =
+                                    Globals.currentUser!.email;
+                                if (widget.event!.eventImage == "") {
+                                  widget.event!.eventImage =
+                                      'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+                                }
+                                mongoDB!.insertEvent(widget.event!).then(
+                                    (value) => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomePage())));
+                              },
+                              child: Icon(FontAwesomeIcons.check,
+                                  color: Colors.white,
+                                  textDirection: TextDirection.rtl),
+
+                              /*new Text(
                                   //"מצא לי חברותא",
                                   "אישור",
                                   style: TextStyle(
                                       fontSize: Globals.scaler.getTextSize(9),
                                       color: Colors.white),
-                                )))
+                                )*/
+                            ))
                       ])
                     ],
                   ),

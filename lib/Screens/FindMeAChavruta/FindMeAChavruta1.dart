@@ -4,6 +4,7 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/First_Dot_Row.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/MyData.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
 import 'package:havruta_project/DataBase_auth/Topic.dart';
 //import 'MyData.dart';
@@ -472,7 +473,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   ),
                                 ]),
                             SizedBox(height: Globals.scaler.getHeight(2.5)),
-                            Center(child: FirstDotRow()),
+                            Center(child: ThirdDotRow()),
                             SizedBox(height: Globals.scaler.getHeight(0.7)),
                             Center(
                               child: NextButton(

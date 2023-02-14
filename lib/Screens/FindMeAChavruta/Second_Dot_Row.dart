@@ -47,6 +47,7 @@ class SecondDotRow extends StatelessWidget {
                   _svg_h36wzl,
                   allowDrawingOutsideViewBox: true,
                   fit: BoxFit.fill,
+                  color: Colors.grey,
                 ),
               ),
               Pinned.fromSize(
@@ -59,11 +60,10 @@ class SecondDotRow extends StatelessWidget {
                 pinTop: true,
                 pinBottom: true,
                 fixedWidth: true,
-                child: SvgPicture.string(
-                  _svg_h36wzl,
-                  allowDrawingOutsideViewBox: true,
-                  fit: BoxFit.fill,
-                ),
+                child: SvgPicture.string(_svg_h36wzl,
+                    allowDrawingOutsideViewBox: true,
+                    fit: BoxFit.fill,
+                    color: Colors.grey),
               ),
             ],
           ),

@@ -61,7 +61,8 @@ class NextButton extends StatelessWidget {
               backgroundColor: Colors.teal,
               shape: StadiumBorder(),
               shadowColor: Colors.grey.withOpacity(1)),
-          child: Icon(Icons.arrow_forward_outlined),
+          child: Icon(Icons.arrow_forward_outlined,
+              textDirection: TextDirection.rtl),
         ));
   }
 
