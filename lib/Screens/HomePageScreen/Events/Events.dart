@@ -177,7 +177,7 @@ class _EventsState extends State<Events> {
 
   searchBar() {
     bool isSearchTextEmpty = searchTextController.text == "";
-    IconData typeFilterIcon = FontAwesomeIcons.filter;
+    IconData typeFilterIcon = FontAwesomeIcons.filterCircleXmark;
     if (typeFilter == 'L') {
       typeFilterIcon = FontAwesomeIcons.graduationCap;
     } else if (typeFilter == 'H') {
@@ -191,10 +191,13 @@ class _EventsState extends State<Events> {
         children: <Widget>[
           SizedBox(width: Globals.scaler.getWidth(1)),
           IconButton(
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              builder: ((builder) => bottomSheet()),
-            ),
+            onPressed: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+              showModalBottomSheet(
+                context: context,
+                builder: ((builder) => bottomSheet()),
+              );
+            },
             icon: Icon(typeFilterIcon,
                 size: Globals.scaler.getTextSize(8),
                 color: Colors.red,

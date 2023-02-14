@@ -98,7 +98,8 @@ class Mongo {
       int startFrom = 0,
       String? withParticipant, //email
       String? createdBy, //email
-      String? typeFilter}) async {
+      String? typeFilter,
+      bool newestFirst = true}) async {
     var query = (collection) async {
       var prefix = where
           .match('book', s)
@@ -115,22 +116,32 @@ class Mongo {
       }
       return await collection
           //.find(prefix.sortBy('_id').skip(startFrom).limit(maxEvents))
-          .find(prefix.sortBy('_id').skip(startFrom).limit(maxEvents))
+          .find(prefix
+              .sortBy('_id', descending: newestFirst)
+              .skip(startFrom)
+              .limit(maxEvents))
           .toList();
     };
     return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 
-  Future<List<Event>> getSomeEvents(int len, String? typeFilter) async {
+  Future<List<Event>> getSomeEvents(int len, String? typeFilter,
+      {bool newestFirst = true}) async {
     var query = (collection) async {
       if (typeFilter == null) {
         return await collection
-            .find(where.sortBy('_id').skip(len).limit(10))
+            .find(where
+                .sortBy('_id', descending: newestFirst)
+                .skip(len)
+                .limit(10))
             .toList();
       } else {
         return await collection
-            .find(
-                where.eq('type', typeFilter).sortBy('_id').skip(len).limit(10))
+            .find(where
+                .eq('type', typeFilter)
+                .sortBy('_id', descending: newestFirst)
+                .skip(len)
+                .limit(10))
             .toList();
       }
     };
