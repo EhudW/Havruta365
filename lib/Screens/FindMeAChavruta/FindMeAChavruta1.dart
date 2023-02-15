@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 //import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "dart:async";
+import '../../Widgets/SplashScreen.dart';
 import 'Next_Button.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
@@ -476,11 +477,32 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             Center(child: ThirdDotRow()),
                             SizedBox(height: Globals.scaler.getHeight(0.7)),
                             Center(
-                              child: NextButton(
-                                  context: context,
-                                  event: this.event,
-                                  whichPage: 2,
-                                  isEmpty: false),
+                              child: FutureBuilder(
+                                future: Globals.db!
+                                    .getAllEventsAndCreated(null, true, null),
+                                builder: (context, snapshot) {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.done:
+                                      return NextButton(
+                                          context: context,
+                                          event: this.event,
+                                          whichPage: 2,
+                                          isEmpty: false,
+                                          allUserEvents:
+                                              snapshot.data as List<Event>);
+                                    case ConnectionState.none:
+                                    case ConnectionState.active:
+                                    case ConnectionState.waiting:
+                                    default:
+                                      return NextButton(
+                                          context: context,
+                                          event: this.event,
+                                          whichPage: 2,
+                                          isEmpty: false,
+                                          allUserEvents: []);
+                                  }
+                                },
+                              ),
                             ),
                           ],
                         ),

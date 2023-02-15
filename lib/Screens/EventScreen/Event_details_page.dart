@@ -17,9 +17,8 @@ import 'dart:ui' as ui;
 // ignore: must_be_immutable
 class EventDetailsPage extends StatefulWidget {
   Event? event;
-  EventDetailsPage(Event? event) {
-    this.event = event;
-  }
+  List<Event>? allUserEvents;
+  EventDetailsPage(this.event, this.allUserEvents);
 
   @override
   _EventDetailsPageState createState() => _EventDetailsPageState();
@@ -102,10 +101,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   dates(Event event) {
-    var nextEvent = DateFormat('dd - MM - yyyy')
-        .format((event.dates![0] as DateTime).toLocal());
-    var time =
-        DateFormat('HH:mm').format((event.dates![0] as DateTime).toLocal());
+    String nextEvent = "-נגמר-";
+    String time = '';
+    if (event.dates!.isNotEmpty) {
+      nextEvent = DateFormat('dd - MM - yyyy')
+          .format((event.dates![0] as DateTime).toLocal());
+      time =
+          DateFormat('HH:mm').format((event.dates![0] as DateTime).toLocal());
+    }
     return Column(
       children: [
         Divider(),
@@ -118,7 +121,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               //textAlign: TextAlign.end,
             ),
             Text(
-              "   האירוע הקרוב יתקיים ב:    ",
+              (event.dates!.isNotEmpty &&
+                      isNow(event.dates![0], event.duration ?? 0))
+                  ? "   האירוע מתקיים כעת ב:    "
+                  : "   האירוע הקרוב יתקיים ב:    ",
               style: GoogleFonts.secularOne(fontSize: 20.0),
               //textAlign: TextAlign.end,
               textDirection: ui.TextDirection.rtl,
@@ -126,7 +132,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           ],
         ),
         Text(
-          "   בשעה  $time",
+          time == ""
+              ? ""
+              : (isNow(event.dates![0], event.duration ?? 0)
+                  ? "   התחיל בשעה  $time"
+                  : "   בשעה  $time"),
           style: GoogleFonts.secularOne(fontSize: 20.0),
           textAlign: TextAlign.end,
         ),
@@ -137,15 +147,17 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           style: GoogleFonts.secularOne(fontSize: 20.0),
           textDirection: ui.TextDirection.rtl,
         ),
-        ElevatedButton.icon(
-          onPressed: () {
-            // TODO Go to Yaniv page!!
-          },
-          icon: Icon(FontAwesomeIcons.clock, size: 18),
-          label: Text("לוח זמנים מלא"),
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.amber)),
-        )
+        event.dates!.isEmpty
+            ? Container()
+            : ElevatedButton.icon(
+                onPressed: () {
+                  // TODO Go to Yaniv page!!
+                },
+                icon: Icon(FontAwesomeIcons.clock, size: 18),
+                label: Text("לוח זמנים מלא"),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.amber)),
+              )
       ],
     );
   }
@@ -168,35 +180,45 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     : FontAwesomeIcons.users),
             dates(widget.event!),
             Divider(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("!מהרו להירשם",
-                    style: GoogleFonts.alef(
-                        fontSize: 22.0,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold)),
-                Text("נשארו" + " $num " + "מקומות פנויים",
-                    style: GoogleFonts.suezOne(
-                        fontSize: 20.0, color: Colors.grey[700])),
-                Row(
-                  textDirection: ui.TextDirection.rtl,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("גברים/נשים: ",
+            widget.event!.dates!.isEmpty
+                ? Container()
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      widget.event!.participants!
+                              .contains(Globals.currentUser!.email)
+                          ? Container()
+                          : Text("!מהרו להירשם",
+                              style: GoogleFonts.alef(
+                                  fontSize: 22.0,
+                                  color: Colors.grey[700],
+                                  fontWeight: FontWeight.bold)),
+                      Text("נשארו" + " $num " + "מקומות פנויים",
+                          style: GoogleFonts.suezOne(
+                              fontSize: 20.0, color: Colors.grey[700])),
+                      Row(
                         textDirection: ui.TextDirection.rtl,
-                        style: GoogleFonts.suezOne(
-                            fontSize: 20.0, color: Colors.grey[700])),
-                    Text(widget.event!.targetGender!,
-                        textDirection: ui.TextDirection.rtl,
-                        style: GoogleFonts.suezOne(
-                            fontSize: 20.0, color: Colors.grey[700])),
-                  ],
-                )
-              ],
-            ),
-            SizedBox(height: 8),
-            MyProgressButton(event: widget.event, notifyParent: refresh),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("גברים/נשים: ",
+                              textDirection: ui.TextDirection.rtl,
+                              style: GoogleFonts.suezOne(
+                                  fontSize: 20.0, color: Colors.grey[700])),
+                          Text(widget.event!.targetGender!,
+                              textDirection: ui.TextDirection.rtl,
+                              style: GoogleFonts.suezOne(
+                                  fontSize: 20.0, color: Colors.grey[700])),
+                        ],
+                      )
+                    ],
+                  ),
+            widget.event!.dates!.isEmpty ? Container() : SizedBox(height: 8),
+            widget.event!.dates!.isEmpty
+                ? Container()
+                : MyProgressButton(
+                    event: widget.event,
+                    allUserEvents: widget.allUserEvents,
+                    notifyParent: refresh),
             SizedBox(height: 8.0),
             Divider(),
             // widget.event.participants.contains(Globals.currentUser.email) ?

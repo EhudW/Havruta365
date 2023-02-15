@@ -9,13 +9,14 @@ class NextButton extends StatelessWidget {
   final int whichPage;
   final BuildContext context;
   final bool isEmpty;
-
+  final List<Event>? allUserEvents;
   NextButton(
       {Key? key,
       required this.context,
       required this.event,
       required this.whichPage,
-      required this.isEmpty})
+      required this.isEmpty,
+      this.allUserEvents})
       : super(key: key);
 
   @override
@@ -35,8 +36,9 @@ class NextButton extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ChooseDates(event: this.event)));
+                          builder: (context) => ChooseDates(
+                              event: this.event,
+                              allUserEvents: allUserEvents)));
                 } else {
                   showErrorSnackBar(
                       context, 'צריך למלא את כל השדות לפני שמתקדמים');

@@ -14,14 +14,17 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  Future<Event>? eventUpdate;
+  Future<List<dynamic>>? f; //[eventUpdate,allUserEvents];
 
   @override
   Widget build(BuildContext context) {
-    eventUpdate = Globals.db!.getEventById(this.widget.event.id);
+    Future<Event> eventUpdate = Globals.db!.getEventById(this.widget.event.id);
+    Future<List<Event>> allUserEvents =
+        Globals.db!.getAllEventsAndCreated(null, true, null);
+    f = Future.wait([eventUpdate, allUserEvents]);
     return Scaffold(
         body: FutureBuilder(
-            future: eventUpdate,
+            future: f,
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
@@ -36,7 +39,9 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                   );
                 case ConnectionState.done:
-                  return EventDetailsPage(snapshot.data as Event?);
+                  List<dynamic> data = snapshot.data! as List<dynamic>;
+                  return EventDetailsPage(
+                      data[0] as Event?, data[1] as List<Event>?);
                 default:
                   return Text('default');
               }

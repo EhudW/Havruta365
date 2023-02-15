@@ -43,6 +43,7 @@ class Mongo {
   Future<void> insertEvent(Event event) async {
     // MondoDB decrease to hour from the time, because he using UTC. here we fix it.
     for (DateTime date in event.dates as Iterable<DateTime>) {
+      // TODO: check if to utc function prefered
       date.add(Duration(hours: 2));
     }
     var collection = db.collection('Events');
@@ -79,7 +80,9 @@ class Mongo {
       Event e = new Event.fromJson(i);
       var len = e.dates!.length;
       for (int j = 0; j < len; j++) {
-        if (timeNow.isAfter(e.dates![j])) {
+        if (timeNow
+            .subtract(Duration(minutes: e.duration ?? 0))
+            .isAfter(e.dates![j])) {
           e.dates!.remove(e.dates![j]);
           len -= 1;
           j--;
@@ -167,6 +170,21 @@ class Mongo {
             "type": typeFilter
           }).toList();
     }
+    return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
+  }
+
+  // Query all events that currents user register for them OR created.
+  Future<List<Event>> getAllEventsAndCreated(
+      String? userMail, bool filterOldEvents, String? typeFilter) async {
+    var queryBuilder = where
+        .eq("creatorUser", userMail ?? Globals.currentUser!.email)
+        .or(where.eq("participants", userMail ?? Globals.currentUser!.email));
+
+    queryBuilder = typeFilter == null
+        ? queryBuilder
+        : where.eq("type", typeFilter).and(queryBuilder);
+    var query =
+        (collection) async => await collection.find(queryBuilder).toList();
     return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 
@@ -347,7 +365,9 @@ class Mongo {
     var e = Event.fromJson(event);
     var len = e.dates!.length;
     for (int j = 0; j < len; j++) {
-      if (timeNow.isAfter(e.dates![j])) {
+      if (timeNow
+          .subtract(Duration(minutes: e.duration ?? 0))
+          .isAfter(e.dates![j])) {
         e.dates!.remove(e.dates![j]);
         len -= 1;
         j--;

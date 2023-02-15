@@ -13,6 +13,7 @@ import '../../Globals.dart';
 //import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../EventScreen/MyProgressButton.dart';
 import 'ChooseDatesAlgo.dart';
 import 'FindMeAChavruta3.dart';
 import 'dart:ui' as UI;
@@ -20,7 +21,8 @@ import 'dart:ui' as UI;
 class ChooseDates extends StatefulWidget {
   final Event? event;
 
-  ChooseDates({this.event});
+  List<Event>? allUserEvents;
+  ChooseDates({this.event, this.allUserEvents});
 
   @override
   _ChooseDates createState() => _ChooseDates();
@@ -333,14 +335,34 @@ class _ChooseDates extends State<ChooseDates> {
                   int frequencyInt = convertFrquency2Int(frequency);
                   List<DateTime> dates =
                       calcDates(firstDate, time, lastDate!, frequencyInt);
+
                   widget.event!.dates = dates;
                   widget.event!.duration = eventDuration!.round();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            FindMeAChavruta3(event: widget.event)),
-                  );
+                  var nextPage = () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                FindMeAChavruta3(event: widget.event)),
+                      );
+                  // -- check for overlap
+                  var overlaps = getEventsOverlap(
+                      widget.event!, widget.allUserEvents ?? []);
+
+                  if (overlaps.isNotEmpty) {
+                    var ok = () {
+                      Navigator.pop(context);
+                      nextPage();
+                    };
+                    var ignore = () => Navigator.pop(context);
+                    showModalBottomSheet(
+                      context: context,
+                      builder: ((builder) =>
+                          bottomSheet(overlaps, context, ok, ignore)),
+                    );
+                    return;
+                  }
+                  // -- if no overlap:
+                  nextPage();
                 }
               },
             ),
