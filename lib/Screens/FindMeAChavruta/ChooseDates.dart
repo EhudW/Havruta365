@@ -262,39 +262,46 @@ class _ChooseDates extends State<ChooseDates> {
             )),
             SizedBox(height: Globals.scaler.getHeight(1)),
             // Last date
-            Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "בחר תאריך אחרון לאירוע   ",
-                  style:
-                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
-                )),
-            SizedBox(height: Globals.scaler.getHeight(0.5)),
-            InkWell(
-              onTap: () => _selectLastDate(context),
-              child: Container(
-                alignment: AlignmentDirectional.center,
-                width: Globals.scaler.getWidth(32),
-                height: Globals.scaler.getHeight(3),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(30.0),
-                  ),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(1),
-                        offset: const Offset(0, 2),
-                        blurRadius: 8.0),
-                  ],
-                ),
-                child: Text(DateFormat('dd - MM - yyyy').format(lastDate!),
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.varelaRound(
-                        fontSize: 21,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrangeAccent)),
-              ),
+            Column(
+              children: frequency == "ללא"
+                  ? []
+                  : [
+                      Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            "בחר תאריך אחרון לאירוע   ",
+                            style: GoogleFonts.alef(
+                                fontSize: 18, color: Colors.teal[400]),
+                          )),
+                      SizedBox(height: Globals.scaler.getHeight(0.5)),
+                      InkWell(
+                        onTap: () => _selectLastDate(context),
+                        child: Container(
+                          alignment: AlignmentDirectional.center,
+                          width: Globals.scaler.getWidth(32),
+                          height: Globals.scaler.getHeight(3),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(30.0),
+                            ),
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                  color: Colors.grey.withOpacity(1),
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 8.0),
+                            ],
+                          ),
+                          child: Text(
+                              DateFormat('dd - MM - yyyy').format(lastDate!),
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.varelaRound(
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepOrangeAccent)),
+                        ),
+                      ),
+                    ],
             ),
             SizedBox(height: Globals.scaler.getHeight(1.4)),
             SecondDotRow(),
@@ -319,6 +326,8 @@ class _ChooseDates extends State<ChooseDates> {
                   // <-- Button color
                   foregroundColor: Colors.teal),
               onPressed: () async {
+                lastDate = frequency == "ללא" ? firstDate : lastDate;
+
                 if (isDatesValid(firstDate, time, lastDate!, context)) {
                   // Calculate dates
                   int frequencyInt = convertFrquency2Int(frequency);

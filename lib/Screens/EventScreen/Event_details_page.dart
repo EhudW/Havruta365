@@ -161,7 +161,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         child: Column(
           children: [
             EventDetailHeader(widget.event),
-            Storyline(widget.event!.description),
+            Storyline(
+                widget.event!.description,
+                widget.event!.type == 'L'
+                    ? FontAwesomeIcons.graduationCap
+                    : FontAwesomeIcons.users),
             dates(widget.event!),
             Divider(),
             Column(
@@ -174,7 +178,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         fontWeight: FontWeight.bold)),
                 Text("נשארו" + " $num " + "מקומות פנויים",
                     style: GoogleFonts.suezOne(
-                        fontSize: 20.0, color: Colors.grey[700]))
+                        fontSize: 20.0, color: Colors.grey[700])),
+                Row(
+                  textDirection: ui.TextDirection.rtl,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("גברים/נשים: ",
+                        textDirection: ui.TextDirection.rtl,
+                        style: GoogleFonts.suezOne(
+                            fontSize: 20.0, color: Colors.grey[700])),
+                    Text(widget.event!.targetGender!,
+                        textDirection: ui.TextDirection.rtl,
+                        style: GoogleFonts.suezOne(
+                            fontSize: 20.0, color: Colors.grey[700])),
+                  ],
+                )
               ],
             ),
             SizedBox(height: 8),
