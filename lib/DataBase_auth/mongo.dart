@@ -68,17 +68,32 @@ class Mongo {
     return user;
   }
 
+  // assume we have event which all its dates are old
+  // @filterOldEvents == true -> getEventsByQuery won't return that event
+  // @filterOldEvents == false -> getEventsByQuery will return that event
+  //     @filterOldDates == true -> getEventsByQuery will return that event with empty dates list
+  //     @filterOldDates == false -> getEventsByQuery will return that event and it dates
+  // if @filterOldEvents == true than @filterOldDates doesn't matter:
+  //      @filterOldEvents == true  -->  @filterOldDates = true
   Future<List<Event>> getEventsByQuery(
       {required Future<dynamic> Function(dynamic events) query,
-      required bool filterOldEvents}) async {
-    List<Event> data = [];
-    DateTime timeNow = filterOldEvents ? DateTime.now() : DateTime(1900);
+      required bool filterOldEvents,
+      bool filterOldDates = true}) async {
+    filterOldDates = filterOldEvents || filterOldDates;
 
     var collection = db.collection('Events');
     final events = await query(collection);
+    // if  filterOldDates = false  -> filterOldEvents = false
+    if (!filterOldDates) {
+      return List.from(events.map((i) => new Event.fromJson(i)));
+    }
+    // filterOldDates = true, but maybe we still won't filterOldEvents
+    List<Event> data = [];
+    DateTime timeNow = DateTime.now();
     for (var i in events) {
       Event e = new Event.fromJson(i);
       var len = e.dates!.length;
+      // filterOldDate=true :
       for (int j = 0; j < len; j++) {
         if (timeNow
             .subtract(Duration(minutes: e.duration ?? 0))
@@ -88,13 +103,15 @@ class Mongo {
           j--;
         }
       }
-      if (e.dates!.isNotEmpty) {
+      // keep events if filterOldEvents=false or if it has dates
+      if (!filterOldEvents || e.dates!.isNotEmpty) {
         data.add(e);
       }
     }
     return data;
   }
 
+  // see comment above getEventsByQuery() about @filterOldEvents
   Future<List<Event>> searchEvents(String s,
       {bool filterOldEvents = true,
       int maxEvents = 10,
@@ -159,6 +176,7 @@ class Mongo {
     return getEventsByQuery(query: query, filterOldEvents: true);
   }
 
+  // see comment above getEventsByQuery() about @filterOldEvents
   // Query all events that currents user register for them.
   Future<List<Event>> getEvents(
       String? userMail, bool filterOldEvents, String? typeFilter) async {
@@ -173,6 +191,7 @@ class Mongo {
     return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 
+  // see comment above getEventsByQuery() about @filterOldEvents
   // Query all events that currents user register for them OR created.
   Future<List<Event>> getAllEventsAndCreated(
       String? userMail, bool filterOldEvents, String? typeFilter) async {

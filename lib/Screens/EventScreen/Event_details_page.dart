@@ -8,6 +8,7 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
+import 'EventDatesList.dart';
 import 'Partcipients_scroller.dart';
 import 'Event_detail_header.dart';
 import 'story_line.dart';
@@ -151,7 +152,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             ? Container()
             : ElevatedButton.icon(
                 onPressed: () {
-                  // TODO Go to Yaniv page!!
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EventDatesList(event, widget.allUserEvents ?? []),
+                    ),
+                  );
                 },
                 icon: Icon(FontAwesomeIcons.clock, size: 18),
                 label: Text("לוח זמנים מלא"),

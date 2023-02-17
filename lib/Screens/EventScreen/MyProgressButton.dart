@@ -68,6 +68,7 @@ List<DateTime> getTimesOverlap2(Event event1, Event event2) {
   return rslt;
 }
 
+// EventDatesList.dart is assuming time1 is from @event
 // get overlaps between events, and specific other event
 // [ ['eventA', [time1, time2]]
 //   ['eventB', [time1, time2]] ... ]
@@ -97,7 +98,8 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     // }
     if (widget.event!.participants!.contains(Globals.currentUser!.email)) {
       // Check if there is event NOW
-      if (isNow(widget.event!.dates![0], widget.event!.duration!) &&
+      if (widget.event!.dates!.isNotEmpty &&
+          isNow(widget.event!.dates![0], widget.event!.duration!) &&
           widget.event!.link!.trim() != "") {
         stateOnlyText = ButtonState.success;
       } else {
@@ -224,7 +226,8 @@ class _MyProgressButtonState extends State<MyProgressButton> {
       widget.event!.participants!.add(Globals.currentUser!.email);
       widget.notifyParent();
       setState(() {
-        if (isNow(widget.event!.dates![0], widget.event!.duration!) &&
+        if (widget.event!.dates!.isNotEmpty &&
+            isNow(widget.event!.dates![0], widget.event!.duration!) &&
             widget.event!.link!.trim() != "") {
           stateOnlyText = ButtonState.success;
         } else {

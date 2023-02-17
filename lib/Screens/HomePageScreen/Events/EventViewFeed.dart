@@ -12,7 +12,12 @@ import 'package:intl/intl.dart';
 class EventViewFeed extends StatelessWidget {
   final Event event;
   final String? search;
-  const EventViewFeed({Key? key, required this.event, this.search})
+  final bool noClickAndClock;
+  const EventViewFeed(
+      {Key? key,
+      required this.event,
+      this.search,
+      this.noClickAndClock = false})
       : super(key: key);
 
   dynamic highlightedText(Text txt, BuildContext ctx, {bool ignore = false}) {
@@ -55,12 +60,17 @@ class EventViewFeed extends StatelessWidget {
             customBorder: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7.0),
             ),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EventScreen(event)));
-            },
+            onTap: noClickAndClock
+                ? null
+                : () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventScreen(event)));
+                  },
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
                       child: Container(
@@ -116,23 +126,31 @@ class EventViewFeed extends StatelessWidget {
                                               size: scaler.getTextSize(8),
                                               color: Colors.red)),
                                       SizedBox(width: scaler.getWidth(3)),
-                                      Row(
-                                          //mainAxisAlignment: MainAxisAlignment.end,
-                                          children: <Widget>[
-                                            Text(
-                                              DateFormat('d-M-yyyy')
-                                                  .format(event.dates![0]),
-                                              //textDirection: TextDirection.rtl,
-                                              textAlign: TextAlign.right,
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      scaler.getTextSize(6)),
-                                            ),
-                                            SizedBox(width: scaler.getWidth(1)),
-                                            Icon(FontAwesomeIcons.clock,
-                                                size: scaler.getTextSize(8),
-                                                color: Colors.red)
-                                          ])
+                                      noClickAndClock
+                                          ? Container()
+                                          : Row(
+                                              //mainAxisAlignment: MainAxisAlignment.end,
+                                              children: <Widget>[
+                                                  Text(
+                                                    event.dates!.isEmpty
+                                                        ? "-נגמר-"
+                                                        : DateFormat('d-M-yyyy')
+                                                            .format(event
+                                                                .dates![0]),
+                                                    //textDirection: TextDirection.rtl,
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                        fontSize: scaler
+                                                            .getTextSize(6)),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          scaler.getWidth(1)),
+                                                  Icon(FontAwesomeIcons.clock,
+                                                      size:
+                                                          scaler.getTextSize(8),
+                                                      color: Colors.red)
+                                                ])
                                     ])))
                       ],
                     ),
