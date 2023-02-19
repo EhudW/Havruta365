@@ -17,6 +17,7 @@ class Event {
       this.eventImage,
       this.lecturer,
       this.participants,
+      this.waitingQueue,
       this.dates,
       this.duration,
       this.maxParticipants});
@@ -43,6 +44,7 @@ class Event {
   int? maxParticipants, duration;
   DateTime? creationDate;
   List<dynamic>? participants;
+  List<dynamic>? waitingQueue;
   List<dynamic>? dates;
 
   // Return JSON of the event
@@ -59,6 +61,7 @@ class Event {
         'eventImage': eventImage,
         'lecturer': lecturer ?? "לא ידוע",
         'participants': participants ?? [],
+        'waitingQueue': waitingQueue ?? [],
         'maxParticipants': maxParticipants ?? 100,
         'dates': dates ?? [],
         'duration': duration ?? 30
@@ -77,6 +80,7 @@ class Event {
         description = json['description'],
         eventImage = json['eventImage'],
         lecturer = json['lecturer'],
+        waitingQueue = json['waitingQueue'],
         participants = json['participants'],
         maxParticipants = json['maxParticipants'],
         dates = json['dates'],

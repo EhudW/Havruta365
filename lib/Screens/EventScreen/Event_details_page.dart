@@ -1,3 +1,5 @@
+//import 'dart:html';
+
 import 'package:another_flushbar/flushbar.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,10 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
+//import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../DataBase_auth/Notification.dart';
 import 'EventDatesList.dart';
 import 'Partcipients_scroller.dart';
 import 'Event_detail_header.dart';
@@ -26,11 +31,15 @@ class EventDetailsPage extends StatefulWidget {
 }
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
-  isNeedDeleteButton() {
-    if (widget.event!.participants!.contains(Globals.currentUser!.email)) {
+  /*isNeedDeleteButton() {
+    var myMail = Globals.currentUser!.email;
+    var iAmParticipant = widget.event!.participants!.contains(myMail);
+    var iAmInWaitingQueue =
+        widget.event!.waitingQueue?.contains(myMail) ?? false;
+    if (iAmParticipant || iAmInWaitingQueue) {
       DeleteFromEventButton(widget.event);
     }
-  }
+  }*/
 
   // To make setState from children
   refresh() {
@@ -141,6 +150,34 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           style: GoogleFonts.secularOne(fontSize: 20.0),
           textAlign: TextAlign.end,
         ),
+        (widget.event!.creatorUser == Globals.currentUser!.email &&
+                (widget.event!.link?.trim() ?? "") != "")
+            ? InkWell(
+                child: Text(
+                  widget.event!.link!.trim(),
+                  style: GoogleFonts.secularOne(
+                      fontSize: 20.0,
+                      color: Colors.blueAccent[100],
+                      decoration: TextDecoration.underline,
+                      decorationStyle: TextDecorationStyle.solid,
+                      decorationThickness: 2),
+                  textDirection: ui.TextDirection.ltr,
+                ),
+                onTap: () async {
+                  var urlStr = widget.event!.link!;
+                  var prefixes = ["", "https://"];
+                  for (String prefix in prefixes) {
+                    var uri =
+                        Uri.parse(prefix + urlStr); // throw on format error
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(uri);
+                      return;
+                    }
+                  }
+                  throw 'Could not launch $urlStr';
+                },
+              )
+            : SizedBox(),
         Text(
           widget.event!.type == 'L'
               ? "משך השיעור: " + event.duration.toString() + " דקות"
@@ -169,10 +206,103 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     );
   }
 
+  Widget bottomSheet(BuildContext context, Function ok, Function ignore) {
+    return Container(
+      height: Globals.scaler.getHeight(8.5),
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: Globals.scaler.getWidth(3),
+        vertical: Globals.scaler.getHeight(1),
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            "אתה בטוח",
+            textDirection: ui.TextDirection.rtl,
+            style: TextStyle(
+              fontSize: Globals.scaler.getTextSize(8.5),
+            ),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(1),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            TextButton.icon(
+              icon: Icon(FontAwesomeIcons.v),
+              onPressed: () {
+                ok();
+              },
+              label: Text("בטוח"),
+            ),
+            TextButton.icon(
+              icon: Icon(FontAwesomeIcons.x),
+              onPressed: () {
+                ignore();
+              },
+              label: Text("בטל פעולה"),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    var num =
-        widget.event!.maxParticipants! - widget.event!.participants!.length;
+    var myMail = Globals.currentUser!.email;
+    var iAmParticipant = widget.event!.participants!.contains(myMail);
+    var iAmCreator = widget.event!.creatorUser == myMail;
+    var waitingQueue = widget.event!.waitingQueue ?? [];
+    var iAmInWaitingQueue = waitingQueue.contains(myMail);
+    var num = widget.event!.maxParticipants! -
+        widget.event!.participants!.length -
+        waitingQueue.length;
+    var rejectOrAcceptFactory = (func) => (userMail) {
+          showModalBottomSheet(
+            context: context,
+            builder: ((builder) => bottomSheet(context, () {
+                  Navigator.pop(context);
+                  func(userMail);
+                  refresh();
+                }, () => Navigator.pop(context))),
+          );
+        };
+    var reject = rejectOrAcceptFactory((userMail) {
+      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
+      NotificationUser notification = NotificationUser.fromJson({
+        'creatorUser': Globals.currentUser!.email,
+        'destinationUser': userMail,
+        'creationDate': DateTime.now(),
+        'message': "לצערי דחיתי את בקשתך לחברותא",
+        'type': 'joinReject',
+        'idEvent': widget.event!.id,
+        'name': Globals.currentUser!.name,
+      });
+      Globals.db!.insertNotification(notification);
+      if (widget.event!.waitingQueue == null) {
+        widget.event!.waitingQueue = [];
+      }
+      widget.event!.waitingQueue!.remove(userMail);
+    });
+    var accept = rejectOrAcceptFactory((userMail) {
+      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
+      Globals.db!.addParticipant(userMail, widget.event!.id);
+      NotificationUser notification = NotificationUser.fromJson({
+        'creatorUser': Globals.currentUser!.email,
+        'destinationUser': userMail,
+        'creationDate': DateTime.now(),
+        'message': "אישרתי את בקשתך לחברותא",
+        'type': 'joinAccept',
+        'idEvent': widget.event!.id,
+        'name': Globals.currentUser!.name,
+      });
+      Globals.db!.insertNotification(notification);
+      if (widget.event!.waitingQueue == null) {
+        widget.event!.waitingQueue = [];
+      }
+      widget.event!.waitingQueue!.remove(userMail);
+      widget.event!.participants!.add(userMail);
+    });
     return Scaffold(
       // floatingActionButton: isCreatorWidget(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
@@ -192,15 +322,17 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      widget.event!.participants!
-                              .contains(Globals.currentUser!.email)
+                      (iAmParticipant || iAmInWaitingQueue || num <= 0)
                           ? Container()
                           : Text("!מהרו להירשם",
                               style: GoogleFonts.alef(
                                   fontSize: 22.0,
                                   color: Colors.grey[700],
                                   fontWeight: FontWeight.bold)),
-                      Text("נשארו" + " $num " + "מקומות פנויים",
+                      Text(
+                          num <= 0
+                              ? "תפוסה מלאה"
+                              : "נשארו" + " $num " + "מקומות פנויים",
                           style: GoogleFonts.suezOne(
                               fontSize: 20.0, color: Colors.grey[700])),
                       Row(
@@ -230,7 +362,20 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             Divider(),
             // widget.event.participants.contains(Globals.currentUser.email) ?
             //   DeleteFromEventButton(widget.event) : SizedBox(),
-            ParticipentsScroller(widget.event!.participants),
+            widget.event!.type == "L" || iAmParticipant || iAmCreator
+                ? ParticipentsScroller(
+                    widget.event!.participants,
+                    title: "משתתפים",
+                  )
+                : Container(),
+            iAmCreator && widget.event!.type == 'H'
+                ? ParticipentsScroller(
+                    widget.event!.waitingQueue,
+                    title: "ממתינים לאישור",
+                    accept: accept,
+                    reject: reject,
+                  )
+                : Container(),
             SizedBox(height: Globals.scaler.getHeight(1)),
             deleteButton(),
             // Link

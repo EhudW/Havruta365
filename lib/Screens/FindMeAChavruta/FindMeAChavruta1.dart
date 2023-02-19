@@ -225,6 +225,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     event.creatorUser = Globals.currentUser!.email;
     event.eventImage = '';
     event.participants = [];
+    event.waitingQueue = [];
     event.link = '';
   }
 

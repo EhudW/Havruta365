@@ -192,6 +192,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                               onPressed: () {
                                 widget.event!.creationDate = DateTime.now();
                                 widget.event!.participants = [];
+                                widget.event!.waitingQueue = [];
                                 widget.event!.creatorUser =
                                     Globals.currentUser!.email;
                                 if (widget.event!.eventImage == "") {

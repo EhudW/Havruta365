@@ -2,6 +2,7 @@
 
 import 'dart:core';
 import 'dart:convert';
+//import 'dart:js_util';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
@@ -111,15 +112,85 @@ class Mongo {
     return data;
   }
 
+  // see comment above getEventsByQuery() about @filterOldEvents, filterOldDates
+  // I think  it is symetric withParticipant<>withParticipant2
+  Future<List<Event>> cross(
+      {String? search,
+      bool filterOldEvents = true,
+      int maxEvents = 10,
+      int startFrom = 0,
+      required String withParticipant, //email
+      required String withParticipant2, //email
+      bool withWaitingQueue = true,
+      String? typeFilter,
+      bool newestFirst = true,
+      bool filterOldDates = true}) async {
+    var query = (collection) async {
+      // cross
+      var oneIsCreator = withWaitingQueue
+          ? (x, y) => where
+              .eq('creatorUser', x)
+              .and(where.eq('participants', y).or(where.eq('waitingQueue', y)))
+          : (x, y) =>
+              where.eq('creatorUser', x).and(where.eq('participants', y));
+      var a = withParticipant;
+      var b = withParticipant2;
+      var prefix = where
+          .all('participants', [a, b])
+          .or(oneIsCreator(a, b))
+          .or(oneIsCreator(b, a));
+      // seach word filter
+      if (search != null) {
+        prefix = prefix.and(where
+            .match('book', search)
+            .or(where.match('topic', search))
+            .or(where.eq('type', 'H').and(where.match("creatorName", search)))
+            .or(where.match('lecturer', search)));
+      }
+      if (typeFilter != null) {
+        prefix = prefix.eq('type', typeFilter);
+      }
+      return await collection
+          //.find(prefix.sortBy('_id').skip(startFrom).limit(maxEvents))
+          .find(prefix
+              .sortBy('_id', descending: newestFirst)
+              .skip(startFrom)
+              .limit(maxEvents))
+          .toList();
+    };
+    return getEventsByQuery(
+        query: query,
+        filterOldEvents: filterOldEvents,
+        filterOldDates: filterOldDates);
+  }
+
   // see comment above getEventsByQuery() about @filterOldEvents
   Future<List<Event>> searchEvents(String s,
       {bool filterOldEvents = true,
       int maxEvents = 10,
       int startFrom = 0,
       String? withParticipant, //email
+      String? withParticipant2, //email
+      bool withWaitingQueue = true, //relevant only if withParticipant != null
+      //then not only joined but also waiting;
       String? createdBy, //email
       String? typeFilter,
       bool newestFirst = true}) async {
+    if (withParticipant2 != null) {
+      return cross(
+          search: s,
+          maxEvents: maxEvents,
+          newestFirst: newestFirst,
+          startFrom: startFrom,
+          typeFilter: typeFilter,
+          withParticipant: withParticipant!,
+          withParticipant2: withParticipant2,
+          filterOldEvents: filterOldEvents,
+          withWaitingQueue: withWaitingQueue
+          //createdBy: irrelevant
+          //withWaitingQueue: always false
+          );
+    }
     var query = (collection) async {
       var prefix = where
           .match('book', s)
@@ -130,7 +201,12 @@ class Mongo {
         prefix = prefix.eq('type', typeFilter);
       }
       if (withParticipant != null) {
-        prefix = prefix.eq("participants", withParticipant);
+        var addition = where.eq("participants", withParticipant);
+        if (withWaitingQueue && typeFilter != 'L') {
+          // lecture has no waitingQueue
+          addition = addition.or(where.eq("waitingQueue", withParticipant));
+        }
+        prefix = prefix.and(addition);
       } else if (createdBy != null) {
         prefix = prefix.eq("creatorUser", createdBy);
       }
@@ -177,27 +253,27 @@ class Mongo {
   }
 
   // see comment above getEventsByQuery() about @filterOldEvents
-  // Query all events that currents user register for them.
+  // Query all events that currents user register for them[\waiting].
   Future<List<Event>> getEvents(
       String? userMail, bool filterOldEvents, String? typeFilter) async {
-    var query = (collection) async => await collection.find(
-        {"participants": userMail ?? Globals.currentUser!.email}).toList();
+    var mail = userMail ?? Globals.currentUser!.email;
+    var prefix =
+        where.eq("participants", mail).or(where.eq("waitingQueue", mail));
     if (typeFilter != null) {
-      query = (collection) async => await collection.find({
-            "participants": userMail ?? Globals.currentUser!.email,
-            "type": typeFilter
-          }).toList();
+      prefix = prefix.and(where.eq("type", typeFilter));
     }
+    var query = (collection) async => await collection.find(prefix).toList();
     return getEventsByQuery(query: query, filterOldEvents: filterOldEvents);
   }
 
   // see comment above getEventsByQuery() about @filterOldEvents
-  // Query all events that currents user register for them OR created.
+  // Query all events that currents user register for them[\waiting] OR created.
   Future<List<Event>> getAllEventsAndCreated(
       String? userMail, bool filterOldEvents, String? typeFilter) async {
     var queryBuilder = where
         .eq("creatorUser", userMail ?? Globals.currentUser!.email)
-        .or(where.eq("participants", userMail ?? Globals.currentUser!.email));
+        .or(where.eq("participants", userMail ?? Globals.currentUser!.email))
+        .or(where.eq("waitingQueue", userMail ?? Globals.currentUser!.email));
 
     queryBuilder = typeFilter == null
         ? queryBuilder
@@ -239,6 +315,14 @@ class Mongo {
         where.eq('_id', id), ModifierBuilder().push('participants', mail));
   }
 
+  Future<void> addToWaitingQueue(String? mail, ObjectId? id) async {
+    var collection = Globals.db!.db.collection('Events');
+    // Get event by id and Add mail to waitingQueue array
+    // ignore: unused_local_variable
+    var res = await collection.updateOne(
+        where.eq('_id', id), ModifierBuilder().push('waitingQueue', mail));
+  }
+
   Future<void> insertNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     var e = notification.toJson();
@@ -267,6 +351,13 @@ class Mongo {
     // ignore: unused_local_variable
     var res = await collection.updateOne(
         where.eq('_id', id), ModifierBuilder().pull('participants', email));
+  }
+
+  deleteFromEventWaitingQueue(ObjectId? id, String? email) async {
+    var collection = Globals.db!.db.collection('Events');
+    // ignore: unused_local_variable
+    var res = await collection.updateOne(
+        where.eq('_id', id), ModifierBuilder().pull('waitingQueue', email));
   }
 
   // Check if user exist

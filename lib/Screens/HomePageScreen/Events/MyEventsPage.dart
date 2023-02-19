@@ -13,7 +13,9 @@ class MyEventsPage extends StatefulWidget {
   final String title;
   final PullingLogic logic;
   final IconData? icon;
-  MyEventsPage({required this.title, required this.logic, this.icon});
+  String? user2View;
+  MyEventsPage(
+      {required this.title, required this.logic, this.icon, this.user2View});
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -25,7 +27,8 @@ class _HomePageState extends State<MyEventsPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       backgroundColor: Colors.teal[100],
       appBar: appBar(context),
-      body: Events(EventsModel(false, logic: this.widget.logic), null),
+      body: Events(EventsModel(false, logic: this.widget.logic), null,
+          user2View: widget.user2View),
     );
   }
 

@@ -12,12 +12,14 @@ import 'package:intl/intl.dart';
 class EventViewFeed extends StatelessWidget {
   final Event event;
   final String? search;
+  final String? user2View; // will highlight if the user is in waiting queue
   final bool noClickAndClock;
   const EventViewFeed(
       {Key? key,
       required this.event,
       this.search,
-      this.noClickAndClock = false})
+      this.noClickAndClock = false,
+      this.user2View})
       : super(key: key);
 
   dynamic highlightedText(Text txt, BuildContext ctx, {bool ignore = false}) {
@@ -53,7 +55,30 @@ class EventViewFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenScaler scaler = new ScreenScaler();
-
+    var myMail = Globals.currentUser!.email;
+    var iAmParticipant = event.participants!.contains(myMail);
+    var iAmInWaitingQueue = event.waitingQueue?.contains(myMail) ?? false;
+    Widget registeredState1 =
+        SizedBox(width: scaler.getWidth(1) + scaler.getTextSize(14));
+    Widget registeredState2 = SizedBox();
+    Widget registeredState3 = SizedBox();
+    if (iAmParticipant || iAmInWaitingQueue) {
+      registeredState1 = SizedBox(
+          child: Text(
+        iAmParticipant ? "רשום" : "מחכה",
+        // textDirection: TextDirection.rtl,
+        textAlign: TextAlign.right,
+        style: TextStyle(fontSize: scaler.getTextSize(6)),
+      ));
+      registeredState2 = SizedBox(width: scaler.getWidth(1));
+      registeredState3 = SizedBox(
+          child: Icon(
+              iAmParticipant
+                  ? FontAwesomeIcons.handshake
+                  : FontAwesomeIcons.hand,
+              size: scaler.getTextSize(8),
+              color: Colors.blueAccent));
+    }
     return Material(
         child: InkWell(
             splashColor: Colors.teal[400],
@@ -74,6 +99,21 @@ class EventViewFeed extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                       child: Container(
+                    decoration: user2View != null &&
+                            event.waitingQueue != null &&
+                            event.waitingQueue!.contains(user2View!)
+                        ? BoxDecoration(
+                            gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Colors.red[300]!,
+                              Colors.transparent,
+                              Colors.transparent,
+                              Colors.transparent,
+                            ],
+                          ))
+                        : null,
                     width: scaler.getWidth(12),
                     height: scaler.getHeight(4),
                     child: Column(
@@ -101,14 +141,22 @@ class EventViewFeed extends StatelessWidget {
                         SizedBox(height: scaler.getHeight(0.5)),
                         Expanded(
                             child: Container(
-                                width: scaler.getWidth(18),
+                                //width: scaler.getWidth(28),
                                 height: scaler.getHeight(1),
                                 child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: <Widget>[
+                                      SizedBox(width: scaler.getWidth(1)),
+                                      registeredState1,
+                                      registeredState2,
+                                      registeredState3,
                                       Expanded(
                                           child: Text(
-                                        event.participants!.length.toString() +
+                                        (event.participants!.length +
+                                                    (event.waitingQueue
+                                                            ?.length ??
+                                                        0))
+                                                .toString() +
                                             "/" +
                                             event.maxParticipants.toString(),
                                         // textDirection: TextDirection.rtl,
@@ -116,8 +164,8 @@ class EventViewFeed extends StatelessWidget {
                                         style: TextStyle(
                                             fontSize: scaler.getTextSize(6)),
                                       )),
-                                      SizedBox(width: scaler.getWidth(0.5)),
-                                      Expanded(
+                                      SizedBox(width: scaler.getWidth(1)),
+                                      SizedBox(
                                           child: Icon(
                                               event.type == 'L'
                                                   ? FontAwesomeIcons

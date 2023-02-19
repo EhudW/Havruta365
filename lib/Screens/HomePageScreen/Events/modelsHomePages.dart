@@ -80,30 +80,45 @@ class EventsModel {
 // helper class to decide how to pull the data about events from the db
 // for now, old events are filtered if this is general, and not filtered if it's specific for the user
 class PullingLogic {
-  String? withParticipant; // email
+  String?
+      withParticipant; // email,   checks in both waitingQueue & participants
+  String? withParticipant2; // mention withParticipant2, for cross ;
+  // then check where both joined, or one is creator and other waiting*/joined,
+  // but not reveal that thay both in waitingQueue for third person
+  // * because withWaitingQueue=true
   String? createdBy; // email
-  PullingLogic({this.withParticipant, this.createdBy})
-      : assert(createdBy == null || withParticipant == null) {
-    //print("constructor as $emailFilter");
-  }
+  PullingLogic({this.withParticipant, this.createdBy, this.withParticipant2})
+      : assert((createdBy == null || withParticipant == null) &&
+            (withParticipant2 == null || withParticipant != null));
   Future<List<Event>> search(
       int length, String searchData, String? typeFilter) {
-    //print("search as $emailFilter");
+    // this.withParticipant: both waitingQueue & participants (if withParticipant!= null)
+    // because  withWaitingQueue: true,
     return Globals.db!.searchEvents(searchData,
         filterOldEvents: this.withParticipant == null && this.createdBy == null,
         maxEvents: 10,
         startFrom: length,
         withParticipant: this.withParticipant,
+        withParticipant2: this.withParticipant2,
+        withWaitingQueue: true,
         createdBy: this.createdBy,
         typeFilter: typeFilter);
   }
 
   Future<List<Event>> next(int length, EventsModel model, String? typeFilter) {
+    if (withParticipant2 != null) {
+      model.hasMore = false;
+      return Globals.db!.cross(
+          withParticipant: withParticipant!,
+          withParticipant2: withParticipant2!,
+          filterOldEvents: false);
+    }
     if (withParticipant != null) {
       // right now, get events returns ALL events,with no filter for time
       // so in order to avoid infinite addition to the stream:
       model.hasMore = false;
       // even if getEvens will return only few, still there is race problem
+      // this.withParticipant: both waitingQueue & participants (if withParticipant!= null)
       return Globals.db!.getEvents(withParticipant, false, typeFilter);
     } else if (createdBy != null) {
       model.hasMore = false;

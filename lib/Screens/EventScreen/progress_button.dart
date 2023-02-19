@@ -2,7 +2,22 @@ import 'package:flutter/material.dart';
 
 import 'iconed_button.dart';
 
-enum ButtonState { idle, loading, success, fail, full }
+//
+// [L]   idle - you can join to this LECTURE
+// [L,H] fail - you already joined to this LECTURE \ HAVRUTA, which isn't online right now
+// [H]   idle2 - you can send request to join to this HAVRUTA
+// [H]   fail2 - you already asked to join to this HAVRUTA [even if it's online right now]
+//
+// [L,H] loading - loading...
+// [L,H] success - this shiur/havruta is online
+// [L,H] full - you can't join shiur\ask to join havruta since it full
+// examples:
+// shiur[L]:      idle  <-> loading <-> success / fail
+//               or start at full
+// HAVRUTA[H]:    idle2 <-> loading <-> fail2
+//               or start at[if creator accept request]: fail/full/success
+//
+enum ButtonState { idle, loading, success, fail, full, idle2, fail2 }
 
 class ProgressButton extends StatefulWidget {
   final Map<ButtonState, Widget> stateWidgets;
@@ -80,9 +95,13 @@ class ProgressButton extends StatefulWidget {
     Map<ButtonState, Widget> stateWidgets = {
       ButtonState.idle: buildChildWithIcon(
           iconedButtons[ButtonState.idle]!, iconPadding, textStyle),
+      ButtonState.idle2: buildChildWithIcon(
+          iconedButtons[ButtonState.idle2]!, iconPadding, textStyle),
       ButtonState.loading: Column(),
       ButtonState.fail: buildChildWithIcon(
           iconedButtons[ButtonState.fail]!, iconPadding, textStyle),
+      ButtonState.fail2: buildChildWithIcon(
+          iconedButtons[ButtonState.fail2]!, iconPadding, textStyle),
       ButtonState.success: buildChildWithIcon(
           iconedButtons[ButtonState.success]!, iconPadding, textStyle),
       ButtonState.full: buildChildWithIcon(
@@ -91,8 +110,10 @@ class ProgressButton extends StatefulWidget {
 
     Map<ButtonState, Color?> stateColors = {
       ButtonState.idle: iconedButtons[ButtonState.idle]!.color,
+      ButtonState.idle2: iconedButtons[ButtonState.idle2]!.color,
       ButtonState.loading: iconedButtons[ButtonState.loading]!.color,
       ButtonState.fail: iconedButtons[ButtonState.fail]!.color,
+      ButtonState.fail2: iconedButtons[ButtonState.fail2]!.color,
       ButtonState.success: iconedButtons[ButtonState.success]!.color,
       ButtonState.full: iconedButtons[ButtonState.full]!.color
     };

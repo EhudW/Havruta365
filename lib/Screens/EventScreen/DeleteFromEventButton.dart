@@ -18,8 +18,12 @@ class _DeleteFromEventButtonState extends State<DeleteFromEventButton> {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        Globals.db!
-            .deleteFromEvent(widget.event!.id, Globals.currentUser!.email);
+        var myMail = Globals.currentUser!.email;
+        if (widget.event?.participants?.contains(myMail) ?? false) {
+          Globals.db!.deleteFromEvent(widget.event!.id, myMail);
+        } else if (widget.event?.waitingQueue?.contains(myMail) ?? false) {
+          Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, myMail);
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),

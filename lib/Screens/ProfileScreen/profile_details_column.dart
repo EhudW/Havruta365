@@ -80,11 +80,11 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => MyEventsPage(
-                            title: "נרשמתי ל",
+                            title: "נרשמתי/בהמתנה ל",
                             logic: PullingLogic(
                                 withParticipant: Globals.currentUser!.email,
                                 createdBy: null),
-                            icon: FontAwesomeIcons.bookBookmark,
+                            icon: FontAwesomeIcons.handshake, //bookBookmark,
                           )));
             },
             child: Container(
@@ -112,7 +112,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                         textDirection: TextDirection.rtl),
                     SizedBox(width: Globals.scaler.getWidth(1.5)),
                     Icon(
-                      FontAwesomeIcons.bookBookmark,
+                      FontAwesomeIcons.handshake, //bookBookmark,
                       size: icon_size,
                       color: Colors.brown[400],
                     ),

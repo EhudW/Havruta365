@@ -10,8 +10,9 @@ import 'package:havruta_project/Globals.dart';
 class Events extends StatefulWidget {
   EventsModel events;
   EventsModel? eventsOnline;
+  String? user2View;
 
-  Events(this.events, this.eventsOnline);
+  Events(this.events, this.eventsOnline, {this.user2View});
 
   @override
   _EventsState createState() => _EventsState();
@@ -87,6 +88,7 @@ class _EventsState extends State<Events> {
                   return EventViewFeed(
                     event: _snapshot.data[index],
                     search: searchTextController.text,
+                    user2View: widget.user2View,
                   );
                 } else if (this.widget.events.hasMore) {
                   return Padding(

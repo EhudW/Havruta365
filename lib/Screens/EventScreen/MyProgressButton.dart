@@ -20,7 +20,7 @@ class MyProgressButton extends StatefulWidget {
   final List<Event>? allUserEvents;
   final Event? event;
   @override
-  _MyProgressButtonState createState() => _MyProgressButtonState();
+  MyProgressButtonState createState() => MyProgressButtonState();
 }
 
 // Check if there is a event that happen right now
@@ -83,7 +83,7 @@ List<dynamic> getEventsOverlap(Event event, List<Event> events) {
   return pairs;
 }
 
-class _MyProgressButtonState extends State<MyProgressButton> {
+class MyProgressButtonState extends State<MyProgressButton> {
   // Check if current user already sign to the event
   // if user is signed --> stateOnlyText = ButtonState.success;
 
@@ -92,11 +92,20 @@ class _MyProgressButtonState extends State<MyProgressButton> {
   @override
   void initState() {
     super.initState();
+    decideButtonState();
     // Create fix list of dates - every node: [start, end]
     // for (var i = 0; i < datesDB.length; i += 2) {
     //   dates.add([datesDB[i], datesDB[i + 1]]);
     // }
-    if (widget.event!.participants!.contains(Globals.currentUser!.email)) {
+  }
+
+  void decideButtonState() {
+    var myMail = Globals.currentUser!.email;
+    var iAmParticipant = widget.event!.participants!.contains(myMail);
+    var waitingQueue = widget.event!.waitingQueue ?? [];
+    var iAmInWaitingQueue = waitingQueue.contains(myMail);
+    // Am I already joined to this event?
+    if (iAmParticipant) {
       // Check if there is event NOW
       if (widget.event!.dates!.isNotEmpty &&
           isNow(widget.event!.dates![0], widget.event!.duration!) &&
@@ -105,51 +114,60 @@ class _MyProgressButtonState extends State<MyProgressButton> {
       } else {
         stateOnlyText = ButtonState.fail;
       }
-    } else if (widget.event!.participants!.length >=
+      // Am I in its waiting queue?
+    } else if (iAmInWaitingQueue) {
+      stateOnlyText = ButtonState.fail2;
+      // Here I am not in the participants/waiting queue:
+      // Is the event already full    ?
+    } else if (widget.event!.participants!.length + waitingQueue.length >=
         widget.event!.maxParticipants!) {
       stateOnlyText = ButtonState.full;
+    } else {
+      // lecture-> will automatically join, havruta -> will join when creator accept me
+      stateOnlyText =
+          widget.event!.type == 'L' ? ButtonState.idle : ButtonState.idle2;
     }
   }
 
   Widget buildCustomButton() {
-    var message = widget.event!.type == 'H'
-        ? "הנך רשומ/ה לחברותא זו"
-        : "הנך רשומ/ה לשיעור זה";
+    decideButtonState();
+    var myMail = Globals.currentUser!.email;
+    var iAmParticipant = widget.event!.participants!.contains(myMail);
+    var iAmInWaitingQueue =
+        widget.event!.waitingQueue?.contains(myMail) ?? false;
+    // for ButtonState.fail > registered but the lecture/havruta not online right now
+    var registered =
+        Globals.currentUser!.gender == 'F' ? "הנך רשומה ל" : "הנך רשום ל";
+    var message = widget.event!.type == 'H' ? "חברותא זו" : "שיעור זה";
+    message = registered + message;
+    // for ButtonState.fail2 > request was sent to the havruta creator
+    var message2 = "ממתין לאישור בקשה";
+    var overlaps = getEventsOverlap(widget.event!, widget.allUserEvents ?? []);
     TextStyle textStyle = TextStyle(
         color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20);
+    var forIdle = (txt) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: overlaps.isNotEmpty
+            ? [
+                Icon(Icons.warning_amber, color: Colors.redAccent),
+                Text("  " + txt, style: textStyle)
+              ]
+            : [Text(txt, style: textStyle)]);
     var progressTextButton = Column(children: [
       ProgressButton(
         stateWidgets: {
-          ButtonState.idle: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children:
-                getEventsOverlap(widget.event!, widget.allUserEvents ?? [])
-                        .isNotEmpty
-                    ? [
-                        Icon(Icons.warning_amber, color: Colors.redAccent),
-                        Text(
-                          "  " +
-                              (widget.event!.type == 'H'
-                                  ? "!הירשם לחברותא"
-                                  : "!הירשם לשיעור"),
-                          style: textStyle,
-                        ),
-                      ]
-                    : [
-                        Text(
-                          widget.event!.type == 'H'
-                              ? "!הירשם לחברותא"
-                              : "!הירשם לשיעור",
-                          style: textStyle,
-                        ),
-                      ],
-          ),
+          ButtonState.idle: forIdle("הירשם לשיעור!"),
+          ButtonState.idle2: forIdle("בקש להצטרף לחברותא"),
           ButtonState.loading: Text(
             "...עובד",
             style: textStyle,
           ),
           ButtonState.fail: Text(
             message,
+            style: textStyle,
+          ),
+          ButtonState.fail2: Text(
+            message2,
             style: textStyle,
           ),
           ButtonState.success: Text(
@@ -165,8 +183,10 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         },
         stateColors: {
           ButtonState.idle: Colors.teal[400],
+          ButtonState.idle2: Colors.teal[400],
           ButtonState.loading: Colors.grey,
           ButtonState.fail: Colors.green[300],
+          ButtonState.fail2: Colors.orange[300],
           ButtonState.success: Colors.green,
           ButtonState.full: Colors.redAccent
         },
@@ -174,7 +194,7 @@ class _MyProgressButtonState extends State<MyProgressButton> {
         state: stateOnlyText,
         padding: EdgeInsets.all(8.0),
       ),
-      widget.event!.participants!.contains(Globals.currentUser!.email)
+      iAmParticipant || iAmInWaitingQueue
           ? Column(
               children: [
                 SizedBox(height: Globals.scaler.getHeight(0.5)),
@@ -198,20 +218,23 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     return buildCustomButton();
   }
 
-  void idleCase() {
+// idleType ==1 > join lecture   idleType ==2 >  send request to join havruta, meanwhile wait in waiting queue
+// idleType == 1  <> event.type=='L'
+  void idleCase(int idleType) {
+    var addMe = idleType == 1
+        ? Globals.db!.addParticipant
+        : Globals.db!.addToWaitingQueue;
     // ignore: non_constant_identifier_names
-    var add_future = Globals.db!
-        .addParticipant(Globals.currentUser!.email, widget.event!.id);
-    String message;
-    message = widget.event!.type == 'H'
-        ? "הצטרפ/ה לחברותא שלך"
-        : "הצטרפ/ה לשיעור שלך";
+    var add_future = addMe(Globals.currentUser!.email, widget.event!.id);
+
+    String message =
+        idleType == 1 ? "הצטרפ/ה לשיעור שלך" : "רוצה להצטרף לחברותא שלך";
     NotificationUser notification = NotificationUser.fromJson({
       'creatorUser': Globals.currentUser!.email,
       'destinationUser': widget.event!.creatorUser,
       'creationDate': DateTime.now(),
       'message': message,
-      'type': 'join',
+      'type': idleType == 1 ? 'join' : 'joinRequest',
       'idEvent': widget.event!.id,
       'name': Globals.currentUser!.name,
     });
@@ -219,19 +242,28 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     add_future.then((value) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-        'האירוע נוסף בהצלחה לפרופיל האישי',
+        idleType == 1 ? 'האירוע נוסף בהצלחה לפרופיל האישי' : "הבקשה נשלחה",
         textAlign: TextAlign.center,
       )));
       // ------------------------ Maybe need to DELETE --------------
-      widget.event!.participants!.add(Globals.currentUser!.email);
+      if (idleType == 1) {
+        widget.event!.participants!.add(Globals.currentUser!.email);
+      } else {
+        if (widget.event!.waitingQueue == null) {
+          widget.event!.waitingQueue = [];
+        }
+        widget.event!.waitingQueue!.add(Globals.currentUser!.email);
+      }
       widget.notifyParent();
       setState(() {
-        if (widget.event!.dates!.isNotEmpty &&
+        // if idleType == 2<>event.type='H' then probably the request not accepted yet.
+        if (idleType == 1 &&
+            widget.event!.dates!.isNotEmpty &&
             isNow(widget.event!.dates![0], widget.event!.duration!) &&
             widget.event!.link!.trim() != "") {
           stateOnlyText = ButtonState.success;
         } else {
-          stateOnlyText = ButtonState.fail;
+          stateOnlyText = idleType == 1 ? ButtonState.fail : ButtonState.fail2;
         }
       });
     });
@@ -240,9 +272,11 @@ class _MyProgressButtonState extends State<MyProgressButton> {
 
   void onPressedCustomButton() {
     var overlaps = getEventsOverlap(widget.event!, widget.allUserEvents ?? []);
-    if (stateOnlyText == ButtonState.idle && overlaps.isNotEmpty) {
+    var isIdle =
+        stateOnlyText == ButtonState.idle || stateOnlyText == ButtonState.idle2;
+    if (isIdle && overlaps.isNotEmpty) {
       var ok = () => setState(() {
-            idleCase();
+            idleCase(stateOnlyText == ButtonState.idle2 ? 2 : 1);
             Navigator.pop(context);
           });
       var ignore = () => setState(() {
@@ -258,7 +292,10 @@ class _MyProgressButtonState extends State<MyProgressButton> {
     setState(() {
       switch (stateOnlyText) {
         case ButtonState.idle:
-          idleCase();
+          idleCase(1);
+          break;
+        case ButtonState.idle2:
+          idleCase(2);
           break;
         case ButtonState.loading:
           // stateOnlyText = ButtonState.fail;
@@ -272,6 +309,13 @@ class _MyProgressButtonState extends State<MyProgressButton> {
             widget.event!.type == 'H'
                 ? 'אין חברותא בזמן הנוכחי'
                 : 'אין שיעור בזמן הנוכחי',
+            textAlign: TextAlign.center,
+          )));
+          break;
+        case ButtonState.fail2:
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            "הבקשה נשלחה כבר",
             textAlign: TextAlign.center,
           )));
           break;
