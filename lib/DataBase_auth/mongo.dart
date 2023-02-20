@@ -9,6 +9,7 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+import './mongo2.dart' as Db2;
 //import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Topic.dart';
@@ -34,9 +35,14 @@ class Mongo {
   late var db;
 
   // Connect to the DB.
-  Future<void> connect() async {
-    db = await Db.create(CONNECT_TO_DB);
-    await db.open();
+  // useDb2 to try auto reconnect when connection lost, see mongo2.dart
+  Future<void> connect({bool useDb2 = false}) async {
+    if (useDb2) {
+      this.db = await Db2.MongoDbImpl.create(CONNECT_TO_DB);
+    } else {
+      this.db = await Db.create(CONNECT_TO_DB);
+    }
+    await this.db.open();
     print('Connected to database');
     Globals.isDbConnect = true;
   }

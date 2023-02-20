@@ -1,9 +1,12 @@
 //import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
+import 'package:havruta_project/DataBase_auth/mongo2.dart';
 //import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 //import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
@@ -37,18 +40,60 @@ class _MyAppState extends State<MyApp> {
     //FirebaseCrashlytics.instance.crash();
   }
 
+  // handling timing reconnecting of mongodb
+  Timer? timer;
+  int fails = 0;
+  void setTimer({bool start = false}) {
+    print("tick  [${DateTime.now()}]");
+    if (timer == null && !start) {
+      return;
+    }
+    timer?.cancel();
+    timer = Timer(Duration(seconds: 15), () async {
+      var x = Globals.db!.db;
+      var force = await Future.any(<Future<bool>>[
+        Future.delayed(Duration(), () {
+          x.reconnect123();
+          return false;
+        }),
+        Future.delayed(Duration(minutes: 1), () {
+          return true;
+        })
+      ]);
+      if (force || fails >= 2) {
+        String reason =
+            fails >= 2 ? "[over 1 min timeout]" : "[test fails >= 2]";
+        print("timer is forcing reconnect   $reason");
+        x.nextReconnect = true;
+        fails = 0;
+      }
+      MongoTest.smallTest(Globals.db!, (i) {
+        fails += i as int;
+      });
+      setTimer(start: false);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     Globals.db = new Mongo();
-    mongoConnectFuture = Globals.db!.connect();
+    bool useDb2 = true; // this control if to use reconnecting model
+    mongoConnectFuture = Globals.db!.connect(useDb2: useDb2);
     initFirebase();
+    if (useDb2) {
+      setTimer(start: true);
+      // big test:
+      //MongoTest.test(mongo: Globals.db!, shouldRethrow: false);
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+    timer?.cancel();
     Globals.db!.db.close();
+    print("dispose");
   }
 
   @override
