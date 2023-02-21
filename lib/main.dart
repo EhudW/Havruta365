@@ -1,26 +1,64 @@
-//import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
-import 'package:havruta_project/DataBase_auth/mongo2.dart';
-//import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
-//import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta2.dart';
+import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
-//import 'package:havruta_project/Screens/Login/LoginMoreDetails.dart';
-//import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
-//import 'package:loading_animations/loading_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'Globals.dart';
 import 'Widgets/SplashScreen.dart';
 
+enum MyPrintType { None, TimerTick, Mongo2, Mongo2Test, Nnim, Rethrow }
+
+Map<MyPrintType, bool> myPrintTypes = {
+  MyPrintType.None: true,
+  //MyPrintType.TimerTick: true,
+  //MyPrintType.Mongo2: true,
+  //MyPrintType.Mongo2Test: true,
+  MyPrintType.Nnim: true,
+  MyPrintType.Rethrow: true,
+};
+myPrint(Object? obj, MyPrintType type) =>
+    (myPrintTypes[type] ?? false) ? print(obj) : null;
+
 void main() async {
   runApp(MyApp());
+}
+
+class NewNotificationManager {
+  // model for the notification
+  final notificationModel model = notificationModel();
+  // for ui update when updateNotification() called
+  Map<Object, Function> refreshMe = {};
+  bool newNotification = false; // for state
+  // refresh needed ui, without accessing model
+  void refreshAll() {
+    for (Function refresh in refreshMe.values) {
+      refresh();
+    }
+  }
+
+  // access model(and mongodb), refreshAll if needed
+  // true on success; false on error
+  Future<bool> updateNotification() async {
+    return await model
+        .refresh()
+        .then((_) {
+          var oldValue = newNotification;
+          newNotification = !model.isDataEmpty;
+          myPrint("newNotification: $newNotification", MyPrintType.Nnim);
+          if (oldValue != newNotification) {
+            refreshAll();
+          }
+          return true;
+        })
+        .catchError((err) => false)
+        .whenComplete(() {});
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -41,38 +79,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   // handling timing reconnecting of mongodb
-  Timer? timer;
-  int fails = 0;
-  void setTimer({bool start = false}) {
-    print("tick  [${DateTime.now()}]");
-    if (timer == null && !start) {
-      return;
-    }
-    timer?.cancel();
-    timer = Timer(Duration(seconds: 15), () async {
-      var x = Globals.db!.db;
-      var force = await Future.any(<Future<bool>>[
-        Future.delayed(Duration(), () {
-          x.reconnect123();
-          return false;
-        }),
-        Future.delayed(Duration(minutes: 1), () {
-          return true;
-        })
-      ]);
-      if (force || fails >= 2) {
-        String reason =
-            fails >= 2 ? "[over 1 min timeout]" : "[test fails >= 2]";
-        print("timer is forcing reconnect   $reason");
-        x.nextReconnect = true;
-        fails = 0;
-      }
-      MongoTest.smallTest(Globals.db!, (i) {
-        fails += i as int;
-      });
-      setTimer(start: false);
-    });
-  }
+  MyTimer? timer;
 
   @override
   void initState() {
@@ -82,9 +89,23 @@ class _MyAppState extends State<MyApp> {
     mongoConnectFuture = Globals.db!.connect(useDb2: useDb2);
     initFirebase();
     if (useDb2) {
-      setTimer(start: true);
-      // big test:
-      //MongoTest.test(mongo: Globals.db!, shouldRethrow: false);
+      timer = MyTimer(
+        duration: 15,
+        function: () async {
+          return Globals.db!.db
+              .reconnect123()
+              .then((_) => Globals.nnim.updateNotification());
+        },
+        failAttempts: 3,
+        onFail: () async {
+          Globals.db!.db.nextReconnect = true;
+        },
+        timeout: 60,
+        onTimeout: () async {
+          Globals.db!.db.nextReconnect = true;
+        },
+      );
+      timer!.start(false);
     }
   }
 
@@ -93,7 +114,7 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
     timer?.cancel();
     Globals.db!.db.close();
-    print("dispose");
+    myPrint("dispose", MyPrintType.None);
   }
 
   @override

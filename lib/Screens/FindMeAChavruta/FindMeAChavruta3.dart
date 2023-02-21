@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
 //import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+import '../../main.dart';
 import 'Wavy_Header.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -320,9 +321,9 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
-      print("error signing in");
+      myPrint("error signing in", MyPrintType.None);
     } else {
-      print('signed in');
+      myPrint('signed in', MyPrintType.None);
     }
     image = await picker.pickImage(source: source);
     var file = File(image?.path ?? "");

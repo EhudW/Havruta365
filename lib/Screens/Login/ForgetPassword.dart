@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 //import 'package:crypto/crypto.dart';
 
 import '../../Globals.dart';
+import '../../main.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
@@ -164,8 +165,8 @@ sendMail(String mailUser, String code) async {
   };
   var response = await http.post(url,
       body: json.encode(x), headers: {'Content-Type': 'application/json'});
-  print('Response status: ${response.statusCode}');
-  print('Response body: ${response.body}');
+  myPrint('Response status: ${response.statusCode}', MyPrintType.None);
+  myPrint('Response body: ${response.body}', MyPrintType.None);
 }
 
 appBar(BuildContext context) {

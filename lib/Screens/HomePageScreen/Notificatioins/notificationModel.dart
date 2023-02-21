@@ -6,6 +6,7 @@ import 'package:havruta_project/DataBase_auth/Notification.dart';
 class notificationModel {
   Stream<List<NotificationUser>>? stream;
   List<NotificationUser>? _data;
+  bool get isDataEmpty => _data?.isEmpty ?? true;
   late StreamController<List<NotificationUser>?> _controller;
 
   notificationModel() {
@@ -28,6 +29,15 @@ class notificationModel {
 
   Future<void> refresh() {
     return loadMore(clearCachedData: true);
+  }
+
+  Future<void> remove(int idx) {
+    var noti = _data![idx];
+    print(_data?.length);
+    _data!.remove(noti);
+    print(_data?.length);
+    _controller.add(_data);
+    return Globals.db!.deleteNotification(noti);
   }
 
   Future<void> loadMore({bool clearCachedData = false}) {

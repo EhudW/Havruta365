@@ -9,6 +9,7 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+import '../main.dart';
 import './mongo2.dart' as Db2;
 //import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,7 +44,7 @@ class Mongo {
       this.db = await Db.create(CONNECT_TO_DB);
     }
     await this.db.open();
-    print('Connected to database');
+    myPrint('Connected to database', MyPrintType.None);
     Globals.isDbConnect = true;
   }
 
@@ -349,6 +350,7 @@ class Mongo {
   Future<void> deleteNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     await collection.deleteOne({"_id": notification.id});
+    myPrint("${notification.message}  DELETED", MyPrintType.Nnim);
   }
 
   deleteFromEvent(ObjectId? id, String? email) async {

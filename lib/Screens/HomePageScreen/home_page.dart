@@ -33,6 +33,17 @@ class _HomePageState extends State<HomePage> {
   Events events = Events(new EventsModel(false), new EventsModel(true));
 
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
+  @override
+  void initState() {
+    super.initState();
+    Globals.nnim.refreshMe[this] = () => setState(() => null);
+  }
+
+  @override
+  void dispose() {
+    Globals.nnim.refreshMe[this] = () => null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,8 +120,12 @@ class _HomePageState extends State<HomePage> {
       leading: Builder(
           builder: (context) => new IconButton(
                 icon: Center(
-                  child: Icon(Icons.notifications,
-                      color: Colors.teal[400], size: scaler.getTextSize(10)),
+                  child: Icon(
+                      Globals.nnim.newNotification
+                          ? Icons.notification_important
+                          : Icons.notifications,
+                      color: Colors.teal[400],
+                      size: scaler.getTextSize(10)),
                 ),
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
                 onPressed: () {

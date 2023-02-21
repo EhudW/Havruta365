@@ -36,10 +36,16 @@ class _notificationsScrollState extends State<notificationsScroll> {
                           return Dismissible(
                               direction: DismissDirection.startToEnd,
                               resizeDuration: Duration(milliseconds: 200),
-                              key: ObjectKey(_snapshot.data[index]),
+                              key: UniqueKey(),
                               onDismissed: (direction) async {
-                                await Globals.db!
-                                    .deleteNotification(_snapshot.data[index]);
+                                await widget.model
+                                    ?.remove(index)
+                                    .catchError((err) => null);
+                                // refresh ui if this delete cause that
+                                if (widget.model!.isDataEmpty) {
+                                  Globals.nnim.newNotification = false;
+                                  Globals.nnim.refreshAll();
+                                }
                               },
                               child: NotificationView(
                                 notification: _snapshot.data[index],

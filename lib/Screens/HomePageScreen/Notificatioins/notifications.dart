@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:havruta_project/Globals.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 
@@ -20,7 +21,7 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   void initState() {
-    model = notificationModel();
+    model = Globals.nnim.model;
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {

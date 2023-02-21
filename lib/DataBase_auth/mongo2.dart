@@ -20,6 +20,7 @@ import 'package:mongo_dart/src/database/commands/administration_commands/list_co
 import 'package:mongo_dart/src/database/commands/administration_commands/drop_database_command/drop_database_options.dart';
 import 'package:mongo_dart/src/database/commands/administration_commands/drop_command/drop_options.dart';
 
+import '../main.dart';
 import 'Event.dart';
 
 class MongoDbImpl implements mongo.Db {
@@ -49,12 +50,12 @@ class MongoDbImpl implements mongo.Db {
     if (true || uriString.startsWith('mongodb://')) {
       try {
         var x = MongoDbImpl(uriString, _debugInfo);
-        print("mongo2   create  success");
+        myPrint("mongo2   create  success", MyPrintType.Mongo2);
         return x;
       } catch (e) {
-        print("mongo2   create  fail");
-        //debugPrint("error:    $e");
-        //debugPrint("error in MongoDbImpl connect() trying in 5 seconds...");
+        myPrint("mongo2   create  fail", MyPrintType.Mongo2);
+        //myPrint("error:    $e",MyPrintType.Mongo2);
+        //myPrint("error in MongoDbImpl connect() trying in 5 seconds...",MyPrintType.Mongo2);
         return Future.delayed(const Duration(seconds: 5), () {
           return create(uriString, _debugInfo);
         });
@@ -64,8 +65,9 @@ class MongoDbImpl implements mongo.Db {
         var temp = await mongo.Db.create(uriString);
         return MongoDbImpl.pool(temp.uriList, _debugInfo);
       } catch (e) {
-        debugPrint("error:    $e");
-        debugPrint("error in MongoDbImpl connect() trying in 5 seconds...");
+        myPrint("error:    $e", MyPrintType.Mongo2);
+        myPrint("error in MongoDbImpl connect() trying in 5 seconds...",
+            MyPrintType.Mongo2);
         return Future.delayed(const Duration(seconds: 5), () {
           return create(uriString, _debugInfo);
         });
@@ -88,11 +90,11 @@ class MongoDbImpl implements mongo.Db {
     try {
       //this.__delegate ??= await mongo.Db.create(_uriString, _debugInfo);
       this.__delegate = await mongo.Db.create(_uriString, _debugInfo);
-      print("mongo2   open[a]  success");
+      myPrint("mongo2   open[a]  success", MyPrintType.Mongo2);
     } catch (e) {
-      print("mongo2   open[a]  fail");
-      //debugPrint("error:    $e");
-      //debugPrint("error in MongoDbImpl  open() trying in 5 seconds...");
+      myPrint("mongo2   open[a]  fail", MyPrintType.Mongo2);
+      //myPrint("error:    $e",MyPrintType.Mongo2);
+      //myPrint("error in MongoDbImpl  open() trying in 5 seconds...",MyPrintType.Mongo2);
       return Future.delayed(const Duration(seconds: 5), () {
         if (acquire) {
           //_m.acquire();
@@ -117,9 +119,9 @@ class MongoDbImpl implements mongo.Db {
     )
             .catchError((e) {
       var retryDelay = Duration(seconds: 5);
-      debugPrint("error:    $e");
-      debugPrint(
-          'MongoDb not ready,  MongoDbImpl open() retrying in $retryDelay ...');
+      myPrint("error:    $e",MyPrintType.Mongo2);
+      myPrint(
+          'MongoDb not ready,  MongoDbImpl open() retrying in $retryDelay ...',MyPrintType.Mongo2);
       return Future.delayed(
           retryDelay,
           () => this.open(
@@ -147,10 +149,10 @@ class MongoDbImpl implements mongo.Db {
     )
         .catchError((e) {
       var retryDelay = Duration(seconds: 5);
-      print("mongo2   open[b]  fail");
-      //debugPrint("error:    $e");
-      //debugPrint(
-      //    'MongoDb not ready,  MongoDbImpl open() retrying in $retryDelay ...');
+      myPrint("mongo2   open[b]  fail", MyPrintType.Mongo2);
+      //myPrint("error:    $e",MyPrintType.Mongo2);
+      //myPrint(
+      //    'MongoDb not ready,  MongoDbImpl open() retrying in $retryDelay ...',MyPrintType.Mongo2);
       return Future.delayed(retryDelay, () {
         var tmp = __delegate!;
         if (tmp.state != mongo.State.closed &&
@@ -167,7 +169,7 @@ class MongoDbImpl implements mongo.Db {
         );
       });
     }).then((x) {
-      print("mongo2   open[b]  success");
+      myPrint("mongo2   open[b]  success", MyPrintType.Mongo2);
       return x;
     });
   }
@@ -182,17 +184,17 @@ class MongoDbImpl implements mongo.Db {
     }
     nextReconnect = false;
     var t = DateTime.now();
-    print("mongo2   reconnect  ... [$t]");
-    //debugPrint(
-    //    'Lost connection to MongoDB MongoDbImpl _reconnect() - reconnecting...');
+    myPrint("mongo2   reconnect  ... [$t]", MyPrintType.Mongo2);
+    //myPrint(
+    //    'Lost connection to MongoDB MongoDbImpl _reconnect() - reconnecting...',MyPrintType.Mongo2);
     await close();
-    //await open().then((_) => debugPrint('Reconnected to MongoDB'));
+    //await open().then((_) => myPrint('Reconnected to MongoDB',MyPrintType.Mongo2));
     //return whenReady;
     return open().then((_) {
-      print("mongo2   reconnect  finished [$t]");
-      //debugPrint('Reconnected to MongoDB');
+      myPrint("mongo2   reconnect  finished [$t]", MyPrintType.Mongo2);
+      //myPrint('Reconnected to MongoDB',MyPrintType.Mongo2);
     }).onError((error, stackTrace) {
-      print("mongo2   reconnect  failed [$t]");
+      myPrint("mongo2   reconnect  failed [$t]", MyPrintType.Mongo2);
     }).whenComplete(() {
       _lastReconnect = DateTime.now();
       nextReconnect = true;
@@ -511,12 +513,13 @@ class MongoCollection implements mongo.DbCollection {
   static int balance = 0;
   Future<void> _reconnect() {
     //return _db._reconnect(); //.then((_) => this.whenReady);
-    print("mongocollection  reconnect ... [$balance/$limit]");
+    myPrint(
+        "mongocollection  reconnect ... [$balance/$limit]", MyPrintType.Mongo2);
     return _db._reconnect().then((value) {
       _delegate = _db._delegate.collection(_initCN);
-      //print("mongocollection  reconnect  ; [$balance/$limit]");
+      //myPrint("mongocollection  reconnect  ; [$balance/$limit]",MyPrintType.Mongo2);
     }).onError((error, stackTrace) {
-      print("mongocollection err $error");
+      myPrint("mongocollection err $error", MyPrintType.Mongo2);
     }); //.then((_) => this.whenReady);
   }
 
@@ -535,6 +538,7 @@ class MongoCollection implements mongo.DbCollection {
       if (e.message == 'No master connection') {*/
       if (balance > limit) {
         balance--;
+        myPrint("_tryWithReconnectStream rethrow", MyPrintType.Rethrow);
         rethrow;
       }
       await _reconnect();
@@ -560,6 +564,7 @@ class MongoCollection implements mongo.DbCollection {
       if (e.message == 'No master connection' ){*/
       if (balance > limit) {
         balance--;
+        myPrint("_tryWithReconnectFuture rethrow", MyPrintType.Rethrow);
         rethrow;
       }
       await _reconnect();
@@ -1094,10 +1099,11 @@ class MongoTest {
         await mongo.db.close();
       }
       if (delay > 0) {
-        debugPrint("test in 20 sec\nclose internet connection to test");
+        myPrint("test in 20 sec\nclose internet connection to test",
+            MyPrintType.Mongo2Test);
       }
-      await Future.delayed(
-          Duration(seconds: delay), () => debugPrint("=== testing: ==="));
+      await Future.delayed(Duration(seconds: delay),
+          () => myPrint("=== testing: ===", MyPrintType.Mongo2Test));
       //trying common actions:
       // findone   objectid
       var tmpEvent = Event(
@@ -1133,11 +1139,11 @@ class MongoTest {
       rslt =
           (await mongo.searchEvents("testBook7777777", filterOldEvents: false));
       assert(rslt.length == 0);
-      debugPrint("=== test end ===");
+      myPrint("=== test end ===", MyPrintType.Mongo2Test);
     } catch (e, stacktrace) {
-      debugPrint("=== error in test ===");
-      debugPrint(e.toString());
-      debugPrint(stacktrace.toString());
+      myPrint("=== error in test ===", MyPrintType.Mongo2Test);
+      myPrint(e.toString(), MyPrintType.Mongo2Test);
+      myPrint(stacktrace.toString(), MyPrintType.Mongo2Test);
       if (shouldRethrow) {
         rethrow;
       }
@@ -1150,7 +1156,7 @@ class MongoTest {
       Future.delayed(Duration(seconds: 30), () => [0, 1])
     ]);
     var map = ["success", "fail", "30 sec timeout"];
-    print("smallTest    " + (map[rslt.length]));
+    myPrint("smallTest    " + (map[rslt.length]), MyPrintType.Mongo2Test);
     add(rslt.length - 1);
   }
 }
