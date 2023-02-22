@@ -108,17 +108,17 @@ class MyTimer {
     timer = Timer(Duration(seconds: duration), () async {
       // wait to first: result / timeout
       var wasTimeout = false;
-      var wasFail =
+      var wasSuccess =
           await function().timeout(Duration(seconds: duration), onTimeout: () {
         wasTimeout = true;
-        return false;
-      }).catchError((err) => true);
+        return true;
+      }).catchError((err) => false);
       // on timeout
       if (wasTimeout && onTimeout != null) {
         await onTimeout!();
       }
       // on fail
-      fails += wasFail ? 1 : 0;
+      fails += wasSuccess ? 0 : 1;
       if (failAttempts != null && fails > failAttempts! && onFail != null) {
         await onFail!();
         fails = 0;

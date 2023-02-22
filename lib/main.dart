@@ -16,9 +16,9 @@ enum MyPrintType { None, TimerTick, Mongo2, Mongo2Test, Nnim, Rethrow }
 
 Map<MyPrintType, bool> myPrintTypes = {
   MyPrintType.None: true,
-  //MyPrintType.TimerTick: true,
-  //MyPrintType.Mongo2: true,
-  //MyPrintType.Mongo2Test: true,
+  MyPrintType.TimerTick: true,
+  MyPrintType.Mongo2: true,
+  MyPrintType.Mongo2Test: true,
   MyPrintType.Nnim: true,
   MyPrintType.Rethrow: true,
 };
@@ -92,9 +92,7 @@ class _MyAppState extends State<MyApp> {
       timer = MyTimer(
         duration: 15,
         function: () async {
-          return Globals.db!.db
-              .reconnect123()
-              .then((_) => Globals.nnim.updateNotification());
+          return Globals.nnim.updateNotification();
         },
         failAttempts: 3,
         onFail: () async {
