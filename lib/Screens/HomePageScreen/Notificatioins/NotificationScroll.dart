@@ -50,7 +50,7 @@ class _notificationsScrollState extends State<notificationsScroll> {
                               child: NotificationView(
                                 notification: _snapshot.data[index],
                               ));
-                        } else if (_snapshot.data.length == 0) {
+                        } else if (index == 0 && _snapshot.data.length == 0) {
                           return Padding(
                             padding: EdgeInsets.symmetric(vertical: 32.0),
                             child: Center(child: Text("אין לך התראות")),

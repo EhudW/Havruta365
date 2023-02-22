@@ -90,19 +90,20 @@ class _EventsState extends State<Events> {
                     search: searchTextController.text,
                     user2View: widget.user2View,
                   );
-                } else if (this.widget.events.hasMore) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32.0),
-                    child: Center(
-                        child: _snapshot.data.length == 0
-                            //? Text("לא נמצאה חברותא מתאימה")
-                            ? Text("לא נמצאה תוצאה מתאימה")
-                            : Text("")),
-                  );
                 } else {
+                  String txt = (index == 0 && !widget.events.hasMore)
+                      ? "- רשימה ריקה -"
+                      : "";
+                  if (widget.events.hasMore) {
+                    txt = "- טוען -";
+                    // needed if scrollController not call listener
+                    widget.events.loadMore();
+                  }
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32.0),
-                  );
+                      padding: EdgeInsets.symmetric(vertical: 32.0),
+                      child: Center(
+                        child: Text(txt),
+                      ));
                 }
               },
             ),
