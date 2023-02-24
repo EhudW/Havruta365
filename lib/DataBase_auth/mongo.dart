@@ -229,14 +229,14 @@ class Mongo {
   }
 
   Future<List<Event>> getSomeEvents(int len, String? typeFilter,
-      {bool newestFirst = true}) async {
+      {bool newestFirst = true, int limit = 10}) async {
     var query = (collection) async {
       if (typeFilter == null) {
         return await collection
             .find(where
                 .sortBy('_id', descending: newestFirst)
                 .skip(len)
-                .limit(10))
+                .limit(limit))
             .toList();
       } else {
         return await collection
@@ -244,7 +244,7 @@ class Mongo {
                 .eq('type', typeFilter)
                 .sortBy('_id', descending: newestFirst)
                 .skip(len)
-                .limit(10))
+                .limit(limit))
             .toList();
       }
     };
@@ -343,8 +343,8 @@ class Mongo {
       "dst": notification.destinationUser
     };
     // ignore: unused_local_variable
-    var response = await http.post(url,
-        body: json.encode(x), headers: {'Content-Type': 'application/json'});
+    /*var response = await http.post(url,
+        body: json.encode(x), headers: {'Content-Type': 'application/json'});*/
   }
 
   Future<void> deleteNotification(NotificationUser notification) async {

@@ -1,4 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:havruta_project/rec_system.dart';
+
+import 'DataBase_auth/Event.dart';
+import 'mytimer.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +12,12 @@ import 'dart:async';
 
 class Globals {
   static NewNotificationManager nnim = NewNotificationManager();
+  static OneLoadProperty<List<Event>> rec = OneLoadProperty((setter) async {
+    var top10events = await ExampleRecommendationSystem.calcAndGetTop10(
+        Globals.currentUser!.email!);
+    setter(top10events);
+    return true;
+  }, 5);
   static Mongo? db;
   static bool isDbConnect = false;
   static User? currentUser;
@@ -64,66 +73,4 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(_pefferedHeight);
-}
-
-class MyTimer {
-  bool _stop = false;
-  Timer? timer;
-  int duration;
-  int timeout;
-  int fails = 0;
-  int? failAttempts;
-  AsyncCallback? onFail;
-  AsyncCallback? onTimeout;
-  AsyncValueGetter<bool> function; // true on success; false on error;
-  MyTimer({
-    required this.duration,
-    required this.function,
-    this.timeout = 9999999999999,
-    this.onTimeout,
-    this.failAttempts,
-    this.onFail,
-  });
-  Future<bool> start(bool beforeDuration) async {
-    _stop = false;
-    _setTimer(start: true);
-    if (beforeDuration) {
-      return function();
-    }
-    return true;
-  }
-
-  void cancel() {
-    _stop = true;
-    timer?.cancel();
-    timer = null;
-  }
-
-  void _setTimer({bool start = false}) {
-    if (timer == null && !start && !_stop) {
-      return;
-    }
-    timer?.cancel();
-    // set run
-    timer = Timer(Duration(seconds: duration), () async {
-      // wait to first: result / timeout
-      var wasTimeout = false;
-      var wasSuccess =
-          await function().timeout(Duration(seconds: duration), onTimeout: () {
-        wasTimeout = true;
-        return true;
-      }).catchError((err) => false);
-      // on timeout
-      if (wasTimeout && onTimeout != null) {
-        await onTimeout!();
-      }
-      // on fail
-      fails += wasSuccess ? 0 : 1;
-      if (failAttempts != null && fails > failAttempts! && onFail != null) {
-        await onFail!();
-        fails = 0;
-      }
-      _setTimer(start: false);
-    });
-  }
 }

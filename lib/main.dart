@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'Globals.dart';
 import 'Widgets/SplashScreen.dart';
+import 'mytimer.dart';
 
 enum MyPrintType { None, TimerTick, Mongo2, Mongo2Test, Nnim, Rethrow }
 

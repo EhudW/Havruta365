@@ -38,7 +38,10 @@ class EventOnlineFeed extends StatelessWidget {
                           )
                         ]),
                     width: Globals.scaler.getWidth(10),
-                    child: Text(event.book!,
+                    child: Text(
+                        (event.book?.trim() ?? "") != ""
+                            ? event.book!.trim()
+                            : (event.topic ?? ""),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,

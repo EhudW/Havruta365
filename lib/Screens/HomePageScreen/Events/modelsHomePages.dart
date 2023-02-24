@@ -43,9 +43,12 @@ class EventsModel {
       });
     }
     if (onlineBit == true) {
-      return Future.delayed(Duration(seconds: 1), () {
-        return this.pullingLogic.nextOnline(length, typeFilter);
-      });
+      //return Future.delayed(Duration(seconds: 1), () {
+      // right now onlineBit <> recommendation system; constant list(in Globals)
+      // (which even not taking account live/online lecture)
+      this.hasMore = false;
+      return this.pullingLogic.nextOnline(length, typeFilter);
+      //});
     }
     return Future.delayed(Duration(seconds: 1), () {
       return this.pullingLogic.next(length, this, typeFilter);
@@ -134,7 +137,8 @@ class PullingLogic {
     return Globals.db!.getSomeEvents(length, typeFilter);
   }
 
-  Future<List<Event>> nextOnline(int length, String? typeFilter) {
-    return Globals.db!.getSomeEventsOnline(length, typeFilter);
+  Future<List<Event>> nextOnline(int length, String? typeFilter) async {
+    //return Globals.db!.getSomeEventsOnline(length, typeFilter);
+    return (await Globals.rec.waitData())!;
   }
 }

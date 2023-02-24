@@ -163,10 +163,10 @@ sendMail(String mailUser, String code) async {
     "src_pass": "havruta365",
     "dst": mailUser
   };
-  var response = await http.post(url,
+  /*var response = await http.post(url,
       body: json.encode(x), headers: {'Content-Type': 'application/json'});
   myPrint('Response status: ${response.statusCode}', MyPrintType.None);
-  myPrint('Response body: ${response.body}', MyPrintType.None);
+  myPrint('Response body: ${response.body}', MyPrintType.None);*/
 }
 
 appBar(BuildContext context) {
