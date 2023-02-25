@@ -139,6 +139,6 @@ class PullingLogic {
 
   Future<List<Event>> nextOnline(int length, String? typeFilter) async {
     //return Globals.db!.getSomeEventsOnline(length, typeFilter);
-    return (await Globals.rec.waitData())!;
+    return (await Globals.rec.waitData() ?? []);
   }
 }

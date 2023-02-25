@@ -185,6 +185,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           style: GoogleFonts.secularOne(fontSize: 20.0),
           textDirection: ui.TextDirection.rtl,
         ),
+        Text(
+          "עד ${(event.maxParticipants ?? 100)} משתתפים",
+          style: GoogleFonts.secularOne(fontSize: 20.0),
+          textDirection: ui.TextDirection.rtl,
+        ),
         event.dates!.isEmpty
             ? Container()
             : ElevatedButton.icon(

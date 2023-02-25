@@ -7,17 +7,22 @@ import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'DataBase_auth/User.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
-import 'package:havruta_project/main.dart';
 import 'dart:async';
 
 class Globals {
-  static NewNotificationManager nnim = NewNotificationManager();
-  static OneLoadProperty<List<Event>> rec = OneLoadProperty((setter) async {
-    var top10events = await ExampleRecommendationSystem.calcAndGetTop10(
-        Globals.currentUser!.email!);
-    setter(top10events);
-    return true;
-  }, 5);
+  static LoadProperty<List<Event>> rec = LoadProperty(
+    (setter) async {
+      var top10events = await ExampleRecommendationSystem.calcAndGetTop10(
+          Globals.currentUser!.email!);
+      setter(top10events);
+      return true;
+    },
+    oneLoadOnly: true,
+    waitAutoStart: false,
+    duration: null,
+  );
+  static void updateRec() => rec.restart([]);
+
   static Mongo? db;
   static bool isDbConnect = false;
   static User? currentUser;

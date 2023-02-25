@@ -6,6 +6,7 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatScreen.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notifications.dart';
 import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
+import 'package:havruta_project/main.dart';
 //import 'package:havruta_project/Widgets/SplashScreen.dart';
 import 'Events/Events.dart';
 //import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
@@ -33,15 +34,19 @@ class _HomePageState extends State<HomePage> {
   Events events = Events(new EventsModel(false), new EventsModel(true));
 
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
+  NewNotificationManager? nnim;
   @override
   void initState() {
     super.initState();
-    Globals.nnim.refreshMe[this] = () => setState(() => null);
+    nnim = NewNotificationManager();
+    nnim!.start();
+    nnim!.refreshMe[this] = () => setState(() => null);
   }
 
   @override
   void dispose() {
-    Globals.nnim.refreshMe[this] = () => null;
+    nnim!.refreshMe[this] = () => null;
+    nnim!.cancel();
     super.dispose();
   }
 
@@ -58,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                         color: Colors.transparent,
                         child: Column(children: <Widget>[
-                          Expanded(child: Notifications())
+                          Expanded(child: Notifications(nnim: nnim!))
                         ])))),
             backgroundColor: Colors.white,
             appBar: appBar(context),
@@ -121,7 +126,7 @@ class _HomePageState extends State<HomePage> {
           builder: (context) => new IconButton(
                 icon: Center(
                   child: Icon(
-                      Globals.nnim.newNotification
+                      (nnim?.newNotification ?? false)
                           ? Icons.notification_important
                           : Icons.notifications,
                       color: Colors.teal[400],

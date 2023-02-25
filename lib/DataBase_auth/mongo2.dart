@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:mongo_dart/src/database/cursor/modern_cursor.dart';
 import 'package:mongo_dart/src/database/commands/aggregation_commands/distinct/distinct_result.dart';
 import 'package:mongo_dart/src/database/commands/aggregation_commands/distinct/distinct_options.dart';
@@ -530,8 +531,8 @@ class MongoCollection implements mongo.DbCollection {
         balance++;
       }
       var x = computation();
-      balance--; // balance decrease only when finished succesfully or if throw below
       yield* x; //.toList()??
+      balance--; // balance decrease only when finished succesfully or if throw below
     } catch (e) {
       /*} on mongo.MongoDartError catch (e) {
       // ignore: avoid_catching_errors
@@ -1148,6 +1149,10 @@ class MongoTest {
         rethrow;
       }
     }
+  }
+
+  static Future<bool> connectionTest(Db d) async {
+    return (await d.collection("Events").findOne())?["_id"] != null;
   }
 
   static void smallTest(Mongo m, Function add) async {

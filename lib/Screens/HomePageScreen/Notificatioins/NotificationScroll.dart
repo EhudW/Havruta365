@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter/cupertino.dart';
-import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/NotificationView.dart';
-import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/main.dart';
 
 // ignore: must_be_immutable, camel_case_types
 class notificationsScroll extends StatefulWidget {
-  notificationModel? model;
+  NewNotificationManager nnim;
 
-  notificationsScroll(this.model);
+  notificationsScroll(this.nnim);
 
   @override
   _notificationsScrollState createState() => _notificationsScrollState();
@@ -22,13 +20,13 @@ class _notificationsScrollState extends State<notificationsScroll> {
         child: Material(
             color: Colors.grey.withOpacity(0.8),
             child: StreamBuilder(
-              stream: this.widget.model!.stream,
+              stream: this.widget.nnim.model.stream,
               builder: (BuildContext _context, AsyncSnapshot _snapshot) {
                 if (!_snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 } else {
                   return RefreshIndicator(
-                    onRefresh: this.widget.model!.refresh,
+                    onRefresh: this.widget.nnim.model.refresh,
                     child: ListView.builder(
                       itemCount: _snapshot.data.length + 1,
                       itemBuilder: (BuildContext _context, int index) {
@@ -38,13 +36,13 @@ class _notificationsScrollState extends State<notificationsScroll> {
                               resizeDuration: Duration(milliseconds: 200),
                               key: UniqueKey(),
                               onDismissed: (direction) async {
-                                await widget.model
-                                    ?.remove(index)
+                                await widget.nnim.model
+                                    .remove(index)
                                     .catchError((err) => null);
                                 // refresh ui if this delete cause that
-                                if (widget.model!.isDataEmpty) {
-                                  Globals.nnim.newNotification = false;
-                                  Globals.nnim.refreshAll();
+                                if (widget.nnim.model.isDataEmpty) {
+                                  widget.nnim.newNotification = false;
+                                  widget.nnim.refreshAll();
                                 }
                               },
                               child: NotificationView(

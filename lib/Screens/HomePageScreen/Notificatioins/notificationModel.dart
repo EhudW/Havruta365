@@ -8,7 +8,7 @@ class notificationModel {
   List<NotificationUser>? _data;
   bool get isDataEmpty => _data?.isEmpty ?? true;
   late StreamController<List<NotificationUser>?> _controller;
-
+  bool ignoreRequests = false;
   notificationModel() {
     _data = <NotificationUser>[];
     _controller = StreamController<List<NotificationUser>?>.broadcast();
@@ -21,6 +21,7 @@ class notificationModel {
   }
 
   Future<List<NotificationUser>> getData(int length) async {
+    if (ignoreRequests) return [];
     return Future.delayed(Duration(seconds: 1), () {
       var data = Globals.db!.getNotifications();
       return data;
@@ -32,6 +33,7 @@ class notificationModel {
   }
 
   Future<void> remove(int idx) {
+    if (ignoreRequests) return Future.value();
     var noti = _data![idx];
     print(_data?.length);
     _data!.remove(noti);
@@ -41,6 +43,7 @@ class notificationModel {
   }
 
   Future<void> loadMore({bool clearCachedData = false}) {
+    if (ignoreRequests) return Future.value();
     if (clearCachedData) {
       _data = <NotificationUser>[];
     }

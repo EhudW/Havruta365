@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:flutter/foundation.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
@@ -229,20 +230,28 @@ class MultiConsiderations extends RecommendationSystem<Event> {
     ///
     var whoTeacher = (Event e) => e.lecturer?.trim() != ""
         ? e.lecturer!.trim().toLowerCase()
-        : e.creatorUser!.trim().toLowerCase();
+        : e.creatorName!.trim().toLowerCase();
+    var uniqueString = (String? x) {
+      x = x?.toLowerCase().trim() ?? "";
+      return x == "" ? UniqueKey().toString() : x;
+    };
 
     /// for rank for specific target group (people who preffer small/big lecture, etc..)
     var considerationsFactory = (events) => [
+          [
+            (Event e) => e.creatorUser!,
+            null,
+          ],
           [
             whoTeacher,
             null,
           ],
           [
-            (Event e) => e.topic!.toUpperCase(),
+            (Event e) => uniqueString(e.topic),
             null,
           ],
           [
-            (Event e) => e.type!.toUpperCase(),
+            (Event e) => e.type!.toLowerCase(),
             null,
           ],
           [
@@ -251,9 +260,14 @@ class MultiConsiderations extends RecommendationSystem<Event> {
                 e.dates?.map((d) => d.toLocal().weekday).toList() ?? [],
           ],
           [
-            (Event e) => e.duration! > 60
-                ? "61+"
-                : (e.duration! > 30 ? "31-60" : "0-30"),
+            (Event e) {
+              if (e.duration == null || e.duration! <= 30) {
+                return "0-30";
+              } else if (e.duration! > 60) {
+                return "61+";
+              }
+              return "31-60";
+            },
             null,
           ],
           [
@@ -261,9 +275,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
             null,
           ],
           [
-            (Event e) => e.targetGender!.toUpperCase() == 'M'
-                ? 'M'
-                : (e.targetGender!.toUpperCase() == 'F' ? 'F' : 'BOTH'),
+            (Event e) => e.targetGender?.toLowerCase(),
             null,
           ],
           [
@@ -349,9 +361,10 @@ class ByEventSuccess extends RecommendationSystem<Event> {
     for (Event event in rank.keys) {
       int amount =
           (event.participants?.length ?? 0) + (event.waitingQueue?.length ?? 0);
-      rank[event] = rank[event]! +
-          amount /
-              ((event.maxParticipants ?? 0) > 0 ? event.maxParticipants! : 100);
+      int soft =
+          ((event.maxParticipants ?? 0) > 0 ? event.maxParticipants! : 100);
+      soft++;
+      rank[event] = rank[event]! + amount / soft;
     }
 
     var myMail = data!["myMail"] ?? Globals.currentUser!.email!;

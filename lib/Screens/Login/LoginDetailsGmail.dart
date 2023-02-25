@@ -103,6 +103,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
                 user.birthDate = _dateTime;
                 // ignore: unused_local_variable
                 var res = Globals.db!.insertNewUser(user);
+                // .then((_) => Globals.updateRec()); done at LoginMoreDetails
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginMoreDetails()),

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
+import 'package:havruta_project/DataBase_auth/mongo2.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
@@ -31,8 +32,32 @@ void main() async {
 }
 
 class NewNotificationManager {
+  // dispose on state not always work in time
+  static NewNotificationManager? onlyLast;
   // model for the notification
   final notificationModel model = notificationModel();
+  late MyTimer _timer;
+  NewNotificationManager() {
+    // This istance is the new
+    var last = onlyLast;
+    onlyLast = this;
+    // handle last NewNotificationManager instance, by disable its effectiveness
+    last?.cancel();
+    last?.model.ignoreRequests = true;
+    last?.refreshMe = {};
+
+    _timer = MyTimer(
+      duration: 15,
+      function: () async {
+        return updateNotification();
+      },
+      timeout: 60,
+      onTimeout: null,
+    );
+  }
+  Future<bool> start() => _timer.start(true);
+  void cancel() => _timer.cancel();
+
   // for ui update when updateNotification() called
   Map<Object, Function> refreshMe = {};
   bool newNotification = false; // for state
@@ -93,7 +118,7 @@ class _MyAppState extends State<MyApp> {
       timer = MyTimer(
         duration: 15,
         function: () async {
-          return Globals.nnim.updateNotification();
+          return MongoTest.connectionTest(Globals.db!.db);
         },
         failAttempts: 3,
         onFail: () async {
@@ -164,6 +189,7 @@ class _MyAppState extends State<MyApp> {
                                         return const CircularProgressIndicator();
                                       case ConnectionState.done:
                                         Globals.currentUser = snapshot.data;
+                                        Globals.updateRec();
                                         return HomePage();
                                       //break;
                                       default:

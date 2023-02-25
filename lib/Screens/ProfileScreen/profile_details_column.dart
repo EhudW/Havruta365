@@ -9,7 +9,6 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Events/MyEventsPage.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Events/modelsHomePages.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
-import 'package:havruta_project/Screens/ProfileScreen/Events_scroller.dart';
 import 'package:havruta_project/Screens/UserChanges/ChangesDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -260,6 +259,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               // ignore: unused_local_variable
               var currentUser;
               if (await (GoogleSignInApi.isSignedIn())) {
+                Globals.rec.cancel([]);
                 currentUser = GoogleSignInApi.currentUser();
                 await GoogleSignInApi.logout();
               }

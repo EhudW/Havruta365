@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:havruta_project/Globals.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
+import 'package:havruta_project/main.dart';
 
 import 'NotificationScroll.dart';
 
 class Notifications extends StatefulWidget {
-  const Notifications({
+  final NewNotificationManager nnim;
+  Notifications({
     Key? key,
+    required this.nnim,
   }) : super(key: key);
 
   @override
@@ -17,15 +18,13 @@ class Notifications extends StatefulWidget {
 class _NotificationsState extends State<Notifications> {
   final scrollController = ScrollController();
 
-  notificationModel? model;
-
   @override
   void initState() {
-    model = Globals.nnim.model;
+    notificationModel model = widget.nnim.model;
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
-        model!.loadMore();
+        model.loadMore();
       }
     });
     super.initState();
@@ -33,6 +32,6 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: new notificationsScroll(model));
+    return Scaffold(body: new notificationsScroll(widget.nnim));
   }
 }
