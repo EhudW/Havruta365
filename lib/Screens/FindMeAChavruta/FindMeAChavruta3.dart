@@ -4,16 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/First_Dot_Row.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
-//import 'package:flutter/rendering.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
-//import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
-import '../../main.dart';
+import '../../mydebug.dart' as MyDebug;
 import 'Wavy_Header.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -321,9 +317,9 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
     final picker = ImagePicker();
     dynamic result = await authenticate.signInAnon();
     if (result == null) {
-      myPrint("error signing in", MyPrintType.None);
+      MyDebug.myPrint("error signing in", MyDebug.MyPrintType.None);
     } else {
-      myPrint('signed in', MyPrintType.None);
+      MyDebug.myPrint('signed in', MyDebug.MyPrintType.None);
     }
     image = await picker.pickImage(source: source);
     var file = File(image?.path ?? "");

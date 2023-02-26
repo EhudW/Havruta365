@@ -13,19 +13,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'Globals.dart';
 import 'Widgets/SplashScreen.dart';
 import 'mytimer.dart';
-
-enum MyPrintType { None, TimerTick, Mongo2, Mongo2Test, Nnim, Rethrow }
-
-Map<MyPrintType, bool> myPrintTypes = {
-  MyPrintType.None: true,
-  MyPrintType.TimerTick: true,
-  MyPrintType.Mongo2: true,
-  MyPrintType.Mongo2Test: true,
-  MyPrintType.Nnim: true,
-  MyPrintType.Rethrow: true,
-};
-myPrint(Object? obj, MyPrintType type) =>
-    (myPrintTypes[type] ?? false) ? print(obj) : null;
+import 'mydebug.dart' as MyDebug;
 
 void main() async {
   runApp(MyApp());
@@ -34,6 +22,7 @@ void main() async {
 class NewNotificationManager {
   // dispose on state not always work in time
   static NewNotificationManager? onlyLast;
+  static int checkEveryXSec = MyDebug.MyConsts.checkNewNotificationSec;
   // model for the notification
   final notificationModel model = notificationModel();
   late MyTimer _timer;
@@ -47,7 +36,7 @@ class NewNotificationManager {
     last?.refreshMe = {};
 
     _timer = MyTimer(
-      duration: 15,
+      duration: checkEveryXSec,
       function: () async {
         return updateNotification();
       },
@@ -76,7 +65,8 @@ class NewNotificationManager {
         .then((_) {
           var oldValue = newNotification;
           newNotification = !model.isDataEmpty;
-          myPrint("newNotification: $newNotification", MyPrintType.Nnim);
+          MyDebug.myPrint(
+              "newNotification: $newNotification", MyDebug.MyPrintType.Nnim);
           if (oldValue != newNotification) {
             refreshAll();
           }
@@ -111,20 +101,21 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     Globals.db = new Mongo();
-    bool useDb2 = true; // this control if to use reconnecting model
+    bool useDb2 =
+        MyDebug.MyConsts.useDb2; // this control if to use reconnecting model
     mongoConnectFuture = Globals.db!.connect(useDb2: useDb2);
     initFirebase();
     if (useDb2) {
       timer = MyTimer(
-        duration: 15,
+        duration: MyDebug.MyConsts.testConnectionEveryXSec,
         function: () async {
           return MongoTest.connectionTest(Globals.db!.db);
         },
-        failAttempts: 3,
+        failAttempts: MyDebug.MyConsts.testConnectionFailsAttempts,
         onFail: () async {
           Globals.db!.db.nextReconnect = true;
         },
-        timeout: 60,
+        timeout: MyDebug.MyConsts.testConnectionTimeoutXSec,
         onTimeout: () async {
           Globals.db!.db.nextReconnect = true;
         },
@@ -138,7 +129,7 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
     timer?.cancel();
     Globals.db!.db.close();
-    myPrint("dispose", MyPrintType.None);
+    MyDebug.myPrint("MyApp dispose", MyDebug.MyPrintType.None);
   }
 
   @override

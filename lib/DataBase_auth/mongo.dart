@@ -9,7 +9,7 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import '../main.dart';
+import '../mydebug.dart' as MyDebug;
 import './mongo2.dart' as Db2;
 //import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,16 +44,16 @@ class Mongo {
       this.db = await Db.create(CONNECT_TO_DB);
     }
     await this.db.open();
-    myPrint('Connected to database', MyPrintType.None);
+    MyDebug.myPrint('Connected to database', MyDebug.MyPrintType.None);
     Globals.isDbConnect = true;
   }
 
   Future<void> insertEvent(Event event) async {
-    // MondoDB decrease to hour from the time, because he using UTC. here we fix it.
+    /* MondoDB decrease to hour from the time, because he using UTC. here we fix it.
     for (DateTime date in event.dates as Iterable<DateTime>) {
       // TODO: check if to utc function prefered
       date.add(Duration(hours: 2));
-    }
+    }*/
     var collection = db.collection('Events');
     var e = event.toJson();
     await collection.insertOne(e);
@@ -350,7 +350,8 @@ class Mongo {
   Future<void> deleteNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     await collection.deleteOne({"_id": notification.id});
-    myPrint("${notification.message}  DELETED", MyPrintType.Nnim);
+    MyDebug.myPrint(
+        "${notification.message}  DELETED", MyDebug.MyPrintType.Nnim);
   }
 
   deleteFromEvent(ObjectId? id, String? email) async {

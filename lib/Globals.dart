@@ -9,6 +9,7 @@ import 'DataBase_auth/User.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'dart:async';
 
+// see also mydebug.dart
 class Globals {
   static LoadProperty<List<Event>> rec = LoadProperty(
     (setter) async {

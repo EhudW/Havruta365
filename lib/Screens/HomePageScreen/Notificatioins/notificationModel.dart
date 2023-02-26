@@ -35,9 +35,7 @@ class notificationModel {
   Future<void> remove(int idx) {
     if (ignoreRequests) return Future.value();
     var noti = _data![idx];
-    print(_data?.length);
     _data!.remove(noti);
-    print(_data?.length);
     _controller.add(_data);
     return Globals.db!.deleteNotification(noti);
   }
