@@ -2,6 +2,8 @@ import 'package:havruta_project/Globals.dart';
 import 'dart:async';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 
+import '../../../mydebug.dart';
+
 // ignore: camel_case_types
 class notificationModel {
   Stream<List<NotificationUser>>? stream;
@@ -22,7 +24,7 @@ class notificationModel {
 
   Future<List<NotificationUser>> getData(int length) async {
     if (ignoreRequests) return [];
-    return Future.delayed(Duration(seconds: 1), () {
+    return Future.delayed(MyConsts.defaultDelay, () {
       var data = Globals.db!.getNotifications();
       return data;
     });

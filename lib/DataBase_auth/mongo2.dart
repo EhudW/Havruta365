@@ -184,8 +184,7 @@ class MongoDbImpl implements mongo.Db {
       return Future.delayed(MongoDbImpl.smallDelay);
     }
     nextReconnect = false;
-    var t = DateTime.now();
-    MyDebug.myPrint("mongo2   reconnect  ... [$t]", MyDebug.MyPrintType.Mongo2);
+    MyDebug.myPrint("mongo2   reconnect  ...", MyDebug.MyPrintType.Mongo2);
     //MyDebug.myPrint(
     //    'Lost connection to MongoDB MongoDbImpl _reconnect() - reconnecting...',MyDebug.MyPrintType.Mongo2);
     await close();
@@ -193,11 +192,10 @@ class MongoDbImpl implements mongo.Db {
     //return whenReady;
     return open().then((_) {
       MyDebug.myPrint(
-          "mongo2   reconnect  finished [$t]", MyDebug.MyPrintType.Mongo2);
+          "mongo2   reconnect  finished", MyDebug.MyPrintType.Mongo2);
       //MyDebug.myPrint('Reconnected to MongoDB',MyDebug.MyPrintType.Mongo2);
     }).onError((error, stackTrace) {
-      MyDebug.myPrint(
-          "mongo2   reconnect  failed [$t]", MyDebug.MyPrintType.Mongo2);
+      MyDebug.myPrint("mongo2   reconnect  failed", MyDebug.MyPrintType.Mongo2);
     }).whenComplete(() {
       _lastReconnect = DateTime.now();
       nextReconnect = true;

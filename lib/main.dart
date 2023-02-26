@@ -23,6 +23,7 @@ class NewNotificationManager {
   // dispose on state not always work in time
   static NewNotificationManager? onlyLast;
   static int checkEveryXSec = MyDebug.MyConsts.checkNewNotificationSec;
+  static int timeoutEveryXSec = MyDebug.MyConsts.checkNewNotificationTimeoutSec;
   // model for the notification
   final notificationModel model = notificationModel();
   late MyTimer _timer;
@@ -41,7 +42,7 @@ class NewNotificationManager {
       function: () async {
         return updateNotification();
       },
-      timeout: 60,
+      timeout: timeoutEveryXSec,
       onTimeout: null,
     );
   }

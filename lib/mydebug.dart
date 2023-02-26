@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 // see also Globals.dart
 
 enum MyPrintType {
@@ -28,13 +29,27 @@ Map<MyPrintType, bool> myPrintTypes = {
   MyPrintType.Rethrow: true,
   MyPrintType.Nnim: true,
 };
+// print formatted log:
+// example:
+// myPrint:  connectionTest() success == true                          <Mongo2Test  22:01:04>
+// myPrint:  ---         obj.toString()   ---  ---     padding    ---  <MyPrintType    now  >
 myPrint(Object? obj, MyPrintType type) {
   if (myPrintTypes[type] ?? false) {
-    print("myPrint:    $obj        <${type.toString().split(".").last}>");
+    String prefix = "myPrint:  $obj";
+    String suffix = "<${type.toString().split(".").last}";
+    suffix += "  ${DateFormat('HH:mm:ss').format(DateTime.now().toLocal())}>";
+    int suffixPadding = 90 - prefix.length;
+    print("$prefix${suffix.padLeft(suffixPadding)}");
   }
 }
 
 class MyConsts {
+  //////////////////////  delay between loop/infinite of async attempts,
+  //////////////////////  (mytimer.dart modelsHomePages.dart notificationModel.dart)
+  //////////////////////  see below for specific cases
+  //////////////////////
+  static const Duration defaultDelay = const Duration(seconds: 1);
+
   //////////////////////   MongoDbImpl (mongo2.dart):
   //////////////////////
   // should use MongoDbImpl (true) or Db (false) ?
@@ -53,6 +68,12 @@ class MyConsts {
   //////////////////////
   // how often check for new notifications
   static const int checkNewNotificationSec = 15;
+  static const int checkNewNotificationTimeoutSec = 60;
+
+  //////////////////////  Globals.rec (Globals.dart):
+  //////////////////////
+  // how often check for fetch load property [this is no setting a timeout]
+  static const int loadPropertyDelaySec = 2;
 
   //////////////////////   MongoDbImpl, MongoCollections (mongo2.dart):
   //////////////////////

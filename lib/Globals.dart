@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'DataBase_auth/User.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'dart:async';
+import 'mydebug.dart' as MyDebug;
 
 // see also mydebug.dart
 class Globals {
@@ -20,9 +21,11 @@ class Globals {
     },
     oneLoadOnly: true,
     waitAutoStart: false,
-    duration: null,
+    // this is how much to wait before each attempt , but no timeout is set
+    duration: MyDebug.MyConsts.loadPropertyDelaySec,
   );
-  static void updateRec() => rec.restart([]);
+  // second param is false, so it will wait  duration: MyDebug.MyConsts.loadPropertyDelaySec
+  static void updateRec() => rec.restart([], false);
 
   static Mongo? db;
   static bool isDbConnect = false;

@@ -2,6 +2,8 @@ import 'dart:async';
 import '../mydebug.dart' as MyDebug;
 import 'package:flutter/foundation.dart';
 
+import 'mydebug.dart';
+
 class MyTimer {
   bool _stop = false;
   Timer? timer;
@@ -51,7 +53,9 @@ class MyTimer {
     // wait to first: result / timeout
     var wasTimeout = false;
     var wasSuccess =
-        await function().timeout(Duration(seconds: duration), onTimeout: () {
+        await function().timeout(Duration(seconds: timeout), onTimeout: () {
+      MyDebug.myPrint("MyTimer timeout _callback() [$myDebugLabel]",
+          MyDebug.MyPrintType.TimerTick);
       wasTimeout = true;
       return true;
     }).catchError((err) => false);
@@ -59,6 +63,10 @@ class MyTimer {
     if (wasTimeout && onTimeout != null) {
       await onTimeout!();
       fails = 0;
+    }
+    if (!wasSuccess) {
+      MyDebug.myPrint("MyTimer fail _callback() [$myDebugLabel]",
+          MyDebug.MyPrintType.TimerTick);
     }
     // on fail
     fails += wasSuccess ? 0 : 1;
@@ -82,12 +90,12 @@ class MyTimer {
 
 abstract class ILoadProperty<T> {
   Future<T?> waitData(); // sometime a result will return
-  void start();
+  void start([bool beforeDuration = false]);
   void pause();
   void cancel(T? instead); // shutdown
-  void restart(T? instead) {
+  void restart(T? instead, [bool beforeDuration = false]) {
     cancel(instead);
-    start();
+    start(beforeDuration);
   }
 }
 
@@ -97,19 +105,24 @@ class LoadProperty<T> extends ILoadProperty<T> {
   MyTimer? _timer;
   bool _dataWasLoaded = false;
   bool _timerHadStart = false;
-  int? duration;
+  int timeout;
+  int duration;
   bool waitAutoStart;
+  bool waitAutoStartBeforeDuration;
   bool _disposeNow = false;
   bool _useInstead = false;
   bool oneLoadOnly;
   T? _instead;
   String? myDebugLabel;
 // @load return true on success;false on error; before return true needs to valuesetter(value)
-// duration == null => wait until waitData() is called [load() will probably run once but maybe twice]
+// waitAutoStart and no start() => wait until waitData() is called [load() will probably run once but maybe twice]
+// waitAutoStartBeforeDuration if to wait duration in that case.
   LoadProperty(
     Future<bool> Function(ValueSetter<T>) load, {
-    this.duration,
+    required this.duration,
+    this.timeout = 99999999999999999,
     this.waitAutoStart = false,
+    this.waitAutoStartBeforeDuration = false,
     required this.oneLoadOnly,
     String? cancelPrev,
     dynamic cancelPrevWith,
@@ -136,8 +149,9 @@ class LoadProperty<T> extends ILoadProperty<T> {
       }
     };
     _timer = MyTimer(
+        timeout: timeout,
         myDebugLabel: "LoadProperty $myDebugLabel",
-        duration: duration ?? 0,
+        duration: duration,
         function: () async => await load(dataSetter).then((success) {
               if (success && oneLoadOnly) {
                 _timer!.cancel();
@@ -146,7 +160,7 @@ class LoadProperty<T> extends ILoadProperty<T> {
             }));
   }
   @override
-  void start() {
+  void start([bool beforeDuration = false]) {
     if (_disposeNow) {
       return;
     }
@@ -156,8 +170,7 @@ class LoadProperty<T> extends ILoadProperty<T> {
       _dataWasLoaded = false;
       _useInstead = false;
       _timerHadStart = true;
-      _timer!.start(
-          false); // it's ok beforeStart=false since duration==null => duration == 0
+      _timer!.start(beforeDuration);
     }
   }
 
@@ -168,9 +181,9 @@ class LoadProperty<T> extends ILoadProperty<T> {
         MyDebug.myPrint(
             "LoadProperty waitData() -> auto start() [$myDebugLabel]",
             MyDebug.MyPrintType.LoadProperty);
-        start();
+        start(waitAutoStartBeforeDuration);
       }
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(MyConsts.defaultDelay);
     }
     return (_useInstead || _disposeNow) ? _instead : _data;
   }

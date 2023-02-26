@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 //import 'dart:math';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/mydebug.dart';
 
 /// class to get events(lessons) data as stream-like object
 /// pullingLogic is control what functions will be called, if needed (when refreshing, for example)
@@ -34,7 +35,7 @@ class EventsModel {
   Future<List<Event>> _getExampleServerData(int length) async {
     // print(searchData + 'db');
     if (searchData != null) {
-      return Future.delayed(Duration(seconds: 1), () {
+      return Future.delayed(MyConsts.defaultDelay, () {
         final String? tmp = searchData;
         if (tmp == null) {
           return Future.value([]);
@@ -43,14 +44,14 @@ class EventsModel {
       });
     }
     if (onlineBit == true) {
-      //return Future.delayed(Duration(seconds: 1), () {
+      //return Future.delayed(MyConsts.defaultDelay, () {
       // right now onlineBit <> recommendation system; constant list(in Globals)
       // (which even not taking account live/online lecture)
       this.hasMore = false;
       return this.pullingLogic.nextOnline(length, typeFilter);
       //});
     }
-    return Future.delayed(Duration(seconds: 1), () {
+    return Future.delayed(MyConsts.defaultDelay, () {
       return this.pullingLogic.next(length, this, typeFilter);
     });
   }
