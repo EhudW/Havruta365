@@ -36,6 +36,7 @@ class NewNotificationManager {
     last?.refreshMe = {};
 
     _timer = MyTimer(
+      myDebugLabel: "nnim ${this.hashCode}",
       duration: checkEveryXSec,
       function: () async {
         return updateNotification();
@@ -66,7 +67,8 @@ class NewNotificationManager {
           var oldValue = newNotification;
           newNotification = !model.isDataEmpty;
           MyDebug.myPrint(
-              "newNotification: $newNotification", MyDebug.MyPrintType.Nnim);
+              "newNotification: $newNotification    [${this.hashCode}]",
+              MyDebug.MyPrintType.Nnim);
           if (oldValue != newNotification) {
             refreshAll();
           }
@@ -100,13 +102,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    initFirebase();
     Globals.db = new Mongo();
     bool useDb2 =
         MyDebug.MyConsts.useDb2; // this control if to use reconnecting model
     mongoConnectFuture = Globals.db!.connect(useDb2: useDb2);
-    initFirebase();
     if (useDb2) {
       timer = MyTimer(
+        myDebugLabel: "MyApp.initState() db refresh",
         duration: MyDebug.MyConsts.testConnectionEveryXSec,
         function: () async {
           return MongoTest.connectionTest(Globals.db!.db);

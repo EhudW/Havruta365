@@ -136,6 +136,7 @@ class LoadProperty<T> extends ILoadProperty<T> {
       }
     };
     _timer = MyTimer(
+        myDebugLabel: "LoadProperty $myDebugLabel",
         duration: duration ?? 0,
         function: () async => await load(dataSetter).then((success) {
               if (success && oneLoadOnly) {

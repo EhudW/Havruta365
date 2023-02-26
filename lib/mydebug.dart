@@ -28,8 +28,11 @@ Map<MyPrintType, bool> myPrintTypes = {
   MyPrintType.Rethrow: true,
   MyPrintType.Nnim: true,
 };
-myPrint(Object? obj, MyPrintType type) =>
-    (myPrintTypes[type] ?? false) ? print(obj) : null;
+myPrint(Object? obj, MyPrintType type) {
+  if (myPrintTypes[type] ?? false) {
+    print("myPrint:    $obj        <${type.toString().split(".").last}>");
+  }
+}
 
 class MyConsts {
   //////////////////////   MongoDbImpl (mongo2.dart):
