@@ -90,9 +90,13 @@ class MongoDbImpl implements mongo.Db {
     try {
       //this.__delegate ??= await mongo.Db.create(_uriString, _debugInfo);
       this.__delegate = await mongo.Db.create(_uriString, _debugInfo);
-      MyDebug.myPrint("mongo2   open[a]  success", MyDebug.MyPrintType.Mongo2);
+      MyDebug.myPrint(
+          "mongo2  [of ${this.hashCode}/${__delegate?.hashCode}] open[a]  success",
+          MyDebug.MyPrintType.Mongo2);
     } catch (e) {
-      MyDebug.myPrint("mongo2   open[a]  fail", MyDebug.MyPrintType.Mongo2);
+      MyDebug.myPrint(
+          "mongo2  [of ${this.hashCode}/${__delegate?.hashCode}] open[a]  fail",
+          MyDebug.MyPrintType.Mongo2);
       //MyDebug.myPrint("error:    $e",MyDebug.MyPrintType.Mongo2);
       //MyDebug.myPrint("error in MongoDbImpl  open() trying in 5 seconds...",MyDebug.MyPrintType.Mongo2);
       return Future.delayed(MongoDbImpl.smallDelay, () {
@@ -149,16 +153,14 @@ class MongoDbImpl implements mongo.Db {
     )
         .catchError((e) {
       var retryDelay = MongoDbImpl.smallDelay;
-      MyDebug.myPrint("mongo2   open[b]  fail", MyDebug.MyPrintType.Mongo2);
+      MyDebug.myPrint(
+          "mongo2  [of ${this.hashCode}/${__delegate?.hashCode}] open[b]  fail",
+          MyDebug.MyPrintType.Mongo2);
       //MyDebug.myPrint("error:    $e",MyDebug.MyPrintType.Mongo2);
       //MyDebug.myPrint(
       //    'MongoDb not ready,  MongoDbImpl open() retrying in $retryDelay ...',MyDebug.MyPrintType.Mongo2);
       return Future.delayed(retryDelay, () {
-        var tmp = __delegate!;
-        if (tmp.state != mongo.State.closed &&
-            tmp.state != mongo.State.closing) {
-          tmp.close().catchError((_) {});
-        }
+        close(); //not awaited
         return this.open(
           writeConcern: writeConcern,
           secure: secure,
@@ -169,7 +171,9 @@ class MongoDbImpl implements mongo.Db {
         );
       });
     }).then((x) {
-      MyDebug.myPrint("mongo2   open[b]  success", MyDebug.MyPrintType.Mongo2);
+      MyDebug.myPrint(
+          "mongo2  [of ${this.hashCode}/${__delegate?.hashCode}] open[b]  success",
+          MyDebug.MyPrintType.Mongo2);
       return x;
     });
   }
@@ -184,7 +188,9 @@ class MongoDbImpl implements mongo.Db {
       return Future.delayed(MongoDbImpl.smallDelay);
     }
     nextReconnect = false;
-    MyDebug.myPrint("mongo2   reconnect  ...", MyDebug.MyPrintType.Mongo2);
+    MyDebug.myPrint(
+        "mongo2  [of ${this.hashCode}/${__delegate?.hashCode}] reconnect  ...",
+        MyDebug.MyPrintType.Mongo2);
     //MyDebug.myPrint(
     //    'Lost connection to MongoDB MongoDbImpl _reconnect() - reconnecting...',MyDebug.MyPrintType.Mongo2);
     await close();
@@ -192,10 +198,13 @@ class MongoDbImpl implements mongo.Db {
     //return whenReady;
     return open().then((_) {
       MyDebug.myPrint(
-          "mongo2   reconnect  finished", MyDebug.MyPrintType.Mongo2);
+          "mongo2  [of ${this.hashCode}/${__delegate?.hashCode}] reconnect  finished",
+          MyDebug.MyPrintType.Mongo2);
       //MyDebug.myPrint('Reconnected to MongoDB',MyDebug.MyPrintType.Mongo2);
     }).onError((error, stackTrace) {
-      MyDebug.myPrint("mongo2   reconnect  failed", MyDebug.MyPrintType.Mongo2);
+      MyDebug.myPrint(
+          "mongo2  [of ${this.hashCode}/${__delegate?.hashCode}] reconnect  failed",
+          MyDebug.MyPrintType.Mongo2);
     }).whenComplete(() {
       _lastReconnect = DateTime.now();
       nextReconnect = true;
@@ -250,6 +259,11 @@ class MongoDbImpl implements mongo.Db {
 
   @override
   Future close() {
+    _closeLaterButWithoutAwait();
+    return Future.value();
+  }
+
+  void _closeLaterButWithoutAwait() {
     // TODO: implement close
     //throw UnimplementedError();
     /*return Future.value(() async {
@@ -259,9 +273,30 @@ class MongoDbImpl implements mongo.Db {
     return _delegate.close().then((value) {
       __delegate = null;
     });*/
-    var tmp = __delegate;
+
     //__delegate = null;
-    return Future.value(tmp?.close().catchError((_) {}));
+    //return Future.value(tmp?.close().catchError((_) {}));
+    ///
+    ///
+    ///
+    // don't close right now, maybe requests waiting to response
+    var tmp = __delegate;
+    var print = (s) => MyDebug.myPrint(
+        "mongo2  inner [of ${this.hashCode}/${__delegate?.hashCode}] finally closed? $s",
+        MyDebug.MyPrintType.Mongo2);
+    if (tmp != null) {
+      // not awaited!
+      Future.delayed(
+          Duration(seconds: MyDebug.MyConsts.mongo2CloseNoAwaitDelaySec), () {
+        if (tmp.state != mongo.State.closed &&
+            tmp.state != mongo.State.closing) {
+          tmp
+              .close()
+              .then((_) => print("success"))
+              .catchError((_) => print("failed"));
+        }
+      });
+    }
   }
 
   @override
@@ -514,67 +549,67 @@ class MongoCollection implements mongo.DbCollection {
   static int balance = 0;
   Future<void> _reconnect() {
     //return _db._reconnect(); //.then((_) => this.whenReady);
-    MyDebug.myPrint("mongocollection  reconnect ... [$balance/$limit]",
+    MyDebug.myPrint(
+        "mongocollection [of ${this.hashCode}/${_delegate.hashCode}:${_delegate.db.hashCode}] reconnect ... [$balance/$limit]",
         MyDebug.MyPrintType.Mongo2);
     return _db._reconnect().then((value) {
       _delegate = _db._delegate.collection(_initCN);
       //MyDebug.myPrint("mongocollection  reconnect  ; [$balance/$limit]",MyDebug.MyPrintType.Mongo2);
     }).onError((error, stackTrace) {
-      MyDebug.myPrint("mongocollection err $error", MyDebug.MyPrintType.Mongo2);
+      MyDebug.myPrint(
+          "mongocollection [of ${this.hashCode}/${_delegate.hashCode}:${_delegate.db.hashCode}] err $error",
+          MyDebug.MyPrintType.Mongo2);
     }); //.then((_) => this.whenReady);
   }
 
-  Stream<T> _tryWithReconnectStream<T>(Stream<T> Function() computation,
-      {bool shouldAdd = true}) async* {
+  Stream<T> _tryWithReconnectStream<T>(
+      Stream<T> Function() computation) async* {
     try {
-      if (shouldAdd) {
-        balance++;
-      }
+      balance++;
       var x = computation();
-      yield* x; //.toList()??
-      balance--; // balance decrease only when finished succesfully or if throw below
+      balance--;
+      yield* x;
     } catch (e) {
       /*} on mongo.MongoDartError catch (e) {
       // ignore: avoid_catching_errors
       if (e.message == 'No master connection') {*/
       if (balance > limit) {
-        balance--;
         MyDebug.myPrint(
-            "_tryWithReconnectStream rethrow", MyDebug.MyPrintType.Rethrow);
+            "_tryWithReconnectStream rethrow [of ${this.hashCode}/${_delegate.hashCode}:${_delegate.db.hashCode}]",
+            MyDebug.MyPrintType.Rethrow);
         rethrow;
       }
       await _reconnect();
-      yield* _tryWithReconnectStream(computation, shouldAdd: false);
+      balance--;
+      yield* _tryWithReconnectStream(computation);
       /*  } else {
         rethrow;
       }*/
-    }
+    } finally {}
   }
 
-  Future<T> _tryWithReconnectFuture<T>(Future<T> Function() computation,
-      {bool shouldAdd = true}) async {
+  Future<T> _tryWithReconnectFuture<T>(Future<T> Function() computation) async {
     try {
-      if (shouldAdd) {
-        balance++;
-      }
+      balance++;
       var rslt = await computation();
-      balance--;
       return Future.value(rslt);
     } catch (e) {
       /*} on mongo.MongoDartError catch (e) {
       // ignore: avoid_catching_errors
       if (e.message == 'No master connection' ){*/
       if (balance > limit) {
-        balance--;
         MyDebug.myPrint(
-            "_tryWithReconnectFuture rethrow", MyDebug.MyPrintType.Rethrow);
+            "_tryWithReconnectFuture rethrow [of ${this.hashCode}/${_delegate.hashCode}:${_delegate.db.hashCode}]",
+            MyDebug.MyPrintType.Rethrow);
         rethrow;
       }
       await _reconnect();
-      return _tryWithReconnectFuture(computation, shouldAdd: false);
+      return _tryWithReconnectFuture(computation);
       /*} else {
         rethrow;
       }*/
+    } finally {
+      balance--;
     }
   }
 

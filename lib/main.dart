@@ -117,11 +117,17 @@ class _MyAppState extends State<MyApp> {
         },
         failAttempts: MyDebug.MyConsts.testConnectionFailsAttempts,
         onFail: () async {
-          Globals.db!.db.nextReconnect = true;
+          if (MyDebug.MyConsts.testConnectionForceReconnectNow) {
+            Globals.db!.db.nextReconnect = true;
+            Globals.db!.db.reconnect123();
+          }
         },
         timeout: MyDebug.MyConsts.testConnectionTimeoutXSec,
         onTimeout: () async {
-          Globals.db!.db.nextReconnect = true;
+          if (MyDebug.MyConsts.testConnectionForceReconnectNow) {
+            Globals.db!.db.nextReconnect = true;
+            Globals.db!.db.reconnect123();
+          }
         },
       );
       timer!.start(false);

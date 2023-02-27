@@ -238,27 +238,43 @@ class MultiConsiderations extends RecommendationSystem<Event> {
 
     /// for rank for specific target group (people who preffer small/big lecture, etc..)
     var considerationsFactory = (events) => [
+          // by who is the creator
           [
             (Event e) => e.creatorUser!,
             null,
           ],
+          // by who are the people with me
+          [
+            null,
+            (Event e) => e.participants ?? [],
+          ],
+          // by what is the book
+          [
+            (Event e) => uniqueString(e.book),
+            null,
+          ],
+          // by who is the teacher
           [
             whoTeacher,
             null,
           ],
+          // by what is the topic
           [
             (Event e) => uniqueString(e.topic),
             null,
           ],
+          // by if it is havruta or shiur
           [
             (Event e) => e.type!.toLowerCase(),
             null,
           ],
+          // by what day it takes place
           [
             null,
             (Event e) =>
                 e.dates?.map((d) => d.toLocal().weekday).toList() ?? [],
           ],
+          // by the duration of the class
           [
             (Event e) {
               if (e.duration == null || e.duration! <= 30) {
@@ -270,14 +286,18 @@ class MultiConsiderations extends RecommendationSystem<Event> {
             },
             null,
           ],
+          // by the size of the class
           [
             (Event e) => e.maxParticipants! >= 10 ? ">=10" : "<10",
             null,
           ],
+          // by its target gender(to both gender? only mine?)
           [
             (Event e) => e.targetGender?.toLowerCase(),
             null,
           ],
+          // by if it has a link (The user don't know until the time=live),
+          // but probably online lessons has link
           [
             (Event e) => (e.link?.trim() ?? "") != "" ? true : false,
             null,

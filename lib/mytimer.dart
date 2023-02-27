@@ -24,7 +24,8 @@ class MyTimer {
     this.onFail,
     this.myDebugLabel,
   }) {
-    myDebugLabel = myDebugLabel ?? this.hashCode.toString();
+    myDebugLabel = myDebugLabel ?? "";
+    myDebugLabel = myDebugLabel! + "/" + this.hashCode.toString();
   }
   Future<bool> start(bool beforeDuration) async {
     MyDebug.myPrint(
@@ -58,7 +59,12 @@ class MyTimer {
           MyDebug.MyPrintType.TimerTick);
       wasTimeout = true;
       return true;
-    }).catchError((err) => false);
+    }).catchError((err) {
+      MyDebug.myPrint("MyTimer catchError _callback() [$myDebugLabel]",
+          MyDebug.MyPrintType.TimerTick);
+      MyDebug.myPrint(err, MyDebug.MyPrintType.TimerTick);
+      return false;
+    });
     // on timeout
     if (wasTimeout && onTimeout != null) {
       await onTimeout!();
@@ -70,7 +76,7 @@ class MyTimer {
     }
     // on fail
     fails += wasSuccess ? 0 : 1;
-    if (failAttempts != null && fails > failAttempts! && onFail != null) {
+    if (failAttempts != null && fails >= failAttempts! && onFail != null) {
       await onFail!();
       fails = 0;
     }
@@ -128,7 +134,8 @@ class LoadProperty<T> extends ILoadProperty<T> {
     dynamic cancelPrevWith,
     this.myDebugLabel,
   }) {
-    myDebugLabel = myDebugLabel ?? this.hashCode.toString();
+    myDebugLabel = myDebugLabel ?? "";
+    myDebugLabel = myDebugLabel! + "/" + this.hashCode.toString();
 
     if (cancelPrev != null) {
       var prev = LoadProperty.avoidRepeatPropertyTimer[cancelPrev];

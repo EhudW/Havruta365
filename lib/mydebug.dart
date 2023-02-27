@@ -36,7 +36,7 @@ Map<MyPrintType, bool> myPrintTypes = {
 myPrint(Object? obj, MyPrintType type) {
   if (myPrintTypes[type] ?? false) {
     String prefix = "myPrint:  $obj";
-    String suffix = "<${type.toString().split(".").last}";
+    String suffix = " <${type.toString().split(".").last}";
     suffix += "  ${DateFormat('HH:mm:ss').format(DateTime.now().toLocal())}>";
     int suffixPadding = 90 - prefix.length;
     print("$prefix${suffix.padLeft(suffixPadding)}");
@@ -57,12 +57,15 @@ class MyConsts {
   static const bool useDb2 = true;
   // if useDb2 == true, then,
   // in addition check connection each @testConnectionEveryXSec,
-  // and force reconnection
+  // which will TRY to active reconnect on MongoCollection & MongoDbImpl
+  // enable reconnection by active requests (_reconnect at MongoDbImpl) if @testConnectionForceReconnectNow
+  // and force reconnection if @testConnectionForceReconnectNow
   // on timeout @testConnectionTimeoutXSec
   // or on every @testConnectionFailsAttempts
   static const int testConnectionEveryXSec = 15;
-  static const int testConnectionTimeoutXSec = 60;
   static const int testConnectionFailsAttempts = 3;
+  static const int testConnectionTimeoutXSec = 45; // 3 * 15
+  static const bool testConnectionForceReconnectNow = false;
 
   //////////////////////   NewNotificationManager (main.dart):
   //////////////////////
@@ -79,6 +82,8 @@ class MyConsts {
   //////////////////////
   // control delay on create() open() reconnect()
   static const int mongo2DelaySec = 5;
+  // for inner __delegate Db close() in MongoDbImpl, not awaited by outer MongoDbImpl
+  static const int mongo2CloseNoAwaitDelaySec = 30;
   // max requests that in the async loop until they get answer
   static const int mongoCollectionPoolLimit = 12;
 }
