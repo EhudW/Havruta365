@@ -108,7 +108,7 @@ class _MyAppState extends State<MyApp> {
     bool useDb2 =
         MyDebug.MyConsts.useDb2; // this control if to use reconnecting model
     mongoConnectFuture = Globals.db!.connect(useDb2: useDb2);
-    if (useDb2) {
+    if (useDb2 && MyDebug.MyConsts.testConnection) {
       timer = MyTimer(
         myDebugLabel: "MyApp.initState() db refresh",
         duration: MyDebug.MyConsts.testConnectionEveryXSec,

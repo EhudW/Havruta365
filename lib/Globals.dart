@@ -12,6 +12,7 @@ import 'mydebug.dart' as MyDebug;
 
 // see also mydebug.dart
 class Globals {
+  // one time heavy calc;
   static LoadProperty<List<Event>> rec = LoadProperty(
     (setter) async {
       var top10events = await ExampleRecommendationSystem.calcAndGetTop10(
@@ -24,8 +25,12 @@ class Globals {
     // this is how much to wait before each attempt , but no timeout is set
     duration: MyDebug.MyConsts.loadPropertyDelaySec,
   );
-  // second param is false, so it will wait  duration: MyDebug.MyConsts.loadPropertyDelaySec
-  static void updateRec() => rec.restart([], false);
+
+  // ignore calling this function unless force==true,
+  //which should be called EACH,but ONLY in Events.dart
+  static void updateRec({bool force = true}) =>
+      // second param is false, so it will wait  duration: MyDebug.MyConsts.loadPropertyDelaySec
+      force ? rec.restart([], false) : null;
 
   static Mongo? db;
   static bool isDbConnect = false;

@@ -55,13 +55,14 @@ class MyConsts {
   // should use MongoDbImpl (true) or Db (false) ?
   // this control if to use reconnecting model
   static const bool useDb2 = true;
-  // if useDb2 == true, then,
+  // if useDb2 == true, && testConnection == true then,
   // in addition check connection each @testConnectionEveryXSec,
   // which will TRY to active reconnect on MongoCollection & MongoDbImpl
   // enable reconnection by active requests (_reconnect at MongoDbImpl) if @testConnectionForceReconnectNow
   // and force reconnection if @testConnectionForceReconnectNow
   // on timeout @testConnectionTimeoutXSec
   // or on every @testConnectionFailsAttempts
+  static const bool testConnection = false;
   static const int testConnectionEveryXSec = 15;
   static const int testConnectionFailsAttempts = 3;
   static const int testConnectionTimeoutXSec = 45; // 3 * 15
