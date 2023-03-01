@@ -76,6 +76,17 @@ class Mongo {
     return user;
   }
 
+  // all should auto use avoidNotMyGender with .and()
+  SelectorBuilder avoidNotMyGender() {
+    if (Globals.currentUser!.gender == 'M') {
+      return where.ne("targetGender", "נשים");
+    }
+    if (Globals.currentUser!.gender == 'F') {
+      return where.ne("targetGender", "גברים");
+    }
+    return where;
+  }
+
   // assume we have event which all its dates are old
   // @filterOldEvents == true -> getEventsByQuery won't return that event
   // @filterOldEvents == false -> getEventsByQuery will return that event
@@ -199,11 +210,11 @@ class Mongo {
           );
     }
     var query = (collection) async {
-      var prefix = where
+      var prefix = avoidNotMyGender().and(where
           .match('book', s)
           .or(where.match('topic', s))
           .or(where.eq('type', 'H').and(where.match("creatorName", s)))
-          .or(where.match('lecturer', s));
+          .or(where.match('lecturer', s)));
       if (typeFilter != null) {
         prefix = prefix.eq('type', typeFilter);
       }
@@ -233,14 +244,14 @@ class Mongo {
     var query = (collection) async {
       if (typeFilter == null) {
         return await collection
-            .find(where
+            .find(avoidNotMyGender()
                 .sortBy('_id', descending: newestFirst)
                 .skip(len)
                 .limit(limit))
             .toList();
       } else {
         return await collection
-            .find(where
+            .find(avoidNotMyGender()
                 .eq('type', typeFilter)
                 .sortBy('_id', descending: newestFirst)
                 .skip(len)
@@ -254,7 +265,11 @@ class Mongo {
   Future<List<Event>> getSomeEventsOnline(int len, String? typeFilter) async {
     assert(typeFilter == null); //for now online is for type = 'L'
     var query = (collection) async => await collection
-        .find(where.eq('type', 'L').sortBy('_id').skip(len).limit(10))
+        .find(avoidNotMyGender()
+            .eq('type', 'L')
+            .sortBy('_id')
+            .skip(len)
+            .limit(10))
         .toList();
     return getEventsByQuery(query: query, filterOldEvents: true);
   }

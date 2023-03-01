@@ -34,6 +34,7 @@ class _EventsState extends State<Events> {
   void initState() {
     //this.widget.events = EventsModel(false);
     //this.widget.eventsOnline = EventsModel(true);
+    Globals.updateRec(force: true);
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
