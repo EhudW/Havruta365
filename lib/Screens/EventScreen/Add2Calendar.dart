@@ -59,13 +59,15 @@ add2calendar(Event event, {bool ignorePast = true}) {
   String link = event.link ?? "";
   String description = event.description ?? "";
   String lecturer = event.lecturer ?? "";
+  String creator = event.creatorName ?? "";
+  String teacher = event.type == "H" ? creator : lecturer;
   int minutesPerMeeting = event.duration ?? 30;
   String title = book;
   title = title.trim() != "" ? title : topic;
   title = "$type: $title";
 
   String formattedDescription =
-      "$type: $topic\n$book\n\n$lecturer\n$link\n------\n$description\n------";
+      "$type: $topic\n$book\n\n$teacher\n$link\n------\n$description\n------";
   // ignore: non_constant_identifier_names
   final ADD2CALENDAR.Event add2cal_event = ADD2CALENDAR.Event(
       title: title,
