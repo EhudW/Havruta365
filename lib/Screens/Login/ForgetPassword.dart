@@ -157,7 +157,7 @@ newFiled(controller, str, text, icon, cover) {
 sendMail(String mailUser, String code) async {
   var url = Uri.parse('http://yonatangat.pythonanywhere.com/mail');
   var x = {
-    "subject": "שינוי סיסמא - פרוייקט חברותא",
+    "subject": "שינוי סיסמא - פרוייקט חברותא+",
     "body": "הקוד שלך לשינוי סיסמא הוא :    " + code,
     "src": "havrutaproject@gmail.com",
     "src_pass": "havruta365",

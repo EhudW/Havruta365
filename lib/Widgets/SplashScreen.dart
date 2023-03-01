@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Globals.dart';
+import 'dart:ui' as ui;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -68,7 +69,8 @@ class _SplashScreenState extends State<SplashScreen> {
               height: 150,
             ),
             Text(
-              'חברותא',
+              'חברותא+',
+              textDirection: ui.TextDirection.rtl,
               style: TextStyle(
                 fontFamily: 'Yiddish',
                 color: Colors.brown,

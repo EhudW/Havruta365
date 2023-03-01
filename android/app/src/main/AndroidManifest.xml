@@ -13,7 +13,7 @@
         </intent>
     </queries>
    <application
-        android:label="חברותא"
+        android:label="חברותא+"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

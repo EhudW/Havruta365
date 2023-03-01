@@ -15,7 +15,7 @@ import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
-
+import 'dart:ui' as ui;
 import 'Events/modelsHomePages.dart';
 
 class HomePage extends StatefulWidget {
@@ -155,7 +155,8 @@ class _HomePageState extends State<HomePage> {
           children: [
             Center(
               child: Text(
-                'חברותא',
+                'חברותא+',
+                textDirection: ui.TextDirection.rtl,
                 style: TextStyle(
                   fontFamily: 'Yiddish',
                   color: Colors.teal,

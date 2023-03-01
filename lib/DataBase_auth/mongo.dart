@@ -336,7 +336,7 @@ class Mongo {
     await collection.insertOne(e);
     var url = Uri.parse('http://yonatangat.pythonanywhere.com/mail');
     var x = {
-      "subject": "פרוייקט חברותא",
+      "subject": "פרוייקט חברותא+",
       "body": notification.name! + "  " + notification.message!,
       "src": "havrutaproject@gmail.com",
       "src_pass": "havruta365",

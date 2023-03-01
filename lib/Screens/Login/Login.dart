@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
@@ -80,7 +81,8 @@ class _HomePageState extends State<Login> {
                     FadeAnimation(
                         1.5,
                         Text(
-                          "פרוייקט חברותא",
+                          "פרוייקט חברותא+",
+                          textDirection: ui.TextDirection.rtl,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.alef(
                               fontSize: Globals.scaler.getTextSize(10)),

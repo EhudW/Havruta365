@@ -16,6 +16,7 @@ import "dart:async";
 import '../../Widgets/SplashScreen.dart';
 import 'Next_Button.dart';
 import 'package:loading_gifs/loading_gifs.dart';
+import 'dart:ui' as ui;
 
 class FindMeAChavruta1 extends StatefulWidget {
   @override
@@ -134,7 +135,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
 
   dropDownContainer(val) {
     return Container(
-      child: Text(val),
+      child: Text(
+        val,
+        textDirection: ui.TextDirection.rtl,
+      ),
       width: Globals.scaler.getWidth(26.6),
       alignment: Alignment.center,
     );
