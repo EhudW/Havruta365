@@ -91,7 +91,7 @@ class EventViewFeed extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EventScreen(event)));
+                            builder: (context) => EventScreen(event.id)));
                   },
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

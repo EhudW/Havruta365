@@ -89,7 +89,7 @@ class _EventsScrollerState extends State<EventsScroller> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EventScreen(event),
+                        builder: (context) => EventScreen(event.id),
                       ));
                 }),
           ),

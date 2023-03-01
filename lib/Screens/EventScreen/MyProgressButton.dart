@@ -101,6 +101,10 @@ class MyProgressButtonState extends State<MyProgressButton> {
 
   void decideButtonState() {
     var myMail = Globals.currentUser!.email;
+    var iAmCreator = widget.event!.creatorUser == myMail;
+    if (iAmCreator) {
+      return;
+    }
     var iAmParticipant = widget.event!.participants!.contains(myMail);
     var waitingQueue = widget.event!.waitingQueue ?? [];
     var iAmInWaitingQueue = waitingQueue.contains(myMail);
@@ -132,6 +136,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
   Widget buildCustomButton() {
     decideButtonState();
     var myMail = Globals.currentUser!.email;
+    var iAmCreator = widget.event!.creatorUser == myMail;
     var iAmParticipant = widget.event!.participants!.contains(myMail);
     var iAmInWaitingQueue =
         widget.event!.waitingQueue?.contains(myMail) ?? false;
@@ -154,55 +159,63 @@ class MyProgressButtonState extends State<MyProgressButton> {
               ]
             : [Text(txt, style: textStyle)]);
     var progressTextButton = Column(children: [
-      ProgressButton(
-        stateWidgets: {
-          ButtonState.idle: forIdle("הירשם לשיעור!"),
-          ButtonState.idle2: forIdle("בקש להצטרף לחברותא"),
-          ButtonState.loading: Text(
-            "...עובד",
-            style: textStyle,
-          ),
-          ButtonState.fail: Text(
-            message,
-            style: textStyle,
-          ),
-          ButtonState.fail2: Text(
-            message2,
-            style: textStyle,
-          ),
-          ButtonState.success: Text(
-            widget.event!.type == 'H' ? "!היכנס לחברותא" : "!היכנס לשיעור",
-            style: textStyle,
-          ),
-          ButtonState.full: Text(
-            widget.event!.type == 'H'
-                ? "החברותא בתפוסה מלאה! לא ניתן להירשם"
-                : "השיעור בתפוסה מלאה! לא ניתן להירשם",
-            style: textStyle,
-          )
-        },
-        stateColors: {
-          ButtonState.idle: Colors.teal[400],
-          ButtonState.idle2: Colors.teal[400],
-          ButtonState.loading: Colors.grey,
-          ButtonState.fail: Colors.green[300],
-          ButtonState.fail2: Colors.orange[300],
-          ButtonState.success: Colors.green,
-          ButtonState.full: Colors.redAccent
-        },
-        onPressed: onPressedCustomButton,
-        state: stateOnlyText,
-        padding: EdgeInsets.all(8.0),
-      ),
-      iAmParticipant || iAmInWaitingQueue
+      iAmCreator
+          ? SizedBox()
+          : ProgressButton(
+              stateWidgets: {
+                ButtonState.idle: forIdle("הירשם לשיעור!"),
+                ButtonState.idle2: forIdle("בקש להצטרף לחברותא"),
+                ButtonState.loading: Text(
+                  "...עובד",
+                  style: textStyle,
+                ),
+                ButtonState.fail: Text(
+                  message,
+                  style: textStyle,
+                ),
+                ButtonState.fail2: Text(
+                  message2,
+                  style: textStyle,
+                ),
+                ButtonState.success: Text(
+                  widget.event!.type == 'H'
+                      ? "!היכנס לחברותא"
+                      : "!היכנס לשיעור",
+                  style: textStyle,
+                ),
+                ButtonState.full: Text(
+                  widget.event!.type == 'H'
+                      ? "החברותא בתפוסה מלאה! לא ניתן להירשם"
+                      : "השיעור בתפוסה מלאה! לא ניתן להירשם",
+                  style: textStyle,
+                )
+              },
+              stateColors: {
+                ButtonState.idle: Colors.teal[400],
+                ButtonState.idle2: Colors.teal[400],
+                ButtonState.loading: Colors.grey,
+                ButtonState.fail: Colors.green[300],
+                ButtonState.fail2: Colors.orange[300],
+                ButtonState.success: Colors.green,
+                ButtonState.full: Colors.redAccent
+              },
+              onPressed: onPressedCustomButton,
+              state: stateOnlyText,
+              padding: EdgeInsets.all(8.0),
+            ),
+      iAmParticipant || iAmInWaitingQueue || iAmCreator
           ? Column(
               children: [
                 SizedBox(height: Globals.scaler.getHeight(0.5)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    DeleteFromEventButton(widget.event),
-                    SizedBox(width: Globals.scaler.getWidth(1)),
+                    iAmCreator
+                        ? SizedBox()
+                        : DeleteFromEventButton(widget.event),
+                    iAmCreator
+                        ? SizedBox()
+                        : SizedBox(width: Globals.scaler.getWidth(1)),
                     Add2Calendar(widget.event)
                   ],
                 ),

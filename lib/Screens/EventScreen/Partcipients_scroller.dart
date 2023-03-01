@@ -18,7 +18,7 @@ class ParticipentsScroller extends StatelessWidget {
   var userColl;
   void Function(String)? accept;
   void Function(String)? reject;
-
+  bool get hasButton => reject != null || accept != null;
   Future getUser(String? userMail) async {
     var user = await userColl.findOne(where.eq('email', '$userMail'));
     return user;
@@ -47,53 +47,67 @@ class ParticipentsScroller extends StatelessWidget {
               ),
             );
           case ConnectionState.done:
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 0.0), //was 16.0
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(snapshot.data['avatar']),
-                        radius: 40.0,
-                        child: IconButton(
-                            icon: Icon(FontAwesomeIcons.houseUser),
-                            iconSize: 40.0,
-                            color: Colors.white.withOpacity(0),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        UserScreen(snapshot.data['email'])),
-                              );
-                            }),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(snapshot.data['name']),
-                      ),
-                    ],
-                  ),
-                ),
-                accept == null
-                    ? SizedBox()
-                    : TextButton(
-                        onPressed: () => accept!(userMail),
-                        child: Text("אשר"),
-                        style: TextButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white)),
-                reject == null
-                    ? SizedBox()
-                    : TextButton(
-                        onPressed: () => reject!(userMail),
-                        child: Text("דחה"),
-                        style: TextButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white))
-              ],
-            );
+            var profile = [
+              CircleAvatar(
+                backgroundImage: NetworkImage(snapshot.data['avatar']),
+                radius: 40.0,
+                child: IconButton(
+                    icon: Icon(FontAwesomeIcons.houseUser),
+                    iconSize: 40.0,
+                    color: Colors.white.withOpacity(0),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                UserScreen(snapshot.data['email'])),
+                      );
+                    }),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    top: hasButton ? 0 : 8.0, left: hasButton ? 16 : 0),
+                child: Text(snapshot.data['name']),
+              ),
+            ];
+            var _inner = [
+              //Padding(
+              //  padding: EdgeInsets.only(right:0),// hasButton?0:16,top:hasButton?16:0), //was 16.0
+              //  child:
+              hasButton ? Row(children: profile) : Column(children: profile),
+              //),
+              accept == null
+                  ? SizedBox()
+                  : TextButton(
+                      onPressed: () => accept!(userMail),
+                      child: Text("אשר"),
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white)),
+              reject == null
+                  ? SizedBox()
+                  : TextButton(
+                      onPressed: () => reject!(userMail),
+                      child: Text("דחה"),
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white))
+            ];
+            _inner = _inner
+                .map((e) => Padding(
+                      padding: EdgeInsets.only(
+                          top: hasButton ? 16 : 0, left: hasButton ? 0 : 16),
+                      child: e,
+                    ))
+                .toList();
+            return hasButton
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: _inner,
+                  )
+                : Column(
+                    children: _inner,
+                  );
           default:
             return Text('default');
         }
@@ -105,16 +119,23 @@ class ParticipentsScroller extends StatelessWidget {
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
-    double extraHeight = 0;
-    extraHeight += accept != null ? ScreenScaler().getHeight(3) : 0;
-    extraHeight += reject != null ? ScreenScaler().getHeight(3) : 0;
+    //double extraHeight = 0;
+    //extraHeight += accept != null ? ScreenScaler().getHeight(3) : 0;
+    //extraHeight += reject != null ? ScreenScaler().getHeight(3) : 0;
+    double totalscrollheight = hasButton ? 120 : 150;
+    if (hasButton && usersMail.length > 0) {
+      totalscrollheight =
+          totalscrollheight * (usersMail.length <= 2 ? usersMail.length : 2);
+    }
+    totalscrollheight = usersMail.length > 0 ? totalscrollheight : 50;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Align(
           alignment: Alignment.center,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
+            padding: const EdgeInsets.only(top: 16),
             child: Text(
               title,
               style: TextStyle(fontSize: 18),
@@ -122,16 +143,22 @@ class ParticipentsScroller extends StatelessWidget {
           ),
         ),
         SizedBox.fromSize(
-          size: Size.fromHeight(
-              usersMail.length > 0 ? (120.0 + extraHeight) : 40),
-          child: usersMail.length == 0
-              ? Center(child: Text("- אין -"))
-              : ListView.builder(
-                  itemCount: usersMail.length,
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(top: 12.0, left: 20.0),
-                  itemBuilder: _buildActor,
-                ),
+          size: Size.fromHeight(totalscrollheight),
+          child: Padding(
+              child: usersMail.length == 0
+                  ? Center(child: Text("- אין -"))
+                  : ListView.builder(
+                      itemCount: usersMail.length,
+                      scrollDirection:
+                          hasButton ? Axis.vertical : Axis.horizontal,
+                      padding: EdgeInsets.only(
+                          top: 0,
+                          left: hasButton ? 16 : 0,
+                          right: 16,
+                          bottom: hasButton ? 16 : 0),
+                      itemBuilder: _buildActor,
+                    ),
+              padding: EdgeInsets.only(top: 16)),
         ),
       ],
     );

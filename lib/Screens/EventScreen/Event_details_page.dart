@@ -46,59 +46,73 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     setState(() {});
   }
 
-  isCreatorWidget() {
-    if (Globals.currentUser!.email == widget.event!.creatorUser) {
-      return Container(
-          height: Globals.scaler.getHeight(4.5),
-          width: Globals.scaler.getWidth(4.5),
-          child: FittedBox(
-              child: FloatingActionButton(
-                  backgroundColor: Colors.redAccent,
-                  tooltip: "מחק אירוע",
-                  child: Icon(FontAwesomeIcons.trashCan),
-                  onPressed: () async {
-                    var succeed =
-                        await Globals.db!.deleteEvent(widget.event!.id);
-                    if (!succeed) {
-                      Flushbar(
-                        title: 'מחיקת אירוע',
-                        messageText: Text('אירעה שגיאה בתהליך המחיקה !',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.teal[400], fontSize: 20)),
-                        duration: Duration(seconds: 3),
-                      )..show(context);
-                    }
-                    Flushbar(
-                      title: 'האירוע נמחק',
-                      messageText: Text('מיד תועבר לעמוד הבית !',
-                          textAlign: TextAlign.center,
-                          style:
-                              TextStyle(color: Colors.teal[400], fontSize: 20)),
-                      duration: Duration(seconds: 2),
-                    )..show(context);
-                    Future.delayed(Duration(seconds: 2), () {
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      });
-                    });
-                  })));
+  _deleteEvent() async {
+    // notify persons who joined/waiting to be joined
+    var toNotify = [];
+    toNotify.addAll(widget.event!.participants ?? []);
+    toNotify.addAll(widget.event!.waitingQueue ?? []);
+    var t = widget.event!.type == 'H' ? "חברותא" : "שיעור";
+    var g = Globals.currentUser!.gender == 'F' ? "ביטלה" : "ביטל";
+    var msg = g + " " + t;
+    // try to delete event
+    var succeed = await Globals.db!.deleteEvent(widget.event!.id);
+    // notify the people
+    if (succeed) {
+      for (String personToNotify in toNotify) {
+        Globals.db!.insertNotification(NotificationUser.fromJson({
+          'creatorUser': Globals.currentUser!.email,
+          'destinationUser': personToNotify,
+          'creationDate': DateTime.now(),
+          'message': msg,
+          'type': 'eventDeleted',
+          'idEvent': null,
+          'name': Globals.currentUser!.name,
+        }));
+      }
     }
-    return null;
+    // show flushbar to the creator
+    if (!succeed) {
+      Flushbar(
+        title: 'מחיקת אירוע',
+        messageText: Text('אירעה שגיאה בתהליך המחיקה !',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+        duration: Duration(seconds: 3),
+      )..show(context);
+    } else {
+      Flushbar(
+        title: 'האירוע נמחק',
+        messageText: Text('מיד תועבר לעמוד הבית !',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+        duration: Duration(seconds: 2),
+      )..show(context);
+    }
+    // move creator to the home page
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      });
+    });
   }
 
   deleteButton() {
     if (Globals.currentUser!.email == widget.event!.creatorUser) {
       return ElevatedButton.icon(
-        onPressed: () {
-          Globals.db!
-              .deleteFromEvent(widget.event!.id, Globals.currentUser!.email);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+        onPressed: () async {
+          showModalBottomSheet(
+            context: context,
+            builder: ((builder) => bottomSheet(
+                  context,
+                  () {
+                    Navigator.pop(context);
+                    _deleteEvent();
+                  },
+                  () => Navigator.pop(context),
+                )),
           );
         },
         icon: Icon(FontAwesomeIcons.trashCan, size: 18),

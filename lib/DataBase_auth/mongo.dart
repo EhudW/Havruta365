@@ -477,10 +477,13 @@ class Mongo {
     await db.close();
   }
 
-  Future<Event> getEventById(ObjectId? id) async {
+  Future<Event?> getEventById(ObjectId? id) async {
     var collection = db.collection('Events');
     DateTime timeNow = DateTime.now();
     var event = await collection.findOne(where.eq("_id", id));
+    if (event == null) {
+      return null;
+    }
     var e = Event.fromJson(event);
     var len = e.dates!.length;
     for (int j = 0; j < len; j++) {
