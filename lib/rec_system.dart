@@ -117,7 +117,7 @@ class CriticMyEvents<O> {
       required this.classify,
       required this.classifyList}) {
     _calc();
-    _norm();
+    _norm(soft: 1);
   }
 
   void _calc() {
@@ -146,13 +146,15 @@ class CriticMyEvents<O> {
     });
   }
 
-  void _norm() {
+  void _norm({int? soft}) {
     if (_total == 0) {
       return;
     }
+    _total += soft ?? 0;
     for (var option in List.of(rank.keys)) {
       rank[option] = rank[option]! / _total;
     }
+    _total -= soft ?? 0;
   }
 
   Map<Event, double> rankOtherEvents(List<Event> events) {

@@ -81,7 +81,7 @@ class EventsModel {
   Future<void> loadMore({bool clearCachedData = false}) {
     if (clearCachedData) {
       //|| searchData != null) {
-      _needToRefresh = true;
+      //?//             _needToRefresh = true;       //?//
       _currPageLimit = startPageLimit;
       _currSkip = 0;
       _data = [];

@@ -67,10 +67,35 @@ add2calendar(Event event, {bool ignorePast = true}) {
   //title = "$type: $title";
   String t_book = book != "" ? " ב" + book : "";
   String t_topic = topic != "" ? " ב" + topic : "";
-  String title = type + t_topic + t_book + "(חברותא+)";
+  String title = type + t_topic + t_book + " " + "(חברותא+)";
+
+  // return val; or "" if checkNotEmpty is empty NONNULLABLE STRING;
+  // if checkNotEmpty ommited(NULL) then val is checked
+  var n = (String val, [String? checkNotEmpty]) =>
+      (checkNotEmpty ?? val) == "" ? "" : val;
+  // if any element of checkNotEmpty array is not empty than ret val, else ""
+  var nA = (String val, List<String> checkNotEmpty) =>
+      checkNotEmpty.any((e) => e != "") ? val : "";
+
+  String r = "$type:";
+  r += n(" $topic", topic);
+  r += n("\n$book", book);
+  r += "\n";
+  r += nA("\n", [teacher, link, description]);
+  r += n("$teacher\n", teacher);
+  r += n("$link\n", link);
+  r += n("------\n$description\n", description);
+  r += "------";
+  /*  
+  will look like
+      [$type:[ $topic]] [\n$book] \n [\n [$teacher\n] [$link\n] [------\n$description\n] ] [------]
+      [$type:         ] [\n$book] \n [\n                                                 ] [------]
+             [ $topic]                   [$teacher\n] [$link\n] [------\n$description\n]                    
+  */
 
   String formattedDescription =
       "$type: $topic\n$book\n\n$teacher\n$link\n------\n$description\n------";
+  formattedDescription = r;
   // ignore: non_constant_identifier_names
   final ADD2CALENDAR.Event add2cal_event = ADD2CALENDAR.Event(
       title: title,
