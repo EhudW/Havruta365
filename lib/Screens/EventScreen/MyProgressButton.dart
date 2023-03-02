@@ -416,14 +416,14 @@ Widget bottomSheet(List<dynamic> overlaps, BuildContext context, Function ok,
         ),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           TextButton.icon(
-            icon: Icon(FontAwesomeIcons.v),
+            icon: Icon(FontAwesomeIcons.check),
             onPressed: () {
               ok();
             },
             label: Text("בכל זאת"),
           ),
           TextButton.icon(
-            icon: Icon(FontAwesomeIcons.x),
+            icon: Icon(FontAwesomeIcons.circleXmark),
             onPressed: () {
               ignore();
             },

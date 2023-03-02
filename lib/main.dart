@@ -136,10 +136,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    super.dispose();
     timer?.cancel();
     Globals.db!.db.close();
     MyDebug.myPrint("MyApp dispose", MyDebug.MyPrintType.None);
+    super.dispose();
   }
 
   @override

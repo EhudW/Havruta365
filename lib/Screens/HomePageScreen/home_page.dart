@@ -31,8 +31,9 @@ class _HomePageState extends State<HomePage> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   ScreenScaler scaler = new ScreenScaler();
-  Events events = Events(new EventsModel(false), new EventsModel(true));
-
+  //Events events = Events(new EventsModel(false), new EventsModel(true));
+  var em1 = new EventsModelMultiFilter();
+  var em2 = new EventsModel(true);
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
   NewNotificationManager? nnim;
   @override
@@ -57,7 +58,8 @@ class _HomePageState extends State<HomePage> {
       child: Center(
         child: Scaffold(
             body: Scaffold(
-                body: Column(children: <Widget>[Expanded(child: events)]),
+                body: Column(
+                    children: <Widget>[Expanded(child: Events(em1, em2))]),
                 key: _scaffoldKey,
                 drawer: Drawer(
                     child: Container(

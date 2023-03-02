@@ -25,9 +25,10 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
     return Material(
       child: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ProfileDetailHeader(widget.user),
-            SizedBox(height: Globals.scaler.getHeight(1.5)),
+            SizedBox(height: Globals.scaler.getHeight(6)),
             ProfileDetailsColumn(widget.user),
           ],
         ),

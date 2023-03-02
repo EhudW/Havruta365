@@ -77,14 +77,18 @@ class Mongo {
   }
 
   // all should auto use avoidNotMyGender with .and()
-  SelectorBuilder avoidNotMyGender() {
+  SelectorBuilder avoidNotMyGender([bool exceptForCreator = false]) {
+    SelectorBuilder? prefix;
     if (Globals.currentUser!.gender == 'M') {
-      return where.ne("targetGender", "נשים");
+      prefix = where.ne("targetGender", "נשים");
+    } else if (Globals.currentUser!.gender == 'F') {
+      prefix = where.ne("targetGender", "גברים");
     }
-    if (Globals.currentUser!.gender == 'F') {
-      return where.ne("targetGender", "גברים");
+    if (prefix != null && exceptForCreator) {
+      var myMail = Globals.currentUser!.email;
+      prefix = prefix.or(where.eq("creatorUser", myMail));
     }
-    return where;
+    return prefix ?? where;
   }
 
   // assume we have event which all its dates are old
@@ -192,6 +196,7 @@ class Mongo {
       bool withWaitingQueue = true, //relevant only if withParticipant != null
       //then not only joined but also waiting;
       String? createdBy, //email
+      bool onlyReq = false, // if createdBy != null
       String? typeFilter,
       bool newestFirst = true}) async {
     if (withParticipant2 != null) {
@@ -210,11 +215,17 @@ class Mongo {
           );
     }
     var query = (collection) async {
-      var prefix = avoidNotMyGender().and(where
+      var prefix = where
           .match('book', s)
           .or(where.match('topic', s))
           .or(where.eq('type', 'H').and(where.match("creatorName", s)))
-          .or(where.match('lecturer', s)));
+          .or(where.match('lecturer', s));
+      if (createdBy != null
+          // maybe help in speed maybe not but this isn't must, since joined iff suitable targetGender
+          // && withParticipant != null && withParticipant2 != null
+          ) {
+        prefix = avoidNotMyGender().and(prefix);
+      }
       if (typeFilter != null) {
         prefix = prefix.eq('type', typeFilter);
       }
@@ -227,6 +238,9 @@ class Mongo {
         prefix = prefix.and(addition);
       } else if (createdBy != null) {
         prefix = prefix.eq("creatorUser", createdBy);
+        prefix = !onlyReq
+            ? prefix
+            : prefix.ne("waitingQueue", null).ne("waitingQueue", []);
       }
       return await collection
           //.find(prefix.sortBy('_id').skip(startFrom).limit(maxEvents))
@@ -244,15 +258,15 @@ class Mongo {
     var query = (collection) async {
       if (typeFilter == null) {
         return await collection
-            .find(avoidNotMyGender()
+            .find(avoidNotMyGender(true)
                 .sortBy('_id', descending: newestFirst)
                 .skip(len)
                 .limit(limit))
             .toList();
       } else {
         return await collection
-            .find(avoidNotMyGender()
-                .eq('type', typeFilter)
+            .find(avoidNotMyGender(true)
+                .and(where.eq('type', typeFilter))
                 .sortBy('_id', descending: newestFirst)
                 .skip(len)
                 .limit(limit))
@@ -262,14 +276,16 @@ class Mongo {
     return getEventsByQuery(query: query, filterOldEvents: true);
   }
 
-  Future<List<Event>> getSomeEventsOnline(int len, String? typeFilter) async {
+  Future<List<Event>> getSomeEventsOnline(int len, String? typeFilter,
+      [limit = 10]) async {
     assert(typeFilter == null); //for now online is for type = 'L'
     var query = (collection) async => await collection
-        .find(avoidNotMyGender()
+        .find(avoidNotMyGender(
+                true) // should we recommend self lessons? // not in the rec.dart
             .eq('type', 'L')
             .sortBy('_id')
             .skip(len)
-            .limit(10))
+            .limit(limit))
         .toList();
     return getEventsByQuery(query: query, filterOldEvents: true);
   }

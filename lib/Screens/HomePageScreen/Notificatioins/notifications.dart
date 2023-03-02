@@ -20,6 +20,7 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   void initState() {
+    super.initState();
     notificationModel model = widget.nnim.model;
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
@@ -27,7 +28,6 @@ class _NotificationsState extends State<Notifications> {
         model.loadMore();
       }
     });
-    super.initState();
   }
 
   @override

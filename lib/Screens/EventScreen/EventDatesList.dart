@@ -285,7 +285,7 @@ Widget bottomSheet(
         ),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           TextButton.icon(
-            icon: Icon(FontAwesomeIcons.x),
+            icon: Icon(FontAwesomeIcons.circleXmark),
             onPressed: () {
               ignore();
             },

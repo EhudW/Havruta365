@@ -247,14 +247,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             TextButton.icon(
-              icon: Icon(FontAwesomeIcons.v),
+              icon: Icon(FontAwesomeIcons.check),
               onPressed: () {
                 ok();
               },
               label: Text("בטוח"),
             ),
             TextButton.icon(
-              icon: Icon(FontAwesomeIcons.x),
+              icon: Icon(FontAwesomeIcons.circleXmark),
               onPressed: () {
                 ignore();
               },

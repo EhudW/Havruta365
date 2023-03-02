@@ -72,8 +72,8 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
     var icon_size = Globals.scaler.getTextSize(11);
     return Expanded(
       child: SingleChildScrollView(
-        child: Column(children: [
-          GestureDetector(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          /*GestureDetector(
             onTap: () {
               Navigator.push(
                   context,
@@ -169,7 +169,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
           ),
           SizedBox(
             height: Globals.scaler.getHeight(0.8),
-          ),
+          ),*/
           /*Container(
             margin: EdgeInsets.fromLTRB(
                 Globals.scaler.getWidth(2.5),

@@ -53,18 +53,21 @@ add2calendar(Event event, {bool ignorePast = true}) {
     frequency = ADD2CALENDAR.Frequency.monthly;
   }
 
-  String topic = event.topic ?? "";
-  String book = event.book ?? "";
+  String topic = event.topic?.trim() ?? "";
+  String book = event.book?.trim() ?? "";
   String type = event.type == "H" ? "חברותא" : "שיעור";
-  String link = event.link ?? "";
-  String description = event.description ?? "";
-  String lecturer = event.lecturer ?? "";
-  String creator = event.creatorName ?? "";
+  String link = event.link?.trim() ?? "";
+  String description = event.description?.trim() ?? "";
+  String lecturer = event.lecturer?.trim() ?? "";
+  String creator = event.creatorName?.trim() ?? "";
   String teacher = event.type == "H" ? creator : lecturer;
   int minutesPerMeeting = event.duration ?? 30;
-  String title = book;
-  title = title.trim() != "" ? title : topic;
-  title = "$type: $title";
+  //String title = book;
+  //title = title.trim() != "" ? title : topic;
+  //title = "$type: $title";
+  String t_book = book != "" ? " ב" + book : "";
+  String t_topic = topic != "" ? " ב" + topic : "";
+  String title = type + t_topic + t_book + "(חברותא+)";
 
   String formattedDescription =
       "$type: $topic\n$book\n\n$teacher\n$link\n------\n$description\n------";
@@ -72,7 +75,7 @@ add2calendar(Event event, {bool ignorePast = true}) {
   final ADD2CALENDAR.Event add2cal_event = ADD2CALENDAR.Event(
       title: title,
       description: formattedDescription,
-      location: event.link?.trim() == "" ? null : event.link,
+      location: link == "" ? null : link,
       startDate: future.first,
       endDate: future.first.add(Duration(minutes: minutesPerMeeting)),
       recurrence: future.first == future.last

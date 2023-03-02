@@ -93,164 +93,183 @@ class EventViewFeed extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => EventScreen(event.id)));
                   },
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                      child: Container(
-                    decoration: user2View != null &&
-                            event.waitingQueue != null &&
-                            event.waitingQueue!.contains(user2View!)
-                        ? BoxDecoration(
-                            gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Colors.red[300]!,
-                              Colors.transparent,
-                              Colors.transparent,
-                              Colors.transparent,
-                            ],
-                          ))
-                        : null,
-                    width: scaler.getWidth(12),
-                    height: scaler.getHeight(4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        SizedBox(height: scaler.getHeight(0.5)),
-                        highlightedText(
-                            Text(
-                              event.topic!,
-                              // textDirection: TextDirection.RTL,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: scaler.getTextSize(7.5),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            context),
-                        highlightedText(
-                            Text(
-                              event.book!,
-                              style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: scaler.getTextSize(6.5)),
-                            ),
-                            context),
-                        SizedBox(height: scaler.getHeight(0.5)),
-                        Expanded(
-                            child: Container(
-                                //width: scaler.getWidth(28),
-                                height: scaler.getHeight(1),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      SizedBox(width: scaler.getWidth(1)),
-                                      registeredState1,
-                                      registeredState2,
-                                      registeredState3,
-                                      Expanded(
-                                          child: Text(
-                                        (event.participants!.length +
-                                                    (event.waitingQueue
-                                                            ?.length ??
-                                                        0))
-                                                .toString() +
-                                            "/" +
-                                            event.maxParticipants.toString(),
-                                        // textDirection: TextDirection.rtl,
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                            fontSize: scaler.getTextSize(6)),
-                                      )),
-                                      SizedBox(width: scaler.getWidth(1)),
-                                      SizedBox(
-                                          child: Icon(
-                                              event.type == 'L'
-                                                  ? FontAwesomeIcons
-                                                      .graduationCap
-                                                  : FontAwesomeIcons.users,
-                                              size: scaler.getTextSize(8),
-                                              color: Colors.red)),
-                                      SizedBox(width: scaler.getWidth(3)),
-                                      noClickAndClock
-                                          ? Container()
-                                          : Row(
-                                              //mainAxisAlignment: MainAxisAlignment.end,
-                                              children: <Widget>[
-                                                  Text(
-                                                    event.dates!.isEmpty
-                                                        ? "-נגמר-"
-                                                        : DateFormat('d-M-yyyy')
-                                                            .format(event
-                                                                .dates![0]),
-                                                    //textDirection: TextDirection.rtl,
-                                                    textAlign: TextAlign.right,
-                                                    style: TextStyle(
-                                                        fontSize: scaler
-                                                            .getTextSize(6)),
-                                                  ),
-                                                  SizedBox(
-                                                      width:
-                                                          scaler.getWidth(1)),
-                                                  Icon(FontAwesomeIcons.clock,
-                                                      size:
-                                                          scaler.getTextSize(8),
-                                                      color: Colors.red)
-                                                ])
-                                    ])))
+            child: Container(
+              decoration: user2View != null &&
+                      event.waitingQueue != null &&
+                      event.waitingQueue!.contains(user2View!)
+                  ? BoxDecoration(
+                      gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Colors.red[300]!,
+                        //Colors.transparent,
+                        //Colors.transparent,
+                        Colors.yellow[50]!,
                       ],
-                    ),
-                  )),
-                  SizedBox(width: scaler.getWidth(3)),
-                  Column(children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.all(4.0),
-                      width: scaler.getWidth(5),
-                      height: scaler.getHeight(3),
-                      decoration: BoxDecoration(
-                        color: Colors.blueAccent[400],
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(60.0),
-                        ),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                              color: Colors.teal[400]!,
-                              offset: const Offset(2, 0),
-                              blurRadius: 10.0),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child: Image.network(
-                          event.eventImage!,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: Globals.scaler.getWidth(6),
+                    ))
+                  : null,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                        child: Container(
+                      /*decoration: user2View != null &&
+                              event.waitingQueue != null &&
+                              event.waitingQueue!.contains(user2View!)
+                          ? BoxDecoration(
+                              gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Colors.red[300]!,
+                                //Colors.transparent,
+                                //Colors.transparent,
+                                Colors.yellow[50]!,
+                              ],
+                            ))
+                          : null,*/
+                      width: scaler.getWidth(12),
+                      height: scaler.getHeight(4),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
+                          SizedBox(height: scaler.getHeight(0.5)),
                           highlightedText(
                               Text(
-                                  this.event.type == "L"
-                                      ? event.lecturer!
-                                      : event.creatorName!,
-                                  style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: scaler.getTextSize(6)),
-                                  textAlign: TextAlign.center),
-                              context,
-                              // even when this.event.type == "H" the search will work, so dont ignore
-                              ignore: false),
+                                event.topic!,
+                                // textDirection: TextDirection.RTL,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: scaler.getTextSize(7.5),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              context),
+                          highlightedText(
+                              Text(
+                                event.book!,
+                                style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: scaler.getTextSize(6.5)),
+                              ),
+                              context),
+                          SizedBox(height: scaler.getHeight(0.5)),
+                          Expanded(
+                              child: Container(
+                                  //width: scaler.getWidth(28),
+                                  height: scaler.getHeight(1),
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        SizedBox(width: scaler.getWidth(1)),
+                                        registeredState1,
+                                        registeredState2,
+                                        registeredState3,
+                                        Expanded(
+                                            child: Text(
+                                          (event.participants!.length +
+                                                      (event.waitingQueue
+                                                              ?.length ??
+                                                          0))
+                                                  .toString() +
+                                              "/" +
+                                              event.maxParticipants.toString(),
+                                          // textDirection: TextDirection.rtl,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                              fontSize: scaler.getTextSize(6)),
+                                        )),
+                                        SizedBox(width: scaler.getWidth(1)),
+                                        SizedBox(
+                                            child: Icon(
+                                                event.type == 'L'
+                                                    ? FontAwesomeIcons
+                                                        .graduationCap
+                                                    : FontAwesomeIcons.users,
+                                                size: scaler.getTextSize(8),
+                                                color: Colors.red)),
+                                        SizedBox(width: scaler.getWidth(3)),
+                                        noClickAndClock
+                                            ? Container()
+                                            : Row(
+                                                //mainAxisAlignment: MainAxisAlignment.end,
+                                                children: <Widget>[
+                                                    Text(
+                                                      event.dates!.isEmpty
+                                                          ? "-נגמר-"
+                                                          : DateFormat(
+                                                                  'd-M-yyyy')
+                                                              .format(event
+                                                                  .dates![0]),
+                                                      //textDirection: TextDirection.rtl,
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      style: TextStyle(
+                                                          fontSize: scaler
+                                                              .getTextSize(6)),
+                                                    ),
+                                                    SizedBox(
+                                                        width:
+                                                            scaler.getWidth(1)),
+                                                    Icon(FontAwesomeIcons.clock,
+                                                        size: scaler
+                                                            .getTextSize(8),
+                                                        color: Colors.red)
+                                                  ])
+                                      ])))
                         ],
                       ),
-                    ),
+                    )),
+                    SizedBox(width: scaler.getWidth(3)),
+                    Column(children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.all(4.0),
+                        width: scaler.getWidth(5),
+                        height: scaler.getHeight(3),
+                        decoration: BoxDecoration(
+                          color: Colors.blueAccent[400],
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(60.0),
+                          ),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Colors.teal[400]!,
+                                offset: const Offset(2, 0),
+                                blurRadius: 10.0),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(60),
+                          child: Image.network(
+                            event.eventImage!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: Globals.scaler.getWidth(6),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            highlightedText(
+                                Text(
+                                    this.event.type == "L"
+                                        ? event.lecturer!
+                                        : event.creatorName!,
+                                    style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: scaler.getTextSize(6)),
+                                    textAlign: TextAlign.center),
+                                context,
+                                // even when this.event.type == "H" the search will work, so dont ignore
+                                ignore: false),
+                          ],
+                        ),
+                      ),
+                    ]),
+                    SizedBox(width: scaler.getWidth(1))
                   ]),
-                  SizedBox(width: scaler.getWidth(1))
-                ])));
+            )));
   }
 }
