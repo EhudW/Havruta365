@@ -203,6 +203,7 @@ class _IosStylePickersState extends State<IosStylePickers> {
                       Container(
                         constraints: BoxConstraints(maxHeight: 200),
                         child: CupertinoDatePicker(
+                          minimumDate: DateTime(1900, 1, 1),
                           onDateTimeChanged: (DateTime date) {
                             value = date;
                           },

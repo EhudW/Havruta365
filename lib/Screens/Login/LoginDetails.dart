@@ -70,7 +70,7 @@ class _HomePageState extends State<LoginDetails> {
               height: 60,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                minimumDate: DateTime(1980, 1, 1),
+                minimumDate: DateTime(1900, 1, 1),
                 initialDateTime: DateTime(1980, 1, 1),
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {

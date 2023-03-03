@@ -94,7 +94,9 @@ class _HomePageState extends State<LoginMoreDetails> {
                           "סטטוס משפחתי",
                           "רווק/ה",
                           'נשוי/אה',
-                          'גרוש/ה'
+                          'גרוש/ה',
+                          'אלמן/נה',
+                          'לא ידוע',
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,

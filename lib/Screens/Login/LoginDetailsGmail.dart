@@ -52,6 +52,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime(1969, 1, 1),
+                minimumDate: DateTime(1900, 1, 1),
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
                   _dateTime = newDateTime;

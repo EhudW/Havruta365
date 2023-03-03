@@ -103,10 +103,13 @@ class EventsModel {
       bool maybeUnFinishedCases = _pullingLogic.createdBy == null &&
           _pullingLogic.withParticipant == null &&
           _onlineBit! == false;
+      // even in created by != null, it uses the search api (if search!=null)so if fetch part..part
+      maybeUnFinishedCases = maybeUnFinishedCases || searchData != null;
       maybeUnFinishedCases =
           _pullingLogic.withParticipant2 != null || maybeUnFinishedCases;
+      // even on fail we know to move-on (even when not maybeUnFinishedCases )
+      _currSkip = _currSkip! + _currPageLimit!;
       if (hasMore && maybeUnFinishedCases) {
-        _currSkip = _currSkip! + _currPageLimit!;
         _currPageLimit = startPageLimit;
       } else if (_currPageLimit! < 4 * startPageLimit && maybeUnFinishedCases) {
         // increasing data(always...) <= 4 meaning 5 fetch[1,2,3,4,5]*startPageLimit

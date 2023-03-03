@@ -220,9 +220,9 @@ class Mongo {
           .or(where.match('topic', s))
           .or(where.eq('type', 'H').and(where.match("creatorName", s)))
           .or(where.match('lecturer', s));
-      if (createdBy != null
+      if (createdBy == null
           // maybe help in speed maybe not but this isn't must, since joined iff suitable targetGender
-          // && withParticipant != null && withParticipant2 != null
+          // for withParticipant != null ; withParticipant2 != null
           ) {
         prefix = avoidNotMyGender().and(prefix);
       }

@@ -63,7 +63,7 @@ class _HomePageState extends State<ChangesDetails> {
               height: 60,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                minimumDate: DateTime(1980, 1, 1),
+                minimumDate: DateTime(1900, 1, 1),
                 initialDateTime: Globals.currentUser!.birthDate,
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
@@ -117,7 +117,9 @@ class _HomePageState extends State<ChangesDetails> {
                       "סטטוס משפחתי",
                       "רווק/ה",
                       'נשוי/אה',
-                      'גרוש/ה'
+                      'גרוש/ה',
+                      'אלמן/נה',
+                      'לא ידוע',
                     ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -352,7 +354,6 @@ newFiled(controller, str, text, icon, size, init) {
                     disabledBorder: InputBorder.none,
                     hintText: text),
                 onChanged: (text) {
-                  controller.text = text;
                   str = controller.text;
                 }),
           ),
