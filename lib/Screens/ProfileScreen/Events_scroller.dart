@@ -28,7 +28,8 @@ class _EventsScrollerState extends State<EventsScroller> {
   @override
   void initState() {
     super.initState();
-    eventsList = Globals.db!.getEvents(widget.userMail, true, null);
+    throw Exception("this .dart file not in used");
+    //eventsList = Globals.db!.getEvents(widget.userMail, true, null);
   }
 
   Widget _buildEvent(BuildContext ctx, int index) {
@@ -50,9 +51,9 @@ class _EventsScrollerState extends State<EventsScroller> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => Events(
-                              EventsModel(false,
-                                  logic: PullingLogic(
-                                      withParticipant: this.widget.userMail)),
+                              EventsModel(
+                                false,
+                              ),
                               null),
                         ));
                   }),

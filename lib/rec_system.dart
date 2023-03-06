@@ -4,7 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+
+import 'DataBase_auth/EventsSelectorBuilder.dart';
 
 /// RecommendationSystem
 ///       abstract class RecommendationSystem<T> [interface]
@@ -181,11 +184,88 @@ class CriticMyEvents<O> {
   }
 }
 
+// check if there is overlap between 2 times
+bool rangesOverlap(List<double> rangeA, List<double> rangeB, [double? modulo]) {
+  double a = rangeA.first;
+  double b = rangeA.last;
+  double x = rangeB.first;
+  double y = rangeB.last;
+  assert(b >= a && y >= x);
+  //            x------y
+  //        a------b
+  //    x------y
+  // moudulo
+  //                         x------y
+  //              a------b
+  //    x------y
+  //
+  var option1 = (a, x, b) {
+    while (x < a && modulo != null) {
+      x += modulo;
+    }
+    return a <= x && x <= b;
+  };
+  var option2 = (a, x, b) {
+    while (x > b && modulo != null) {
+      x -= modulo;
+    }
+    return a <= x && x <= b;
+  };
+  between(a, x, b) => option1(a, x, b) || option2(a, x, b);
+  return between(a, x, b) || between(x, a, y);
+}
+
+bool rangeDateOverlap(List<double> rangeA, DateTime d, int duration) {
+  double h = d.toLocal().hour + d.toLocal().minute / 60;
+  return rangesOverlap(rangeA, [h.toDouble(), (h + duration / 60)], 24);
+}
+
+enum PartOfDay {
+  hour0to4,
+  hour4to8,
+  hour8to12,
+  hour12to16,
+  hour16to20,
+  hour20to24
+}
+
+List<PartOfDay> getPartsOfDayOf(DateTime d, int duration) {
+  List<PartOfDay> rslt = [];
+  for (List l in [
+    [PartOfDay.hour0to4, 0, 4],
+    [PartOfDay.hour4to8, 4, 8],
+    [PartOfDay.hour8to12, 8, 12],
+    [PartOfDay.hour12to16, 12, 16],
+    [PartOfDay.hour16to20, 16, 20],
+    [PartOfDay.hour20to24, 20, 24],
+  ]) {
+    if (rangeDateOverlap([l[1].toDouble(), l[2].toDouble()], d, duration)) {
+      rslt.add(l[0]);
+    }
+  }
+  return rslt;
+}
+
 class MultiConsiderations extends RecommendationSystem<Event> {
-  static Future<List<Event>> getAllEvents() =>
-      Globals.db!.getSomeEvents(0, null, limit: 100, newestFirst: true);
-  static Future<List<Event>> getMyEvents(String myMail) =>
-      Globals.db!.getEvents(myMail, false, null);
+  static Future<List<Event>> getAllEvents([int maxEvents = 100]) =>
+      EventsSelectorBuilder.fetchFrom(
+        startFrom: 0,
+        maxEvents: maxEvents,
+        filterOldEvents: true,
+        filterOldDates: true,
+        newestFirst: true,
+      );
+  //Globals.db!.getSomeEvents(0, null, limit: 100, newestFirst: true);
+  static Future<List<Event>> getMyEvents(String myMail,
+          {bool filterOld = false}) =>
+      // Globals.db!.getEvents(myMail, false, null);
+      EventsSelectorBuilder.fetchFrom(
+          withParticipant: myMail,
+          filterOldDates: filterOld,
+          filterOldEvents: filterOld,
+          maxEvents: null,
+          startFrom: null,
+          withWaitingQueue: true);
   static bool thisEventIsNewForMeAndAvailable(
       Event e, String myMail, DateTime timeNow) {
     if ((e.participants ?? []).length + (e.waitingQueue ?? []).length >=
@@ -238,8 +318,78 @@ class MultiConsiderations extends RecommendationSystem<Event> {
       return x == "" ? UniqueKey().toString() : x;
     };
 
+    Map<String, User> users_cache = {};
+    var fillUsersCache = (List<Event> list) async {
+      for (Event e in list) {
+        for (String user in e.participants ?? []) {
+          users_cache[user] = users_cache[user] ?? await getUser(user);
+        }
+        for (String user in e.waitingQueue ?? []) {
+          users_cache[user] = users_cache[user] ?? await getUser(user);
+        }
+      }
+    };
+
     /// for rank for specific target group (people who preffer small/big lecture, etc..)
     var considerationsFactory = (events) => [
+          /* need await fillUsersCache()
+          // by how age of others are similiar to my age
+          [
+            (Event e) {
+              double total = 0.0;
+              var thisYear = DateTime.now().year;
+              var both = (e.participants ?? []) + (e.waitingQueue ?? []);
+              for (String user in both) {
+                total += thisYear - users_cache[user]!.birthDate!.year;
+              }
+              double diff = total / both.length -
+                  (thisYear - Globals.currentUser!.birthDate!.year);
+              diff = diff > 0 ? diff : -diff;
+              if (both.length == 1) {
+                // only me
+                return UniqueKey().toString();
+              }
+              return diff > 10 ? ">10" : (diff > 5 ? "5-10" : "<5");
+            },
+            null,
+          ],
+          // by what is the status of the majority of others
+          [
+            (Event e) {
+              Map<String, int> status_count = {};
+              var both = (e.participants ?? []) + (e.waitingQueue ?? []);
+              for (String user in both) {
+                var s = users_cache[user]!.status!;
+                status_count[s] = (status_count[s] ?? 0) + 1;
+              }
+              String? max = status_count.keys.fold(
+                  null,
+                  (previousValue, element) => previousValue != null
+                      ? (status_count[previousValue]! >= status_count[element]!
+                          ? previousValue
+                          : element)
+                      : element);
+              if (both.length == 1) {
+                // only me
+                return UniqueKey().toString();
+              }
+              return max ?? UniqueKey().toString();
+            },
+            null,
+          ],
+          */
+          // by part of day
+          [
+            null,
+            // (Event e) => getPartsOfDayOf(e.dates!.first, e.duration ?? 0),
+            (Event e) {
+              List rslt = [];
+              int duration = e.duration ?? 0;
+              e.dates!.forEach(
+                  (time) => rslt.addAll(getPartsOfDayOf(time, duration)));
+              return rslt;
+            },
+          ],
           // by who is the creator
           [
             (Event e) => e.creatorUser!,
@@ -311,8 +461,12 @@ class MultiConsiderations extends RecommendationSystem<Event> {
                 myEvents: events))
             .toList();
 
-    var getTotalRank = (List<Event> possibleEvents, List<Event> compareToMe) {
+    var getTotalRank =
+        (List<Event> possibleEvents, List<Event> compareToMe) async {
       var considerations = considerationsFactory(compareToMe);
+      // very heavy(100 events can have 2000 users)
+      // await fillUsersCache(possibleEvents);
+      // await fillUsersCache(compareToMe);
       Map<Event, double> totalRank = {};
       for (CriticMyEvents partOfRank in considerations) {
         var part = partOfRank.rankOtherEvents(possibleEvents);
@@ -345,7 +499,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
     }
     var timeNow = DateTime.now();
 
-    this.top = getSortedList(getTotalRank(possibleEvents, compareToMe))
+    this.top = getSortedList(await getTotalRank(possibleEvents, compareToMe))
         .where((Event e) => thisEventIsNewForMeAndAvailable(e, myMail, timeNow))
         .toList();
     return success;
@@ -654,12 +808,17 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
   Map<String, List<Event>> user_events_data = {};
   Map<String, List<Event>> user_rec = {};
   for (var email in usersEmail) {
-    var list = await mongo.getAllEventsAndCreated(email, false, null);
+    var list = await MultiConsiderations.getMyEvents(email!,
+        // filterOld = true since we want to the test/validate will be on same zone,
+        // it isn't just recommendation but also test
+        // and since we filter old events from getAllEvents, we need to do it here too...
+        // or else we miss old event because they aren't in the possibleEvents=getAllEvents
+        filterOld: true); //mongo.getAllEventsAndCreated(email, false, null);
     if (list.length < (2 * k)) {
       continue;
     }
     list.shuffle();
-    user_events_validate[email!] = list.sublist(0, 2 * k + 1);
+    user_events_validate[email] = list.sublist(0, 2 * k + 1);
     user_events_data[email] = list.sublist(2 * k + 1);
     var data = {
       "compareToMe": user_events_data[email],

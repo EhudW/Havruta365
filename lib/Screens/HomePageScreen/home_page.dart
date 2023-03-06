@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   ScreenScaler scaler = new ScreenScaler();
   //Events events = Events(new EventsModel(false), new EventsModel(true));
-  var em1 = new EventsModelMultiFilter();
+  var em1 = new EventsModel(false);
   var em2 = new EventsModel(true);
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
   NewNotificationManager? nnim;

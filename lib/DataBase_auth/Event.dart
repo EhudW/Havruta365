@@ -62,27 +62,27 @@ class Event {
         'lecturer': lecturer ?? "לא ידוע",
         'participants': participants ?? [],
         'waitingQueue': waitingQueue ?? [],
-        'maxParticipants': maxParticipants ?? 100,
+        'maxParticipants': maxParticipants ?? 15,
         'dates': dates ?? [],
         'duration': duration ?? 30
       };
 
   Event.fromJson(Map<String, dynamic> json)
       : _id = json['_id'],
-        creatorUser = json['creatorUser'],
-        creatorName = json['creatorName'],
+        creatorUser = json['creatorUser'] ?? "לא ידוע",
+        creatorName = json['creatorName'] ?? "לא ידוע",
         creationDate = json['creationDate'],
-        topic = json['topic'],
-        book = json['book'],
-        type = json['type'],
-        targetGender = json['targetGender'],
-        link = json['link'],
-        description = json['description'],
+        topic = json['topic'] ?? "לא ידוע",
+        book = json['book'] ?? "לא ידוע",
+        type = json['type'] ?? "לא ידוע",
+        targetGender = json['targetGender'] ?? "לא ידוע",
+        link = json['link'] ?? "",
+        description = json['description'] ?? "לא ידוע",
         eventImage = json['eventImage'],
-        lecturer = json['lecturer'],
-        waitingQueue = json['waitingQueue'],
-        participants = json['participants'],
-        maxParticipants = json['maxParticipants'],
-        dates = json['dates'],
-        duration = json['duration'];
+        lecturer = json['lecturer'] ?? "לא ידוע",
+        waitingQueue = json['waitingQueue'] ?? [],
+        participants = json['participants'] ?? [],
+        maxParticipants = json['maxParticipants'] ?? 15,
+        dates = json['dates'] ?? [],
+        duration = json['duration'] ?? 30;
 }

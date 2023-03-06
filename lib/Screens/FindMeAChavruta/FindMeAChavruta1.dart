@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 //import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "dart:async";
+import '../../DataBase_auth/EventsSelectorBuilder.dart';
 import '../../Widgets/SplashScreen.dart';
 import 'Next_Button.dart';
 import 'package:loading_gifs/loading_gifs.dart';
@@ -483,8 +484,12 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                             SizedBox(height: Globals.scaler.getHeight(0.7)),
                             Center(
                               child: FutureBuilder(
-                                future: Globals.db!
-                                    .getAllEventsAndCreated(null, true, null),
+                                // future: Globals.db!.getAllEventsAndCreated(null, true, null),
+                                future: EventsSelectorBuilder.IinvolvedIn(
+                                    myMail: Globals.currentUser!.email!,
+                                    filterOldEvents: true,
+                                    startFrom: null,
+                                    maxEvents: null),
                                 builder: (context, snapshot) {
                                   switch (snapshot.connectionState) {
                                     case ConnectionState.done:

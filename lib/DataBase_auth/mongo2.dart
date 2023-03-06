@@ -1126,85 +1126,10 @@ class MongoCollection implements mongo.DbCollection {
 }
 
 class MongoTest {
-  // testing will be calling test(mongo), and then turn off the internet connection
-  static test(
-      {required Mongo mongo,
-      int delay = 20,
-      bool closeDB = false,
-      bool shouldRethrow = false}) async {
-    try {
-      if (closeDB) {
-        await mongo.db.close();
-      }
-      if (delay > 0) {
-        MyDebug.myPrint("test in $delay sec\nclose internet connection to test",
-            MyDebug.MyPrintType.Mongo2Test);
-      }
-      await Future.delayed(
-          Duration(seconds: delay),
-          () => MyDebug.myPrint(
-              "=== testing: ===", MyDebug.MyPrintType.Mongo2Test));
-      //trying common actions:
-      // findone   objectid
-      var tmpEvent = Event(
-          book: "testBook7777777",
-          creationDate: DateTime.now(),
-          creatorName: "testName",
-          dates: <DateTime>[DateTime.now()],
-          description: "test...123",
-          duration: 1,
-          eventImage: null,
-          lecturer: "none",
-          link: "",
-          maxParticipants: 1,
-          participants: [],
-          waitingQueue: [],
-          type: "H",
-          topic: "topic",
-          creatorUser: "testUser");
-      // test insert event and search for it
-      await mongo.insertEvent(tmpEvent);
-      var rslt =
-          (await mongo.searchEvents("testBook7777777", filterOldEvents: false));
-      assert(rslt.length == 1);
-      var event = rslt[0];
-      assert(event.creatorUser == "testUser");
-      // test joining and search for it
-      await mongo.addToWaitingQueue("mail", event.id);
-      var rslt2 = await mongo.cross(
-          withParticipant: "mail", withParticipant2: "testUser");
-      assert(rslt2[0].book == "testBook7777777");
-      // test delete event
-      await mongo.deleteEvent(event.id);
-      rslt =
-          (await mongo.searchEvents("testBook7777777", filterOldEvents: false));
-      assert(rslt.length == 0);
-      MyDebug.myPrint("=== test end ===", MyDebug.MyPrintType.Mongo2Test);
-    } catch (e, stacktrace) {
-      MyDebug.myPrint("=== error in test ===", MyDebug.MyPrintType.Mongo2Test);
-      MyDebug.myPrint(e.toString(), MyDebug.MyPrintType.Mongo2Test);
-      MyDebug.myPrint(stacktrace.toString(), MyDebug.MyPrintType.Mongo2Test);
-      if (shouldRethrow) {
-        rethrow;
-      }
-    }
-  }
-
   static Future<bool> connectionTest(Db d) async {
     var success = (await d.collection("Events").findOne())?["_id"] != null;
     MyDebug.myPrint(
         "connectionTest() success == $success", MyDebug.MyPrintType.Mongo2Test);
     return success;
-  }
-
-  static void smallTest(Mongo m, Function add) async {
-    var rslt = await Future.any(<Future<dynamic>>[
-      m.searchEvents("testBook999999", filterOldEvents: false),
-      Future.delayed(Duration(seconds: 30), () => [0, 1])
-    ]);
-    var map = ["success", "fail", "30 sec timeout"];
-    MyDebug.myPrint(
-        "smallTest    " + (map[rslt.length]), MyDebug.MyPrintType.Mongo2Test);
-    add(rslt.length - 1);
   }
 }

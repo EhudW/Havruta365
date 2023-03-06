@@ -85,10 +85,12 @@ class ContactButtons extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => MyEventsPage(
                               title: "ביחד עם - " + user!.name!,
-                              logic: PullingLogic(
-                                  withParticipant: Globals.currentUser!.email,
-                                  withParticipant2: user!.email,
-                                  createdBy: null),
+
+                              modelData: {
+                                "withParticipant": Globals.currentUser!.email,
+                                "withParticipant2": user!.email,
+                                "createdBy": null
+                              },
                               icon: FontAwesomeIcons.userGroup, //bookBookmark,
                               user2View: user!.email,
                             )));

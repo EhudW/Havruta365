@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:havruta_project/DataBase_auth/EventsSelectorBuilder.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' as m;
@@ -21,7 +22,12 @@ class _EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     Future<Event?> eventUpdate = Globals.db!.getEventById(this.widget.eventId);
     Future<List<Event>> allUserEvents =
-        Globals.db!.getAllEventsAndCreated(null, true, null);
+        //Globals.db!.getAllEventsAndCreated(null, true, null);
+        EventsSelectorBuilder.IinvolvedIn(
+            myMail: Globals.currentUser!.email!,
+            filterOldEvents: true,
+            startFrom: null,
+            maxEvents: null);
     f = Future.wait([eventUpdate, allUserEvents]);
     return Scaffold(
         body: FutureBuilder(
