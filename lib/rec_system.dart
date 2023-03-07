@@ -448,6 +448,11 @@ class MultiConsiderations extends RecommendationSystem<Event> {
             (Event e) => e.targetGender?.toLowerCase(),
             null,
           ],
+          // by its location
+          [
+            (Event e) => e.location?.toLowerCase().trim(),
+            null,
+          ],
           // by if it has a link (The user don't know until the time=live),
           // but probably online lessons has link
           [

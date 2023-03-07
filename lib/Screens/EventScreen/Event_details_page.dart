@@ -9,6 +9,7 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 //import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -101,24 +102,45 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   deleteButton() {
     if (Globals.currentUser!.email == widget.event!.creatorUser) {
-      return ElevatedButton.icon(
-        onPressed: () async {
-          showModalBottomSheet(
-            context: context,
-            builder: ((builder) => bottomSheet(
-                  context,
-                  () {
-                    Navigator.pop(context);
-                    _deleteEvent();
-                  },
-                  () => Navigator.pop(context),
-                )),
-          );
-        },
-        icon: Icon(FontAwesomeIcons.trashCan, size: 18),
-        label: Text("מחק אירוע"),
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.red[700])),
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FindMeAChavruta1(
+                          initEvent: widget.event,
+                        )),
+              );
+            },
+            icon: Icon(FontAwesomeIcons.penToSquare, size: 18),
+            label: Text("ערוך אירוע"),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.orange[400])),
+          ),
+          SizedBox(width: 8),
+          ElevatedButton.icon(
+            onPressed: () async {
+              showModalBottomSheet(
+                context: context,
+                builder: ((builder) => bottomSheet(
+                      context,
+                      () {
+                        Navigator.pop(context);
+                        _deleteEvent();
+                      },
+                      () => Navigator.pop(context),
+                    )),
+              );
+            },
+            icon: Icon(FontAwesomeIcons.trashCan, size: 18),
+            label: Text("מחק אירוע"),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.red[700])),
+          ),
+        ],
       );
     }
     return SizedBox();
@@ -322,6 +344,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       widget.event!.waitingQueue!.remove(userMail);
       widget.event!.participants!.add(userMail);
     });
+    String? storyline = widget.event!.description;
+    String location = widget.event!.location?.trim() ?? "";
+    location = location == "" ? "" : "\n" + location;
+    storyline = storyline == null
+        ? widget.event!.location?.trim()
+        : storyline + location;
+    bool notMyTarget = !Globals.currentUser!.isTargetedForMe(widget.event!);
     return Scaffold(
       // floatingActionButton: isCreatorWidget(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
@@ -330,7 +359,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           children: [
             EventDetailHeader(widget.event),
             Storyline(
-                widget.event!.description,
+                storyline,
                 widget.event!.type == 'L'
                     ? FontAwesomeIcons.graduationCap
                     : FontAwesomeIcons.users),
@@ -341,7 +370,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      (iAmParticipant || iAmInWaitingQueue || num <= 0)
+                      (iAmParticipant ||
+                              iAmInWaitingQueue ||
+                              num <= 0 ||
+                              notMyTarget)
                           ? Container()
                           : Text("!מהרו להירשם",
                               style: GoogleFonts.alef(
@@ -370,8 +402,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       )
                     ],
                   ),
-            widget.event!.dates!.isEmpty ? Container() : SizedBox(height: 8),
-            widget.event!.dates!.isEmpty
+            widget.event!.dates!.isEmpty || notMyTarget
+                ? Container()
+                : SizedBox(height: 8),
+            widget.event!.dates!.isEmpty || notMyTarget
                 ? Container()
                 : MyProgressButton(
                     event: widget.event,

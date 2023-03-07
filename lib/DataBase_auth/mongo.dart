@@ -215,6 +215,12 @@ class Mongo {
         where.eq('email', user.email), modify.set('avatar', user.avatar));
   }
 
+  updateEvent(Event event) async {
+    // error if event.id == null or cant find the event in the db
+    var collection = db.collection('Events');
+    await collection.replaceOne(where.eq("_id", event.id), event.toJson());
+  }
+
   changeDeatailsUser(User user) async {
     var collection = db.collection('Users');
     // Check if the user exist

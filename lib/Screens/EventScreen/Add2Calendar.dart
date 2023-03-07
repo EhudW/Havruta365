@@ -57,6 +57,7 @@ add2calendar(Event event, {bool ignorePast = true}) {
   String book = event.book?.trim() ?? "";
   String type = event.type == "H" ? "חברותא" : "שיעור";
   String link = event.link?.trim() ?? "";
+  String location = event.location?.trim() ?? "";
   String description = event.description?.trim() ?? "";
   String lecturer = event.lecturer?.trim() ?? "";
   String creator = event.creatorName?.trim() ?? "";
@@ -81,26 +82,27 @@ add2calendar(Event event, {bool ignorePast = true}) {
   r += n(" $topic", topic);
   r += n("\n$book", book);
   r += "\n";
-  r += nA("\n", [teacher, link, description]);
+  r += nA("\n", [teacher, location, link, description]);
   r += n("$teacher\n", teacher);
+  r += n("$location\n", location);
   r += n("$link\n", link);
   r += n("------\n$description\n", description);
   r += "------";
   /*  
   will look like
-      [$type:[ $topic]] [\n$book] \n [\n [$teacher\n] [$link\n] [------\n$description\n] ] [------]
+      [$type:[ $topic]] [\n$book] \n [\n [$teacher\n] [$location\n] [$link\n] [------\n$description\n] ] [------]
       [$type:         ] [\n$book] \n [\n                                                 ] [------]
-             [ $topic]                   [$teacher\n] [$link\n] [------\n$description\n]                    
+             [ $topic]                   [$teacher\n] [$location\n] [$link\n] [------\n$description\n]                    
   */
 
   String formattedDescription =
-      "$type: $topic\n$book\n\n$teacher\n$link\n------\n$description\n------";
+      "$type: $topic\n$book\n\n$teacher\n$location\n$link\n------\n$description\n------";
   formattedDescription = r;
   // ignore: non_constant_identifier_names
   final ADD2CALENDAR.Event add2cal_event = ADD2CALENDAR.Event(
       title: title,
       description: formattedDescription,
-      location: link == "" ? null : link,
+      location: location != "" ? location : (link == "" ? null : link),
       startDate: future.first,
       endDate: future.first.add(Duration(minutes: minutesPerMeeting)),
       recurrence: future.first == future.last

@@ -19,6 +19,7 @@ class NotificationView extends StatelessWidget {
           "joinReject": FontAwesomeIcons.thumbsDown,
           "joinRequest": FontAwesomeIcons.ellipsis,
           "eventDeleted": FontAwesomeIcons.triangleExclamation,
+          "eventUpdated": FontAwesomeIcons.triangleExclamation,
         }[notification.type] ??
         FontAwesomeIcons.book; //or .user
 

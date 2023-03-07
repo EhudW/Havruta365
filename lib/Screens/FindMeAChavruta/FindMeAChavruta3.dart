@@ -9,6 +9,8 @@ import 'package:havruta_project/Screens/FindMeAChavruta/First_Dot_Row.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:objectid/objectid.dart';
+import '../../DataBase_auth/Notification.dart';
 import '../../mydebug.dart' as MyDebug;
 import 'Wavy_Header.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -34,6 +36,21 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
   String details_str = "";
   String? link;
   double? spaceBetween;
+  late TextEditingController linkController;
+  late TextEditingController descriptionController;
+  late TextEditingController locationController;
+  late TextEditingController lecturerController;
+
+  @override
+  void initState() {
+    super.initState();
+    link = widget.event?.link;
+    descriptionController =
+        TextEditingController(text: widget.event?.description);
+    linkController = TextEditingController(text: link);
+    locationController = TextEditingController(text: widget.event?.location);
+    lecturerController = TextEditingController(text: widget.event?.lecturer);
+  }
 
   Widget checkIfShiur() {
     if (widget.event!.type == 'L') {
@@ -47,6 +64,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: new TextField(
+          controller: lecturerController,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
             border: InputBorder.none,
@@ -99,6 +117,35 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     child: checkIfShiur(),
                   ),
                   SizedBox(height: spaceBetween),
+                  Container(
+                    height: Globals.scaler.getHeight(2.5),
+                    width: Globals.scaler.getWidth(35),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: Colors.teal[400]!,
+                          width: Globals.scaler.getWidth(.1)),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: new TextField(
+                      controller: locationController,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "מקום ודרכי הגעה",
+                        focusColor: Colors.teal,
+                        contentPadding: EdgeInsets.fromLTRB(
+                            Globals.scaler.getWidth(2),
+                            Globals.scaler.getHeight(0),
+                            Globals.scaler.getWidth(2),
+                            Globals.scaler.getHeight(0)),
+                      ),
+                      onChanged: (location) {
+                        widget.event!.location = location;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: spaceBetween),
                   Stack(
                     children: [
                       SizedBox(height: spaceBetween),
@@ -113,6 +160,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                           child: new TextField(
+                            controller: linkController,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -148,6 +196,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                           ),
                           child: Center(
                             child: TextField(
+                              controller: descriptionController,
                               textDirection: TextDirection.rtl,
                               maxLines: 4,
                               textAlign: TextAlign.center,
@@ -186,21 +235,154 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.teal),
-                              onPressed: () {
-                                widget.event!.creationDate = DateTime.now();
-                                widget.event!.participants = [];
-                                widget.event!.waitingQueue = [];
+                              onPressed: () async {
+                                /// new and update event:
                                 widget.event!.creatorUser =
                                     Globals.currentUser!.email;
                                 if (widget.event!.eventImage == "") {
                                   widget.event!.eventImage =
                                       'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
                                 }
-                                mongoDB!.insertEvent(widget.event!).then(
-                                    (value) => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => HomePage())));
+
+                                /// new event:
+                                if (widget.event!.id == null) {
+                                  widget.event!.creationDate = DateTime.now();
+                                  widget.event!.participants = [];
+                                  widget.event!.waitingQueue = [];
+                                  mongoDB!.insertEvent(widget.event!).then(
+                                      (value) => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomePage())));
+                                } else {
+                                  /// update event:
+                                  // notify all that the event was updated, or they rejected
+                                  var e = widget.event!;
+                                  var m = e.maxParticipants!;
+                                  var p = e.participants!;
+                                  var wq = e.waitingQueue!;
+                                  List toNotify = [];
+                                  toNotify.addAll(p);
+                                  toNotify.addAll(wq);
+                                  Set rejected = {};
+                                  Set accepted = {};
+                                  Set waiting = {};
+
+                                  ///
+                                  /// maxParticipants conflict [affect rejected,waitingQueue,participants]
+                                  ///
+                                  // due to the new max participants value, reset lists:
+                                  if (m >= p.length + wq.length) {
+                                    // don't reset lists
+                                  } else if (m >= p.length) {
+                                    // reset only wq
+                                    rejected.addAll(wq);
+                                    widget.event!.waitingQueue = [];
+                                  } else {
+                                    // reset noth p wq
+                                    rejected.addAll(p);
+                                    rejected.addAll(wq);
+                                    widget.event!.participants = [];
+                                    widget.event!.waitingQueue = [];
+                                  }
+
+                                  //////
+                                  /// type conflict  [affect waiting,accepted,waitingQueue,participants]
+                                  ///
+                                  if (e.type == 'L') {
+                                    // auto accept all waiting
+                                    e.participants!.addAll(e.waitingQueue!);
+                                    accepted.addAll(e.waitingQueue!);
+                                    e.waitingQueue = [];
+                                  } else if (e.type == 'H' &&
+                                      e.firstInitType != 'H') {
+                                    // auto move all to waiting
+                                    e.waitingQueue!.addAll(e.participants!);
+                                    waiting.addAll(e.participants!);
+                                    e.participants = [];
+                                  }
+
+                                  ///
+                                  /// target[Gender] conflict  [affect rejected,waitingQueue,participants]
+                                  ///
+                                  Set<String> tmp = {};
+                                  var rejectDueGender = (List list) async =>
+                                      Future.wait(list.map((mail) =>
+                                          mongoDB!.getUser(mail).then((user) {
+                                            /*String? avoid = <String?, String>{
+                                              "F": "גברים",
+                                              "M": "נשים"
+                                            }[user.gender];
+                                            if (avoid == e.targetGender) {*/
+                                            if (!user.isTargetedForMe(e)) {
+                                              tmp.add(user.email!);
+                                            }
+                                          })));
+                                  await rejectDueGender(e.participants!);
+                                  await rejectDueGender(e.waitingQueue!);
+                                  rejected.addAll(tmp);
+                                  e.participants = e.participants!
+                                      .where((v) => !tmp.contains(v))
+                                      .toList();
+                                  e.waitingQueue = e.waitingQueue!
+                                      .where((v) => !tmp.contains(v))
+                                      .toList();
+                                  //////
+                                  /// dates conflict
+                                  /// probably overwritten, or maybe not, anyway it done in ChooseDates.dart
+                                  ///
+                                  accepted = accepted.difference(rejected);
+                                  waiting = waiting.difference(rejected);
+                                  // update event
+                                  mongoDB!.updateEvent(widget.event!).then(
+                                      // then
+                                      (_) {
+                                    // for each user that is/was in my event
+                                    for (String personToNotify in toNotify) {
+                                      // notify msg format:
+                                      var t = widget.event!.type == 'H'
+                                          ? "חברותא"
+                                          : "שיעור";
+                                      var g = Globals.currentUser!.gender == 'F'
+                                          ? "עידכנה"
+                                          : "עידכן";
+                                      var msg = g + " " + t;
+                                      // rejected msg format:
+                                      if (rejected.contains(personToNotify)) {
+                                        msg = Globals.currentUser!.gender == 'F'
+                                            ? "ביטלה רישומך"
+                                            : "ביטל רישומך";
+                                      }
+                                      if (waiting.contains(personToNotify)) {
+                                        msg = Globals.currentUser!.gender == 'F'
+                                            ? "הפכה השיעור לחברותא. נרשמת לתור המתנה"
+                                            : "הפך השיעור לחברותא. נרשמת לתור המתנה";
+                                      }
+                                      if (accepted.contains(personToNotify)) {
+                                        msg = Globals.currentUser!.gender == 'F'
+                                            ? "הפכה החברותא לשיעור. צורפת אוטומטית"
+                                            : "הפך החברותא לשיעור. צורפת אוטומטית";
+                                      }
+                                      var m = {
+                                        'creatorUser':
+                                            Globals.currentUser!.email,
+                                        'destinationUser': personToNotify,
+                                        'creationDate': DateTime.now(),
+                                        'message': msg, // rejected / notify
+                                        'type': 'eventUpdated',
+                                        'idEvent': e.id,
+                                        'name': Globals.currentUser!.name,
+                                      };
+
+                                      Globals.db!.insertNotification(
+                                          NotificationUser.fromJson(m));
+                                    }
+                                  }).then((value) => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => HomePage())));
+                                }
                               },
                               child: Icon(FontAwesomeIcons.check,
                                   color: Colors.white,
@@ -322,11 +504,12 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
       MyDebug.myPrint('signed in', MyDebug.MyPrintType.None);
     }
     image = await picker.pickImage(source: source);
+    String fileName = ObjectId().toString();
     var file = File(image?.path ?? "");
     //check if an image was picked
     if (image != null) {
       var snapshot =
-          await _storage.ref().child('folderName/imageName').putFile(file);
+          await _storage.ref().child('Images/$fileName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
         widget.event!.eventImage = downloadUrl;

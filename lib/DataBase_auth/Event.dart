@@ -3,7 +3,12 @@
 //import 'package:havruta_project/DataBase_auth/User.dart';
 //import 'package:mongo_dart/mongo_dart.dart';
 
+import 'User.dart';
+
 class Event {
+  late final String? firstInitType;
+  late final List firstInitDates;
+  late final String? firstInitTargetGender;
   Event(
       {this.creatorUser,
       this.creatorName,
@@ -13,6 +18,7 @@ class Event {
       this.topic,
       this.book,
       this.link,
+      this.location = "",
       this.description,
       this.eventImage,
       this.lecturer,
@@ -20,8 +26,13 @@ class Event {
       this.waitingQueue,
       this.dates,
       this.duration,
-      this.maxParticipants});
+      this.maxParticipants}) {
+    this.firstInitTargetGender = targetGender;
+    this.firstInitType = type;
+    this.firstInitDates = List.of(dates ?? []);
+  }
 
+  bool isTargetedFor(User user) => user.isTargetedForMe(this);
   var _id;
 
   // ignore: unnecessary_getters_setters
@@ -37,6 +48,7 @@ class Event {
       topic,
       book,
       link,
+      location,
       description,
       eventImage,
       targetGender,
@@ -56,6 +68,7 @@ class Event {
         'book': book ?? "לא ידוע",
         'type': type ?? "לא ידוע",
         'link': link ?? "",
+        'location': location ?? "",
         'targetGender': targetGender ?? "לא ידוע",
         'description': description ?? "לא ידוע",
         'eventImage': eventImage,
@@ -77,6 +90,7 @@ class Event {
         type = json['type'] ?? "לא ידוע",
         targetGender = json['targetGender'] ?? "לא ידוע",
         link = json['link'] ?? "",
+        location = json['location'] ?? "",
         description = json['description'] ?? "לא ידוע",
         eventImage = json['eventImage'],
         lecturer = json['lecturer'] ?? "לא ידוע",
@@ -84,5 +98,9 @@ class Event {
         participants = json['participants'] ?? [],
         maxParticipants = json['maxParticipants'] ?? 15,
         dates = json['dates'] ?? [],
-        duration = json['duration'] ?? 30;
+        duration = json['duration'] ?? 30 {
+    this.firstInitTargetGender = targetGender;
+    this.firstInitType = type;
+    this.firstInitDates = List.of(dates ?? []);
+  }
 }

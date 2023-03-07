@@ -1,6 +1,7 @@
 // ------------------------------ USER CLASS ------------------------------
 //import 'dart:convert';
 
+import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 
 class User {
@@ -38,6 +39,13 @@ class User {
     if (gender == 'male')
       this.avatar = Globals.maleAvatar;
     else if (gender == 'female') this.avatar = Globals.femaleAvatar;
+  }
+  // both User.isForMe && EventsSelectorBuilder.targetForMe should have same logic
+  bool isTargetedForMe(Event e, [bool okWhenCreator = true]) {
+    bool isOk = true;
+    String? avoid = {"F": "גברים", "M": "נשים"}[this.gender];
+    isOk = isOk && (avoid == null || avoid != e.targetGender);
+    return isOk || (okWhenCreator && e.creatorUser == this.email);
   }
 
   // Add interest to the list

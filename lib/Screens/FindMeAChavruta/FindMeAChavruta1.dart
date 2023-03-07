@@ -20,6 +20,8 @@ import 'package:loading_gifs/loading_gifs.dart';
 import 'dart:ui' as ui;
 
 class FindMeAChavruta1 extends StatefulWidget {
+  final Event? initEvent;
+  FindMeAChavruta1({this.initEvent});
   @override
   _FindMeAChavruta1CreateState createState() => _FindMeAChavruta1CreateState();
 }
@@ -57,7 +59,32 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   List<String> choice = MyData().choice;
   List<String> genderList = MyData().gender;
   String user = "yonatan";
-  Event event = Event();
+  Event event = Event(); // see initState()
+  late TextEditingController maxController;
+  late TextEditingController bookController;
+  @override
+  void initState() {
+    super.initState();
+    maxController = TextEditingController(
+        text: widget.initEvent?.maxParticipants?.toString());
+    bookController = TextEditingController(text: widget.initEvent?.book);
+    if (widget.initEvent != null) {
+      event = widget.initEvent!;
+      // for debug compabilty
+      if (!genderList.contains(event.targetGender)) {
+        event.targetGender = MyData().gender.last;
+      }
+      // here set & also in controller: TextEditingController
+      this.selectedBook = event.book;
+      // here set, which will also affect default value showed to the user
+      this.gender = event.targetGender;
+      this.selectedTopic = event.topic;
+      this.selectedChoice = {"H": "חברותא", "L": "שיעור"}[event.type];
+      // max participants only in controller: TextEditingController,
+      //but no field to update here... (onChange auto update event.maxParticipants)
+      counter++; //to prevent call in build() to intializeEvent()
+    }
+  }
 
   Future<List<Topic>> getTopics() async {
     final topicsList = await Globals.db!.getTopics();
@@ -330,6 +357,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       child: Container(
                                         width: Globals.scaler.getWidth(29),
                                         child: TextField(
+                                          controller: maxController,
                                           textAlign: TextAlign.center,
                                           autocorrect: true,
                                           style: TextStyle(
@@ -353,12 +381,14 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                           ],
                                           maxLines: 1,
                                           onChanged: (newVal) {
-                                            var numOfParticapints =
-                                                int.parse(newVal);
-                                            event.maxParticipants =
-                                                numOfParticapints;
-                                            if (event.maxParticipants == null) {
-                                              event.maxParticipants = 1;
+                                            int? numOfParticapints =
+                                                int.tryParse(newVal);
+                                            if (numOfParticapints == null) {
+                                              event.maxParticipants =
+                                                  event.maxParticipants ?? 1;
+                                            } else {
+                                              event.maxParticipants =
+                                                  numOfParticapints;
                                             }
                                           },
                                         ),
@@ -424,6 +454,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                         child: Container(
                                             width: Globals.scaler.getWidth(29),
                                             child: TextField(
+                                              controller: bookController,
                                               textAlign: TextAlign.center,
                                               autocorrect: true,
                                               style: TextStyle(
@@ -489,7 +520,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     myMail: Globals.currentUser!.email!,
                                     filterOldEvents: true,
                                     startFrom: null,
-                                    maxEvents: null),
+                                    maxEvents: null,
+                                    // drop self event(when editing, to avoid false overlap alert)
+                                    eventTesters: [
+                                      (Event e) => e.id == event.id ? null : e
+                                    ]),
                                 builder: (context, snapshot) {
                                   switch (snapshot.connectionState) {
                                     case ConnectionState.done:

@@ -32,16 +32,18 @@ class EventsSelectorBuilder {
     return EventsSelectorBuilder(selector, set);
   }
 
+// both User.isForMe && EventsSelectorBuilder.targetForMe should have same logic
   /// add needed filters that for my target group(gender ...);
   /// only if I am not the creator etc...
-  EventsSelectorBuilder targetForMe() {
+  /// @okWhenCreator might not work well if assigned.contain("avoidTargetFilter")
+  EventsSelectorBuilder targetForMe([bool okWhenCreator = true]) {
     var myMail = Globals.currentUser!.email;
     //
     if (assigned.intersection({
       // IinvolvedIn withParticipant cross
       "avoidTargetFilter",
       // I should see my createdBy, but not unrelevant lectures of others person
-      "createdBy: $myMail",
+      okWhenCreator ? "createdBy: $myMail" : "notExistingString1234",
     }).isNotEmpty) {
       return this;
     }
@@ -55,7 +57,7 @@ class EventsSelectorBuilder {
     }
     // targeted age?
     // targeted other issues?
-    if (prefix != null) {
+    if (prefix != null && okWhenCreator) {
       prefix = prefix.or(where.eq("creatorUser", myMail));
     }
     return this.plus(prefix);
@@ -70,7 +72,10 @@ class EventsSelectorBuilder {
     return this.plus(where
         .match('book', word)
         .or(where.match('topic', word))
-        .or(where.eq('type', 'H').and(where.match("creatorName", word)))
+        //.or(where.eq('type', 'H').and(where.match("creatorName", word)))
+        .or(where.match("creatorName", word))
+        .or(where.match("location",
+            word)) // ? less general than description, but than just persons names
         .or(where.match('lecturer', word)));
   }
 
@@ -321,7 +326,7 @@ class EventsSelectorBuilder {
         rslt[i] = rslt[i] == null ? null : test(rslt[i]!);
       }
     }
-    return rslt as List<Event>;
+    return rslt.where((e) => e != null).map((e) => e!).toList();
   }
 
   // if times != null, change Event.dates, and return true iff Event.dates.isNotEmpty
