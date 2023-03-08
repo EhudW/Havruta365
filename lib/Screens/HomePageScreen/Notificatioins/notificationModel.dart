@@ -6,6 +6,7 @@ import '../../../mydebug.dart';
 
 // ignore: camel_case_types
 class notificationModel {
+  bool _wasFetched = false;
   Stream<List<NotificationUser>>? stream;
   List<NotificationUser>? _data;
   bool get isDataEmpty => _data?.isEmpty ?? true;
@@ -51,6 +52,11 @@ class notificationModel {
     return getData(10).then((postsData) {
       _data!.addAll(postsData);
       _controller.add(_data);
+      _wasFetched = true;
     });
   }
+
+  // don't fetch from server, but resend item to stream,
+  // if was fetch with this model, at least one time
+  void simulateRefresh() => _wasFetched ? _controller.add(_data) : null;
 }

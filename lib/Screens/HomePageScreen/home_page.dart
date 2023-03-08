@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
   var em1 = new EventsModel(false);
   var em2 = new EventsModel(true);
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
+  //use NewNotificationManager.onlyLast for build()
   NewNotificationManager? nnim;
   @override
   void initState() {
@@ -65,7 +66,9 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                         color: Colors.transparent,
                         child: Column(children: <Widget>[
-                          Expanded(child: Notifications(nnim: nnim!))
+                          Expanded(
+                              child: Notifications(
+                                  nnim: NewNotificationManager.onlyLast!))
                         ])))),
             backgroundColor: Colors.white,
             appBar: appBar(context),
@@ -128,7 +131,8 @@ class _HomePageState extends State<HomePage> {
           builder: (context) => new IconButton(
                 icon: Center(
                   child: Icon(
-                      (nnim?.newNotification ?? false)
+                      (NewNotificationManager.onlyLast?.newNotification ??
+                              false)
                           ? Icons.notification_important
                           : Icons.notifications,
                       color: Colors.teal[400],

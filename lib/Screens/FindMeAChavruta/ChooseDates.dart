@@ -36,6 +36,32 @@ class _ChooseDates extends State<ChooseDates> {
   DateTime? lastDate = DateTime.now();
   String? frequency = "יומי";
   double? eventDuration = 30;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.event!.id != null) {
+      Event event = widget.event!;
+      final DateTime now = DateTime.now();
+      event.dates = (event.dates ?? []).where((t) => t.isAfter(now)).toList();
+      firstDate =
+          event.dates!.isNotEmpty ? event.dates!.first.toLocal() : firstDate;
+      lastDate =
+          event.dates!.isNotEmpty ? event.dates!.last.toLocal() : lastDate;
+      time = TimeOfDay.fromDateTime(firstDate);
+      eventDuration = event.duration?.toDouble() ?? eventDuration;
+      if (event.dates!.isEmpty) {
+        frequency = frequency;
+      } else if (event.dates!.first == event.dates!.last) {
+        frequency = "ללא";
+      } else if (event.dates![1].difference(event.dates!.first).inDays > 8) {
+        frequency = "חודשי";
+      } else if (event.dates![1].difference(event.dates!.first).inDays > 2) {
+        frequency = "שבועי";
+      } else {
+        frequency = "יומי";
+      }
+    }
+  }
 
   Future<void> _selectFirstDate(BuildContext context) async {
     final DateTime? picked = await (showDatePicker(

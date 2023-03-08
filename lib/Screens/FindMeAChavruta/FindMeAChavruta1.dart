@@ -525,7 +525,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     maxEvents: null,
                                     // drop self event(when editing, to avoid false overlap alert)
                                     eventTesters: [
-                                      (Event e) => e.id == event.id ? null : e
+                                      (Event e) => (!event.shouldDuplicate &&
+                                              e.id == event.id)
+                                          ? null
+                                          : e
                                     ]),
                                 builder: (context, snapshot) {
                                   switch (snapshot.connectionState) {

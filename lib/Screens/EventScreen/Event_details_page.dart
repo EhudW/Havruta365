@@ -109,6 +109,24 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         children: [
           ElevatedButton.icon(
             onPressed: () async {
+              widget.event!.shouldDuplicate = true;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FindMeAChavruta1(
+                          initEvent: widget.event,
+                        )),
+              );
+            },
+            icon: Icon(FontAwesomeIcons.copy, size: 18),
+            label: Text("צור על בסיס"),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.green[400])),
+          ),
+          SizedBox(width: 8),
+          ElevatedButton.icon(
+            onPressed: () async {
+              widget.event!.shouldDuplicate = false;
               Navigator.push(
                 context,
                 MaterialPageRoute(

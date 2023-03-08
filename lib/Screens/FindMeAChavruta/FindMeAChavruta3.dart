@@ -247,7 +247,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 }
 
                                 /// new event:
-                                if (widget.event!.id == null) {
+                                if (widget.event!.id == null ||
+                                    widget.event!.shouldDuplicate) {
                                   widget.event!.creationDate = DateTime.now();
                                   widget.event!.participants = [];
                                   widget.event!.waitingQueue = [];

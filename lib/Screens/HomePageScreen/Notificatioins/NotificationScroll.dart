@@ -23,6 +23,8 @@ class _notificationsScrollState extends State<notificationsScroll> {
               stream: this.widget.nnim.model.stream,
               builder: (BuildContext _context, AsyncSnapshot _snapshot) {
                 if (!_snapshot.hasData) {
+                  // no critical side-effects:
+                  this.widget.nnim.model.simulateRefresh();
                   return Center(child: CircularProgressIndicator());
                 } else {
                   return RefreshIndicator(

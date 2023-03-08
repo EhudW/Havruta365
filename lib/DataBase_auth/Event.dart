@@ -9,6 +9,7 @@ class Event {
   late final String? firstInitType;
   late final List firstInitDates;
   late final String? firstInitTargetGender;
+  bool shouldDuplicate = false; //only for program
   Event(
       {this.creatorUser,
       this.creatorName,

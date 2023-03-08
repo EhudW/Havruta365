@@ -64,7 +64,8 @@ class NextButton extends StatelessWidget {
                               event: this.event,
                               allUserEvents: allUserEvents)));
 
-                  var problem = event?.id != null;
+                  var problem =
+                      event?.id != null && event!.shouldDuplicate == false;
                   int m = event?.maxParticipants ?? 0;
                   int p = event?.participants?.length ?? 0;
                   int wq = event?.waitingQueue?.length ?? 0;
