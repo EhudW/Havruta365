@@ -76,6 +76,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       Flushbar(
         title: 'מחיקת אירוע',
         messageText: Text('אירעה שגיאה בתהליך המחיקה !',
+            textDirection: ui.TextDirection.rtl,
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.teal[400], fontSize: 20)),
         duration: Duration(seconds: 3),
@@ -84,6 +85,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       Flushbar(
         title: 'האירוע נמחק',
         messageText: Text('מיד תועבר לעמוד הבית !',
+            textDirection: ui.TextDirection.rtl,
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.teal[400], fontSize: 20)),
         duration: Duration(seconds: 2),

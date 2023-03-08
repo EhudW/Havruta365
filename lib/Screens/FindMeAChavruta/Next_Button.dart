@@ -129,6 +129,7 @@ class NextButton extends StatelessWidget {
           Expanded(
             child: Text(
               text,
+              textDirection: ui.TextDirection.rtl,
               style: TextStyle(fontSize: Globals.scaler.getTextSize(8)),
             ),
           ),

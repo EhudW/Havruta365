@@ -108,9 +108,9 @@ class _HomePageState extends State<LoginMoreDetails> {
                       )),
                 ),
                 newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה",
-                    FontAwesomeIcons.book, 3.0),
+                    FontAwesomeIcons.book, 3.0, TextDirection.rtl),
                 newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
-                    FontAwesomeIcons.list, 8.0),
+                    FontAwesomeIcons.list, 8.0, TextDirection.rtl),
                 SizedBox(height: Globals.scaler.getHeight(1)),
                 ElevatedButton(
                   child: Text(
@@ -271,7 +271,7 @@ class _HomePageState extends State<LoginMoreDetails> {
   }
 }
 
-newFiled(controller, str, text, icon, size) {
+newFiled(controller, str, text, icon, size, [TextDirection? dir]) {
   return FadeAnimation(
     1.7,
     new Column(children: <Widget>[
@@ -295,6 +295,7 @@ newFiled(controller, str, text, icon, size) {
           ),
           child: TextField(
               textAlign: TextAlign.center,
+              textDirection: dir,
               controller: controller,
               style: TextStyle(fontSize: Globals.scaler.getTextSize(7.5)),
               decoration: InputDecoration(
@@ -318,7 +319,7 @@ newFiled(controller, str, text, icon, size) {
   );
 }
 
-newFiled1(controller, str, text, icon, size) {
+newFiled1(controller, str, text, icon, size, [TextDirection? dir]) {
   return FadeAnimation(
     1.7,
     new Column(children: <Widget>[
@@ -344,6 +345,7 @@ newFiled1(controller, str, text, icon, size) {
               maxLines: null,
               expands: true,
               textAlign: TextAlign.center,
+              textDirection: dir,
               controller: controller,
               style: TextStyle(fontSize: Globals.scaler.getTextSize(7.5)),
               decoration: InputDecoration(

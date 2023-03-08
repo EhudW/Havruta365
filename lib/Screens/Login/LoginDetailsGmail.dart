@@ -60,7 +60,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
               ),
             ),
             newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.house, false),
+                FontAwesomeIcons.house, false, TextDirection.rtl),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
@@ -119,7 +119,7 @@ class _HomePageState extends State<LoginDetailsGmail> {
   }
 }
 
-newFiled(controller, str, text, icon, cover) {
+newFiled(controller, str, text, icon, cover, [TextDirection? dir]) {
   return new FadeAnimation(
       1.7,
       Column(children: <Widget>[
@@ -143,6 +143,7 @@ newFiled(controller, str, text, icon, cover) {
             ),
             child: TextField(
                 textAlign: TextAlign.center,
+                textDirection: dir,
                 controller: controller,
                 obscureText: cover,
                 style: TextStyle(fontSize: 18),

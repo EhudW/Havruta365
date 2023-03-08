@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
+import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
 class SendScreen extends StatefulWidget {
@@ -45,6 +46,7 @@ class _SendScreenState extends State<SendScreen> {
                 children: <Widget>[
                   Text(
                     "${chatMessage.name}",
+                    textDirection: ui.TextDirection.rtl,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.alef(
                         fontSize: Globals.scaler.getTextSize(8.5),
@@ -79,6 +81,7 @@ class _SendScreenState extends State<SendScreen> {
                 children: <Widget>[
                   Text(
                     "${widget.dstName}",
+                    textDirection: ui.TextDirection.rtl,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.alef(
                         fontSize: Globals.scaler.getTextSize(8.5),
@@ -185,6 +188,7 @@ class _SendScreenState extends State<SendScreen> {
               ),
               child: TextField(
                   keyboardType: TextInputType.multiline,
+                  textDirection: ui.TextDirection.rtl,
                   maxLines: null,
                   textAlign: TextAlign.center,
                   controller: controller,

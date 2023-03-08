@@ -8,6 +8,7 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 //import 'package:havruta_project/DataBase_auth/User.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'dart:ui' as ui;
 
 class EventViewFeed extends StatelessWidget {
   final Event event;
@@ -38,6 +39,7 @@ class EventViewFeed extends StatelessWidget {
     fullString = fullString.replaceFirst(bold, notUsedStr);
     var strings = fullString.split(notUsedStr);
     return RichText(
+      textDirection: ui.TextDirection.rtl,
       text: TextSpan(
         text: '',
         style: DefaultTextStyle.of(ctx).style,
@@ -139,6 +141,7 @@ class EventViewFeed extends StatelessWidget {
                           highlightedText(
                               Text(
                                 event.topic!,
+                                textDirection: ui.TextDirection.rtl,
                                 // textDirection: TextDirection.RTL,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -149,6 +152,7 @@ class EventViewFeed extends StatelessWidget {
                           highlightedText(
                               Text(
                                 event.book!,
+                                textDirection: ui.TextDirection.rtl,
                                 style: TextStyle(
                                     color: Colors.grey.shade600,
                                     fontSize: scaler.getTextSize(6.5)),
@@ -257,6 +261,7 @@ class EventViewFeed extends StatelessWidget {
                                     this.event.type == "L"
                                         ? event.lecturer!
                                         : event.creatorName!,
+                                    textDirection: ui.TextDirection.rtl,
                                     style: TextStyle(
                                         color: Colors.grey.shade600,
                                         fontSize: scaler.getTextSize(6)),

@@ -73,9 +73,15 @@ class _HomePageState extends State<ChangesDetails> {
             ),
             SizedBox(height: Globals.scaler.getHeight(1)),
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
-                3.0, Globals.currentUser!.name),
-            newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.house, 3.0, Globals.currentUser!.address),
+                3.0, Globals.currentUser!.name, TextDirection.rtl),
+            newFiled(
+                address,
+                address_str,
+                "כתובת מגורים",
+                FontAwesomeIcons.house,
+                3.0,
+                Globals.currentUser!.address,
+                TextDirection.rtl),
             SizedBox(height: Globals.scaler.getHeight(1)),
             FadeAnimation(
               1.7,
@@ -130,9 +136,15 @@ class _HomePageState extends State<ChangesDetails> {
                   )),
             ),
             newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
-                3.0, Globals.currentUser!.yeshiva),
-            newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
-                FontAwesomeIcons.list, 8.0, Globals.currentUser!.description),
+                3.0, Globals.currentUser!.yeshiva, TextDirection.rtl),
+            newFiled1(
+                description,
+                description_str,
+                "פרטים שחשוב לך לשתף",
+                FontAwesomeIcons.list,
+                8.0,
+                Globals.currentUser!.description,
+                TextDirection.rtl),
             SizedBox(height: Globals.scaler.getHeight(1)),
             SizedBox(height: Globals.scaler.getHeight(1)),
             ElevatedButton(
@@ -315,7 +327,7 @@ class _HomePageState extends State<ChangesDetails> {
   }
 }
 
-newFiled(controller, str, text, icon, size, init) {
+newFiled(controller, str, text, icon, size, init, [TextDirection? dir]) {
   return new FadeAnimation(
       1.7,
       Column(children: <Widget>[
@@ -339,6 +351,7 @@ newFiled(controller, str, text, icon, size, init) {
             ),
             child: TextField(
                 textAlign: TextAlign.center,
+                textDirection: dir,
                 controller: controller..text = init,
                 style: TextStyle(fontSize: 18),
                 decoration: InputDecoration(
@@ -361,7 +374,7 @@ newFiled(controller, str, text, icon, size, init) {
       ]));
 }
 
-newFiled1(controller, str, text, icon, size, init) {
+newFiled1(controller, str, text, icon, size, init, [TextDirection? dir]) {
   return FadeAnimation(
     1.7,
     new Column(children: <Widget>[
@@ -387,6 +400,7 @@ newFiled1(controller, str, text, icon, size, init) {
               maxLines: null,
               expands: true,
               textAlign: TextAlign.center,
+              textDirection: dir,
               controller: controller..text = init,
               style: TextStyle(fontSize: Globals.scaler.getTextSize(7.5)),
               decoration: InputDecoration(

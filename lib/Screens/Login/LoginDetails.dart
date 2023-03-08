@@ -80,11 +80,11 @@ class _HomePageState extends State<LoginDetails> {
             ),
             SizedBox(height: Globals.scaler.getHeight(1)),
             newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
-                false),
+                false, TextDirection.rtl),
             newFiled(address, address_str, "כתובת מגורים",
-                FontAwesomeIcons.house, false),
+                FontAwesomeIcons.house, false, TextDirection.rtl),
             newFiled(mail, mail_str, "כתובת המייל",
-                FontAwesomeIcons.envelopesBulk, false),
+                FontAwesomeIcons.envelopesBulk, false, TextDirection.ltr),
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
                 alignment: Alignment.centerRight,
@@ -212,7 +212,7 @@ class _HomePageState extends State<LoginDetails> {
   }
 }
 
-newFiled(controller, str, text, icon, cover) {
+newFiled(controller, str, text, icon, cover, [TextDirection? dir]) {
   return new FadeAnimation(
       1.7,
       Column(children: <Widget>[
@@ -236,6 +236,7 @@ newFiled(controller, str, text, icon, cover) {
             ),
             child: TextField(
                 textAlign: TextAlign.center,
+                textDirection: dir,
                 controller: controller,
                 obscureText: cover,
                 style: TextStyle(fontSize: 18),

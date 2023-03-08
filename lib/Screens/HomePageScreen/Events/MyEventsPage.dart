@@ -54,7 +54,8 @@ class _HomePageState extends State<MyEventsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "${this.widget.title}  ",
+                  "  ${this.widget.title}  ",
+                  textDirection: TextDirection.rtl,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.alef(
                       fontWeight: FontWeight.bold,

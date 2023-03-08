@@ -21,6 +21,7 @@ class ProfileDetailHeader extends StatelessWidget {
     var userInformation = Align(
       alignment: AlignmentDirectional.center,
       child: Text(user!.name!,
+          textDirection: TextDirection.rtl,
           style: GoogleFonts.alef(
               fontSize: Globals.scaler.getTextSize(10),
               textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),

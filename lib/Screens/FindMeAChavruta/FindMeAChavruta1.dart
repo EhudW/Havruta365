@@ -455,6 +455,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                             width: Globals.scaler.getWidth(29),
                                             child: TextField(
                                               controller: bookController,
+                                              textDirection:
+                                                  ui.TextDirection.rtl,
                                               textAlign: TextAlign.center,
                                               autocorrect: true,
                                               style: TextStyle(
@@ -598,6 +600,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     width: Globals.scaler.getWidth(26.5),
                     child: TextField(
                         textAlign: TextAlign.center,
+                        textDirection: ui.TextDirection.rtl,
                         autocorrect: true,
                         style: TextStyle(
                             fontSize: Globals.scaler.getTextSize(7.2),

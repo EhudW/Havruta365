@@ -102,7 +102,7 @@ class _EventsScrollerState extends State<EventsScroller> {
                     style: GoogleFonts.secularOne(
                         fontSize: 12, fontWeight: FontWeight.bold),
                     textDirection: TextDirection.rtl),
-                Text(teacher)
+                Text(teacher, textDirection: TextDirection.rtl)
               ],
             ),
           ),

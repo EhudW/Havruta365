@@ -65,6 +65,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
         ),
         child: new TextField(
           controller: lecturerController,
+          textDirection: TextDirection.rtl,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
             border: InputBorder.none,
@@ -129,6 +130,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     ),
                     child: new TextField(
                       controller: locationController,
+                      textDirection: TextDirection.rtl,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,

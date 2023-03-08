@@ -112,6 +112,7 @@ class _HomePageState extends State<ForgetPassword1> {
                 Flushbar(
                   title: 'בוצע החלפת סיסמא',
                   messageText: Text('הסיסמא שונתה בהצלחה !',
+                      textDirection: TextDirection.rtl,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.teal[400], fontSize: 20)),
                   duration: Duration(seconds: 3),

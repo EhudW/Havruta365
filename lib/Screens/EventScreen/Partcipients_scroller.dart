@@ -5,6 +5,7 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
+import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
 class ParticipentsScroller extends StatelessWidget {
@@ -67,7 +68,8 @@ class ParticipentsScroller extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(
                     top: hasButton ? 0 : 8.0, left: hasButton ? 16 : 0),
-                child: Text(snapshot.data['name']),
+                child: Text(snapshot.data['name'],
+                    textDirection: ui.TextDirection.rtl),
               ),
             ];
             var _inner = [
@@ -138,6 +140,7 @@ class ParticipentsScroller extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16),
             child: Text(
               title,
+              textDirection: ui.TextDirection.rtl,
               style: TextStyle(fontSize: 18),
             ),
           ),

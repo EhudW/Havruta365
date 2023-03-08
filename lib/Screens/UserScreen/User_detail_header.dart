@@ -20,6 +20,7 @@ class UserDetailHeader extends StatelessWidget {
     var userInformation = Align(
       alignment: AlignmentDirectional.center,
       child: Text(user!.name!,
+          textDirection: TextDirection.rtl,
           style: GoogleFonts.alef(
               fontSize: 32,
               textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),

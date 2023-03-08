@@ -155,9 +155,12 @@ class MyProgressButtonState extends State<MyProgressButton> {
         children: overlaps.isNotEmpty
             ? [
                 Icon(Icons.warning_amber, color: Colors.redAccent),
-                Text("  " + txt, style: textStyle)
+                Text("  " + txt + "  ",
+                    textDirection: ui.TextDirection.rtl, style: textStyle)
               ]
-            : [Text(txt, style: textStyle)]);
+            : [
+                Text(txt, textDirection: ui.TextDirection.rtl, style: textStyle)
+              ]);
     var progressTextButton = Column(children: [
       iAmCreator
           ? SizedBox()
@@ -171,10 +174,12 @@ class MyProgressButtonState extends State<MyProgressButton> {
                 ),
                 ButtonState.fail: Text(
                   message,
+                  textDirection: ui.TextDirection.rtl,
                   style: textStyle,
                 ),
                 ButtonState.fail2: Text(
                   message2,
+                  textDirection: ui.TextDirection.rtl,
                   style: textStyle,
                 ),
                 ButtonState.success: Text(
@@ -339,6 +344,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
                 widget.event!.type == 'H'
                     ? 'החברותא בתפוסה מלאה! לא ניתן להצטרף!'
                     : 'השיעור בתפוסה מלאה! לא ניתן להצטרף!',
+                textDirection: ui.TextDirection.rtl,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.teal[400],

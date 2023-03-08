@@ -7,6 +7,7 @@ import 'package:havruta_project/Widgets/SplashScreen.dart';
 import '../../Globals.dart';
 import 'ChatMessage.dart';
 import 'package:intl/intl.dart';
+import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
 class ChatScreen extends StatefulWidget {
@@ -54,7 +55,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                             title: Row(
                               children: <Widget>[
-                                Text(message.name!),
+                                Text(message.name!,
+                                    textDirection: ui.TextDirection.rtl),
                                 SizedBox(
                                   width: 16.0,
                                 ),
@@ -65,7 +67,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                 ),
                               ],
                             ),
-                            subtitle: Text(message.message!),
+                            subtitle: Text(message.message!,
+                                textDirection: ui.TextDirection.rtl),
                             trailing: Icon(
                               Icons.arrow_forward_ios,
                               size: 14.0,

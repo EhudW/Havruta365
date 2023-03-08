@@ -50,16 +50,19 @@ class EventDetailHeader extends StatelessWidget {
         ),
         Text(
           event!.topic!,
+          textDirection: TextDirection.rtl,
           style: GoogleFonts.secularOne(fontSize: 26.0),
           textAlign: TextAlign.center,
         ),
         Text(
           event!.book!,
+          textDirection: TextDirection.rtl,
           style: GoogleFonts.secularOne(fontSize: 22.0),
           textAlign: TextAlign.center,
         ),
         Text(
           teacher,
+          textDirection: TextDirection.rtl,
           style: GoogleFonts.secularOne(fontSize: 22.0),
           textAlign: TextAlign.center,
         ),
