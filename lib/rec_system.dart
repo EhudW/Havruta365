@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
@@ -300,15 +302,22 @@ class MultiConsiderations extends RecommendationSystem<Event> {
     Future<List<Event>>? compareToMe,
     Future<List<Event>>? possibleEvents,
     String? myMail,
+    bool saveLastRank = false,
+    bool clearCacheAfter = true,
   }) {
     setData({
       "compareToMe": compareToMe,
       "possibleEvents": possibleEvents,
-      "myMail": myMail
+      "myMail": myMail,
+      "saveLastRank": saveLastRank,
+      "clearCacheAfter": clearCacheAfter,
     });
   }
-  @override
-  Future<bool> calc([int? topAmount]) async {
+  static Map<String, User> _users_cache = {};
+  Map<Event, double> last_rank = {};
+  static void clear_cache() => _users_cache.clear();
+  Future<Map<Event, double>> calcTotalRank(
+      List<Event> possibleEvents, List<Event> compareToMe) {
     ///
     var whoTeacher = (Event e) => e.lecturer?.trim() != ""
         ? e.lecturer!.trim().toLowerCase()
@@ -318,14 +327,13 @@ class MultiConsiderations extends RecommendationSystem<Event> {
       return x == "" ? UniqueKey().toString() : x;
     };
 
-    Map<String, User> users_cache = {};
     var fillUsersCache = (List<Event> list) async {
       for (Event e in list) {
         for (String user in e.participants ?? []) {
-          users_cache[user] = users_cache[user] ?? await getUser(user);
+          _users_cache[user] = _users_cache[user] ?? await getUser(user);
         }
         for (String user in e.waitingQueue ?? []) {
-          users_cache[user] = users_cache[user] ?? await getUser(user);
+          _users_cache[user] = _users_cache[user] ?? await getUser(user);
         }
       }
     };
@@ -481,7 +489,14 @@ class MultiConsiderations extends RecommendationSystem<Event> {
       }
       return totalRank;
     };
+    return getTotalRank(possibleEvents, compareToMe).then((value) {
+      this.last_rank = this.data!["saveLastRank"] ? value : last_rank;
+      return value;
+    }).whenComplete(() => this.data!["clearCacheAfter"] ? clear_cache() : null);
+  }
 
+  @override
+  Future<bool> calc([int? topAmount]) async {
     bool success = true;
 
     var possibleEvents = await ((this.data?['possibleEvents'] ?? getAllEvents())
@@ -504,7 +519,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
     }
     var timeNow = DateTime.now();
 
-    this.top = getSortedList(await getTotalRank(possibleEvents, compareToMe))
+    this.top = getSortedList(await calcTotalRank(possibleEvents, compareToMe))
         .where((Event e) => thisEventIsNewForMeAndAvailable(e, myMail, timeNow))
         .toList();
     return success;
@@ -675,6 +690,7 @@ abstract class ModelEvalution<T> {
   // sum(1/(j*#users) for all hits that predicted at pos j for all users)
   // pos j = human index which start from 1
   double ARHR(List<List<List<T>>> prediction_hits, int? fixedK);
+  dynamic getDiff(dynamic tblA, dynamic tblB);
   double MAE(dynamic distanceTable);
   double RMSE(dynamic distanceTable);
 }
@@ -745,13 +761,27 @@ class EventModelEvaluation extends ModelEvalution<Event> {
   }
 
   @override
-  double MAE(distanceTable) {
-    return double.nan;
+  getDiff(dynamic tblA, dynamic tblB) {
+    Map<ObjectId, double> a = (tblA as Map<Event, double>)
+        .map((key, value) => MapEntry(key.id, value));
+    Map<ObjectId, double> b = (tblB as Map<Event, double>)
+        .map((key, value) => MapEntry(key.id, value));
+    Set<ObjectId> both = a.keys.toSet().intersection(b.keys.toSet());
+    return both.map((i) => a[i]! - b[i]!).toList();
+  }
+
+  @override
+  double MAE(dynamic distanceTable) {
+    return (distanceTable as List<double>)
+            .fold<double>(0.0, (pre, e) => pre + e.abs()) /
+        distanceTable.length;
   }
 
   @override
   double RMSE(distanceTable) {
-    return double.nan;
+    var x = (distanceTable as List<double>)
+        .fold<double>(0.0, (pre, e) => pre + e * e);
+    return sqrt(x / distanceTable.length);
   }
 
   @override
@@ -803,6 +833,7 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
   }
   assert(k % 2 == 0);
   assert(k >= 4);
+  var eval = EventModelEvaluation();
   var mongo = Globals.db!;
   var db = mongo.db as Db;
   var collection = db.collection('Users');
@@ -812,6 +843,7 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
   Map<String, List<Event>> user_events_validate = {};
   Map<String, List<Event>> user_events_data = {};
   Map<String, List<Event>> user_rec = {};
+  List<double> alluser_distance_tbl = [];
   for (var email in usersEmail) {
     var list = await MultiConsiderations.getMyEvents(email!,
         // filterOld = true since we want to the test/validate will be on same zone,
@@ -823,12 +855,14 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
       continue;
     }
     list.shuffle();
-    user_events_validate[email] = list.sublist(0, 2 * k + 1);
-    user_events_data[email] = list.sublist(2 * k + 1);
+    user_events_validate[email] = list.sublist(0, k + 1);
+    user_events_data[email] = list.sublist(k + 1);
     var data = {
-      "compareToMe": user_events_data[email],
-      "possibleEvents": allEvents,
+      "compareToMe": Future.value(user_events_data[email]),
+      "possibleEvents": Future.value(allEvents),
       "myMail": email,
+      "clearCacheAfter": false,
+      "saveLastRank": true,
     };
     var system = MultiRecommendationSystem<Event>(
         systems: [MultiConsiderations(), ByEventSuccess()],
@@ -838,18 +872,40 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
     var success = await system.calc();
     if (success) {
       user_rec[email] = system.getTop();
+      // distance tbl
+      var mcs = system.systems[0] as MultiConsiderations;
+      var A = mcs.last_rank;
+      var B = await mcs.calcTotalRank(A.keys.toList(), list);
+      alluser_distance_tbl.addAll(eval.getDiff(A, B));
+      //mcs.last_rank.clear(); because  "saveLastRank": true,
     }
   }
+  //MultiConsiderations.clear_cache(); because "clearCacheAfter": false,
   List<List<List<Event>>> prediction_hits = [];
   for (var email in user_rec.keys) {
     prediction_hits.add([user_rec[email]!, user_events_validate[email]!]);
   }
-  var eval = EventModelEvaluation();
   var ranges = ModelEvalution.calcRange(k);
   var pk_range = ranges[ModelEvalutionMethod.PrecisionK];
+  var rk_range = ranges[ModelEvalutionMethod.RecallK];
   var mrr_range = ranges[ModelEvalutionMethod.MRR];
-  var pk = eval.precision_k(prediction_hits, null);
-  var mrr = eval.MRR(prediction_hits, null);
-  print("k=$k   pk=$pk   pk range=$pk_range");
-  print("k=$k   mrr=$mrr   mrr range=$mrr_range");
+  var arhr_range = ranges[ModelEvalutionMethod.ARHR];
+  var mae_range = ranges[ModelEvalutionMethod.MAE];
+  var rmse_range = ranges[ModelEvalutionMethod.RMSE];
+  int? fixedK = k;
+  var pk = eval.precision_k(prediction_hits, fixedK);
+  var rk = eval.recall_k(prediction_hits, fixedK);
+  var mrr = eval.MRR(prediction_hits, fixedK);
+  var arhr = eval.ARHR(prediction_hits, fixedK);
+  var mae = eval.MAE(alluser_distance_tbl);
+  var rmse = eval.RMSE(alluser_distance_tbl);
+  print("k=$k");
+  print("       pk=$pk       pk range=$pk_range");
+  print("       rk=$rk       rk range=$rk_range");
+  print("       mrr=$mrr     mrr range=$mrr_range");
+  print("       arhr=$arhr   arhr range=$arhr_range");
+  print(
+      "       mae=$mae     mae range=$mae_range  [only for 'MultiConsiderations']");
+  print(
+      "       rmse=$rmse   rmse range=$rmse_range  [only for 'MultiConsiderations']");
 }
