@@ -263,6 +263,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
         idleType == 1 ? 'האירוע נוסף בהצלחה לפרופיל האישי' : "הבקשה נשלחה",
         textAlign: TextAlign.center,
       )));
+      Globals.updateRec(force: true);
       // ------------------------ Maybe need to DELETE --------------
       if (idleType == 1) {
         widget.event!.participants!.add(Globals.currentUser!.email);

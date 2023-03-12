@@ -25,16 +25,23 @@ class Globals {
     // this is how much to wait before each attempt , but no timeout is set
     duration: MyDebug.MyConsts.loadPropertyDelaySec,
   );
-
+  static Function()? onUpdateRec;
   // ignore calling this function unless force==true,
   //which should be called EACH,but ONLY in Events.dart
-  static void updateRec({bool force = false}) =>
+  static void updateRec({bool force = false}) {
+    if (force) {
       // second param is false, so it will wait  duration: MyDebug.MyConsts.loadPropertyDelaySec
-      force
-          ? rec.restart([], false)
-          : MyDebug.myPrint(
-              "updateRec() called with force=false; so the call is ignored.",
-              MyDebug.MyPrintType.None);
+      rec.restart([], false);
+      var tmp = onUpdateRec;
+      if (tmp != null) {
+        tmp();
+      }
+    } else {
+      MyDebug.myPrint(
+          "updateRec() called with force=false; so the call is ignored.",
+          MyDebug.MyPrintType.None);
+    }
+  }
 
   static Mongo? db;
   static bool isDbConnect = false;

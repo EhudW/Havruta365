@@ -146,6 +146,7 @@ class _EventsState extends State<Events> {
     super.initState();
     //this.widget.events = EventsModel(false);
     //this.widget.eventsOnline = EventsModel(true);
+    Globals.onUpdateRec = () => null;
     Globals.updateRec(force: true);
     /*scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
@@ -161,6 +162,8 @@ class _EventsState extends State<Events> {
     });*/
 
     this.refresh();
+    final tmp = widget.eventsOnline;
+    Globals.onUpdateRec = () => tmp?.refresh();
   }
 
   @override

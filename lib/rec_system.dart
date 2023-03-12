@@ -249,6 +249,7 @@ List<PartOfDay> getPartsOfDayOf(DateTime d, int duration) {
 }
 
 class MultiConsiderations extends RecommendationSystem<Event> {
+  // auto filtered by EvenesSelectorBuildder.targetForMe()
   static Future<List<Event>> getAllEvents([int maxEvents = 100]) =>
       EventsSelectorBuilder.fetchFrom(
         startFrom: 0,
@@ -268,6 +269,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
           maxEvents: null,
           startFrom: null,
           withWaitingQueue: true);
+  // won't check isTargetedForMe
   static bool thisEventIsNewForMeAndAvailable(
       Event e, String myMail, DateTime timeNow) {
     if ((e.participants ?? []).length + (e.waitingQueue ?? []).length >=
@@ -498,7 +500,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
   @override
   Future<bool> calc([int? topAmount]) async {
     bool success = true;
-
+    // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
     var possibleEvents = await ((this.data?['possibleEvents'] ?? getAllEvents())
         .catchError((error) {
       success = false;
@@ -518,7 +520,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
       return success;
     }
     var timeNow = DateTime.now();
-
+    // won't check isTargetedForMe, assuming given possibleEvents might filtered by it, if needed
     this.top = getSortedList(await calcTotalRank(possibleEvents, compareToMe))
         .where((Event e) => thisEventIsNewForMeAndAvailable(e, myMail, timeNow))
         .toList();
@@ -527,6 +529,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
 }
 
 class ByEventSuccess extends RecommendationSystem<Event> {
+  // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
   static Future<List<Event>> getAllEvents() =>
       MultiConsiderations.getAllEvents();
   static Future<List<Event>> getMyEvents(String myMail) =>
@@ -540,6 +543,7 @@ class ByEventSuccess extends RecommendationSystem<Event> {
   }
   Future<bool> calc([int? topAmount]) async {
     bool success = true;
+    // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
     var possibleEvents = await ((this.data?['possibleEvents'] ?? getAllEvents())
         .catchError((error) {
       success = false;
@@ -565,7 +569,7 @@ class ByEventSuccess extends RecommendationSystem<Event> {
 
     var myMail = data!["myMail"] ?? Globals.currentUser!.email!;
     var timeNow = DateTime.now();
-
+    // won't check isTargetedForMe, assuming given possibleEvents might filtered by it, if needed
     this.top = MultiConsiderations.getSortedList(rank)
         .where((Event e) => MultiConsiderations.thisEventIsNewForMeAndAvailable(
             e, myMail, timeNow))
@@ -586,6 +590,7 @@ class ByEventSuccess extends RecommendationSystem<Event> {
 class ExampleRecommendationSystem {
   static MultiRecommendationSystem<Event> create(String myMail) {
     var myEvents = MultiConsiderations.getMyEvents(myMail);
+    // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
     var allEvents = MultiConsiderations.getAllEvents();
     var data = {
       "compareToMe": myEvents,
@@ -839,6 +844,7 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
   var collection = db.collection('Users');
   var usersEmail =
       await collection.find().map((user) => User.fromJson(user).email).toList();
+  // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
   var allEvents = await MultiConsiderations.getAllEvents();
   Map<String, List<Event>> user_events_validate = {};
   Map<String, List<Event>> user_events_data = {};
@@ -846,11 +852,18 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
   List<double> alluser_distance_tbl = [];
   for (var email in usersEmail) {
     var list = await MultiConsiderations.getMyEvents(email!,
-        // filterOld = true since we want to the test/validate will be on same zone,
+        // filterOld = true since we want the test/validate will be on same zone,
         // it isn't just recommendation but also test
         // and since we filter old events from getAllEvents, we need to do it here too...
         // or else we miss old event because they aren't in the possibleEvents=getAllEvents
-        filterOld: true); //mongo.getAllEventsAndCreated(email, false, null);
+        // we want:
+        // [possibleRecommendation ( validate            ]   data)
+        // [ getAllEvents          ( list.sublist(0,k+1) ]   list=getMyEvents.shuffle )
+        // we don't want empty intersection:
+        // [possibleRecommendation]     (validate              data)
+        // [ getAllEvents ]             ( list.sublist(0,k+1)  list=getMyEvents.shuffle )
+        // and also the systems won't recommend old events
+        filterOld: true);
     if (list.length < (2 * k)) {
       continue;
     }
