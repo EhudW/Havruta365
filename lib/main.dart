@@ -14,9 +14,10 @@ import 'Globals.dart';
 import 'Widgets/SplashScreen.dart';
 import 'mytimer.dart';
 import 'mydebug.dart' as MyDebug;
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
-  runApp(MyApp());
+  initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
 class NewNotificationManager {

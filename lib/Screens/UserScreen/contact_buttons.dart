@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
 import 'package:havruta_project/Screens/ChatScreen/SendScreen.dart';
 
 import '../../Globals.dart';
@@ -46,7 +47,8 @@ class ContactButtons extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            SendScreen(user!.email, user!.name)));
+                            ChatPage(otherPerson: user!.email!)));
+                //SendScreen(user!.email, user!.name)));
               },
               style: buttonStyleMessage,
               child: Row(

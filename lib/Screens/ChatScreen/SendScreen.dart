@@ -10,27 +10,33 @@ import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
 class SendScreen extends StatefulWidget {
-  SendScreen(String? dstMail, String? dstName) {
-    this.dstMail = dstMail;
-    this.dstName = dstName;
+  SendScreen(List<dynamic> dstMails) {
+    this.dstMails = dstMails;
   }
-  String? dstMail, dstName;
+  late List<dynamic> dstMails;
   @override
   _SendScreenState createState() => _SendScreenState();
 }
 
 class _SendScreenState extends State<SendScreen> {
-  ChatMessage chatMessage = new ChatMessage();
+  //ChatMessage chatMessage = new ChatMessage();
   final message = TextEditingController();
   // ignore: non_constant_identifier_names
   String message_str = "";
+  void sendToAll() async {
+    Navigator.pop(context);
+    await Future.wait(widget.dstMails.map((element) => Globals.db!.sendMessage(
+        ChatMessage(
+            src_mail: Globals.currentUser!.email,
+            avatar: Globals.currentUser!.avatar,
+            name: Globals.currentUser!.name,
+            dst_mail: element,
+            datetime: DateTime.now(),
+            message: message.text))));
+  }
 
   @override
   Widget build(BuildContext context) {
-    chatMessage.src_mail = Globals.currentUser!.email;
-    chatMessage.dst_mail = widget.dstMail;
-    chatMessage.avatar = Globals.currentUser!.avatar;
-    chatMessage.name = Globals.currentUser!.name;
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       backgroundColor: Colors.teal[100],
@@ -45,7 +51,7 @@ class _SendScreenState extends State<SendScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    "${chatMessage.name}",
+                    Globals.currentUser!.name!,
                     textDirection: ui.TextDirection.rtl,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.alef(
@@ -80,7 +86,7 @@ class _SendScreenState extends State<SendScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    "${widget.dstName}",
+                    "הודעת תפוצה",
                     textDirection: ui.TextDirection.rtl,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.alef(
@@ -140,7 +146,8 @@ class _SendScreenState extends State<SendScreen> {
                   )..show(context);
                   return;
                 }
-                chatMessage.message = message.text;
+                sendToAll();
+                /*chatMessage.message = message.text;
                 bool isSend = await Globals.db!.sendMessage(chatMessage);
                 if (!isSend) {
                   Flushbar(
@@ -154,7 +161,7 @@ class _SendScreenState extends State<SendScreen> {
                   title: 'שליחת הודעה',
                   message: 'ההודעה נשלחה בהצלחה',
                   duration: Duration(seconds: 3),
-                )..show(context);
+                )..show(context);*/
               },
             ),
             SizedBox(height: Globals.scaler.getHeight(1))

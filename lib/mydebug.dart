@@ -74,6 +74,12 @@ class MyConsts {
   static const int checkNewNotificationSec = 15;
   static const int checkNewNotificationTimeoutSec = 60;
 
+  //////////////////////   ChatRefresh (chatStreamModel.dart):
+  //////////////////////
+  // how often check for new msgs
+  static const int checkNewMessageInChatSec = 7;
+  static const int checkNewMessageOutsideChatSec = checkNewNotificationSec;
+
   //////////////////////  Globals.rec (Globals.dart):
   //////////////////////
   // how often check for fetch load property [this is no setting a timeout]

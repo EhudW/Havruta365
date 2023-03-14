@@ -318,15 +318,61 @@ class Mongo {
     return true;
   }
 
-  Future<List<ChatMessage>> getAllMyMessages(String? dstMail) async {
+  Future<List<ChatMessage>> getAllMyMessages(String dstMail,
+      [String? srcMail, bool biDirectional = true]) async {
     List<ChatMessage> listMessages = [];
     var collection = Globals.db!.db.collection('Chats');
-    var messages =
-        await collection.find(where.eq('dst_mail', dstMail)).toList();
+    var selector = where.eq('dst_mail', dstMail);
+    if (dstMail == srcMail) {
+      selector = selector.eq('src_mail', srcMail);
+    } else {
+      selector =
+          biDirectional ? selector.or(where.eq("src_mail", dstMail)) : selector;
+      if (srcMail != null) {
+        var extra = where.eq("src_mail", srcMail);
+        extra = biDirectional ? extra.or(where.eq("dst_mail", srcMail)) : extra;
+        selector = selector.and(extra);
+      }
+    }
+
+    var messages = await collection.find(selector).toList();
     for (var i in messages) {
       listMessages.add(new ChatMessage.fromJson(i));
     }
+    listMessages.sort((a, b) => a.datetime!.compareTo(b.datetime!));
     return listMessages;
+  }
+
+  Future<List<ChatMessage>> getAllMyLastMessageWithEachFriend(String dstMail,
+      [bool biDirectional = true]) async {
+    List<ChatMessage> listMessages =
+        await getAllMyMessages(dstMail, null, biDirectional);
+    List<ChatMessage> rslt = [];
+    Set<String> withFriend = {};
+    var sameRepr = (a, b) {
+      var x = [a, b];
+      x.sort();
+      return x.toString();
+    };
+    listMessages.reversed.forEach((element) {
+      var r = sameRepr(element.src_mail!, element.dst_mail!);
+      if (!withFriend.contains(r)) {
+        rslt.add(element);
+        withFriend.add(r);
+      }
+    });
+    for (int i = 0; i < rslt.length; i++) {
+      if (rslt[i].src_mail != dstMail || rslt[i].src_mail == rslt[i].dst_mail) {
+        rslt[i].otherPersonName = rslt[i].name!;
+        rslt[i].otherPersonAvatar = rslt[i].avatar!;
+        continue;
+      }
+
+      User u = await getUser(rslt[i].dst_mail!);
+      rslt[i].otherPersonAvatar = u.avatar!;
+      rslt[i].otherPersonName = u.name!;
+    }
+    return rslt;
   }
 
   deleteEvent(ObjectId? id) async {

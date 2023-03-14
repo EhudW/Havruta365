@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
+import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
+import 'package:havruta_project/Screens/UserScreen/User_details_page.dart';
 //import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Widgets/SplashScreen.dart';
 import '../../Globals.dart';
@@ -21,8 +24,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    widget.chatMessagesList =
-        Globals.db!.getAllMyMessages(Globals.currentUser!.email);
+    widget.chatMessagesList = Globals.db!
+        .getAllMyLastMessageWithEachFriend(Globals.currentUser!.email!);
   }
 
   @override
@@ -49,26 +52,53 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: 12.0,
                           ),
                           ListTile(
-                            leading: CircleAvatar(
-                              radius: 24.0,
-                              backgroundImage: NetworkImage(message.avatar!),
-                            ),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(
+                                      otherPerson: message.otherPersonMail),
+                                )).then((value) => Navigator.pop(context)),
+                            leading: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                    side:
+                                        BorderSide(color: Colors.transparent)),
+                                onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          UserScreen(message.otherPersonMail),
+                                    )),
+                                child: CircleAvatar(
+                                  radius: 24.0,
+                                  backgroundImage:
+                                      NetworkImage(message.otherPersonAvatar),
+                                )),
                             title: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text(message.name!,
-                                    textDirection: ui.TextDirection.rtl),
                                 SizedBox(
                                   width: 16.0,
                                 ),
                                 Text(
-                                  DateFormat('d-M-yyyy')
+                                    (message.amITheSender
+                                            ? "נשלחה ל "
+                                            : "התקבלה מ") +
+                                        message.otherPersonName,
+                                    textDirection: ui.TextDirection.rtl),
+                              ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  DateFormat('HH:mm  d-M-yyyy')
                                       .format(message.datetime!),
                                   style: TextStyle(fontSize: 12.0),
                                 ),
+                                Text(message.message!,
+                                    textDirection: ui.TextDirection.rtl),
                               ],
                             ),
-                            subtitle: Text(message.message!,
-                                textDirection: ui.TextDirection.rtl),
                             trailing: Icon(
                               Icons.arrow_forward_ios,
                               size: 14.0,

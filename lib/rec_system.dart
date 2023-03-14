@@ -595,7 +595,9 @@ class ExampleRecommendationSystem {
     var data = {
       "compareToMe": myEvents,
       "possibleEvents": allEvents,
-      "myMail": myMail
+      "myMail": myMail,
+      "clearCacheAfter": true,
+      "saveLastRank": false,
     };
     var rslt = MultiRecommendationSystem<Event>(
         systems: [MultiConsiderations(), ByEventSuccess()],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/ChatScreen/SendScreen.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
@@ -72,39 +73,57 @@ class ParticipentsScroller extends StatelessWidget {
                     textDirection: ui.TextDirection.rtl),
               ),
             ];
-            var _inner = [
+            var profileInk = InkWell(
+              child: hasButton
+                  ? Row(children: profile)
+                  : Column(children: profile),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserScreen(snapshot.data['email'])),
+                );
+              },
+            );
+            List<Widget> _inner = [
               //Padding(
               //  padding: EdgeInsets.only(right:0),// hasButton?0:16,top:hasButton?16:0), //was 16.0
               //  child:
-              hasButton ? Row(children: profile) : Column(children: profile),
+              profileInk,
               //),
-              accept == null
-                  ? SizedBox()
-                  : TextButton(
-                      onPressed: () => accept!(userMail),
-                      child: Text("אשר"),
-                      style: TextButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white)),
-              reject == null
-                  ? SizedBox()
-                  : TextButton(
-                      onPressed: () => reject!(userMail),
-                      child: Text("דחה"),
-                      style: TextButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white))
+              Row(children: [
+                accept == null
+                    ? SizedBox()
+                    : TextButton(
+                        onPressed: () => accept!(userMail),
+                        child: Text("אשר"),
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white)),
+                SizedBox(
+                  width: 8,
+                ),
+                reject == null
+                    ? SizedBox()
+                    : TextButton(
+                        onPressed: () => reject!(userMail),
+                        child: Text("דחה"),
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white))
+              ])
             ];
             _inner = _inner
-                .map((e) => Padding(
+                .map((e) => Container(
                       padding: EdgeInsets.only(
                           top: hasButton ? 16 : 0, left: hasButton ? 0 : 16),
+                      margin: hasButton ? EdgeInsets.only(left: 16) : null,
                       child: e,
                     ))
                 .toList();
             return hasButton
                 ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: _inner,
                   )
                 : Column(
@@ -130,7 +149,38 @@ class ParticipentsScroller extends StatelessWidget {
           totalscrollheight * (usersMail.length <= 2 ? usersMail.length : 2);
     }
     totalscrollheight = usersMail.length > 0 ? totalscrollheight : 50;
-
+    dynamic list = ListView.builder(
+      itemCount: usersMail.length,
+      scrollDirection: hasButton ? Axis.vertical : Axis.horizontal,
+      padding: EdgeInsets.only(
+          top: 0,
+          left: hasButton ? 16 : 0,
+          right: 16,
+          bottom: hasButton ? 16 : 0),
+      itemBuilder: _buildActor,
+    );
+    list = SizedBox.fromSize(
+      size: Size.fromHeight(totalscrollheight),
+      child: Padding(
+          child: usersMail.length == 0 ? Center(child: Text("- אין -")) : list,
+          padding: EdgeInsets.only(top: 16)),
+    );
+    if (hasButton) {
+      list = Column(
+          children: List.generate(
+              usersMail.length,
+              (index) => Padding(
+                    padding: EdgeInsets.only(
+                        top: 0,
+                        left: hasButton ? 8 : 0,
+                        right: 16,
+                        bottom: hasButton ? 16 : 0),
+                    child: _buildActor(context, index),
+                  )));
+      list = Padding(
+          child: usersMail.length == 0 ? Center(child: Text("- אין -")) : list,
+          padding: EdgeInsets.only(top: 16));
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -138,31 +188,33 @@ class ParticipentsScroller extends StatelessWidget {
           alignment: Alignment.center,
           child: Padding(
             padding: const EdgeInsets.only(top: 16),
-            child: Text(
-              title,
-              textDirection: ui.TextDirection.rtl,
-              style: TextStyle(fontSize: 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                usersMail.isNotEmpty
+                    ? ElevatedButton.icon(
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SendScreen(usersMail),
+                            )),
+                        icon: Icon(FontAwesomeIcons.envelope, size: 18),
+                        label: Text("שליחת הודעה לרשימה זו"),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.red[700])),
+                      )
+                    : Container(),
+                Text(
+                  title,
+                  textDirection: ui.TextDirection.rtl,
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
             ),
           ),
         ),
-        SizedBox.fromSize(
-          size: Size.fromHeight(totalscrollheight),
-          child: Padding(
-              child: usersMail.length == 0
-                  ? Center(child: Text("- אין -"))
-                  : ListView.builder(
-                      itemCount: usersMail.length,
-                      scrollDirection:
-                          hasButton ? Axis.vertical : Axis.horizontal,
-                      padding: EdgeInsets.only(
-                          top: 0,
-                          left: hasButton ? 16 : 0,
-                          right: 16,
-                          bottom: hasButton ? 16 : 0),
-                      itemBuilder: _buildActor,
-                    ),
-              padding: EdgeInsets.only(top: 16)),
-        ),
+        list
       ],
     );
   }

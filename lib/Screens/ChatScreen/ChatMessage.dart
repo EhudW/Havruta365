@@ -3,15 +3,22 @@
 
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:havruta_project/Globals.dart';
+
 class ChatMessage {
+  String otherPersonAvatar = ""; //only in program
+  String otherPersonName = ""; //only in program
+  String get otherPersonMail => amITheSender ? this.dst_mail! : this.src_mail!;
+  bool get amITheSender => Globals.currentUser!.email == this.src_mail;
   ChatMessage(
       {this.name,
       this.avatar,
       this.src_mail,
       this.datetime,
       this.message,
-      this.dst_mail});
-
+      this.dst_mail,
+      this.id});
+  dynamic id;
   // SrcUser details
   String? name;
   String? avatar;
@@ -28,7 +35,7 @@ class ChatMessage {
         'avatar': avatar ?? "",
         'name': name ?? "",
         'src_mail': src_mail ?? "",
-        'datetime': DateTime.now(),
+        'datetime': datetime ?? DateTime.now(),
         'message': message ?? "",
         'dst_mail': dst_mail ?? ""
       };
@@ -39,5 +46,6 @@ class ChatMessage {
         src_mail = json['src_mail'],
         datetime = json['datetime'],
         message = json['message'],
-        dst_mail = json['dst_mail'];
+        dst_mail = json['dst_mail'],
+        id = json['_id'];
 }

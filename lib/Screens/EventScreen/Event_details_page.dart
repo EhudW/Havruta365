@@ -3,6 +3,7 @@
 import 'package:another_flushbar/flushbar.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
@@ -371,89 +372,100 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ? widget.event!.location?.trim()
         : storyline + location;
     bool notMyTarget = !Globals.currentUser!.isTargetedForMe(widget.event!);
+    var scroll = SingleChildScrollView(
+      child: Column(
+        children: [
+          EventDetailHeader(widget.event),
+          Storyline(
+              storyline,
+              widget.event!.type == 'L'
+                  ? FontAwesomeIcons.graduationCap
+                  : FontAwesomeIcons.users),
+          dates(widget.event!),
+          Divider(),
+          widget.event!.dates!.isEmpty
+              ? Container()
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    (iAmParticipant ||
+                            iAmInWaitingQueue ||
+                            num <= 0 ||
+                            notMyTarget)
+                        ? Container()
+                        : Text("!מהרו להירשם",
+                            style: GoogleFonts.alef(
+                                fontSize: 22.0,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.bold)),
+                    Text(
+                        num <= 0
+                            ? "תפוסה מלאה"
+                            : "נשארו" + " $num " + "מקומות פנויים",
+                        style: GoogleFonts.suezOne(
+                            fontSize: 20.0, color: Colors.grey[700])),
+                    Row(
+                      textDirection: ui.TextDirection.rtl,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("גברים/נשים: ",
+                            textDirection: ui.TextDirection.rtl,
+                            style: GoogleFonts.suezOne(
+                                fontSize: 20.0, color: Colors.grey[700])),
+                        Text(widget.event!.targetGender!,
+                            textDirection: ui.TextDirection.rtl,
+                            style: GoogleFonts.suezOne(
+                                fontSize: 20.0, color: Colors.grey[700])),
+                      ],
+                    )
+                  ],
+                ),
+          widget.event!.dates!.isEmpty || notMyTarget
+              ? Container()
+              : SizedBox(height: 8),
+          widget.event!.dates!.isEmpty || notMyTarget
+              ? Container()
+              : MyProgressButton(
+                  event: widget.event,
+                  allUserEvents: widget.allUserEvents,
+                  notifyParent: refresh),
+          SizedBox(height: 8.0),
+          Divider(),
+          // widget.event.participants.contains(Globals.currentUser.email) ?
+          //   DeleteFromEventButton(widget.event) : SizedBox(),
+          widget.event!.type == "L" || iAmParticipant || iAmCreator
+              ? ParticipentsScroller(
+                  widget.event!.participants,
+                  title: "משתתפים",
+                )
+              : Container(),
+          iAmCreator && widget.event!.type == 'H'
+              ? ParticipentsScroller(
+                  widget.event!.waitingQueue,
+                  title: "ממתינים לאישור",
+                  accept: accept,
+                  reject: reject,
+                )
+              : Container(),
+          SizedBox(height: Globals.scaler.getHeight(1)),
+          // Link
+        ],
+      ),
+    );
+    if (!iAmCreator) {
+      return Scaffold(body: scroll);
+    }
     return Scaffold(
       // floatingActionButton: isCreatorWidget(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            EventDetailHeader(widget.event),
-            Storyline(
-                storyline,
-                widget.event!.type == 'L'
-                    ? FontAwesomeIcons.graduationCap
-                    : FontAwesomeIcons.users),
-            dates(widget.event!),
-            Divider(),
-            widget.event!.dates!.isEmpty
-                ? Container()
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      (iAmParticipant ||
-                              iAmInWaitingQueue ||
-                              num <= 0 ||
-                              notMyTarget)
-                          ? Container()
-                          : Text("!מהרו להירשם",
-                              style: GoogleFonts.alef(
-                                  fontSize: 22.0,
-                                  color: Colors.grey[700],
-                                  fontWeight: FontWeight.bold)),
-                      Text(
-                          num <= 0
-                              ? "תפוסה מלאה"
-                              : "נשארו" + " $num " + "מקומות פנויים",
-                          style: GoogleFonts.suezOne(
-                              fontSize: 20.0, color: Colors.grey[700])),
-                      Row(
-                        textDirection: ui.TextDirection.rtl,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("גברים/נשים: ",
-                              textDirection: ui.TextDirection.rtl,
-                              style: GoogleFonts.suezOne(
-                                  fontSize: 20.0, color: Colors.grey[700])),
-                          Text(widget.event!.targetGender!,
-                              textDirection: ui.TextDirection.rtl,
-                              style: GoogleFonts.suezOne(
-                                  fontSize: 20.0, color: Colors.grey[700])),
-                        ],
-                      )
-                    ],
-                  ),
-            widget.event!.dates!.isEmpty || notMyTarget
-                ? Container()
-                : SizedBox(height: 8),
-            widget.event!.dates!.isEmpty || notMyTarget
-                ? Container()
-                : MyProgressButton(
-                    event: widget.event,
-                    allUserEvents: widget.allUserEvents,
-                    notifyParent: refresh),
-            SizedBox(height: 8.0),
-            Divider(),
-            // widget.event.participants.contains(Globals.currentUser.email) ?
-            //   DeleteFromEventButton(widget.event) : SizedBox(),
-            widget.event!.type == "L" || iAmParticipant || iAmCreator
-                ? ParticipentsScroller(
-                    widget.event!.participants,
-                    title: "משתתפים",
-                  )
-                : Container(),
-            iAmCreator && widget.event!.type == 'H'
-                ? ParticipentsScroller(
-                    widget.event!.waitingQueue,
-                    title: "ממתינים לאישור",
-                    accept: accept,
-                    reject: reject,
-                  )
-                : Container(),
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            deleteButton(),
-            // Link
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Container(
+              height: ScreenScaler().getHeight(iAmCreator ? 35 : 37),
+              child: scroll),
+          deleteButton(),
+        ],
       ),
     );
   }
