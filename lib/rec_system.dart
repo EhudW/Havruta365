@@ -116,11 +116,13 @@ class CriticMyEvents<O> {
   Map<O, double> rank = {};
   O Function(Event)? classify;
   List<O> Function(Event)? classifyList;
+  num weight;
   CriticMyEvents(
       {this.field, // not needed for calc
       required this.myEvents,
       required this.classify,
-      required this.classifyList}) {
+      required this.classifyList,
+      this.weight = 1.0}) {
     _calc();
     _norm(soft: 1);
   }
@@ -157,7 +159,7 @@ class CriticMyEvents<O> {
     }
     _total += soft ?? 0;
     for (var option in List.of(rank.keys)) {
-      rank[option] = rank[option]! / _total;
+      rank[option] = rank[option]! / _total * weight;
     }
     _total -= soft ?? 0;
   }
@@ -344,7 +346,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
     var considerationsFactory = (events) => [
           /* need await fillUsersCache()
           // by how age of others are similiar to my age
-          [
+          {"classify":
             (Event e) {
               double total = 0.0;
               var thisYear = DateTime.now().year;
@@ -361,10 +363,10 @@ class MultiConsiderations extends RecommendationSystem<Event> {
               }
               return diff > 10 ? ">10" : (diff > 5 ? "5-10" : "<5");
             },
-            null,
-          ],
+            "weight":1,
+            },
           // by what is the status of the majority of others
-          [
+          {"classify":
             (Event e) {
               Map<String, int> status_count = {};
               var both = (e.participants ?? []) + (e.waitingQueue ?? []);
@@ -385,60 +387,61 @@ class MultiConsiderations extends RecommendationSystem<Event> {
               }
               return max ?? UniqueKey().toString();
             },
-            null,
-          ],
+            "weight":1,
+            },
           */
           // by part of day
-          [
-            null,
-            // (Event e) => getPartsOfDayOf(e.dates!.first, e.duration ?? 0),
-            (Event e) {
+          {
+            "classifyList":
+                // (Event e) => getPartsOfDayOf(e.dates!.first, e.duration ?? 0),
+                (Event e) {
               List rslt = [];
               int duration = e.duration ?? 0;
               e.dates!.forEach(
                   (time) => rslt.addAll(getPartsOfDayOf(time, duration)));
               return rslt;
             },
-          ],
+            "weight": 1,
+          },
           // by who is the creator
-          [
-            (Event e) => e.creatorUser!,
-            null,
-          ],
+          {
+            "classify": (Event e) => e.creatorUser!,
+            "weight": 2,
+          },
           // by who are the people with me
-          [
-            null,
-            (Event e) => e.participants ?? [],
-          ],
+          {
+            "classifyList": (Event e) => e.participants ?? [],
+            "weight": 1,
+          },
           // by what is the book
-          [
-            (Event e) => uniqueString(e.book),
-            null,
-          ],
+          {
+            "classify": (Event e) => uniqueString(e.book),
+            "weight": 2,
+          },
           // by who is the teacher
-          [
-            whoTeacher,
-            null,
-          ],
+          {
+            "classify": whoTeacher,
+            "weight": 1,
+          },
           // by what is the topic
-          [
-            (Event e) => uniqueString(e.topic),
-            null,
-          ],
+          {
+            "classify": (Event e) => uniqueString(e.topic),
+            "weight": 1.5,
+          },
           // by if it is havruta or shiur
-          [
-            (Event e) => e.type!.toLowerCase(),
-            null,
-          ],
+          {
+            "classify": (Event e) => e.type!.toLowerCase(),
+            "weight": 1,
+          },
           // by what day it takes place
-          [
-            null,
-            (Event e) =>
+          {
+            "classifyList": (Event e) =>
                 e.dates?.map((d) => d.toLocal().weekday).toList() ?? [],
-          ],
+            "weight": 1,
+          },
           // by the duration of the class
-          [
-            (Event e) {
+          {
+            "classify": (Event e) {
               if (e.duration == null || e.duration! <= 30) {
                 return "0-30";
               } else if (e.duration! > 60) {
@@ -446,33 +449,36 @@ class MultiConsiderations extends RecommendationSystem<Event> {
               }
               return "31-60";
             },
-            null,
-          ],
+            "weight": 1,
+          },
           // by the size of the class
-          [
-            (Event e) => e.maxParticipants! >= 10 ? ">=10" : "<10",
-            null,
-          ],
+          {
+            "classify": (Event e) => e.maxParticipants! >= 10 ? ">=10" : "<10",
+            "weight": 1,
+          },
           // by its target gender(to both gender? only mine?)
-          [
-            (Event e) => e.targetGender?.toLowerCase(),
-            null,
-          ],
+          {
+            "classify": (Event e) => e.targetGender?.toLowerCase(),
+            "weight": 1,
+          },
           // by its location
-          [
-            (Event e) => uniqueString(e.location),
-            null,
-          ],
+          {
+            "classify": (Event e) => uniqueString(e.location),
+            "weight": 1,
+          },
           // by if it has a link (The user don't know until the time=live),
           // but probably online lessons has link
-          [
-            (Event e) => (e.link?.trim() ?? "") != "" ? true : false,
-            null,
-          ],
+          {
+            "classify": (Event e) =>
+                (e.link?.trim() ?? "") != "" ? true : false,
+            "weight": 0.5,
+          },
         ]
             .map((e) => CriticMyEvents(
-                classify: e[0] as dynamic Function(Event)?,
-                classifyList: e[1] as List<dynamic> Function(Event)?,
+                classify: e["classify"] as dynamic Function(Event)?,
+                classifyList:
+                    e["classifyList"] as List<dynamic> Function(Event)?,
+                weight: e["weight"] as num? ?? 1.0,
                 myEvents: events))
             .toList();
 

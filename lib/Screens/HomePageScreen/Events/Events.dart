@@ -424,14 +424,59 @@ class _BottomState extends State<Bottom> {
     filterCopy = Map.of(widget.filterRef);
   }
 
+  //int? _lastMyButtonClick; // avoid clicking too fast
+  //int get timestamp => DateTime.now().millisecondsSinceEpoch;
   Widget myButton(
       String label, IconData icon, dynamic applyMap, selected, unselected) {
     bool on = EventsFilters.test(filterCopy, applyMap, false)!; //true, true)!;
     dynamic func = on
         ? null
         : () {
-            filterCopy.addAll(applyMap);
-            setState(() {});
+            setState(() {
+              //if (timestamp - (_lastMyButtonClick ?? 0) < 1200) return;
+              //_lastMyButtonClick = timestamp;
+              filterCopy.addAll(applyMap);
+              if (EventsFilters.test(
+                      filterCopy, widget.filterRef, false) == //true, false) ==
+                  false) {
+                widget.filterRef.addAll(filterCopy);
+                widget.model.filterData['BoolMapFilters'] =
+                    Map.of(widget.filterRef);
+                widget.model.filterData['testers'] = [
+                  EventsSelectorBuilder.timeFilter(
+                      EventsFilters.asParts(widget.filterRef))
+                ];
+                void setter(String? createdBy, String? withParticipant,
+                    String? withParticipant2) {
+                  widget.model.filterData["withParticipant2"] =
+                      withParticipant2;
+                  widget.model.filterData["withParticipant"] = withParticipant;
+                  widget.model.filterData["createdBy"] = createdBy;
+                }
+
+                bool crossMode =
+                    widget.model.filterData["withParticipant2"] != null;
+                // on cross mode no filter about newEvents/Icreated/Ijoined/Pending
+                if (!crossMode) {
+                  String myMail = Globals.currentUser!.email!;
+                  if (EventsFilters.test(
+                      widget.filterRef, EventsFilters.ToNewEvents, false)!) {
+                    setter(null, null, null);
+                  } else if (EventsFilters.test(
+                      widget.filterRef, EventsFilters.ToIcreated, false)!) {
+                    setter(myMail, null, null);
+                  } else if (EventsFilters.test(
+                      widget.filterRef, EventsFilters.ToIjoined, false)!) {
+                    setter(null, myMail, null);
+                  } else if (EventsFilters.test(widget.filterRef,
+                      EventsFilters.ToPendingHavReq, false)!) {
+                    setter(myMail, null, null);
+                  }
+                }
+
+                widget.model.refresh();
+              }
+            });
           };
 
     var colors = on ? selected : unselected;
@@ -495,165 +540,113 @@ class _BottomState extends State<Bottom> {
           horizontal: Globals.scaler.getWidth(3),
           vertical: Globals.scaler.getHeight(1),
         ),
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
-            Widget>[
-          /*Text(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              /*Text(
             "סנן לפי",
             style: TextStyle(
               fontSize: Globals.scaler.getTextSize(8.5),
             ),
           ),
           Divider(thickness: 3),*/
-          mybuttonRow([
-            ["חברותא", FontAwesomeIcons.users, EventsFilters.ToHav],
-            ["שיעור", FontAwesomeIcons.graduationCap, EventsFilters.ToShiur],
-            [
-              "הכל",
-              FontAwesomeIcons.filterCircleXmark,
-              EventsFilters.ToShiurAndHav
-            ]
-          ], selected1, unselected1),
-          crossMode ? SizedBox() : Divider(thickness: 3),
-          crossMode
-              ? SizedBox()
-              : mybuttonRow([
-                  [
-                    "ביוזמתי",
-                    FontAwesomeIcons.personChalkboard,
-                    EventsFilters.ToIcreated
-                  ],
-                  [
-                    "נרשמתי",
-                    FontAwesomeIcons.handshake,
-                    EventsFilters.ToIjoined
-                  ],
-                  [
-                    "הכל",
-                    FontAwesomeIcons.filterCircleXmark,
-                    EventsFilters.ToNewEvents
-                  ]
-                ], selected2, unselected2),
-          crossMode ? SizedBox() : Divider(thickness: 3),
-          crossMode
-              ? SizedBox()
-              : mybuttonRow([
-                  [
-                    "מחכים לאישור ממני",
-                    FontAwesomeIcons.ellipsis,
-                    EventsFilters.ToPendingHavReq
-                  ],
-                  [
-                    "הכל",
-                    FontAwesomeIcons.filterCircleXmark,
-                    EventsFilters.ToNoFilterPendingHavReq
-                  ]
-                ], selected3, unselected3),
-          Divider(thickness: 3),
-          mybuttonRow([
-            [
-              "0-8",
-              FontAwesomeIcons.clock,
-              EventsFilters.ToFrom0to8,
-            ],
-            [
-              "8-16",
-              FontAwesomeIcons.clock,
-              EventsFilters.ToFrom8to16,
-            ],
-          ], selected1, unselected1),
-          mybuttonRow([
-            [
-              "16-24",
-              FontAwesomeIcons.clock,
-              EventsFilters.ToFrom16to24,
-            ],
-            [
-              "הכל",
-              FontAwesomeIcons.filterCircleXmark,
-              EventsFilters.ToNoHourFilter
-            ]
-          ], selected1, unselected1),
-          Divider(thickness: 3),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            OutlinedButton(
-                onPressed: () => Navigator.pop(context),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Color.fromARGB(255, 255, 4, 4),
-                  side: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.circleXmark,
+              mybuttonRow([
+                ["חברותא", FontAwesomeIcons.users, EventsFilters.ToHav],
+                [
+                  "שיעור",
+                  FontAwesomeIcons.graduationCap,
+                  EventsFilters.ToShiur
+                ],
+                [
+                  "הכל",
+                  FontAwesomeIcons.filterCircleXmark,
+                  EventsFilters.ToShiurAndHav
+                ]
+              ], selected1, unselected1),
+              crossMode ? SizedBox() : Divider(thickness: 3),
+              crossMode
+                  ? SizedBox()
+                  : mybuttonRow([
+                      [
+                        "ביוזמתי",
+                        FontAwesomeIcons.personChalkboard,
+                        EventsFilters.ToIcreated
+                      ],
+                      [
+                        "נרשמתי",
+                        FontAwesomeIcons.handshake,
+                        EventsFilters.ToIjoined
+                      ],
+                      [
+                        "הכל",
+                        FontAwesomeIcons.filterCircleXmark,
+                        EventsFilters.ToNewEvents
+                      ]
+                    ], selected2, unselected2),
+              crossMode ? SizedBox() : Divider(thickness: 3),
+              crossMode
+                  ? SizedBox()
+                  : mybuttonRow([
+                      [
+                        "מחכים לאישור ממני",
+                        FontAwesomeIcons.ellipsis,
+                        EventsFilters.ToPendingHavReq
+                      ],
+                      [
+                        "הכל",
+                        FontAwesomeIcons.filterCircleXmark,
+                        EventsFilters.ToNoFilterPendingHavReq
+                      ]
+                    ], selected3, unselected3),
+              Divider(thickness: 3),
+              mybuttonRow([
+                [
+                  "0-8",
+                  FontAwesomeIcons.clock,
+                  EventsFilters.ToFrom0to8,
+                ],
+                [
+                  "8-16",
+                  FontAwesomeIcons.clock,
+                  EventsFilters.ToFrom8to16,
+                ],
+              ], selected1, unselected1),
+              mybuttonRow([
+                [
+                  "16-24",
+                  FontAwesomeIcons.clock,
+                  EventsFilters.ToFrom16to24,
+                ],
+                [
+                  "הכל",
+                  FontAwesomeIcons.filterCircleXmark,
+                  EventsFilters.ToNoHourFilter
+                ]
+              ], selected1, unselected1),
+              Divider(thickness: 3),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.green[900],
+                      side: BorderSide(
+                        color: Colors.transparent,
+                      ),
                     ),
-                    Text(
-                      "  " + "ביטול",
-                    )
-                  ],
-                )),
-            OutlinedButton(
-                onPressed: () {
-                  if (EventsFilters.test(filterCopy, widget.filterRef,
-                          false) == //true, false) ==
-                      false) {
-                    widget.filterRef.addAll(filterCopy);
-                    widget.model.filterData['BoolMapFilters'] =
-                        Map.of(widget.filterRef);
-                    widget.model.filterData['testers'] = [
-                      EventsSelectorBuilder.timeFilter(
-                          EventsFilters.asParts(widget.filterRef))
-                    ];
-                    void setter(String? createdBy, String? withParticipant,
-                        String? withParticipant2) {
-                      widget.model.filterData["withParticipant2"] =
-                          withParticipant2;
-                      widget.model.filterData["withParticipant"] =
-                          withParticipant;
-                      widget.model.filterData["createdBy"] = createdBy;
-                    }
-
-                    // on cross mode no filter about newEvents/Icreated/Ijoined/Pending
-                    if (!crossMode) {
-                      String myMail = Globals.currentUser!.email!;
-                      if (EventsFilters.test(widget.filterRef,
-                          EventsFilters.ToNewEvents, false)!) {
-                        setter(null, null, null);
-                      } else if (EventsFilters.test(
-                          widget.filterRef, EventsFilters.ToIcreated, false)!) {
-                        setter(myMail, null, null);
-                      } else if (EventsFilters.test(
-                          widget.filterRef, EventsFilters.ToIjoined, false)!) {
-                        setter(null, myMail, null);
-                      } else if (EventsFilters.test(widget.filterRef,
-                          EventsFilters.ToPendingHavReq, false)!) {
-                        setter(myMail, null, null);
-                      }
-                    }
-
-                    widget.model.refresh();
-                  }
-                  Navigator.pop(context);
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.green[900],
-                  side: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.check,
-                    ),
-                    Text(
-                      "  " + "סינון",
-                    )
-                  ],
-                )),
-          ]),
-          /*
+                    child: Row(
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.check,
+                        ),
+                        Text(
+                          "  " + "חזור לרשימה",
+                        )
+                      ],
+                    )),
+              ]),
+              /*
             TextButton.icon(
               icon: Icon(FontAwesomeIcons.filterCircleXmark),
               onPressed: () {
@@ -666,6 +659,6 @@ class _BottomState extends State<Bottom> {
               },
               label: Text("לא משנה"),
             ),*/
-        ]));
+            ]));
   }
 }
