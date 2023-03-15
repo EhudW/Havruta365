@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
+import '../UserScreen/UserScreen.dart';
 import 'arc_banner_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -50,6 +51,17 @@ class ProfileDetailHeader extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(user!.avatar!),
                     radius: 80.0,
+                    child: IconButton(
+                        icon: Icon(Icons.quiz_sharp),
+                        iconSize: 60.0,
+                        color: Colors.white.withOpacity(0),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UserScreen(user!.email)),
+                          );
+                        }),
                   ),
                   backgroundColor: Colors.white,
                   radius: 85.0,

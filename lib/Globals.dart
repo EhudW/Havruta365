@@ -46,8 +46,11 @@ class Globals {
   static dynamic _lastMsgSeen;
   static dynamic get lastMsgSeen => _lastMsgSeen;
   static set lastMsgSeen(dynamic v) {
-    _lastMsgSeen = v;
-    hasNewMsg = false;
+    if (_lastMsgSeen == null ||
+        (v != null && v.datetime.isAfter(_lastMsgSeen.datetime))) {
+      _lastMsgSeen = v;
+      hasNewMsg = false;
+    }
   }
 
   static bool _hasNewMsg = false;

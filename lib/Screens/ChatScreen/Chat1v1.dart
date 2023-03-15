@@ -211,7 +211,7 @@ class _ChatPageState extends State<ChatPage> {
                                 primaryColor: Colors.teal,
                                 secondaryColor: Colors.white70,
                                 inputTextColor: Colors.black,
-                                userAvatarNameColors: [Colors.indigoAccent!],
+                                userAvatarNameColors: [Colors.indigoAccent],
                                 //inputTextCursorColor: Colors.yellow,
                                 inputBackgroundColor: Colors.white54,
                               ),

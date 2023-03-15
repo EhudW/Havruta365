@@ -393,18 +393,24 @@ class Mongo {
     return true;
   }
 
-  Future<dynamic> getLastMsg() async {
+  Future<dynamic> getLastMsgSentForMe() async {
     var collection = Globals.db!.db.collection('Chats');
     var result = await (collection as DbCollection).findOne(where
-        .eq("src_mail", Globals.currentUser!.email)
-        .or(where.eq("dst_mail", Globals.currentUser!.email))
+        .eq("dst_mail", Globals.currentUser!.email)
+        .and(where.ne("src_mail", Globals.currentUser!.email))
+        //.eq("src_mail", Globals.currentUser!.email)
+        //.or(where.eq("dst_mail", Globals.currentUser!.email))
         .sortBy("_id", descending: true));
     return result;
   }
 
   Future<bool> hasNewMsg(ChatMessage? last) async {
-    var newest = await getLastMsg();
-    return newest?['_id'] != last?.id;
+    var newest = await getLastMsgSentForMe();
+    if (newest == null) return false;
+    if (last == null) return true;
+    // instead of using id which might be wrong if the last was deleted and the newest is very old
+    return ChatMessage.fromJson(newest).datetime!.isAfter(last.datetime!);
+    //return newest?['_id'] != last?.id;
   }
 
   Future deleteMsgs(List msgs, ChatMessage? insertAlert) async {

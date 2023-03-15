@@ -39,7 +39,11 @@ class _ChatScreenState extends State<ChatScreen> {
               return SplashScreen();
             case ConnectionState.done:
               var list = snapshot.data!;
-              Globals.lastMsgSeen = list.isNotEmpty ? list.first : null;
+              var impList = list
+                  .where((element) =>
+                      element.src_mail != Globals.currentUser!.email)
+                  .toList();
+              Globals.lastMsgSeen = impList.isNotEmpty ? impList.first : null;
               return Scaffold(
                 appBar: appBar(context),
                 body: Container(
@@ -99,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               children: [
                                 Text(
                                   DateFormat('HH:mm  d-M-yyyy')
-                                      .format(message.datetime!),
+                                      .format(message.datetime!.toLocal()),
                                   style: TextStyle(fontSize: 12.0),
                                 ),
                                 Text(message.message!,

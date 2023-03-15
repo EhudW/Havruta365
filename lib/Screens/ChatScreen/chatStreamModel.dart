@@ -34,6 +34,8 @@ class ChatModel {
   }) {
     _controller = StreamController<List<ChatMessage>>.broadcast();
     stream = _controller.stream.map((List<ChatMessage> postsData) {
+      var impList = postsData.where((m) => m.src_mail != myMail).toList();
+      if (impList.isNotEmpty) Globals.lastMsgSeen = impList.last;
       return postsData.map((e) => toTypeMessage(fromChatMessage(e))).toList();
     });
     if (refreshNow) {
