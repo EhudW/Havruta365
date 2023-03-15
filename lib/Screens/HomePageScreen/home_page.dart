@@ -37,18 +37,32 @@ class _HomePageState extends State<HomePage> {
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
   //use NewNotificationManager.onlyLast for build()
   NewNotificationManager? nnim;
+  // call before/then each navigator.push
+  setRefresh(bool on, {bool andRefreshNow = true}) {
+    if (on) {
+      Globals.onNewMsg = () => this.setState(() {});
+      nnim!.refreshMe[this] = () => setState(() {});
+      nnim!.start();
+      Globals.hasNewMsgHelper.start(true);
+      if (andRefreshNow) setState(() {});
+    } else {
+      Globals.onNewMsg = () => null;
+      nnim!.refreshMe[this] = () => null;
+      nnim!.cancel();
+      Globals.hasNewMsgHelper.pause();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     nnim = NewNotificationManager();
-    nnim!.start();
-    nnim!.refreshMe[this] = () => setState(() => null);
+    setRefresh(true);
   }
 
   @override
   void dispose() {
-    nnim!.refreshMe[this] = () => null;
-    nnim!.cancel();
+    setRefresh(false);
     super.dispose();
   }
 
@@ -89,13 +103,16 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       IconButton(
                         icon: Icon(FontAwesomeIcons.envelope),
-                        color: Colors.white54,
+                        color: Globals.hasNewMsg
+                            ? Colors.redAccent
+                            : Colors.white54,
                         onPressed: () async {
+                          setRefresh(false);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen()),
-                          );
+                          ).then((value) => setRefresh(true));
                           // this.events.events.refresh();
                           // this.events.eventsOnline.refresh();
                         },
@@ -105,11 +122,12 @@ class _HomePageState extends State<HomePage> {
                         icon: Icon(Icons.person),
                         color: Colors.white54,
                         onPressed: () {
+                          setRefresh(false);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProfileScreen()),
-                          );
+                          ).then((value) => setRefresh(true));
                         },
                         iconSize: scaler.getTextSize(10),
                       )
@@ -135,7 +153,11 @@ class _HomePageState extends State<HomePage> {
                               false)
                           ? Icons.notification_important
                           : Icons.notifications,
-                      color: Colors.teal[400],
+                      color:
+                          (NewNotificationManager.onlyLast?.newNotification ??
+                                  false)
+                              ? Colors.redAccent
+                              : Colors.teal[400],
                       size: scaler.getTextSize(10)),
                 ),
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
@@ -207,8 +229,10 @@ class _HomePageState extends State<HomePage> {
         child: FloatingActionButton(
           backgroundColor: Colors.red,
           onPressed: () {
+            setRefresh(false);
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => FindMeAChavruta1()));
+                    MaterialPageRoute(builder: (context) => FindMeAChavruta1()))
+                .then((value) => setRefresh(true));
           },
           child: Text(
             "+",
@@ -252,10 +276,11 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.person),
                 color: Colors.white54,
                 onPressed: () {
+                  setRefresh(false);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ProfileScreen()),
-                  );
+                  ).then((value) => setRefresh(true));
                 },
                 iconSize: scaler.getTextSize(10),
               )

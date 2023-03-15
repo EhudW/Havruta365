@@ -384,6 +384,40 @@ class Mongo {
     return true;
   }
 
+  Future<dynamic> getLastMsg() async {
+    var collection = Globals.db!.db.collection('Chats');
+    var result = await (collection as DbCollection).findOne(where
+        .eq("src_mail", Globals.currentUser!.email)
+        .or(where.eq("dst_mail", Globals.currentUser!.email))
+        .sortBy("_id", descending: true));
+    return result;
+  }
+
+  Future<bool> hasNewMsg(ChatMessage? last) async {
+    var newest = await getLastMsg();
+    return newest?['_id'] != last?.id;
+  }
+
+  Future deleteMsgs(List msgs, ChatMessage? insertAlert) async {
+    if (msgs.isEmpty) return;
+    // msg should be list of object id or objectid.toString()
+    msgs = msgs
+        .map((e) => e is ObjectId
+            ? e
+            : ObjectId.fromHexString(e.substring(10, e.length - 2)))
+        .toList();
+    var collection = Globals.db!.db.collection('Chats');
+    WriteResult result =
+        await collection.deleteMany(where.oneFrom('_id', msgs));
+    if (result.hasWriteErrors) {
+      return false;
+    }
+    if (insertAlert != null) {
+      await sendMessage(insertAlert);
+    }
+    return true;
+  }
+
   void disconnect() async {
     await db.close();
   }

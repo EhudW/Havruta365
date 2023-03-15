@@ -43,6 +43,35 @@ class Globals {
     }
   }
 
+  static dynamic _lastMsgSeen;
+  static dynamic get lastMsgSeen => _lastMsgSeen;
+  static set lastMsgSeen(dynamic v) {
+    _lastMsgSeen = v;
+    hasNewMsg = false;
+  }
+
+  static bool _hasNewMsg = false;
+  static bool get hasNewMsg => _hasNewMsg;
+  static set hasNewMsg(bool v) {
+    if (v != _hasNewMsg) {
+      _hasNewMsg = v;
+      if (onNewMsg != null) onNewMsg!();
+    }
+  }
+
+  static Function()? onNewMsg;
+  static LoadProperty<void> hasNewMsgHelper = LoadProperty(
+    (setter) async {
+      hasNewMsg = await db!.hasNewMsg(lastMsgSeen);
+      setter(hasNewMsg);
+      return true;
+    },
+    oneLoadOnly: false,
+    waitAutoStart: false,
+    // this is how much to wait before each attempt , but no timeout is set
+    duration: MyDebug.MyConsts.checkNewMessageOutsideChatSec,
+  );
+
   static Mongo? db;
   static bool isDbConnect = false;
   static User? currentUser;

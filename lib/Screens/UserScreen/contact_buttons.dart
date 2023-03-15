@@ -46,8 +46,10 @@ class ContactButtons extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            ChatPage(otherPerson: user!.email!)));
+                        builder: (context) => ChatPage(
+                              otherPerson: user!.email!,
+                              otherPersonName: user!.name!,
+                            )));
                 //SendScreen(user!.email, user!.name)));
               },
               style: buttonStyleMessage,

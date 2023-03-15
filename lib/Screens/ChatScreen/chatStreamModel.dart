@@ -3,6 +3,7 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:mongo_dart/mongo_dart.dart';
 
 Map<String, dynamic> fromChatMessage(ChatMessage m) {
   return {
@@ -48,21 +49,57 @@ class ChatModel {
     });
   }
 
-  ChatMessage? lastToBeSent;
+  // meant to avoid refresh without last msg,
+  // but cause problem if refresh called from send()
+  // which we wan't because we need the id that mongo db give us
+  //ChatMessage? lastToBeSent;
+  Future deleteAll() {
+    _isLoading = true;
+    List toDel = List.of(_data).map((e) => e.id).toList();
+    return Globals.db!
+        .deleteMsgs(
+            toDel,
+            ChatMessage(
+                name: Globals.currentUser!.name,
+                avatar: Globals.currentUser!.avatar,
+                datetime: DateTime.now(),
+                dst_mail: otherPerson,
+                src_mail: myMail,
+                message: "*__שיחה נמחקה__*"))
+        .whenComplete(() {
+      _data = [];
+      _controller.add(_data);
+      _isLoading = false;
+      refresh();
+    });
+  }
+
+  Future deleteOne(types.Message msg) {
+    _isLoading = true;
+    return Globals.db!.deleteMsgs([msg.id], null).whenComplete(() {
+      _data = _data.where((element) => element.id != msg.id).toList();
+      _controller.add(_data);
+      _isLoading = false;
+      refresh();
+    });
+  }
+
   Future send(ChatMessage msg) {
     _isLoading = true;
-    ChatMessage? prevLastToBeSent = lastToBeSent;
-    lastToBeSent = msg;
+    //ChatMessage? prevLastToBeSent = lastToBeSent;
+    //lastToBeSent = msg;
     return Globals.db!.sendMessage(msg).then((v) {
       if (v == false) {
-        lastToBeSent = prevLastToBeSent;
+        //lastToBeSent = prevLastToBeSent;
         return v;
       }
-      _data.add(msg);
-      _controller.add(_data);
+      // prefer to wait till we will get msg with id!=null from mongoDB
+      //_data.add(msg);
+      //_controller.add(_data);
       return v;
     }).whenComplete(() {
       _isLoading = false;
+      refresh();
     });
   }
 
@@ -78,13 +115,14 @@ class ChatModel {
     }
     _isLoading = true;
     return _getExampleServerData().then((postsData) {
+      /* meant to avoid refresh without last msg, but cause problem if refresh called from send()
       if (lastToBeSent != null) {
         Set<DateTime?> msgs = postsData.map((e) => e.datetime).toSet();
         msgs.addAll(_data.map((e) => e.datetime));
         if (!msgs.contains(lastToBeSent)) {
           return;
         }
-      }
+      }*/
       if (clearCachedData) {
         _data = List.of(postsData);
       } else {

@@ -14,24 +14,24 @@ import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
 class ChatScreen extends StatefulWidget {
-  Future<List<ChatMessage>>? chatMessagesList;
-
+  ChatScreen() : super(key: GlobalKey());
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  Future<List<ChatMessage>>? chatMessagesList;
   @override
   void initState() {
     super.initState();
-    widget.chatMessagesList = Globals.db!
+    chatMessagesList = Globals.db!
         .getAllMyLastMessageWithEachFriend(Globals.currentUser!.email!);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: widget.chatMessagesList,
+        future: chatMessagesList,
         builder:
             (BuildContext context, AsyncSnapshot<List<ChatMessage>> snapshot) {
           switch (snapshot.connectionState) {
@@ -39,6 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
               return SplashScreen();
             case ConnectionState.done:
               var list = snapshot.data!;
+              Globals.lastMsgSeen = list.isNotEmpty ? list.first : null;
               return Scaffold(
                 appBar: appBar(context),
                 body: Container(
@@ -56,8 +57,14 @@ class _ChatScreenState extends State<ChatScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ChatPage(
-                                      otherPerson: message.otherPersonMail),
-                                )).then((value) => Navigator.pop(context)),
+                                    otherPerson: message.otherPersonMail,
+                                    otherPersonName: message.otherPersonName,
+                                  ),
+                                )).then((value) {
+                              var x = (widget.key as GlobalKey).currentState;
+                              if (x == null) return;
+                              Navigator.pop(x.context);
+                            }),
                             leading: OutlinedButton(
                                 style: OutlinedButton.styleFrom(
                                     side:

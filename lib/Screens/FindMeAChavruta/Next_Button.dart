@@ -145,7 +145,7 @@ class NextButton extends StatelessWidget {
       ..showSnackBar(snackBar);
   }
 
-  Widget bottomSheet(
+  static Widget bottomSheet(
       BuildContext context, String title, Function ok, Function ignore) {
     return Container(
       height: Globals.scaler.getHeight(8.5),
