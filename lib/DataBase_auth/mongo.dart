@@ -140,6 +140,15 @@ class Mongo {
         "${notification.message}  DELETED", MyDebug.MyPrintType.Nnim);
   }
 
+  Future<void> deleteAllNotifications(List<NotificationUser> noti) async {
+    List ids = List.of(noti).map((e) => e.id).where((e) => e != null).toList();
+    if (ids.isEmpty) return;
+    var collection = db.collection('Notifications');
+    await collection.deleteMany(where.oneFrom("_id", ids));
+    MyDebug.myPrint(
+        "${ids.length} notifications  DELETED", MyDebug.MyPrintType.Nnim);
+  }
+
   deleteFromEvent(ObjectId? id, String? email) async {
     var collection = Globals.db!.db.collection('Events');
     // Get event by id and Add mail to participants array

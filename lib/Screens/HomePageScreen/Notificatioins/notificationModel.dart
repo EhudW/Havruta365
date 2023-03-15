@@ -35,6 +35,14 @@ class notificationModel {
     return loadMore(clearCachedData: true);
   }
 
+  Future<void> removeAll() {
+    if (ignoreRequests) return Future.value();
+    var noti = _data!;
+    _data = [];
+    _controller.add([]);
+    return Globals.db!.deleteAllNotifications(noti);
+  }
+
   Future<void> remove(int idx) {
     if (ignoreRequests) return Future.value();
     var noti = _data![idx];
@@ -45,12 +53,13 @@ class notificationModel {
 
   Future<void> loadMore({bool clearCachedData = false}) {
     if (ignoreRequests) return Future.value();
-    if (clearCachedData) {
-      _data = <NotificationUser>[];
-    }
 
     return getData(10).then((postsData) {
-      _data!.addAll(postsData);
+      if (clearCachedData) {
+        _data = postsData;
+      } else {
+        _data!.addAll(postsData);
+      }
       _controller.add(_data);
       _wasFetched = true;
     });
