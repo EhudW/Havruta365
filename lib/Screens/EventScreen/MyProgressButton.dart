@@ -123,7 +123,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
       stateOnlyText = ButtonState.fail2;
       // Here I am not in the participants/waiting queue:
       // Is the event already full    ?
-    } else if (widget.event!.participants!.length + waitingQueue.length >=
+    } else if (widget.event!.participants!.length /*+ waitingQueue.length*/ >=
         widget.event!.maxParticipants!) {
       stateOnlyText = ButtonState.full;
     } else {

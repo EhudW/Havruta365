@@ -317,8 +317,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     var waitingQueue = widget.event!.waitingQueue ?? [];
     var iAmInWaitingQueue = waitingQueue.contains(myMail);
     var num = widget.event!.maxParticipants! -
-        widget.event!.participants!.length -
-        waitingQueue.length;
+            widget.event!.participants!.length /*-waitingQueue.length*/
+        ;
     var rejectOrAcceptFactory = (func) => (userMail) {
           showModalBottomSheet(
             context: context,

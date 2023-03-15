@@ -274,7 +274,7 @@ class MultiConsiderations extends RecommendationSystem<Event> {
   // won't check isTargetedForMe
   static bool thisEventIsNewForMeAndAvailable(
       Event e, String myMail, DateTime timeNow) {
-    if ((e.participants ?? []).length + (e.waitingQueue ?? []).length >=
+    if ((e.participants ?? []).length /*+ (e.waitingQueue ?? []).length*/ >=
         (e.maxParticipants ?? 0)) {
       return false;
     }
@@ -565,6 +565,7 @@ class ByEventSuccess extends RecommendationSystem<Event> {
     // rank Event by:
     // how much participants there are
     for (Event event in rank.keys) {
+      // ignoring rejectedQueue, but waiting do teach us, so rank could be > 1
       int amount =
           (event.participants?.length ?? 0) + (event.waitingQueue?.length ?? 0);
       int soft =

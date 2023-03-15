@@ -76,7 +76,7 @@ class NextButton extends StatelessWidget {
 
                   bool typeChangeProblem =
                       problem && event?.type != event?.firstInitType;
-                  bool maxParticipantsProblem = problem && m < p + wq;
+                  bool maxParticipantsProblem = problem && m < p /*+ wq*/;
 
                   List<bool> problems = [
                     maxParticipantsProblem,
@@ -86,8 +86,8 @@ class NextButton extends StatelessWidget {
                   List<String> whatToAsk = [
                     "הקטנת מספר המשתתפים תבטל נרשמים קיימים",
                     event?.type == 'L'
-                        ? "שינוי סוג לשיעור יגרור אישור מיידי של הממתינים"
-                        : "שינוי סוג לחברותא יגרור העברה של המשתתפים לתור המתנה לאישור",
+                        ? "שינוי סוג לשיעור יגרור אישור או דחייה מיידיים של הממתינים"
+                        : "שינוי סוג לחברותא יגרור העברה של כל המשתתפים לתור המתנה לאישור",
                     "שינוי קבוצת יעד גברים/נשים עלול לגרור ביטול השתתפות של חלק",
                   ];
                   askIfProblems(apply, problems, whatToAsk);

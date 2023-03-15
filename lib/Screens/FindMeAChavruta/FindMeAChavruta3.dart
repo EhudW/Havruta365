@@ -279,11 +279,11 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   if (m >= p.length + wq.length) {
                                     // don't reset lists
                                   } else if (m >= p.length) {
-                                    // reset only wq
+                                    /*// reset only wq
                                     rejected.addAll(wq);
-                                    widget.event!.waitingQueue = [];
+                                    widget.event!.waitingQueue = [];*/
                                   } else {
-                                    // reset noth p wq
+                                    // reset both p wq
                                     rejected.addAll(p);
                                     rejected.addAll(wq);
                                     widget.event!.participants = [];
@@ -293,11 +293,20 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   //////
                                   /// type conflict  [affect waiting,accepted,waitingQueue,participants]
                                   ///
+                                  wq = widget.event!.waitingQueue!;
+                                  p = widget.event!.participants!;
                                   if (e.type == 'L') {
-                                    // auto accept all waiting
-                                    e.participants!.addAll(e.waitingQueue!);
-                                    accepted.addAll(e.waitingQueue!);
-                                    e.waitingQueue = [];
+                                    // if there is place,
+                                    if (m >= wq.length + p.length) {
+                                      // auto accept all waiting
+                                      e.participants!.addAll(e.waitingQueue!);
+                                      accepted.addAll(e.waitingQueue!);
+                                      e.waitingQueue = [];
+                                    } else {
+                                      // reset only wq
+                                      rejected.addAll(wq);
+                                      widget.event!.waitingQueue = [];
+                                    }
                                   } else if (e.type == 'H' &&
                                       e.firstInitType != 'H') {
                                     // auto move all to waiting

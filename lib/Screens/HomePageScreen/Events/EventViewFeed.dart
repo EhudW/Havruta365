@@ -172,10 +172,12 @@ class EventViewFeed extends StatelessWidget {
                                         registeredState3,
                                         Expanded(
                                             child: Text(
-                                          (event.participants!.length +
+                                          (event.participants!
+                                                      .length /*+
                                                       (event.waitingQueue
                                                               ?.length ??
-                                                          0))
+                                                          0)*/
+                                                  )
                                                   .toString() +
                                               "/" +
                                               event.maxParticipants.toString(),
