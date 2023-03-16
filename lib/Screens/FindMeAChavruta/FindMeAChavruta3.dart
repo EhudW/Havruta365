@@ -472,8 +472,12 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
         children: <Widget>[
           Text(
             widget.event!.type == 'L'
-                ? "בחר תמונה לשיעור"
-                : "בחר תמונה לחברותא",
+                ? (Globals.currentUser!.gender == 'F'
+                    ? "בחרי תמונה לשיעור"
+                    : "בחר תמונה לשיעור")
+                : (Globals.currentUser!.gender == 'F'
+                    ? "בחרי תמונה לחברותא"
+                    : "בחר תמונה לחברותא"),
             style: TextStyle(
               fontSize: Globals.scaler.getTextSize(8.5),
             ),

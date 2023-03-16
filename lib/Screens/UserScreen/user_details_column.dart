@@ -77,6 +77,19 @@ class UserDetailsColumn extends StatelessWidget {
           ]),
           SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+            Text("בגיל " + user!.age.toString(),
+                style: GoogleFonts.alef(
+                    fontSize: size_field, fontWeight: FontWeight.bold),
+                textDirection: TextDirection.rtl),
+            SizedBox(width: 10.0),
+            Icon(
+              FontAwesomeIcons.calendarDay,
+              size: 26.0,
+              color: Colors.grey[600],
+            ),
+          ]),
+          SizedBox(height: 15.0),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
             Text(user!.status!,
                 style: GoogleFonts.alef(
                     fontSize: size_field, fontWeight: FontWeight.bold),

@@ -5,22 +5,25 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/Next_Button.dart';
 import 'package:havruta_project/Screens/Login/FadeAnimation.dart';
 import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
 class SendScreen extends StatefulWidget {
-  SendScreen(List<dynamic> dstMails) {
+  SendScreen(List<dynamic> dstMails, [this.initText]) {
     this.dstMails = dstMails;
   }
   late List<dynamic> dstMails;
+  String? initText;
   @override
   _SendScreenState createState() => _SendScreenState();
 }
 
 class _SendScreenState extends State<SendScreen> {
   //ChatMessage chatMessage = new ChatMessage();
-  final message = TextEditingController();
+  late TextEditingController message =
+      TextEditingController(text: widget.initText);
   // ignore: non_constant_identifier_names
   String message_str = "";
   void sendToAll() async {
@@ -146,7 +149,15 @@ class _SendScreenState extends State<SendScreen> {
                   )..show(context);
                   return;
                 }
-                sendToAll();
+                showModalBottomSheet(
+                  context: context,
+                  builder: ((builder) =>
+                      NextButton.bottomSheet(context, "לשלוח?", () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        sendToAll();
+                      }, () => Navigator.pop(context))),
+                );
                 /*chatMessage.message = message.text;
                 bool isSend = await Globals.db!.sendMessage(chatMessage);
                 if (!isSend) {

@@ -133,6 +133,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 MaterialPageRoute(
                     builder: (context) => FindMeAChavruta1(
                           initEvent: widget.event,
+                          barTitle: "עריכת אירוע קיים  ",
                         )),
               );
             },
@@ -243,7 +244,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           textDirection: ui.TextDirection.rtl,
         ),
         Text(
-          "עד ${(event.maxParticipants ?? 100)} משתתפים",
+          "עד ${(event.maxParticipants ?? 100)} משתתפים" +
+              "\n" +
+              event.onlyForStatus! +
+              " " +
+              "מגיל ${event.minAge} עד ${event.maxAge}",
           style: GoogleFonts.secularOne(fontSize: 20.0),
           textDirection: ui.TextDirection.rtl,
         ),
@@ -279,7 +284,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       child: Column(
         children: <Widget>[
           Text(
-            "אתה בטוח",
+            Globals.currentUser!.gender == 'F' ? "את בטוחה?" : "אתה בטוח?",
             textDirection: ui.TextDirection.rtl,
             style: TextStyle(
               fontSize: Globals.scaler.getTextSize(8.5),
@@ -311,6 +316,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    String t_pre = "*הודעת תפוצה*" + "\n";
+    String t_type = widget.event!.type == "H" ? "חברותא" : "שיעור";
+    String t_book = widget.event!.book != "" ? " ב" + widget.event!.book! : "";
+    String t_topic =
+        widget.event!.topic != "" ? " ב" + widget.event!.topic! : "";
+    String t_suffix = t_type + t_topic + t_book + ":\n";
+    var initPub =
+        (bool wq) => t_pre + (wq ? "למבקשים להצטרף ל" : "למשתתפי ה") + t_suffix;
+
     var myMail = Globals.currentUser!.email;
     var iAmParticipant = widget.event!.participants!.contains(myMail);
     var iAmCreator = widget.event!.creatorUser == myMail;
@@ -437,12 +451,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               ? ParticipentsScroller(
                   widget.event!.participants,
                   title: "משתתפים",
+                  initPubMsgText: initPub(false),
                 )
               : Container(),
           iAmCreator && widget.event!.type == 'H'
               ? ParticipentsScroller(
                   widget.event!.waitingQueue,
                   title: "ממתינים לאישור",
+                  initPubMsgText: initPub(true),
                   accept: accept,
                   reject: reject,
                 )

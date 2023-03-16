@@ -5,23 +5,9 @@ import 'package:havruta_project/mydebug.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:mongo_dart/mongo_dart.dart';
 
-Map<String, dynamic> fromChatMessage(ChatMessage m) {
-  return {
-    "author": {"firstName": m.name, "imageUrl": m.avatar, "id": m.src_mail},
-    "createdAt": m.datetime?.millisecondsSinceEpoch,
-    "text": m.message,
-    "id": m.id.toString(),
-    // "status": "seen",
-    "type": "text",
-  };
-}
-
-types.Message toTypeMessage(Map<String, dynamic> m) =>
-    types.Message.fromJson(m);
-
 /// class to get chats(lessons) data as stream-like object
 class ChatModel {
-  late Stream<List<types.Message>> stream;
+  late Stream<List<ChatMessage>> stream;
   bool _isLoading = false;
   List<ChatMessage> _data = [];
   late StreamController<List<ChatMessage>> _controller;
@@ -36,7 +22,7 @@ class ChatModel {
     stream = _controller.stream.map((List<ChatMessage> postsData) {
       var impList = postsData.where((m) => m.src_mail != myMail).toList();
       if (impList.isNotEmpty) Globals.lastMsgSeen = impList.last;
-      return postsData.map((e) => toTypeMessage(fromChatMessage(e))).toList();
+      return postsData;
     });
     if (refreshNow) {
       refresh();
@@ -46,8 +32,9 @@ class ChatModel {
   Future<List<ChatMessage>> _getExampleServerData() async {
     return Future.delayed(MyConsts.defaultDelay, () {
       return otherPerson == null
-          ? Globals.db!.getAllMyLastMessageWithEachFriend(myMail)
-          : Globals.db!.getAllMyMessages(myMail, otherPerson);
+          ? Globals.db!
+              .getAllMyLastMessageWithEachFriend(myMail, fetchDstUserData: true)
+          : Globals.db!.getAllMyMessages(myMail, srcMail: otherPerson);
     });
   }
 
@@ -56,6 +43,7 @@ class ChatModel {
   // which we wan't because we need the id that mongo db give us
   //ChatMessage? lastToBeSent;
   Future deleteAll() {
+    if (otherPerson == null) throw Exception();
     _isLoading = true;
     List toDel = List.of(_data).map((e) => e.id).toList();
     return Globals.db!
@@ -71,22 +59,26 @@ class ChatModel {
         .whenComplete(() {
       _data = [];
       _controller.add(_data);
+      _wasFetched = true;
       _isLoading = false;
       refresh();
     });
   }
 
   Future deleteOne(types.Message msg) {
+    if (otherPerson == null) throw Exception();
     _isLoading = true;
     return Globals.db!.deleteMsgs([msg.id], null).whenComplete(() {
       _data = _data.where((element) => element.id != msg.id).toList();
       _controller.add(_data);
+      _wasFetched = true;
       _isLoading = false;
       refresh();
     });
   }
 
   Future send(ChatMessage msg) {
+    if (otherPerson == null) throw Exception();
     _isLoading = true;
     //ChatMessage? prevLastToBeSent = lastToBeSent;
     //lastToBeSent = msg;
@@ -97,7 +89,7 @@ class ChatModel {
       }
       // prefer to wait till we will get msg with id!=null from mongoDB
       //_data.add(msg);
-      //_controller.add(_data);
+      //_controller.add(_data); _wasFetched = true;
       return v;
     }).whenComplete(() {
       _isLoading = false;
@@ -105,13 +97,15 @@ class ChatModel {
     });
   }
 
+  bool _wasFetched = false;
   // no fetch from server but data re-send to _controller
-  void simulateRefresh() => _controller.add(_data);
+  void simulateRefresh() => _wasFetched ? _controller.add(_data) : null;
   Future<void> refresh() {
     return _loadMore(clearCachedData: true);
   }
 
   Future<void> _loadMore({bool clearCachedData = false}) {
+    if (!clearCachedData) throw Exception();
     if (_isLoading) {
       return Future.value();
     }
@@ -131,6 +125,7 @@ class ChatModel {
         _data.addAll(postsData);
       }
       _controller.add(_data);
+      _wasFetched = true;
     }).whenComplete(() {
       _isLoading = false;
     });

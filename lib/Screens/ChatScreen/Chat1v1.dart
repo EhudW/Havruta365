@@ -36,27 +36,28 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final _myUser = types.User(id: Globals.currentUser!.email!);
+  final _myUser = types.User(
+      id: Globals.currentUser!.email!,
+      firstName: Globals.currentUser!.name,
+      imageUrl: Globals.currentUser!.avatar);
   late ChatModel model;
+  late MyTimer timer;
   @override
   void initState() {
     super.initState();
     model = ChatModel(
-        myMail: Globals.currentUser!.email!,
-        refreshNow: false,
-        otherPerson: widget.otherPerson);
-    // LoadProperty + cancelPrev using MyTimer with max 1 instance in the the program
-    // MyTimer using Timer to schedule task every x seconds
-    LoadProperty<void>(
-      (setter) async {
-        model.refresh();
-        setter(null);
-        return true;
-      },
+        myMail: Globals.currentUser!.email!, otherPerson: widget.otherPerson);
+    timer = MyTimer(
       duration: MyConsts.checkNewMessageInChatSec,
-      oneLoadOnly: false,
-      cancelPrev: "Chat1v1AutoRefresh", // prevent double timers
-    ).start();
+      function: () => model.refresh().then((value) => true),
+    );
+    timer.start(true);
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   void onSend(types.PartialText pt) {
@@ -168,21 +169,23 @@ class _ChatPageState extends State<ChatPage> {
 
   void onAvatarClick(types.User u) async {
     User user = await Globals.db!.getUser(u.id);
+    timer.cancel();
     Navigator.push(context,
-        MaterialPageRoute(builder: ((context) => UserDetailsPage(user))));
+            MaterialPageRoute(builder: ((context) => UserDetailsPage(user))))
+        .then((value) => timer.start(true));
   }
 
   @override
   Widget build(BuildContext context) {
-    List<types.Message> firstData = [];
+    List<ChatMessage> firstData = [];
 
-    Future<List<types.Message>> first =
+    Future<List<ChatMessage>> first =
         model.stream.first.then((value) => firstData = value);
     model.refresh();
     return Scaffold(
       body: FutureBuilder(
           future: first,
-          builder: (context, AsyncSnapshot<List<types.Message>> snapshot) {
+          builder: (context, AsyncSnapshot<List<ChatMessage>> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
                 return Text('none');
@@ -199,7 +202,7 @@ class _ChatPageState extends State<ChatPage> {
                 return Scaffold(
                     appBar: appBar(context),
                     resizeToAvoidBottomInset: true,
-                    body: StreamBuilder<List<types.Message>>(
+                    body: StreamBuilder<List<ChatMessage>>(
                         initialData: firstData,
                         stream: model.stream,
                         builder: (context, snapshot) {
@@ -232,7 +235,9 @@ class _ChatPageState extends State<ChatPage> {
                                 );
                               },
                               bubbleRtlAlignment: BubbleRtlAlignment.right,
-                              messages: snapshot.data!.reversed.toList(),
+                              messages: snapshot.data!.reversed
+                                  .map((e) => e.toTypesTextMsg())
+                                  .toList(),
                               onAvatarTap: onAvatarClick,
                               l10n: ChatL10nHe(),
                               onSendPressed: onSend,

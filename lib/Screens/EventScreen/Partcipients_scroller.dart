@@ -10,8 +10,12 @@ import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
 class ParticipentsScroller extends StatelessWidget {
+  String initPubMsgText;
   ParticipentsScroller(List<dynamic>? usersMail,
-      {this.title = "משתתפים", this.accept, this.reject}) {
+      {this.title = "משתתפים",
+      this.accept,
+      this.reject,
+      required this.initPubMsgText}) {
     this.usersMail = usersMail ?? [];
     this.userColl = Globals.db!.db.collection('Users');
   }
@@ -196,7 +200,8 @@ class ParticipentsScroller extends StatelessWidget {
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SendScreen(usersMail),
+                              builder: (context) =>
+                                  SendScreen(usersMail, this.initPubMsgText),
                             )),
                         icon: Icon(FontAwesomeIcons.envelope, size: 18),
                         label: Text("שליחת הודעה לרשימה זו"),

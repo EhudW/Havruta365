@@ -461,6 +461,24 @@ class MultiConsiderations extends RecommendationSystem<Event> {
             "classify": (Event e) => e.targetGender?.toLowerCase(),
             "weight": 1,
           },
+          // by its target status
+          {
+            "classify": (Event e) => e.onlyForStatus,
+            "weight": 1,
+          },
+          // by its target min age
+          {
+            "classify": (Event e) {
+              int min = 0;
+              //int max = 120;
+              for (int i = 0; i < 121; i += 10) {
+                if (i <= e.minAge) min = i;
+                //if (120 - i >= e.maxAge) max = i;
+              }
+              return min; //"$min,$max";
+            },
+            "weight": 1,
+          },
           // by its location
           {
             "classify": (Event e) => uniqueString(e.location),

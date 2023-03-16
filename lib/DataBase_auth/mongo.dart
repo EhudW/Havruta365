@@ -327,8 +327,27 @@ class Mongo {
     return true;
   }
 
+  Future __fetchDstUserData(List<ChatMessage> rslt, String myMail) async {
+    Map<String, User> cache = {};
+    for (int i = 0; i < rslt.length; i++) {
+      ChatMessage curr = rslt[i];
+      if (curr.src_mail != myMail || curr.src_mail == curr.dst_mail) {
+        curr.otherPersonName = curr.name!;
+        curr.otherPersonAvatar = curr.avatar!;
+        continue;
+      }
+      String currDstMail = curr.dst_mail!;
+      cache[currDstMail] = cache[currDstMail] ?? await getUser(currDstMail);
+      User u = cache[currDstMail]!;
+      curr.otherPersonAvatar = u.avatar!;
+      curr.otherPersonName = u.name!;
+    }
+  }
+
   Future<List<ChatMessage>> getAllMyMessages(String dstMail,
-      [String? srcMail, bool biDirectional = true]) async {
+      {String? srcMail,
+      bool biDirectional = true,
+      bool fetchDstUserData = false}) async {
     List<ChatMessage> listMessages = [];
     var collection = Globals.db!.db.collection('Chats');
     var selector = where.eq('dst_mail', dstMail);
@@ -349,13 +368,14 @@ class Mongo {
       listMessages.add(new ChatMessage.fromJson(i));
     }
     listMessages.sort((a, b) => a.datetime!.compareTo(b.datetime!));
+    !fetchDstUserData ? null : await __fetchDstUserData(listMessages, dstMail);
     return listMessages;
   }
 
   Future<List<ChatMessage>> getAllMyLastMessageWithEachFriend(String dstMail,
-      [bool biDirectional = true]) async {
-    List<ChatMessage> listMessages =
-        await getAllMyMessages(dstMail, null, biDirectional);
+      {bool biDirectional = true, bool fetchDstUserData = false}) async {
+    List<ChatMessage> listMessages = await getAllMyMessages(dstMail,
+        biDirectional: biDirectional, fetchDstUserData: false);
     List<ChatMessage> rslt = [];
     Set<String> withFriend = {};
     var sameRepr = (a, b) {
@@ -370,17 +390,7 @@ class Mongo {
         withFriend.add(r);
       }
     });
-    for (int i = 0; i < rslt.length; i++) {
-      if (rslt[i].src_mail != dstMail || rslt[i].src_mail == rslt[i].dst_mail) {
-        rslt[i].otherPersonName = rslt[i].name!;
-        rslt[i].otherPersonAvatar = rslt[i].avatar!;
-        continue;
-      }
-
-      User u = await getUser(rslt[i].dst_mail!);
-      rslt[i].otherPersonAvatar = u.avatar!;
-      rslt[i].otherPersonName = u.name!;
-    }
+    !fetchDstUserData ? null : await __fetchDstUserData(rslt, dstMail);
     return rslt;
   }
 
@@ -393,7 +403,7 @@ class Mongo {
     return true;
   }
 
-  Future<dynamic> getLastMsgSentForMe() async {
+  Future<dynamic> __getLastMsgSentForMe() async {
     var collection = Globals.db!.db.collection('Chats');
     var result = await (collection as DbCollection).findOne(where
         .eq("dst_mail", Globals.currentUser!.email)
@@ -405,7 +415,7 @@ class Mongo {
   }
 
   Future<bool> hasNewMsg(ChatMessage? last) async {
-    var newest = await getLastMsgSentForMe();
+    var newest = await __getLastMsgSentForMe();
     if (newest == null) return false;
     if (last == null) return true;
     // instead of using id which might be wrong if the last was deleted and the newest is very old
@@ -415,15 +425,12 @@ class Mongo {
 
   Future deleteMsgs(List msgs, ChatMessage? insertAlert) async {
     if (msgs.isEmpty) return;
-    // msg should be list of object id or objectid.toString()
-    msgs = msgs
-        .map((e) => e is ObjectId
-            ? e
-            : ObjectId.fromHexString(e.substring(10, e.length - 2)))
-        .toList();
+    msgs =
+        msgs.map((e) => e is ObjectId ? e : ObjectId.fromHexString(e)).toList();
     var collection = Globals.db!.db.collection('Chats');
-    WriteResult result =
-        await collection.deleteMany(where.oneFrom('_id', msgs));
+    WriteResult result = msgs.length == 1
+        ? await collection.deleteOne(where.eq('_id', msgs[0]))
+        : await collection.deleteMany(where.oneFrom('_id', msgs));
     if (result.hasWriteErrors) {
       return false;
     }

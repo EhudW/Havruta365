@@ -1,5 +1,8 @@
 // ignore_for_file: non_constant_identifier_names, unnecessary_null_comparison
 
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,7 +20,6 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:objectid/objectid.dart';
 
 class ChangesDetails extends StatefulWidget {
   @override
@@ -265,7 +267,7 @@ class _HomePageState extends State<ChangesDetails> {
       child: Column(
         children: <Widget>[
           Text(
-            "בחר תמונה",
+            "בחר/י תמונה",
             style: TextStyle(
               fontSize: Globals.scaler.getTextSize(8.5),
             ),
@@ -309,7 +311,10 @@ class _HomePageState extends State<ChangesDetails> {
     }
     image = await picker.pickImage(source: source);
     var file = File(image?.path ?? "");
-    String fileName = ObjectId().toString();
+    //String fileName = ObjectId().toString();
+    String fileName = sha1
+        .convert(utf8.encode(Globals.currentUser!.email! + "avatar"))
+        .toString();
     //check if an image was picked
     if (image != null) {
       var snapshot =

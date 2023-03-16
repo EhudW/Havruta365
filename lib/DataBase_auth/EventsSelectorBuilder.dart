@@ -47,17 +47,32 @@ class EventsSelectorBuilder {
     }).isNotEmpty) {
       return this;
     }
+    SelectorBuilder? prefix;
+    // targeted age?
+    int age = Globals.currentUser!.age;
+    prefix = where.notExists("minAge").or(where.lte("minAge", age));
+    prefix = prefix.and(where.notExists("maxAge").or(where.gte("maxAge", age)));
     // targeted gender
     var myGender = Globals.currentUser!.gender;
-    SelectorBuilder? prefix;
     if (myGender == 'M') {
-      prefix = where.ne("targetGender", "נשים");
+      prefix = prefix.ne("targetGender", "נשים");
     } else if (myGender == 'F') {
-      prefix = where.ne("targetGender", "גברים");
+      prefix = prefix.ne("targetGender", "גברים");
     }
-    // targeted age?
     // targeted other issues?
-    if (prefix != null && okWhenCreator) {
+    //prefix = prefix.onlyForStatus
+    var l = Event.statusesICanJoin();
+    prefix = l.length <= 1
+        ? prefix
+        : prefix.and(where
+            .notExists("onlyForStatus")
+            .or(where.oneFrom("onlyForStatus", l)));
+    prefix = l.length != 1
+        ? prefix
+        : prefix.and(where
+            .notExists("onlyForStatus")
+            .or(where.eq("onlyForStatus", l[0])));
+    if (okWhenCreator) {
       prefix = prefix.or(where.eq("creatorUser", myMail));
     }
     return this.plus(prefix);

@@ -21,7 +21,9 @@ import 'dart:ui' as ui;
 
 class FindMeAChavruta1 extends StatefulWidget {
   final Event? initEvent;
-  FindMeAChavruta1({this.initEvent});
+  final String? barTitle;
+  FindMeAChavruta1({Event? initEvent, this.barTitle})
+      : this.initEvent = initEvent?.deepClone();
   @override
   _FindMeAChavruta1CreateState createState() => _FindMeAChavruta1CreateState();
 }
@@ -46,6 +48,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   String? value,
       selectedTopic,
       gender,
+      targetStatus,
       selectedBook,
       selectedHour,
       selectedChoice,
@@ -61,12 +64,18 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   String user = "yonatan";
   Event event = Event(); // see initState()
   late TextEditingController maxController;
+  late TextEditingController maxAgeController;
+  late TextEditingController minAgeController;
   late TextEditingController bookController;
   @override
   void initState() {
     super.initState();
     maxController = TextEditingController(
         text: widget.initEvent?.maxParticipants?.toString());
+    maxAgeController =
+        TextEditingController(text: widget.initEvent?.maxAge.toString());
+    minAgeController =
+        TextEditingController(text: widget.initEvent?.minAge.toString());
     bookController = TextEditingController(text: widget.initEvent?.book);
     if (widget.initEvent != null) {
       event = widget.initEvent!;
@@ -78,6 +87,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
       this.selectedBook = event.book;
       // here set, which will also affect default value showed to the user
       this.gender = event.targetGender;
+      this.targetStatus = event.onlyForStatus;
       this.selectedTopic = event.topic;
       this.selectedChoice = {"H": "חברותא", "L": "שיעור"}[event.type];
       // max participants only in controller: TextEditingController,
@@ -512,6 +522,174 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     size: iconSize,
                                   ),
                                 ]),
+                            SizedBox(height: spaceBetween),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  ///########### ----GENDER DROPDOWN LIST----########
+                                  dropDownList(
+                                      "בחרו קבוצת יעד",
+                                      Event.onlyForStatus_Options
+                                          .map((e) => DropdownMenuItem<String>(
+                                                child: dropDownContainer(e[0]),
+                                                value: e[0],
+                                              ))
+                                          .toList(),
+                                      targetStatus),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Icon(
+                                    FontAwesomeIcons.heart,
+                                    color: Colors.red,
+                                    //color: Colors.tealAccent[400],
+                                    size: iconSize,
+                                  ),
+                                ]),
+                            SizedBox(height: spaceBetween),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    height: height,
+                                    width: width,
+                                    decoration: BoxDecoration(
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(1),
+                                            offset: const Offset(0, 2),
+                                            blurRadius:
+                                                Globals.scaler.getHeight(.2)),
+                                      ],
+                                      color: Colors.white70,
+                                      border: Border.all(
+                                          color: Colors.white70,
+                                          width: Globals.scaler.getWidth(0.2)),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                    ),
+                                    child: Material(
+                                      elevation: Globals.scaler.getHeight(2),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      child: Container(
+                                        width: Globals.scaler.getWidth(29),
+                                        child: TextField(
+                                          controller: minAgeController,
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: TextStyle(
+                                              color: Colors.teal,
+                                              fontSize: Globals.scaler
+                                                  .getTextSize(7.2)),
+                                          decoration: InputDecoration(
+                                            hintText: "גיל מינימלי",
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.fromLTRB(
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                            ),
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          maxLines: 1,
+                                          onChanged: (newVal) {
+                                            int? n = int.tryParse(newVal);
+                                            if (n != null) {
+                                              event.minAge = n;
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    )),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Icon(
+                                  FontAwesomeIcons.lessThanEqual,
+                                  textDirection: ui.TextDirection.ltr,
+                                  color: Colors.red,
+                                  //color: Colors.tealAccent[400],
+                                  size: iconSize,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: spaceBetween),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    height: height,
+                                    width: width,
+                                    decoration: BoxDecoration(
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(1),
+                                            offset: const Offset(0, 2),
+                                            blurRadius:
+                                                Globals.scaler.getHeight(.2)),
+                                      ],
+                                      color: Colors.white70,
+                                      border: Border.all(
+                                          color: Colors.white70,
+                                          width: Globals.scaler.getWidth(0.2)),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                    ),
+                                    child: Material(
+                                      elevation: Globals.scaler.getHeight(2),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      child: Container(
+                                        width: Globals.scaler.getWidth(29),
+                                        child: TextField(
+                                          controller: maxAgeController,
+                                          textAlign: TextAlign.center,
+                                          autocorrect: true,
+                                          style: TextStyle(
+                                              color: Colors.teal,
+                                              fontSize: Globals.scaler
+                                                  .getTextSize(7.2)),
+                                          decoration: InputDecoration(
+                                            hintText: "גיל מקסימלי",
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.fromLTRB(
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                              Globals.scaler.getWidth(1.3),
+                                            ),
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          maxLines: 1,
+                                          onChanged: (newVal) {
+                                            int? n = int.tryParse(newVal);
+                                            if (n != null) {
+                                              event.maxAge = n;
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    )),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Icon(
+                                  FontAwesomeIcons.greaterThanEqual,
+                                  color: Colors.red,
+                                  //color: Colors.tealAccent[400],
+                                  size: iconSize,
+                                ),
+                              ],
+                            ),
                             SizedBox(height: Globals.scaler.getHeight(2.5)),
                             Center(child: ThirdDotRow()),
                             SizedBox(height: Globals.scaler.getHeight(0.7)),
@@ -621,6 +799,10 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                     gender = value;
                     event.targetGender = gender;
                     setState(() {});
+                  } else if (text == "בחרו קבוצת יעד") {
+                    targetStatus = value;
+                    event.onlyForStatus = value;
+                    setState(() {});
                   } else if (text == "בחרו תחום") {
                     if (value == "תורה") {
                       selectedBook = null;
@@ -691,7 +873,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
         title:
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(
-            'קבע אירוע חדש  ',
+            widget.barTitle ?? 'קבע אירוע חדש  ',
             style:
                 TextStyle(fontWeight: FontWeight.bold, color: Colors.teal[400]),
           ),

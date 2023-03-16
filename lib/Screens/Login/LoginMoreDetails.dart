@@ -1,7 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:io';
-
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
@@ -10,7 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Authenitcate.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:objectid/objectid.dart';
+
 import '../../Globals.dart';
 import 'FadeAnimation.dart';
 import 'package:flutter/material.dart';
@@ -209,7 +210,7 @@ class _HomePageState extends State<LoginMoreDetails> {
       child: Column(
         children: <Widget>[
           Text(
-            "בחר תמונה",
+            "בחר/י תמונה",
             style: TextStyle(
               fontSize: Globals.scaler.getTextSize(8.5),
             ),
@@ -253,7 +254,10 @@ class _HomePageState extends State<LoginMoreDetails> {
     }
     image = await picker.pickImage(source: source);
     var file = File(image?.path ?? "");
-    String fileName = ObjectId().toString();
+    //String fileName = ObjectId().toString();
+    String fileName = sha1
+        .convert(utf8.encode(Globals.currentUser!.email! + "avatar"))
+        .toString();
     //check if an image was picked
     if (image != null) {
       var snapshot =

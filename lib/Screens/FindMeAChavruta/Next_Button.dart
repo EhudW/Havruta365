@@ -57,40 +57,59 @@ class NextButton extends StatelessWidget {
                     this.event!.targetGender == "" ||
                     // this.event.book == "" ||
                     this.event!.maxParticipants == 0)) {
-                  var apply = () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChooseDates(
-                              event: this.event,
-                              allUserEvents: allUserEvents)));
+                  if (event!.minAge <= event!.maxAge) {
+                    var apply = () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChooseDates(
+                                event: this.event,
+                                allUserEvents: allUserEvents)));
 
-                  var problem =
-                      event?.id != null && event!.shouldDuplicate == false;
-                  int m = event?.maxParticipants ?? 0;
-                  int p = event?.participants?.length ?? 0;
-                  int wq = event?.waitingQueue?.length ?? 0;
+                    var problem =
+                        event?.id != null && event!.shouldDuplicate == false;
+                    int m = event?.maxParticipants ?? 0;
+                    int p = event?.participants?.length ?? 0;
+                    int wq = event?.waitingQueue?.length ?? 0;
 
-                  bool targetGenderProblem = problem &&
-                      event?.firstInitTargetGender != event?.targetGender &&
-                      {"גברים", "נשים"}.contains(event?.targetGender);
+                    bool targetGenderProblem = problem &&
+                        event?.firstInitTargetGender != event?.targetGender &&
+                        {"גברים", "נשים"}.contains(event?.targetGender);
+                    bool targetAgesProblem = problem &&
+                        (event!.firstInitMinAge < event!.minAge ||
+                            event!.firstInitMaxAge > event!.maxAge);
+                    var a = event!.firstInitOnlyForStatus;
+                    var aa = Event.statusesCanJoin(a!);
+                    var b = event!.onlyForStatus;
+                    var bb = Event.statusesCanJoin(b!);
+                    var cc = aa.intersection(bb);
+                    bool targetStatusProblem = problem &&
+                        a != b &&
+                        (cc.length != aa.length || cc.length != bb.length);
+                    bool typeChangeProblem =
+                        problem && event?.type != event?.firstInitType;
+                    bool maxParticipantsProblem = problem && m < p /*+ wq*/;
 
-                  bool typeChangeProblem =
-                      problem && event?.type != event?.firstInitType;
-                  bool maxParticipantsProblem = problem && m < p /*+ wq*/;
-
-                  List<bool> problems = [
-                    maxParticipantsProblem,
-                    typeChangeProblem,
-                    targetGenderProblem
-                  ];
-                  List<String> whatToAsk = [
-                    "הקטנת מספר המשתתפים תבטל נרשמים קיימים",
-                    event?.type == 'L'
-                        ? "שינוי סוג לשיעור יגרור אישור או דחייה מיידיים של הממתינים"
-                        : "שינוי סוג לחברותא יגרור העברה של כל המשתתפים לתור המתנה לאישור",
-                    "שינוי קבוצת יעד גברים/נשים עלול לגרור ביטול השתתפות של חלק",
-                  ];
-                  askIfProblems(apply, problems, whatToAsk);
+                    List<bool> problems = [
+                      maxParticipantsProblem,
+                      typeChangeProblem,
+                      targetGenderProblem,
+                      targetAgesProblem,
+                      targetStatusProblem,
+                    ];
+                    List<String> whatToAsk = [
+                      "הקטנת מספר המשתתפים תבטל נרשמים קיימים",
+                      event?.type == 'L'
+                          ? "שינוי סוג לשיעור יגרור אישור או דחייה מיידיים של הממתינים"
+                          : "שינוי סוג לחברותא יגרור העברה של כל המשתתפים לתור המתנה לאישור",
+                      "שינוי קבוצת יעד גברים/נשים עלול לגרור ביטול השתתפות של חלק",
+                      "שינוי טווח גילאי קבוצת יעד עלול לגרור ביטול השתתפות של חלק",
+                      "שינוי סטטוס משפחתי של קבוצת יעד עלול לגרור ביטול השתתפות של חלק",
+                    ];
+                    askIfProblems(apply, problems, whatToAsk);
+                  } else {
+                    showErrorSnackBar(context,
+                        'גיל מינימלי צריך להיות קטן יותר מגיל מקסימלי');
+                  }
                 } else {
                   showErrorSnackBar(
                       context, 'צריך למלא את כל השדות לפני שמתקדמים');

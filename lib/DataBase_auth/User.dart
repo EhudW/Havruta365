@@ -45,7 +45,17 @@ class User {
     bool isOk = true;
     String? avoid = {"F": "גברים", "M": "נשים"}[this.gender];
     isOk = isOk && (avoid == null || avoid != e.targetGender);
+    isOk = isOk && Event.isStatusOk(e, status);
+    isOk = isOk && e.minAge <= age && age <= e.maxAge;
     return isOk || (okWhenCreator && e.creatorUser == this.email);
+  }
+
+  int get age {
+    var now = DateTime.now();
+    var _age =
+        (birthDate!.isAfter(now) ? 0 : now.difference(birthDate!).inDays) ~/
+            365;
+    return _age;
   }
 
   // Add interest to the list
