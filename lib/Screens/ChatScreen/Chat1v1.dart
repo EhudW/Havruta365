@@ -219,6 +219,7 @@ class _ChatPageState extends State<ChatPage> {
                                 inputBackgroundColor: Colors.white54,
                               ),
                               onMessageLongPress: (context, p1) {
+                                if (p1.author.id != _myUser.id) return;
                                 showModalBottomSheet(
                                   context: context,
                                   builder: ((builder) => NextButton.bottomSheet(
@@ -226,10 +227,14 @@ class _ChatPageState extends State<ChatPage> {
                                         "ההודעה תימחק גם לצד השני,\nולא ניתן לשחזרה.",
                                         () {
                                           Navigator.pop(context);
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
                                           model.deleteOne(p1);
                                         },
                                         () {
                                           Navigator.pop(context);
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
                                         },
                                       )),
                                 );

@@ -68,7 +68,8 @@ class ChatModel {
   Future deleteOne(types.Message msg) {
     if (otherPerson == null) throw Exception();
     _isLoading = true;
-    return Globals.db!.deleteMsgs([msg.id], null).whenComplete(() {
+    //return Globals.db!.deleteMsgs([msg.id], null).whenComplete(() {
+    return Globals.db!.editMsg(msg.id, "*__הודעה נמחקה__*").whenComplete(() {
       _data = _data.where((element) => element.id != msg.id).toList();
       _controller.add(_data);
       _wasFetched = true;

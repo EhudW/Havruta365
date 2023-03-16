@@ -440,6 +440,14 @@ class Mongo {
     return true;
   }
 
+  Future editMsg(dynamic id, String text) async {
+    id = id is ObjectId ? id : ObjectId.fromHexString(id);
+    var collection = db.collection('Chats');
+    // Check if the user exist
+    await collection.updateOne(
+        where.eq('_id', id), modify.set('message', text));
+  }
+
   void disconnect() async {
     await db.close();
   }
