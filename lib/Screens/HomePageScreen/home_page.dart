@@ -43,13 +43,11 @@ class _HomePageState extends State<HomePage> {
       Globals.onNewMsg = () => this.setState(() {});
       nnim!.refreshMe[this] = () => setState(() {});
       nnim!.start();
-      Globals.hasNewMsgHelper.start(true);
       if (andRefreshNow) setState(() {});
     } else {
       Globals.onNewMsg = () => null;
       nnim!.refreshMe[this] = () => null;
       nnim!.cancel();
-      Globals.hasNewMsgHelper.pause();
     }
   }
 
@@ -101,22 +99,37 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      IconButton(
-                        icon: Icon(FontAwesomeIcons.envelope),
-                        color: Globals.hasNewMsg
-                            ? Colors.redAccent
-                            : Colors.white54,
-                        onPressed: () async {
-                          setRefresh(false);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChatScreen()),
-                          ).then((value) => setRefresh(true));
-                          // this.events.events.refresh();
-                          // this.events.eventsOnline.refresh();
-                        },
-                        iconSize: scaler.getTextSize(10),
+                      Stack(
+                        children: [
+                          IconButton(
+                            icon: Icon(FontAwesomeIcons.envelope),
+                            color: Globals.hasNewMsg
+                                ? Colors.redAccent
+                                : Colors.white54,
+                            onPressed: () async {
+                              setRefresh(false);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatScreen()),
+                              ).then((value) => setRefresh(true));
+                              // this.events.events.refresh();
+                              // this.events.eventsOnline.refresh();
+                            },
+                            iconSize: scaler.getTextSize(10),
+                          ),
+                          CircleAvatar(
+                            radius:
+                                Globals.msgWithFriendsUnread == 0 ? 0 : 13.0,
+                            backgroundColor: Colors.red[900],
+                            child: Text(
+                              Globals.msgWithFriendsUnread.toString(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                       IconButton(
                         icon: Icon(Icons.person),

@@ -322,9 +322,10 @@ class Mongo {
   // Get message and insert it to the DB
   Future<bool> sendMessage(ChatMessage message) async {
     var collection = Globals.db!.db.collection('Chats');
-    var m = message.toJson();
-    await collection.insertOne(m);
-    return true;
+    var m = ChatMessage.cloneWith(message, newStatus: ChatMessage.statuses[1])
+        .toJson();
+    WriteResult result = await collection.insertOne(m);
+    return !result.hasWriteErrors;
   }
 
   Future __fetchDstUserData(List<ChatMessage> rslt, String myMail) async {
@@ -337,6 +338,7 @@ class Mongo {
         continue;
       }
       String currDstMail = curr.dst_mail!;
+      if (currDstMail.startsWith("ObjectId(")) continue;
       cache[currDstMail] = cache[currDstMail] ?? await getUser(currDstMail);
       User u = cache[currDstMail]!;
       curr.otherPersonAvatar = u.avatar!;
@@ -347,7 +349,8 @@ class Mongo {
   Future<List<ChatMessage>> getAllMyMessages(String dstMail,
       {String? srcMail,
       bool biDirectional = true,
-      bool fetchDstUserData = false}) async {
+      bool fetchDstUserData = false,
+      bool isForum = false}) async {
     List<ChatMessage> listMessages = [];
     var collection = Globals.db!.db.collection('Chats');
     var selector = where.eq('dst_mail', dstMail);
@@ -362,21 +365,33 @@ class Mongo {
         selector = selector.and(extra);
       }
     }
-
+    if (isForum) {
+      selector.and(where.eq("isForum", true));
+    } else {
+      selector.and(where.notExists("isForum").or(where.eq("isForum", false)));
+    }
     var messages = await collection.find(selector).toList();
     for (var i in messages) {
-      listMessages.add(new ChatMessage.fromJson(i));
+      listMessages.add(ChatMessage.fromJson(i));
     }
     listMessages.sort((a, b) => a.datetime!.compareTo(b.datetime!));
     !fetchDstUserData ? null : await __fetchDstUserData(listMessages, dstMail);
     return listMessages;
   }
 
-  Future<List<ChatMessage>> getAllMyLastMessageWithEachFriend(String dstMail,
-      {bool biDirectional = true, bool fetchDstUserData = false}) async {
+  Future<List<MapEntry<ChatMessage, int>>> getAllMyLastMessageWithEachFriend(
+    String dstMail, {
+    bool biDirectional = true,
+    bool fetchDstUserData = false,
+    bool isForum = false,
+  }) async {
     List<ChatMessage> listMessages = await getAllMyMessages(dstMail,
-        biDirectional: biDirectional, fetchDstUserData: false);
-    List<ChatMessage> rslt = [];
+        biDirectional: biDirectional,
+        fetchDstUserData: false,
+        isForum: isForum);
+    List<ChatMessage> _rslt = [];
+    List<MapEntry<ChatMessage, int>> rslt = [];
+    Map<String, int> unseenCounter = {};
     Set<String> withFriend = {};
     var sameRepr = (a, b) {
       var x = [a, b];
@@ -385,12 +400,21 @@ class Mongo {
     };
     listMessages.reversed.forEach((element) {
       var r = sameRepr(element.src_mail!, element.dst_mail!);
+      bool sentToMe =
+          element.dst_mail == dstMail && element.dst_mail != element.src_mail;
+      bool IhavntReadYet =
+          sentToMe && element.status != ChatMessage.statuses[2];
+      unseenCounter[r] = (unseenCounter[r] ?? 0) + (IhavntReadYet ? 1 : 0);
       if (!withFriend.contains(r)) {
-        rslt.add(element);
+        _rslt.add(element);
         withFriend.add(r);
       }
     });
-    !fetchDstUserData ? null : await __fetchDstUserData(rslt, dstMail);
+    !fetchDstUserData ? null : await __fetchDstUserData(_rslt, dstMail);
+    for (int i = 0; i < _rslt.length; i++) {
+      var r = sameRepr(_rslt[i].src_mail!, _rslt[i].dst_mail!);
+      rslt.add(MapEntry(_rslt[i], unseenCounter[r]!));
+    }
     return rslt;
   }
 
@@ -403,7 +427,7 @@ class Mongo {
     return true;
   }
 
-  Future<dynamic> __getLastMsgSentForMe() async {
+  /*Future<dynamic> __getLastMsgSentForMe() async {
     var collection = Globals.db!.db.collection('Chats');
     var result = await (collection as DbCollection).findOne(where
         .eq("dst_mail", Globals.currentUser!.email)
@@ -421,10 +445,10 @@ class Mongo {
     // instead of using id which might be wrong if the last was deleted and the newest is very old
     return ChatMessage.fromJson(newest).datetime!.isAfter(last.datetime!);
     //return newest?['_id'] != last?.id;
-  }
+  }*/
 
-  Future deleteMsgs(List msgs, ChatMessage? insertAlert) async {
-    if (msgs.isEmpty) return;
+  Future<bool> deleteMsgs(List msgs, ChatMessage? insertAlert) async {
+    if (msgs.isEmpty) return true;
     msgs =
         msgs.map((e) => e is ObjectId ? e : ObjectId.fromHexString(e)).toList();
     var collection = Globals.db!.db.collection('Chats');
@@ -440,12 +464,29 @@ class Mongo {
     return true;
   }
 
-  Future editMsg(dynamic id, String text) async {
+  Future<bool> editMsg(dynamic id, String text) async {
     id = id is ObjectId ? id : ObjectId.fromHexString(id);
     var collection = db.collection('Chats');
     // Check if the user exist
-    await collection.updateOne(
+    WriteResult result = await collection.updateOne(
         where.eq('_id', id), modify.set('message', text));
+    await collection.updateOne(where.eq('_id', id), modify.set('status', 1));
+    return !result.hasWriteErrors;
+  }
+
+  Future<bool> setMsgsStatus(List<dynamic> ids, int newStatus) async {
+    if (ids.isEmpty) return true;
+    ids = ids
+        .map((id) => id is ObjectId ? id : ObjectId.fromHexString(id))
+        .toList();
+    var collection = db.collection('Chats');
+    // Check if the user exist
+    WriteResult result = ids.length == 1
+        ? await collection.updateOne(
+            where.eq('_id', ids[0]), modify.set('status', newStatus))
+        : await collection.updateMany(
+            where.oneFrom('_id', ids), modify.set('status', newStatus));
+    return !result.hasWriteErrors;
   }
 
   void disconnect() async {

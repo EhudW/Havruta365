@@ -71,11 +71,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   void initState() {
     super.initState();
     maxController = TextEditingController(
-        text: widget.initEvent?.maxParticipants?.toString());
-    maxAgeController =
-        TextEditingController(text: widget.initEvent?.maxAge.toString());
+        text: widget.initEvent?.maxParticipants?.toString() ?? "5");
+    maxAgeController = TextEditingController(
+        text: widget.initEvent?.maxAge.toString() ?? "120");
     minAgeController =
-        TextEditingController(text: widget.initEvent?.minAge.toString());
+        TextEditingController(text: widget.initEvent?.minAge.toString() ?? "0");
     bookController = TextEditingController(text: widget.initEvent?.book);
     if (widget.initEvent != null) {
       event = widget.initEvent!;
@@ -255,7 +255,9 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
   }
 
   void intializeEvent(Event event) {
-    event.maxParticipants = 0;
+    event.maxParticipants = 5;
+    event.minAge = 0;
+    event.maxAge = 120;
     event.targetGender = '';
     event.book = '';
     event.topic = '';
@@ -332,7 +334,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   width: 8,
                                 ),
                                 Icon(
-                                  FontAwesomeIcons.circleQuestion,
+                                  FontAwesomeIcons.comments,
                                   color: Colors.red,
                                   //color: Colors.tealAccent[400],
                                   size: iconSize,
@@ -375,6 +377,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                               fontSize: Globals.scaler
                                                   .getTextSize(7.2)),
                                           decoration: InputDecoration(
+                                            suffixText: "מספר משתתפים",
                                             hintText: "מספר משתתפים",
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.fromLTRB(
@@ -516,7 +519,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     width: 8,
                                   ),
                                   Icon(
-                                    Icons.face,
+                                    FontAwesomeIcons.restroom,
                                     color: Colors.red,
                                     //color: Colors.tealAccent[400],
                                     size: iconSize,
@@ -541,7 +544,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                     width: 8,
                                   ),
                                   Icon(
-                                    FontAwesomeIcons.heart,
+                                    FontAwesomeIcons.usersViewfinder,
                                     color: Colors.red,
                                     //color: Colors.tealAccent[400],
                                     size: iconSize,
@@ -583,6 +586,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                               fontSize: Globals.scaler
                                                   .getTextSize(7.2)),
                                           decoration: InputDecoration(
+                                            suffixText: "גיל מינימלי",
                                             hintText: "גיל מינימלי",
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.fromLTRB(
@@ -611,7 +615,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   width: 8,
                                 ),
                                 Icon(
-                                  FontAwesomeIcons.lessThanEqual,
+                                  FontAwesomeIcons.baby,
                                   textDirection: ui.TextDirection.ltr,
                                   color: Colors.red,
                                   //color: Colors.tealAccent[400],
@@ -655,6 +659,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                               fontSize: Globals.scaler
                                                   .getTextSize(7.2)),
                                           decoration: InputDecoration(
+                                            suffixText: "גיל מקסימלי",
                                             hintText: "גיל מקסימלי",
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.fromLTRB(
@@ -683,7 +688,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                   width: 8,
                                 ),
                                 Icon(
-                                  FontAwesomeIcons.greaterThanEqual,
+                                  FontAwesomeIcons.personCane,
                                   color: Colors.red,
                                   //color: Colors.tealAccent[400],
                                   size: iconSize,

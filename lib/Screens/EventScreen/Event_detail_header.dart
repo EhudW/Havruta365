@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide Center;
 import '../UserScreen/UserScreen.dart';
@@ -68,6 +69,11 @@ class EventDetailHeader extends StatelessWidget {
         ),
       ],
     );
+    String topic = event?.topic?.trim() ?? "";
+    String book = event?.book?.trim() ?? "";
+    String type = event?.type == "H" ? "חברותא" : "שיעור";
+    String t_book = book != "" ? " ב" + book : "";
+    String t_topic = topic != "" ? " ב" + topic : "";
     return FutureBuilder(
         future: creator,
         builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -142,6 +148,18 @@ class EventDetailHeader extends StatelessWidget {
                       ],
                     ),
                   ),
+                  ElevatedButton.icon(
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                              otherPerson: event!.id.toString(),
+                              otherPersonName: event!.id.toString(),
+                              forumName: type + t_topic + t_book,
+                            ),
+                          )),
+                      icon: Icon(Icons.abc),
+                      label: Text("forum")),
                 ],
               );
             default:

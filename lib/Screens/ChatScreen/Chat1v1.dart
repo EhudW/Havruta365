@@ -28,7 +28,12 @@ class ChatL10nHe extends ChatL10n {
 class ChatPage extends StatefulWidget {
   String otherPerson;
   String otherPersonName;
-  ChatPage({Key? key, required this.otherPerson, required this.otherPersonName})
+  String? forumName;
+  ChatPage(
+      {Key? key,
+      required this.otherPerson,
+      required this.otherPersonName,
+      this.forumName})
       : super(key: key);
 
   @override
@@ -46,7 +51,9 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     model = ChatModel(
-        myMail: Globals.currentUser!.email!, otherPerson: widget.otherPerson);
+        myMail: Globals.currentUser!.email!,
+        otherPerson: widget.otherPerson,
+        forum: widget.forumName != null);
     timer = MyTimer(
       duration: MyConsts.checkNewMessageInChatSec,
       function: () => model.refresh().then((value) => true),
@@ -62,6 +69,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void onSend(types.PartialText pt) {
     model.send(ChatMessage(
+        isForum: widget.forumName != null,
         avatar: Globals.currentUser!.avatar,
         datetime: DateTime.now(),
         dst_mail: widget.otherPerson,
@@ -77,37 +85,40 @@ class _ChatPageState extends State<ChatPage> {
       leadingWidth: Globals.scaler.getWidth(6),
       toolbarHeight: Globals.scaler.getHeight(4.4),
       elevation: 10,
-      leading: Builder(
-          builder: (context) => Container(
-                margin: EdgeInsets.only(left: 20),
-                // SizedBox(
-                //   width: Globals.scaler.getWidth(2),
-                // ),
-                child: IconButton(
-                  icon: Center(
-                    child: Icon(Icons.delete,
-                        color: Colors.red[400], size: scaler.getTextSize(10)),
-                  ),
-                  tooltip:
-                      MaterialLocalizations.of(context).openAppDrawerTooltip,
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: ((builder) => NextButton.bottomSheet(
-                            context,
-                            "השיחה תימחק גם לצד השני,\nולא ניתן לשחזרה.",
-                            () {
-                              Navigator.pop(context);
-                              model.deleteAll();
-                            },
-                            () {
-                              Navigator.pop(context);
-                            },
-                          )),
-                    );
-                  },
-                ),
-              )),
+      leading: widget.forumName != null
+          ? null
+          : Builder(
+              builder: (context) => Container(
+                    margin: EdgeInsets.only(left: 20),
+                    // SizedBox(
+                    //   width: Globals.scaler.getWidth(2),
+                    // ),
+                    child: IconButton(
+                      icon: Center(
+                        child: Icon(Icons.delete,
+                            color: Colors.red[400],
+                            size: scaler.getTextSize(10)),
+                      ),
+                      tooltip: MaterialLocalizations.of(context)
+                          .openAppDrawerTooltip,
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: ((builder) => NextButton.bottomSheet(
+                                context,
+                                "השיחה תימחק גם לצד השני,\nולא ניתן לשחזרה.",
+                                () {
+                                  Navigator.pop(context);
+                                  model.deleteAll();
+                                },
+                                () {
+                                  Navigator.pop(context);
+                                },
+                              )),
+                        );
+                      },
+                    ),
+                  )),
       shadowColor: Colors.teal[400],
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -145,7 +156,9 @@ class _ChatPageState extends State<ChatPage> {
                 // Center(
                 //  child:
                 Text(
-                  "שיחה עם ${widget.otherPersonName}",
+                  widget.forumName != null
+                      ? "פורום - ${widget.forumName}"
+                      : "שיחה עם ${widget.otherPersonName}",
                   textDirection: TextDirection.rtl,
                   style: TextStyle(
                     //fontFamily: 'Yiddish',
@@ -180,7 +193,7 @@ class _ChatPageState extends State<ChatPage> {
     List<ChatMessage> firstData = [];
 
     Future<List<ChatMessage>> first =
-        model.stream.first.then((value) => firstData = value);
+        model.streamAsEntryKey.first.then((value) => firstData = value);
     model.refresh();
     return Scaffold(
       body: FutureBuilder(
@@ -204,11 +217,16 @@ class _ChatPageState extends State<ChatPage> {
                     resizeToAvoidBottomInset: true,
                     body: StreamBuilder<List<ChatMessage>>(
                         initialData: firstData,
-                        stream: model.stream,
+                        stream: model.streamAsEntryKey,
                         builder: (context, snapshot) {
                           return Directionality(
                             textDirection: TextDirection.rtl,
                             child: Chat(
+                              onMessageVisibilityChanged: (p0, visible) =>
+                                  !visible || (widget.forumName != null)
+                                      ? null
+                                      : model
+                                          .msgWasSeen(p0 as types.TextMessage),
                               theme: DefaultChatTheme(
                                 backgroundColor: Colors.cyan[50]!,
                                 primaryColor: Colors.teal,
@@ -219,7 +237,8 @@ class _ChatPageState extends State<ChatPage> {
                                 inputBackgroundColor: Colors.white54,
                               ),
                               onMessageLongPress: (context, p1) {
-                                if (p1.author.id != _myUser.id) return;
+                                if (p1.author.id != _myUser.id ||
+                                    p1.id == "NULL") return;
                                 showModalBottomSheet(
                                   context: context,
                                   builder: ((builder) => NextButton.bottomSheet(

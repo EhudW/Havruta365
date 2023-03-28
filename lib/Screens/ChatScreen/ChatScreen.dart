@@ -31,8 +31,11 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     timer = MyTimer(
-      duration: MyConsts.checkNewMessageOutsideChatSec,
-      function: () => model.refresh().then((value) => true),
+      //duration: MyConsts.checkNewMessageOutsideChatSec,
+      duration: 1,
+      function: () => model
+          .refresh(Globals.msgWithFriends.waitData().then((v) => v!))
+          .then((value) => true),
     );
     timer.start(true);
   }
@@ -48,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
         appBar: appBar(context),
         resizeToAvoidBottomInset: true,
-        body: StreamBuilder<List<ChatMessage>>(
+        body: StreamBuilder<List<MapEntry<ChatMessage, int>>>(
             stream: model.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -67,7 +70,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: ListView.builder(
                   itemCount: list.length,
                   itemBuilder: (context, index) {
-                    ChatMessage message = list[index];
+                    ChatMessage message = list[index].key;
+                    int unread = list[index].value;
                     return Column(
                       children: <Widget>[
                         Divider(
@@ -86,23 +90,38 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ),
                                 )).then((value) => timer.start(true));
                           },
-                          leading: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: Colors.transparent)),
-                              onPressed: () {
-                                timer.cancel();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          UserScreen(message.otherPersonMail),
-                                    )).then((value) => timer.start(true));
-                              },
-                              child: CircleAvatar(
-                                radius: 24.0,
-                                backgroundImage:
-                                    NetworkImage(message.otherPersonAvatar!),
-                              )),
+                          leading: Stack(
+                            children: [
+                              OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                      side: BorderSide(
+                                          color: Colors.transparent)),
+                                  onPressed: () {
+                                    timer.cancel();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => UserScreen(
+                                              message.otherPersonMail),
+                                        )).then((value) => timer.start(true));
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 24.0,
+                                    backgroundImage: NetworkImage(
+                                        message.otherPersonAvatar!),
+                                  )),
+                              CircleAvatar(
+                                radius: unread == 0 ? 0 : 13.0,
+                                backgroundColor: Colors.red[900],
+                                child: Text(
+                                  unread.toString(),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[

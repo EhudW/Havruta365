@@ -1,3 +1,4 @@
+import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/rec_system.dart';
 
 import 'DataBase_auth/Event.dart';
@@ -43,30 +44,26 @@ class Globals {
     }
   }
 
-  static dynamic _lastMsgSeen;
-  static dynamic get lastMsgSeen => _lastMsgSeen;
-  static set lastMsgSeen(dynamic v) {
-    if (_lastMsgSeen == null ||
-        (v != null && v.datetime.isAfter(_lastMsgSeen.datetime))) {
-      _lastMsgSeen = v;
-      hasNewMsg = false;
-    }
-  }
-
-  static bool _hasNewMsg = false;
-  static bool get hasNewMsg => _hasNewMsg;
-  static set hasNewMsg(bool v) {
-    if (v != _hasNewMsg) {
-      _hasNewMsg = v;
+  static int _msgWithFriendsUnread = 0;
+  static int get msgWithFriendsUnread => _msgWithFriendsUnread;
+  static set msgWithFriendsUnread(int v) {
+    if (v != _msgWithFriendsUnread) {
+      _msgWithFriendsUnread = v;
       if (onNewMsg != null) onNewMsg!();
     }
   }
 
   static Function()? onNewMsg;
-  static LoadProperty<void> hasNewMsgHelper = LoadProperty(
+  static bool get hasNewMsg => msgWithFriendsUnread != 0;
+  static LoadProperty<List<MapEntry<ChatMessage, int>>> msgWithFriends =
+      LoadProperty(
     (setter) async {
-      hasNewMsg = await db!.hasNewMsg(lastMsgSeen);
-      setter(hasNewMsg);
+      var x = await db!.getAllMyLastMessageWithEachFriend(
+          Globals.currentUser!.email!,
+          fetchDstUserData: true);
+      msgWithFriendsUnread = x.fold(0, (s, c) => s + c.value);
+      //hasNewMsg = x.any((element) => element.value != 0);
+      setter(x);
       return true;
     },
     oneLoadOnly: false,

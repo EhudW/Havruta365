@@ -118,36 +118,6 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                     child: checkIfShiur(),
                   ),
                   SizedBox(height: spaceBetween),
-                  Container(
-                    height: Globals.scaler.getHeight(2.5),
-                    width: Globals.scaler.getWidth(35),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                          color: Colors.teal[400]!,
-                          width: Globals.scaler.getWidth(.1)),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: new TextField(
-                      controller: locationController,
-                      textDirection: TextDirection.rtl,
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "מקום ודרכי הגעה",
-                        focusColor: Colors.teal,
-                        contentPadding: EdgeInsets.fromLTRB(
-                            Globals.scaler.getWidth(2),
-                            Globals.scaler.getHeight(0),
-                            Globals.scaler.getWidth(2),
-                            Globals.scaler.getHeight(0)),
-                      ),
-                      onChanged: (location) {
-                        widget.event!.location = location;
-                      },
-                    ),
-                  ),
-                  SizedBox(height: spaceBetween),
                   Stack(
                     children: [
                       SizedBox(height: spaceBetween),
@@ -166,9 +136,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: widget.event!.type == 'L'
-                                  ? "קישור לשיעור"
-                                  : "קישור לחברותא",
+                              suffixText: "קישור אונליין",
+                              hintText: "...קישור אונליין",
                               focusColor: Colors.teal,
                               contentPadding: EdgeInsets.fromLTRB(
                                   Globals.scaler.getWidth(2),
@@ -182,6 +151,37 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             },
                           )),
                     ],
+                  ),
+                  SizedBox(height: spaceBetween),
+                  Container(
+                    height: Globals.scaler.getHeight(2.5),
+                    width: Globals.scaler.getWidth(35),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: Colors.teal[400]!,
+                          width: Globals.scaler.getWidth(.1)),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: new TextField(
+                      controller: locationController,
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        suffixText: "מיקום ודרכי הגעה",
+                        hintText: "...מיקום ודרכי הגעה",
+                        focusColor: Colors.teal,
+                        contentPadding: EdgeInsets.fromLTRB(
+                            Globals.scaler.getWidth(2),
+                            Globals.scaler.getHeight(0),
+                            Globals.scaler.getWidth(2),
+                            Globals.scaler.getHeight(0)),
+                      ),
+                      onChanged: (location) {
+                        widget.event!.location = location;
+                      },
+                    ),
                   ),
                   SizedBox(height: spaceBetween),
                   Stack(
@@ -205,7 +205,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                               textAlignVertical: TextAlignVertical.center,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "פרטים נוספים",
+                                hintText: "...פרטים נוספים",
+                                helperText: "פרטים נוספים",
                                 focusColor: Colors.blue,
                                 contentPadding: EdgeInsets.fromLTRB(
                                     Globals.scaler.getWidth(2),

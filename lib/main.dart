@@ -192,6 +192,8 @@ class _MyAppState extends State<MyApp> {
                                       case ConnectionState.done:
                                         Globals.currentUser = snapshot.data;
                                         Globals.updateRec();
+                                        Globals.msgWithFriends
+                                            .restart([], true);
                                         return HomePage();
                                       //break;
                                       default:

@@ -190,6 +190,7 @@ class _HomePageState extends State<Login> {
                               // Update current user
                               Globals.currentUser = User.fromJson(user_json);
                               Globals.updateRec();
+                              Globals.msgWithFriends.restart([], true);
                               // This is ObjectID!!
                               var id = user_json['_id'];
                               final SharedPreferences prefs = await _prefs;
@@ -323,6 +324,7 @@ class _HomePageState extends State<Login> {
         // Update current user
         Globals.currentUser = await Globals.db!.getUser(google_user.email);
         Globals.updateRec();
+        Globals.msgWithFriends.restart([], true);
         // Save a token in user device
         Globals.db!.saveIdLocally();
         Navigator.of(context).pushReplacement(

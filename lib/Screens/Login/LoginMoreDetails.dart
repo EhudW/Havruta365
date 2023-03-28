@@ -144,6 +144,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                           'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
                     Globals.db!.updateUser(Globals.currentUser!);
                     Globals.updateRec();
+                    Globals.msgWithFriends.restart([], true);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomePage()),
