@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Google_sign_in.dart';
+import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Events/MyEventsPage.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Events/modelsHomePages.dart';
@@ -258,9 +259,11 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             onTap: () async {
               // ignore: unused_local_variable
               var currentUser;
+              Globals.currentUser = null;
+              Globals.rec.cancel([]);
+              Globals.msgWithFriends.cancel([]);
+              FCM.clearAll();
               if (await (GoogleSignInApi.isSignedIn())) {
-                Globals.rec.cancel([]);
-                Globals.msgWithFriends.cancel([]);
                 currentUser = GoogleSignInApi.currentUser();
                 await GoogleSignInApi.logout();
               }

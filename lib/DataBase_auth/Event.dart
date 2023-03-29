@@ -8,6 +8,30 @@ import 'package:havruta_project/Globals.dart';
 import 'User.dart';
 
 class Event {
+  String get shortStr {
+    String _topic = this.topic?.trim() ?? "";
+    String _book = this.book?.trim() ?? "";
+    String _type = this.type == "H" ? "חברותא" : "שיעור";
+    String t_book = _book != "" ? " ב" + _book : "";
+    String t_topic = _topic != "" ? " ב" + _topic : "";
+    return _type + t_topic + t_book;
+  }
+
+  // minutes to next date. 0 online, -1 pass,
+  int get startIn {
+    if (dates == null || dates!.isEmpty) return -1;
+    var next = dates!.first as DateTime;
+    next = next.toLocal();
+    var now = DateTime.now().toLocal();
+    var diff = next.millisecondsSinceEpoch - now.millisecondsSinceEpoch;
+    diff = diff ~/ (1000 * 60);
+    if (diff >= 0) return diff;
+    if (diff < -1 * duration!) return -1;
+    return 0;
+  }
+
+  String get typeAsStr => type == "H" ? "חברותא" : "שיעור";
+
   static List<String> statusOps = <String>[
     "סטטוס משפחתי",
     "רווק/ה",

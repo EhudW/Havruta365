@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
+import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -148,18 +149,23 @@ class EventDetailHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  ElevatedButton.icon(
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatPage(
-                              otherPerson: event!.id.toString(),
-                              otherPersonName: event!.id.toString(),
-                              forumName: type + t_topic + t_book,
-                            ),
-                          )),
-                      icon: Icon(Icons.abc),
-                      label: Text("forum")),
+                  Positioned(
+                    top: 200,
+                    child: ElevatedButton.icon(
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  otherPerson: event!.id.toString(),
+                                  otherPersonName: event!.id.toString(),
+                                  forumName: type + t_topic + t_book,
+                                ),
+                              ));
+                        },
+                        icon: Icon(Icons.abc),
+                        label: Text("forum")),
+                  ),
                 ],
               );
             default:

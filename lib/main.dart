@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/DataBase_auth/mongo2.dart';
+import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
@@ -133,6 +134,7 @@ class _MyAppState extends State<MyApp> {
       );
       timer!.start(false);
     }
+    Future.delayed(Duration(seconds: 5), () => FCM.foreground());
   }
 
   @override
