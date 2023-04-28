@@ -56,8 +56,8 @@ class _NotificationsState extends State<Notifications> {
                                   .removeAll()
                                   .catchError((err) => null);
                               // refresh ui if this delete cause that
-                              if (widget.nnim.model.isDataEmpty) {
-                                widget.nnim.newNotification = false;
+                              if (widget.nnim.model.dataLen == 0) {
+                                widget.nnim.newNotification = 0;
                                 widget.nnim.refreshAll();
                               }
                               Navigator.pop(context);

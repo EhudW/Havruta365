@@ -42,6 +42,7 @@ class ChatModel {
     if (_shouldNotSendSeen.contains(msg.id)) return;
     _shouldNotSendSeen.add(msg.id);
     ChatMessage m = ChatMessage.fromTypesTextMsg(msg);
+    if (m.id == null) return; // if src==mymail
     if (m.dst_mail != myMail || m.status == types.Status.seen) return;
     Globals.db!.setMsgsStatus([m.id], 2);
   }
@@ -191,7 +192,7 @@ class ChatModel {
         for (var id in totalIds) {
           var m1x = m1[id];
           var m2x = m2[id];
-          var last = (m1x?.key.tag ?? 0) > (m2x?.key.tag ?? 0) ? m1x : m2x;
+          var last = (m1x?.key.tag ?? 0) >= (m2x?.key.tag ?? 0) ? m1x : m2x;
           combined.add(last!);
           times.add(last.key.datetime!);
         }

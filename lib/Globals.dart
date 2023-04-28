@@ -1,3 +1,4 @@
+import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/rec_system.dart';
 
@@ -13,6 +14,15 @@ import 'mydebug.dart' as MyDebug;
 
 // see also mydebug.dart
 class Globals {
+  static void onNewLogin(User user) {
+    // new login
+    // Update current user
+    Globals.currentUser = user;
+    Globals.updateRec();
+    Globals.msgWithFriends.restart([], true);
+    FCM.onLogin();
+  }
+
   // one time heavy calc;
   static LoadProperty<List<Event>> rec = LoadProperty(
     (setter) async {

@@ -321,6 +321,14 @@ class Mongo {
 
   // Get message and insert it to the DB
   Future<bool> sendMessage(ChatMessage message) async {
+    String topic =
+        message.dst_mail!.replaceAll("@", "%%%%").replaceAll("(", "%%%");
+    String mgt = "msgs";
+    String title = message.name ?? "";
+    String body = message.message ?? "";
+    String link = "??"; //todo
+    http.get(Uri.parse(
+        "http://10.0.0.7:5000/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link"));
     var collection = Globals.db!.db.collection('Chats');
     var m = ChatMessage.cloneWith(message, newStatus: ChatMessage.statuses[1])
         .toJson();
@@ -467,10 +475,11 @@ class Mongo {
   Future<bool> editMsg(dynamic id, String text) async {
     id = id is ObjectId ? id : ObjectId.fromHexString(id);
     var collection = db.collection('Chats');
-    // Check if the user exist
+    int tag = DateTime.now().millisecondsSinceEpoch;
     WriteResult result = await collection.updateOne(
         where.eq('_id', id), modify.set('message', text));
     await collection.updateOne(where.eq('_id', id), modify.set('status', 1));
+    await collection.updateOne(where.eq('_id', id), modify.set('tag', tag));
     return !result.hasWriteErrors;
   }
 
@@ -480,12 +489,19 @@ class Mongo {
         .map((id) => id is ObjectId ? id : ObjectId.fromHexString(id))
         .toList();
     var collection = db.collection('Chats');
-    // Check if the user exist
+    int tag = DateTime.now().millisecondsSinceEpoch;
     WriteResult result = ids.length == 1
         ? await collection.updateOne(
             where.eq('_id', ids[0]), modify.set('status', newStatus))
         : await collection.updateMany(
             where.oneFrom('_id', ids), modify.set('status', newStatus));
+    if (ids.length == 1) {
+      await collection.updateOne(
+          where.eq('_id', ids[0]), modify.set('tag', tag));
+    } else {
+      await collection.updateMany(
+          where.oneFrom('_id', ids), modify.set('tag', tag));
+    }
     return !result.hasWriteErrors;
   }
 
