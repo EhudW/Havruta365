@@ -16,7 +16,8 @@ class User {
       this.yeshiva,
       this.description,
       this.gender,
-      this.status});
+      this.status})
+      : subs_topics = (email == null ? [] : [email]);
 
   String? name,
       email,
@@ -30,9 +31,10 @@ class User {
       status;
   DateTime? birthDate;
   List<dynamic>? interestList;
-
+  List<String> subs_topics;
   // Constructor
-  User.fromUser(String name, String email, String gender) {
+  User.fromUser(String name, String email, String gender)
+      : subs_topics = [email] {
     this.name = name;
     this.email = email;
     this.gender = gender;
@@ -77,6 +79,7 @@ class User {
         'avatar': avatar ?? "",
         'interest': interestList ?? [],
         'phone': phone ?? "",
+        'subs_topics': subs_topics,
       };
 
   User.fromJson(Map<String, dynamic> json)
@@ -91,5 +94,12 @@ class User {
         status = json['status'],
         avatar = json['avatar'],
         interestList = json['interest'],
-        phone = json['phone'];
+        subs_topics = [json['email']],
+        phone = json['phone'] {
+    for (String s in (json['subs_topics'] ?? [])) {
+      if (s != email) {
+        subs_topics.add(s);
+      }
+    }
+  }
 }

@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -82,7 +83,7 @@ class Mongo {
     final notifications = await collection
         .find(where
             .eq('destinationUser', Globals.currentUser!.email)
-            .sortBy('_id'))
+            .sortBy('_id', descending: true))
         .toList();
     for (var i in notifications) {
       data.add(new NotificationUser.fromJson(i));
@@ -224,6 +225,24 @@ class Mongo {
         where.eq('email', user.email), modify.set('avatar', user.avatar));
   }
 
+  Future updateUserSubs_Topics(
+      {List<String>? add, List<String>? remove}) async {
+    var user = Globals.currentUser!;
+    var topicsSet = Set.of(user.subs_topics);
+    topicsSet.addAll(add ?? []);
+    topicsSet.removeAll(remove ?? []);
+    if (user.subs_topics.toSet().length == topicsSet.length &&
+        user.subs_topics.toSet().difference(topicsSet).isEmpty) return;
+    user.subs_topics = List.of(topicsSet);
+    print(user.subs_topics);
+    var collection = db.collection('Users');
+    // Check if the user exist
+    await collection.updateOne(where.eq('email', user.email),
+        modify.set('subs_topics', user.subs_topics));
+    await FCM.unsub();
+    await FCM.sub();
+  }
+
   updateEvent(Event event) async {
     // error if event.id == null or cant find the event in the db
     var collection = db.collection('Events');
@@ -319,20 +338,36 @@ class Mongo {
     await prefs.setString('id', id.toString());
   }
 
+  static String topicReplace(String topic) {
+    //isValidTopic = RegExp(r'^[a-zA-Z0-9-_.~%]{1,900}$').hasMatch(topic);
+    topic = topic.replaceAll("\'", '\"');
+    var toReplace = "@()\"".split('');
+    for (int i = 0; i < toReplace.length; i++)
+      topic = topic.replaceAll(toReplace[i], 'QqQ${'Z' * (i + 1)}QqQ');
+    return topic;
+  }
+
+  Future sendMessageNodeJS(String name, String msg, String dst_mail) async {
+    String topic = topicReplace(dst_mail);
+    String mgt = "msgs";
+    String title = name;
+    String body = msg;
+    String link = "??$dst_mail"; //todo
+    try {
+      await http.get(Uri.parse(
+          "http://10.0.0.7:5000/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link"));
+    } catch (err) {}
+  }
+
   // Get message and insert it to the DB
   Future<bool> sendMessage(ChatMessage message) async {
-    String topic =
-        message.dst_mail!.replaceAll("@", "%%%%").replaceAll("(", "%%%");
-    String mgt = "msgs";
-    String title = message.name ?? "";
-    String body = message.message ?? "";
-    String link = "??"; //todo
-    http.get(Uri.parse(
-        "http://10.0.0.7:5000/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link"));
     var collection = Globals.db!.db.collection('Chats');
     var m = ChatMessage.cloneWith(message, newStatus: ChatMessage.statuses[1])
         .toJson();
     WriteResult result = await collection.insertOne(m);
+    result.hasWriteErrors
+        ? null
+        : sendMessageNodeJS(message.name!, message.message!, message.dst_mail!);
     return !result.hasWriteErrors;
   }
 
@@ -385,6 +420,46 @@ class Mongo {
     listMessages.sort((a, b) => a.datetime!.compareTo(b.datetime!));
     !fetchDstUserData ? null : await __fetchDstUserData(listMessages, dstMail);
     return listMessages;
+  }
+
+  Future<List<MapEntry<ChatMessage, int>>>
+      getAllMyLastMessageWithEachFriendAndForums(
+    String dstMail, {
+    bool biDirectional = true,
+    bool fetchDstUserData = false,
+  }) {
+    var dialog_results = getAllMyLastMessageWithEachFriend(dstMail,
+        biDirectional: biDirectional,
+        fetchDstUserData: fetchDstUserData,
+        isForum: false);
+    return getAllMyForums(dialog_results);
+  }
+
+  Future<List<MapEntry<ChatMessage, int>>> getAllMyForums(
+      [Future<List<MapEntry<ChatMessage, int>>>? combine]) async {
+    var mail = Globals.currentUser!.email!;
+    List<MapEntry<ChatMessage, int>> dialog_results =
+        await (combine ?? Future.value([]));
+    dialog_results = List.of(dialog_results);
+    List<MapEntry<ChatMessage, int>> x = [];
+    var collection = (Globals.db!.db as Db).collection('Chats');
+    for (String topic in Globals.currentUser!.subs_topics) {
+      try {
+        if ([mail].contains(topic)) continue;
+        var tmp = await collection.findOne(
+            where.eq('dst_mail', topic).sortBy('_id', descending: true));
+        if (tmp == null) continue;
+        var msg = ChatMessage.fromJson(tmp);
+        var event = await getEventById(
+            ObjectId.fromHexString(msg.dst_mail!.split("\"")[1]));
+        msg.otherPersonAvatar = event!.eventImage!;
+        msg.otherPersonName = event.shortStr;
+        x.add(MapEntry(msg, 0));
+      } catch (err) {}
+    }
+    dialog_results.addAll(x);
+    dialog_results.sort((a, b) => b.key.datetime!.compareTo(a.key.datetime!));
+    return dialog_results;
   }
 
   Future<List<MapEntry<ChatMessage, int>>> getAllMyLastMessageWithEachFriend(
@@ -472,7 +547,8 @@ class Mongo {
     return true;
   }
 
-  Future<bool> editMsg(dynamic id, String text) async {
+  Future<bool> editMsg(dynamic id, String text,
+      {required ChatMessage message}) async {
     id = id is ObjectId ? id : ObjectId.fromHexString(id);
     var collection = db.collection('Chats');
     int tag = DateTime.now().millisecondsSinceEpoch;
@@ -480,6 +556,9 @@ class Mongo {
         where.eq('_id', id), modify.set('message', text));
     await collection.updateOne(where.eq('_id', id), modify.set('status', 1));
     await collection.updateOne(where.eq('_id', id), modify.set('tag', tag));
+    result.hasWriteErrors
+        ? null
+        : sendMessageNodeJS(message.name!, message.message!, message.dst_mail!);
     return !result.hasWriteErrors;
   }
 

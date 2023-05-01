@@ -258,6 +258,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
     });
     Globals.db!.insertNotification(notification);
     add_future.then((value) {
+      Globals.db!.updateUserSubs_Topics(add: [widget.event!.id.toString()]);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
         idleType == 1 ? 'האירוע נוסף בהצלחה לפרופיל האישי' : "הבקשה נשלחה",

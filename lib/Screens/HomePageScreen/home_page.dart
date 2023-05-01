@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
       Globals.onNewMsg = () => this.setState(() {});
       nnim!.refreshMe[this] = () => setState(() {});
       nnim!.start();
-      if (andRefreshNow) setState(() {});
+      if (andRefreshNow && mounted) setState(() {});
     } else {
       Globals.onNewMsg = () => null;
       nnim!.refreshMe[this] = () => null;
@@ -197,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                                           .onlyLast?.newNotification ??
                                       0) >
                                   0
-                              ? 0 //13
+                              ? 13
                               : 0,
                           backgroundColor: Colors.red[900],
                           child: Text(

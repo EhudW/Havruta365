@@ -72,6 +72,15 @@ class Globals {
           Globals.currentUser!.email!,
           fetchDstUserData: true);
       msgWithFriendsUnread = x.fold(0, (s, c) => s + c.value);
+      x.isNotEmpty
+          ? FCM.resetTo(
+              "msgs",
+              msgWithFriendsUnread,
+              x.first.key.name!,
+              x.first.key.message!,
+              "??",
+              x.map((e) => e.key.otherPersonMail).toList())
+          : FCM.reset("msgs");
       //hasNewMsg = x.any((element) => element.value != 0);
       setter(x);
       return true;

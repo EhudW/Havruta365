@@ -11,6 +11,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../DataBase_auth/mongo.dart';
+
 @pragma('vm:entry-point')
 Future<void> _emptyFunction(RemoteMessage message) async {}
 
@@ -67,6 +69,39 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
 }
 
 class FCM {
+  static reset(String mgt) async {
+    if (!{"events", "msgs", "notis"}.contains(mgt)) return;
+    var spm = SPManager("firebaseMsg");
+    await spm.load();
+    spm[mgt] = {"counter": 0, "senders": {}};
+    await spm.save();
+    await FCM.init();
+    flutterLocalNotificationsPlugin.cancel(mgt.hashCode);
+  }
+
+  static resetTo(
+      String mgt, int counter, String title, String body, String link,
+      [List<String> senders = const []]) async {
+    if (counter == 0) return reset(mgt);
+    if (!{"events", "msgs", "notis"}.contains(mgt)) return;
+    //spm > spmanger_firebaseMsg > mgt > counter
+    //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
+    var spm = SPManager("firebaseMsg");
+    await spm.load();
+    Set x = (spm[mgt]["senders"] ?? {}).keys.toSet();
+    if ((spm[mgt]["counter"] ?? 0) == counter && // same counter
+            x.length == senders.length && // same size
+            x.union(senders.toSet()).length ==
+                x.length //union not affect -> same
+        ) return;
+    spm[mgt] = {"counter": counter, "senders": Map.fromIterable(senders)};
+    await spm.save();
+
+    await FCM.init();
+    FCM.showFCM(
+        mgt, spm[mgt]["counter"], title, body, spm[mgt]["senders"], link);
+  }
+
   static showFCM(String mgt, int counter, String? title, String body,
       Map senders, String payload) {
     switch (mgt) {
@@ -149,13 +184,11 @@ class FCM {
     if (_subs == null) {
       _subs = FirebaseMessaging.onMessage.listen(handler);
     }
-    var mail = Globals.currentUser?.email?.replaceAll("@", "%%%%");
-    //isValidTopic = RegExp(r'^[a-zA-Z0-9-_.~%]{1,900}$').hasMatch(topic);
-    if (mail == null && subMyTopics)
-      throw Exception("no-mail but want to add subscription!");
-    var myTopics = subMyTopics ? [mail, "test"] : List.of(_lastTopics);
-    myTopics.remove(null);
+
+    var myTopics =
+        subMyTopics ? Globals.currentUser!.subs_topics : List.of(_lastTopics);
     for (String topic in myTopics) {
+      topic = Mongo.topicReplace(topic);
       if (subMyTopics) {
         await FirebaseMessaging.instance.subscribeToTopic(topic);
         _lastTopics.add(topic);

@@ -75,6 +75,14 @@ class NewNotificationManager {
           if (oldValue != newNotification) {
             refreshAll();
           }
+          if (newNotification == 0) {
+            FCM.reset("notis");
+          } else {
+            var newest = model.getNewest();
+            if (newest != null)
+              FCM.resetTo("notis", newNotification, newest.name!,
+                  newest.message!, "??");
+          }
           return true;
         })
         .catchError((err) => false)

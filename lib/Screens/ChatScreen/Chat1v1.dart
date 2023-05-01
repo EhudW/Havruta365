@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
@@ -23,6 +24,49 @@ class ChatL10nHe extends ChatL10n {
             inputPlaceholder: "הודעה...",
             sendButtonAccessibilityLabel: "שלח",
             unreadMessagesLabel: "הודעות שלא נקראו");
+}
+
+class IconSwitch extends StatefulWidget {
+  final bool on;
+  final Function(bool, Function) action;
+  const IconSwitch(this.on, this.action, {Key? key}) : super(key: key);
+
+  @override
+  State<IconSwitch> createState() => IconSwitchState();
+}
+
+class IconSwitchState extends State<IconSwitch> {
+  bool on = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    on = widget.on;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(left: 20),
+        // SizedBox(
+        //   width: Globals.scaler.getWidth(2),
+        // ),
+        child: IconButton(
+          icon: Center(
+            child: Icon(!on ? FontAwesomeIcons.plus : FontAwesomeIcons.minus,
+                color: !on ? Colors.teal[400] : Colors.red[400],
+                size: ScreenScaler().getTextSize(10)),
+          ),
+          tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          onPressed: () {
+            widget.action(
+                !on,
+                () => setState(() {
+                      on = !on;
+                    }));
+          },
+        ));
+  }
 }
 
 class ChatPage extends StatefulWidget {
@@ -86,7 +130,34 @@ class _ChatPageState extends State<ChatPage> {
       toolbarHeight: Globals.scaler.getHeight(4.4),
       elevation: 10,
       leading: widget.forumName != null
-          ? null
+          ? Builder(builder: (context) {
+              // true => sub
+              bool on =
+                  Globals.currentUser!.subs_topics.contains(widget.otherPerson);
+              return IconSwitch(on, (bool toBe, Function flip) {
+                if (toBe == true) {
+                  Globals.db!.updateUserSubs_Topics(add: [widget.otherPerson]);
+                  flip();
+                } else {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => NextButton.bottomSheet(
+                          context,
+                          "האם לבטל מעקב אחר הפורום?",
+                          () {
+                            Navigator.pop(context);
+                            flip();
+                            Globals.db!.updateUserSubs_Topics(
+                                remove: [widget.otherPerson]);
+                          },
+                          () {
+                            Navigator.pop(context);
+                          },
+                        )),
+                  );
+                }
+              });
+            })
           : Builder(
               builder: (context) => Container(
                     margin: EdgeInsets.only(left: 20),

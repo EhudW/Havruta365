@@ -84,7 +84,8 @@ class NextButton extends StatelessWidget {
                     var cc = aa.intersection(bb);
                     bool targetStatusProblem = problem &&
                         a != b &&
-                        (cc.length != aa.length || cc.length != bb.length);
+                        (cc.length !=
+                            aa.length); // its ok that now more people can join: || cc.length != bb.length);
                     bool typeChangeProblem =
                         problem && event?.type != event?.firstInitType;
                     bool maxParticipantsProblem = problem && m < p /*+ wq*/;

@@ -50,7 +50,8 @@ class ChatModel {
   Future<List<MapEntry<ChatMessage, int>>> _getExampleServerData() async {
     return Future.delayed(MyConsts.defaultDelay, () async {
       return otherPerson == null
-          ? (await Globals.db!.getAllMyLastMessageWithEachFriend(myMail,
+          ? (await Globals.db!.getAllMyLastMessageWithEachFriendAndForums(
+              myMail,
               fetchDstUserData: true))
           : (isForum
                   ? (await Globals.db!
@@ -104,7 +105,9 @@ class ChatModel {
     tmp.key.message = delmsg;
     simulateRefresh(tmp);
     //return Globals.db!.deleteMsgs([msg.id], null).whenComplete(() {
-    return Globals.db!.editMsg(msg.id, delmsg).then((success) {
+    return Globals.db!
+        .editMsg(msg.id, delmsg, message: tmp.key)
+        .then((success) {
       tmp.key.status = success ? types.Status.sent : types.Status.error;
       tmp.key.tagNow();
       simulateRefresh(tmp);
