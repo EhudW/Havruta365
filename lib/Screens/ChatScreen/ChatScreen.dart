@@ -35,8 +35,9 @@ class _ChatScreenState extends State<ChatScreen> {
     timer = MyTimer(
       duration: MyConsts.checkNewMessageOutsideChatSec,
       function: () => model
-          .refresh(Globals.db!.getAllMyForums(
-              Globals.msgWithFriends.waitData().then((v) => v!)))
+          //.refresh(Globals.db!.getAllMyForums(
+          //    Globals.msgWithFriends.waitData().then((v) => v!)))
+          .refresh(Globals.msgWithFriends.waitData().then((v) => v!))
           .then((value) => true),
     );
     timer.start(true);
@@ -141,8 +142,8 @@ class _ChatScreenState extends State<ChatScreen> {
                               Text(
                                   (!message.isForum
                                           ? (message.amITheSender
-                                              ? "נשלחה ל "
-                                              : "התקבלה מ")
+                                              ? "נשלחה ל : "
+                                              : "התקבלה מ : ")
                                           : "") +
                                       message.otherPersonName!,
                                   textDirection: ui.TextDirection.rtl),
@@ -151,10 +152,18 @@ class _ChatScreenState extends State<ChatScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
+                              message.isForum
+                                  ? Text(
+                                      (" 🗨 פורום 🗨 "),
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: Colors.deepOrange),
+                                    )
+                                  : SizedBox(),
                               Text(
                                 DateFormat('HH:mm  d-M-yyyy')
                                     .format(message.datetime!.toLocal()),
-                                style: TextStyle(fontSize: 12.0),
+                                style: TextStyle(fontSize: 14.0),
                               ),
                               Text(message.message!,
                                   textDirection: ui.TextDirection.rtl),
@@ -176,7 +185,17 @@ class _ChatScreenState extends State<ChatScreen> {
   appBar(BuildContext context) {
     ScreenScaler scaler = new ScreenScaler();
     return new AppBar(
-        leadingWidth: 0,
+        leadingWidth: Globals.scaler.getWidth(6),
+        leading: IconSwitch(
+          true,
+          (toBe, flip) {
+            model.onlyPrivateChats = !toBe;
+            model.simulateRefresh();
+            flip();
+          },
+          icons: {true: Icons.filter_alt_off_sharp, false: Icons.chat_outlined},
+          tooltip: {true: "עם פורומים", false: "בלי פורומים"},
+        ),
         toolbarHeight: 40,
         elevation: 30,
         shadowColor: Colors.teal[400],

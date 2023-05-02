@@ -20,6 +20,7 @@ class ChatMessage {
     types.Status.delivered
   ];
   bool isForum;
+  int counter;
   // 11 fields [8, 1 id, 2 otherPerson] + _tag
   String? otherPersonAvatar; //only in program
   String? otherPersonName; //only in program
@@ -42,7 +43,8 @@ class ChatMessage {
       this.datetime, // no need _tag here
       this.message,
       this.dst_mail,
-      this.id});
+      this.id,
+      this.counter = 0});
   dynamic id;
   // SrcUser details
   String? name;
@@ -66,6 +68,7 @@ class ChatMessage {
         'dst_mail': dst_mail ?? "",
         'status': statusAsInt,
         'isForum': isForum,
+        'counter': counter,
       };
   // 11 of 11  [8/8, 1/1 id, 2/2 otherPerson] + _tag
   ChatMessage.cloneWith(ChatMessage old, {types.Status? newStatus})
@@ -80,6 +83,7 @@ class ChatMessage {
         status = newStatus ?? old.status,
         otherPersonAvatar = old.otherPersonAvatar,
         otherPersonName = old.otherPersonName,
+        counter = old.counter,
         id = old.id;
   // 9 of 11  [8/8, 1/1 id, 0/2 otherPerson] + _tag
   ChatMessage.fromJson(Map<String, dynamic> json)
@@ -92,6 +96,7 @@ class ChatMessage {
         message = json['message'],
         dst_mail = json['dst_mail'],
         status = statuses[json['status'] ?? 1],
+        counter = json['counter'] ?? 0,
         id = json['_id'];
   // 11 of 11  [8/8, 1/1 id, 2/2 otherPerson] + _tag
   types.TextMessage toTypesTextMsg() {
@@ -107,6 +112,7 @@ class ChatMessage {
         status: status,
         id: (id as ObjectId?)?.$oid ?? "NULL",
         metadata: {
+          "counter": counter,
           "tag": tag,
           "otherPersonAvatar": otherPersonAvatar,
           "otherPersonName": otherPersonName,
@@ -123,6 +129,7 @@ class ChatMessage {
         isForum = m.metadata?["isForum"] ?? false,
         datetime = DateTime.fromMillisecondsSinceEpoch(m.createdAt!).toLocal(),
         message = m.text,
+        counter = m.metadata?["counter"] ?? 0,
         status = m.status ?? statuses[0],
         dst_mail = m.metadata?["dst_mail"],
         _tag = m.metadata?["tag"] ?? 0,

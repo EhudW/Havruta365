@@ -27,10 +27,15 @@ class ChatModel {
         StreamController<List<MapEntry<ChatMessage, int>>>.broadcast();
     stream =
         _controller.stream.map((List<MapEntry<ChatMessage, int>> postsData) {
-      return postsData;
+      return postsData
+          .where((e) => !onlyPrivateChats || !e.key.isForum)
+          .toList();
     });
     streamAsEntryKey = stream.map((List<MapEntry<ChatMessage, int>> postsData) {
-      return postsData.map((e) => e.key).toList();
+      return postsData
+          .where((e) => !onlyPrivateChats || !e.key.isForum)
+          .map((e) => e.key)
+          .toList();
     });
     if (refreshNow) {
       refresh();
@@ -38,10 +43,13 @@ class ChatModel {
   }
   void msgWasSeen(types.TextMessage msg) {
     if (otherPerson == null) throw Exception();
-    if (isForum) return;
     if (_shouldNotSendSeen.contains(msg.id)) return;
     _shouldNotSendSeen.add(msg.id);
     ChatMessage m = ChatMessage.fromTypesTextMsg(msg);
+    if (isForum) {
+      counter = m.counter;
+      return;
+    }
     if (m.id == null) return; // if src==mymail
     if (m.dst_mail != myMail || m.status == types.Status.seen) return;
     Globals.db!.setMsgsStatus([m.id], 2);
@@ -116,10 +124,29 @@ class ChatModel {
     });
   }
 
+  int __counter = 0; //keep track of max counter msg
+  int get counter => __counter;
+  set counter(int v) {
+    if (v <= __counter) return;
+    if (isForum == false) return;
+    __counter = v;
+    Map tmp = Globals.currentUser!.subs_topics;
+    tmp[otherPerson] = tmp[otherPerson] ?? {};
+    int x = (tmp[otherPerson]['seen'] ?? 0);
+    if (x >= v) return;
+    tmp[otherPerson]['seen'] = v;
+    var collection = (Globals.db!.db as Db).collection('Users');
+    collection.updateOne(where.eq('email', Globals.currentUser!.email),
+        ModifierBuilder().set('subs_topics', Globals.currentUser!.subs_topics));
+  }
+
+  bool onlyPrivateChats = false;
   Future send(ChatMessage msg) {
     if (otherPerson == null) throw Exception();
-    msg.status = types.Status.sending;
     _isLoading = true;
+    msg.status = types.Status.sending;
+    counter++;
+    msg.counter = counter;
     //ChatMessage? prevLastToBeSent = lastToBeSent;
     //lastToBeSent = msg;
     var msgEntry = MapEntry(msg, -1);

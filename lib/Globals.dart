@@ -68,18 +68,22 @@ class Globals {
   static LoadProperty<List<MapEntry<ChatMessage, int>>> msgWithFriends =
       LoadProperty(
     (setter) async {
-      var x = await db!.getAllMyLastMessageWithEachFriend(
+      //var x = await db!.getAllMyLastMessageWithEachFriend(
+      var x = await db!.getAllMyLastMessageWithEachFriendAndForums(
           Globals.currentUser!.email!,
           fetchDstUserData: true);
       msgWithFriendsUnread = x.fold(0, (s, c) => s + c.value);
-      x.isNotEmpty
+      var unreadMsgEntries = x.where((e) => e.value > 0).toList();
+      var unreadSenders =
+          unreadMsgEntries.map((e) => e.key.otherPersonMail).toList();
+      unreadMsgEntries.isNotEmpty
           ? FCM.resetTo(
               "msgs",
               msgWithFriendsUnread,
-              x.first.key.name!,
-              x.first.key.message!,
+              unreadMsgEntries.first.key.name!,
+              unreadMsgEntries.first.key.message!,
               "??",
-              x.map((e) => e.key.otherPersonMail).toList())
+              unreadSenders)
           : FCM.reset("msgs");
       //hasNewMsg = x.any((element) => element.value != 0);
       setter(x);

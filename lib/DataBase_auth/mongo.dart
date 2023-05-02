@@ -225,15 +225,22 @@ class Mongo {
         where.eq('email', user.email), modify.set('avatar', user.avatar));
   }
 
-  Future updateUserSubs_Topics(
-      {List<String>? add, List<String>? remove}) async {
+  Future<int> getCounterOf(String eventAsTopic) async {
+    var collection = (Globals.db!.db as Db).collection('Chats');
+    var tmp = await collection.findOne(
+        where.eq('dst_mail', eventAsTopic).sortBy('_id', descending: true));
+    return tmp?['counter'] ?? 0;
+  }
+
+  Future updateUserSubs_Topics({Map? add, List<String>? remove}) async {
     var user = Globals.currentUser!;
-    var topicsSet = Set.of(user.subs_topics);
-    topicsSet.addAll(add ?? []);
-    topicsSet.removeAll(remove ?? []);
-    if (user.subs_topics.toSet().length == topicsSet.length &&
-        user.subs_topics.toSet().difference(topicsSet).isEmpty) return;
-    user.subs_topics = List.of(topicsSet);
+    var future = Map.of(user.subs_topics);
+    future.addAll(Map.from(add ?? {}));
+    future.removeWhere((k, v) => (remove ?? []).contains(k));
+    if (user.subs_topics.length == future.length &&
+        user.subs_topics.keys.toSet().difference(future.keys.toSet()).isEmpty)
+      return;
+    user.subs_topics = future;
     print(user.subs_topics);
     var collection = db.collection('Users');
     // Check if the user exist
@@ -348,6 +355,8 @@ class Mongo {
   }
 
   Future sendMessageNodeJS(String name, String msg, String dst_mail) async {
+    String? myMail = Globals.currentUser!.email;
+    if (dst_mail == myMail) return; // don't notify for chat 1v1 me-myself
     String topic = topicReplace(dst_mail);
     String mgt = "msgs";
     String title = name;
@@ -355,7 +364,7 @@ class Mongo {
     String link = "??$dst_mail"; //todo
     try {
       await http.get(Uri.parse(
-          "http://10.0.0.7:5000/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link"));
+          "https://adorable-crab-outfit.cyclic.app/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link&avoidMyself=$myMail"));
     } catch (err) {}
   }
 
@@ -393,6 +402,8 @@ class Mongo {
       {String? srcMail,
       bool biDirectional = true,
       bool fetchDstUserData = false,
+      // keep it false so no need to fetch all data from several forums in getAllMyMessages use other function instead
+      // also not testet for this, also for __fetchDstUserData
       bool isForum = false}) async {
     List<ChatMessage> listMessages = [];
     var collection = Globals.db!.db.collection('Chats');
@@ -443,7 +454,7 @@ class Mongo {
     dialog_results = List.of(dialog_results);
     List<MapEntry<ChatMessage, int>> x = [];
     var collection = (Globals.db!.db as Db).collection('Chats');
-    for (String topic in Globals.currentUser!.subs_topics) {
+    for (String topic in Globals.currentUser!.subs_topics.keys) {
       try {
         if ([mail].contains(topic)) continue;
         var tmp = await collection.findOne(
@@ -454,7 +465,11 @@ class Mongo {
             ObjectId.fromHexString(msg.dst_mail!.split("\"")[1]));
         msg.otherPersonAvatar = event!.eventImage!;
         msg.otherPersonName = event.shortStr;
-        x.add(MapEntry(msg, 0));
+        dynamic curr = Globals.currentUser!.subs_topics[msg.dst_mail];
+        curr = curr?['seen'] ?? 0;
+        int unseen = msg.counter - (curr as int);
+        unseen = unseen < 0 ? 0 : unseen;
+        x.add(MapEntry(msg, unseen));
       } catch (err) {}
     }
     dialog_results.addAll(x);
@@ -467,6 +482,7 @@ class Mongo {
     bool biDirectional = true,
     bool fetchDstUserData = false,
     bool isForum = false,
+    // keep it false so no need to fetch all data from several forums in getAllMyMessages use other function instead
   }) async {
     List<ChatMessage> listMessages = await getAllMyMessages(dstMail,
         biDirectional: biDirectional,

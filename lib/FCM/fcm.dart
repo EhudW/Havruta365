@@ -48,6 +48,7 @@ class SPManager {
 // on server should check that link is valid one?
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
+  if (message.data["avoidMyself"] == Globals.currentUser!.email) return;
   String title = message.data["title"] ?? "";
   String body = message.data["body"] ?? "";
   String mgt = message.data["msgGroupType"] ?? "";
@@ -185,8 +186,9 @@ class FCM {
       _subs = FirebaseMessaging.onMessage.listen(handler);
     }
 
-    var myTopics =
-        subMyTopics ? Globals.currentUser!.subs_topics : List.of(_lastTopics);
+    var myTopics = subMyTopics
+        ? Globals.currentUser!.subs_topics.keys.toList()
+        : List.of(_lastTopics);
     for (String topic in myTopics) {
       topic = Mongo.topicReplace(topic);
       if (subMyTopics) {
