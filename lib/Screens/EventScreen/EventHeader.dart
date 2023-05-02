@@ -1,5 +1,3 @@
-//import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
@@ -10,11 +8,9 @@ import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide Center;
 import '../UserScreen/UserScreen.dart';
 import 'arc_banner_image.dart';
-//import 'poster.dart';
 
-// ignore: must_be_immutable
-class EventDetailHeader extends StatelessWidget {
-  EventDetailHeader(Event? event) {
+class EventHeader extends StatelessWidget {
+  EventHeader(Event? event) {
     this.event = event;
     this.userColl = Globals.db!.db.collection('Users');
   }
@@ -43,42 +39,12 @@ class EventDetailHeader extends StatelessWidget {
     String creatorDescription =
         myCmp(teacher, event!.creatorName!) ? "" : event!.creatorName!;
 
-    var movieInformation = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      //crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // ? TODO: add a button to chat wwith the creator
-        SizedBox(
-          //TODO: remove this
-          height: 50,
-        ),
-        Text(
-          // TODO: add limud: before the text
-          event!.topic!,
-          textDirection: TextDirection.rtl,
-          style: GoogleFonts.secularOne(fontSize: 26.0),
-          textAlign: TextAlign.center,
-        ),
-        Text(
-          event!.book!, //TODO: combine with topic
-          textDirection: TextDirection.rtl,
-          style: GoogleFonts.secularOne(fontSize: 22.0),
-          textAlign: TextAlign.center,
-        ),
-        Text(
-          //TODO: remove this
-          teacher,
-          textDirection: TextDirection.rtl,
-          style: GoogleFonts.secularOne(fontSize: 22.0),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-    String topic = event?.topic?.trim() ?? "";
-    String book = event?.book?.trim() ?? "";
     String type = event?.type == "H" ? "חברותא" : "שיעור";
+    String book = event?.book?.trim() ?? "";
+    String topic = event?.topic?.trim() ?? "";
     String t_book = book != "" ? " ב" + book : "";
     String t_topic = topic != "" ? " ב" + topic : "";
+
     return FutureBuilder(
         future: creator,
         builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -99,68 +65,98 @@ class EventDetailHeader extends StatelessWidget {
                 children: [
                   Padding(
                     //TODO: shreenk the image
-                    padding: const EdgeInsets.only(bottom: 100.0),
-                    child: ArcBannerImage(event!.eventImage),
+                    padding: const EdgeInsets.only(bottom: 30.0),
+                    child: ArcBannerImage(event!.eventImage, imgHeight: 40.0),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(type,
+                        style: GoogleFonts.assistant(
+                          color: Colors.white,
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.w700,
+                        )),
                   ),
                   Positioned(
                     bottom: 0.0,
-                    left: 16.0,
-                    right: 16.0,
+                    left: 10.0,
+                    right: 10.0,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment
                           .end, //TODO: change to start or remove
                       children: [
-                        movieInformation,
-                        SizedBox(
+                        /*SizedBox(
                           width: 60,
-                        ),
+                        ),*/
                         //SizedBox(width: 16.0),
 
-                        Column(
-                          children: [
-                            CircleAvatar(
-                              //TODO: shreenk
-                              backgroundImage:
-                                  NetworkImage(snapshot.data['avatar']),
-                              radius: 60.0, //here
-                              child: IconButton(
-                                  icon: Icon(Icons.quiz_sharp),
-                                  iconSize: 40.0,
-                                  color: Colors.white.withOpacity(0),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => UserScreen(
-                                              snapshot.data['email'])),
-                                    );
-                                  }),
-                            ),
-                            Text(
-                              // TODO: remove this
-                              creatorDescription == "" ? "" : "ביוזמת",
-                              textAlign: TextAlign.right,
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.grey[600]),
-                            ),
-                            Text(
-                              creatorDescription,
-                              textAlign: TextAlign.right,
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.grey[600]),
-                            ),
-                          ],
+                        CircleAvatar(
+                          //TODO: shreenk
+                          backgroundImage:
+                              NetworkImage(snapshot.data['avatar']),
+                          radius: 30.0, //here
+                          child: IconButton(
+                              icon: Icon(Icons.quiz_sharp),
+                              iconSize: 20.0,
+                              color: Colors.white.withOpacity(0),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          UserScreen(snapshot.data['email'])),
+                                );
+                              }),
                         ),
                       ],
                     ),
                   ),
                   Positioned(
                     // TODO: move into sandwich
-                    top: 200,
-                    child: ElevatedButton.icon(
+                    top: 100,
+                    child: Scaffold(
+                      appBar: AppBar(title: Text(type)),
+                      body: const Center(
+                        child: Text('My Page!'),
+                      ),
+                      drawer: Drawer(
+                        // Add a ListView to the drawer. This ensures the user can scroll
+                        // through the options in the drawer if there isn't enough vertical
+                        // space to fit everything.
+                        child: ListView(
+                          // Important: Remove any padding from the ListView.
+                          padding: EdgeInsets.zero,
+                          children: [
+                            const DrawerHeader(
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                              ),
+                              child: Text('Drawer Header'),
+                            ),
+                            ListTile(
+                              title: const Text('Item 1'),
+                              onTap: () {
+                                // Update the state of the app
+                                // ...
+                                // Then close the drawer
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('Item 2'),
+                              onTap: () {
+                                // Update the state of the app
+                                // ...
+                                // Then close the drawer
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    /*child: ElevatedButton.icon(
                         onPressed: () async {
                           Navigator.push(
                               context,
@@ -173,7 +169,7 @@ class EventDetailHeader extends StatelessWidget {
                               ));
                         },
                         icon: Icon(Icons.abc),
-                        label: Text("forum")),
+                        label: Text("forum")),*/
                   ),
                 ],
               );

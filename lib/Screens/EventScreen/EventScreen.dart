@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/EventsSelectorBuilder.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/EventScreen/EventPage.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' as m;
 import 'Event_details_page.dart';
@@ -50,8 +51,7 @@ class _EventScreenState extends State<EventScreen> {
                   if (data[0] == null) {
                     return NoEventScreen();
                   }
-                  return EventDetailsPage(
-                      data[0] as Event?, data[1] as List<Event>?);
+                  return EventPage(data[0] as Event?, data[1] as List<Event>?);
                 default:
                   return Text('default');
               }

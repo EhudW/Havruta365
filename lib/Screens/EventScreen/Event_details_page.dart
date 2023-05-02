@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
+import 'package:havruta_project/Screens/EventScreen/EventHeader.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 //import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
@@ -184,16 +185,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              nextEvent,
-              style: GoogleFonts.secularOne(fontSize: 20.0),
-              //textAlign: TextAlign.end,
-            ),
-            Text(
               (event.dates!.isNotEmpty &&
                       isNow(event.dates![0], event.duration ?? 0))
                   ? "   האירוע מתקיים כעת ב:    "
-                  : "   האירוע הקרוב יתקיים ב:    ",
-              style: GoogleFonts.secularOne(fontSize: 20.0),
+                  : "   האירוע מתקיים ב:    ",
+              style: GoogleFonts.secularOne(fontSize: 14.0),
               //textAlign: TextAlign.end,
               textDirection: ui.TextDirection.rtl,
             ),
@@ -203,10 +199,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           time == ""
               ? ""
               : (isNow(event.dates![0], event.duration ?? 0)
-                  ? "   התחיל בשעה  $time"
-                  : "   בשעה  $time"),
+                  ? nextEvent + "    בשעה  " + time
+                  : nextEvent + "   בשעה  " + time),
           style: GoogleFonts.secularOne(fontSize: 20.0),
-          textAlign: TextAlign.end,
+          textAlign: TextAlign.center,
+          textDirection: ui.TextDirection.rtl,
         ),
         (widget.event!.creatorUser == Globals.currentUser!.email &&
                 (widget.event!.link?.trim() ?? "") != "")
@@ -236,6 +233,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 },
               )
             : SizedBox(),
+        //TODO: insert into grey box and change location
         Text(
           widget.event!.type == 'L'
               ? "משך השיעור: " + event.duration.toString() + " דקות"
@@ -252,6 +250,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           style: GoogleFonts.secularOne(fontSize: 20.0),
           textDirection: ui.TextDirection.rtl,
         ),
+        /*TODO: push into sandwich*/
         event.dates!.isEmpty
             ? Container()
             : ElevatedButton.icon(
@@ -317,20 +316,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   @override
   Widget build(BuildContext context) {
     String t_pre = "*הודעת תפוצה*" + "\n";
-    String t_type = widget.event!.type == "H" ? "חברותא" : "שיעור";
-    String t_book = widget.event!.book != "" ? " ב" + widget.event!.book! : "";
+    String t_event_type = widget.event!.type == "H" ? "חברותא" : "שיעור";
+    String t_book_name =
+        widget.event!.book != "" ? " ב" + widget.event!.book! : "";
     String t_topic =
         widget.event!.topic != "" ? " ב" + widget.event!.topic! : "";
-    String t_suffix = t_type + t_topic + t_book + ":\n";
+    String t_suffix = t_event_type + t_topic + t_book_name + ":\n";
     var initPub =
         (bool wq) => t_pre + (wq ? "למבקשים להצטרף ל" : "למשתתפי ה") + t_suffix;
 
     var myMail = Globals.currentUser!.email;
-    var iAmParticipant = widget.event!.participants!.contains(myMail);
-    var iAmCreator = widget.event!.creatorUser == myMail;
+    var amIParticipant = widget.event!.participants!.contains(myMail);
+    var amICreator = widget.event!.creatorUser == myMail;
     var waitingQueue = widget.event!.waitingQueue ?? [];
-    var iAmInWaitingQueue = waitingQueue.contains(myMail);
-    var num = widget.event!.maxParticipants! -
+    var amIInWaitingQueue = waitingQueue.contains(myMail);
+    var remainedPlaces = widget.event!.maxParticipants! -
             widget.event!.participants!.length /*-waitingQueue.length*/
         ;
     var rejectOrAcceptFactory = (func) => (userMail) {
@@ -379,7 +379,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       widget.event!.waitingQueue!.remove(userMail);
       widget.event!.participants!.add(userMail);
     });
-    String? storyline = widget.event!.description;
+    String? storyline =
+        widget.event!.description; //TODO:new description without location.
     String location = widget.event!.location?.trim() ?? "";
     location = location == "" ? "" : "\n" + location;
     storyline = storyline == null
@@ -389,40 +390,42 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     var scroll = SingleChildScrollView(
       child: Column(
         children: [
-          EventDetailHeader(widget.event),
+          EventHeader(widget.event),
           Storyline(
+              // TODO: change class
               storyline,
               widget.event!.type == 'L'
                   ? FontAwesomeIcons.graduationCap
                   : FontAwesomeIcons.users),
-          dates(widget.event!),
+          dates(widget.event!), //TODO should be inside sandwich
           Divider(),
           widget.event!.dates!.isEmpty
               ? Container()
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    (iAmParticipant ||
-                            iAmInWaitingQueue ||
-                            num <= 0 ||
+                    (amIParticipant ||
+                            amIInWaitingQueue ||
+                            remainedPlaces <= 0 ||
                             notMyTarget)
                         ? Container()
-                        : Text("!מהרו להירשם",
+                        : Text("!מהרו להירשם", // TODO: remove
                             style: GoogleFonts.alef(
                                 fontSize: 22.0,
                                 color: Colors.grey[700],
                                 fontWeight: FontWeight.bold)),
                     Text(
-                        num <= 0
+                        //TODO: inside grey box
+                        remainedPlaces <= 0
                             ? "תפוסה מלאה"
-                            : "נשארו" + " $num " + "מקומות פנויים",
+                            : "נשארו" + " $remainedPlaces " + "מקומות פנויים",
                         style: GoogleFonts.suezOne(
                             fontSize: 20.0, color: Colors.grey[700])),
                     Row(
                       textDirection: ui.TextDirection.rtl,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("גברים/נשים: ",
+                        Text("גברים/נשים: ", //TODO: into further details
                             textDirection: ui.TextDirection.rtl,
                             style: GoogleFonts.suezOne(
                                 fontSize: 20.0, color: Colors.grey[700])),
@@ -447,14 +450,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           Divider(),
           // widget.event.participants.contains(Globals.currentUser.email) ?
           //   DeleteFromEventButton(widget.event) : SizedBox(),
-          widget.event!.type == "L" || iAmParticipant || iAmCreator
+          widget.event!.type == "L" || amIParticipant || amICreator
               ? ParticipentsScroller(
+                  //TODO: edit widget
                   widget.event!.participants,
                   title: "משתתפים",
                   initPubMsgText: initPub(false),
                 )
               : Container(),
-          iAmCreator && widget.event!.type == 'H'
+          amICreator && widget.event!.type == 'H'
               ? ParticipentsScroller(
                   widget.event!.waitingQueue,
                   title: "ממתינים לאישור",
@@ -468,7 +472,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ],
       ),
     );
-    if (!iAmCreator) {
+    if (!amICreator) {
       return Scaffold(body: scroll);
     }
     return Scaffold(
@@ -478,7 +482,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Container(
-              height: ScreenScaler().getHeight(iAmCreator ? 35 : 37),
+              height: ScreenScaler().getHeight(amICreator ? 35 : 37),
               child: scroll),
           deleteButton(),
         ],

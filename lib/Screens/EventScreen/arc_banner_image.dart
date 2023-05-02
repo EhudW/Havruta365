@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
 class ArcBannerImage extends StatelessWidget {
-  ArcBannerImage(this.imageUrl);
+  ArcBannerImage(this.imageUrl, {this.imgHeight = 230.0});
   final String? imageUrl;
+  final double imgHeight;
 
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
 
     return ClipPath(
-      clipper: ArcClipper(),
+      //clipper: ArcClipper(),
       child: Image.network(
         imageUrl!,
         width: screenWidth,
-        height: 230.0,
+        height: imgHeight,
         fit: BoxFit.cover,
       ),
     );
