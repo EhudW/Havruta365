@@ -73,13 +73,25 @@ class Globals {
           Globals.currentUser!.email!,
           fetchDstUserData: true);
       msgWithFriendsUnread = x.fold(0, (s, c) => s + c.value);
-      var unreadMsgEntries = x.where((e) => e.value > 0).toList();
+      // ignore all unread msg from opened chat, for fcm
+      var spm = SPManager("openChat");
+      String? chat;
+      await spm.load();
+      int now = DateTime.now().millisecondsSinceEpoch;
+      int curr = spm['time'] ?? 0;
+      int extra = 1000 * (MyDebug.MyConsts.checkNewMessageOutsideChatSec);
+      if (curr + extra < now) {
+        chat = spm['chat'];
+      }
+      var unreadMsgEntries =
+          x.where((e) => e.value > 0 && e.key.dst_mail != chat).toList();
       var unreadSenders =
           unreadMsgEntries.map((e) => e.key.otherPersonMail).toList();
       unreadMsgEntries.isNotEmpty
           ? FCM.resetTo(
               "msgs",
-              msgWithFriendsUnread,
+              unreadMsgEntries.fold(
+                  0, (s, c) => s + c.value), // <= msgwithFriendsUnread
               unreadMsgEntries.first.key.name!,
               unreadMsgEntries.first.key.message!,
               "??",

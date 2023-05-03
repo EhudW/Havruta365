@@ -13,6 +13,7 @@ import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/mytimer.dart';
 import 'package:loading_animations/loading_animations.dart';
 
+import '../../FCM/fcm.dart';
 import '../FindMeAChavruta/Next_Button.dart';
 
 class ChatL10nHe extends ChatL10n {
@@ -108,7 +109,16 @@ class _ChatPageState extends State<ChatPage> {
         forum: widget.forumName != null);
     timer = MyTimer(
       duration: MyConsts.checkNewMessageInChatSec,
-      function: () => model.refresh().then((value) => true),
+      function: () async {
+        // ignore all unread msg from opened chat, for fcm
+        var spm = SPManager("openChat");
+        await spm.load();
+        int now = DateTime.now().millisecondsSinceEpoch;
+        spm['time'] = now;
+        spm['chat'] = widget.otherPerson;
+        await spm.save();
+        return model.refresh().then((value) => true);
+      },
     );
     timer.start(true);
   }

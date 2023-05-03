@@ -8,6 +8,7 @@ import 'package:havruta_project/FCM/token_monitor.dart';
 import 'package:havruta_project/Globals.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:havruta_project/mydebug.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,30 +49,61 @@ class SPManager {
 // on server should check that link is valid one?
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
-  if (message.data["avoidMyself"] == Globals.currentUser!.email) return;
   String title = message.data["title"] ?? "";
   String body = message.data["body"] ?? "";
   String mgt = message.data["msgGroupType"] ?? "";
   String sender = message.data["sender"] ?? "";
   String link = message.data["link"] ?? "";
   if (!{"events", "msgs", "notis"}.contains(mgt)) return;
-  //spm > spmanger_firebaseMsg > mgt > counter
-  //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
-  var spm = SPManager("firebaseMsg");
-  await spm.load();
-  spm[mgt] = spm[mgt] ?? {"counter": 0, "senders": {}};
-  spm[mgt]["counter"] = (spm[mgt]["counter"] ?? 0) + 1;
-  spm[mgt]["senders"] = spm[mgt]["senders"] ?? {};
-  spm[mgt]["senders"][sender] = true;
-  await spm.save();
+  var func = () async {
+    //spm > spmanger_firebaseMsg > mgt > counter
+    //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
+    var spm = SPManager("firebaseMsg");
+    await spm.load();
+    if (message.data["avoidMyself"] == spm["email"]) return;
+    spm[mgt] = spm[mgt] ?? {"counter": 0, "senders": {}};
+    spm[mgt]["counter"] = (spm[mgt]["counter"] ?? 0) + 1;
+    spm[mgt]["senders"] = spm[mgt]["senders"] ?? {};
+    spm[mgt]["senders"][sender] = true;
+    await spm.save();
 
-  await FCM.init();
-  FCM.showFCM(mgt, spm[mgt]["counter"], title, body, spm[mgt]["senders"], link);
+    await FCM.init();
+    FCM.showFCM(
+        mgt, spm[mgt]["counter"], title, body, spm[mgt]["senders"], link);
+  };
+  FCM.tag_applyIfInactive(
+      "afi$mgt",
+      MyConsts.checkNewMessageOutsideChatSec * 1000 + 2000,
+      func); //avoidForegroundInteruption
 }
 
 class FCM {
+  static Future tag_applyIfInactive(
+      String subject, int nextMilSecInactive, Function func,
+      [bool tryAgain = true]) async {
+    var spm = SPManager("fcm_tag$subject");
+    await spm.load();
+    int lastActive = spm["lastActive"] ?? 0;
+    int now = DateTime.now().millisecondsSinceEpoch;
+    if (now > lastActive + nextMilSecInactive)
+      func();
+    else if (tryAgain) {
+      await Future.delayed(Duration(milliseconds: nextMilSecInactive));
+      await tag_applyIfInactive(subject, nextMilSecInactive, func, false);
+    }
+  }
+
+  static Future tag_setActiveNow(String subject) async {
+    var spm = SPManager("fcm_tag$subject");
+    await spm.load();
+    int now = DateTime.now().millisecondsSinceEpoch;
+    spm["lastActive"] = now;
+    await spm.save();
+  }
+
   static reset(String mgt) async {
     if (!{"events", "msgs", "notis"}.contains(mgt)) return;
+    await tag_setActiveNow("afi$mgt");
     var spm = SPManager("firebaseMsg");
     await spm.load();
     spm[mgt] = {"counter": 0, "senders": {}};
@@ -85,6 +117,7 @@ class FCM {
       [List<String> senders = const []]) async {
     if (counter == 0) return reset(mgt);
     if (!{"events", "msgs", "notis"}.contains(mgt)) return;
+    await tag_setActiveNow("afi$mgt");
     //spm > spmanger_firebaseMsg > mgt > counter
     //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
     var spm = SPManager("firebaseMsg");
@@ -130,11 +163,19 @@ class FCM {
 
   static void onLogin() async {
     _clearAll();
+    var spm = SPManager("firebaseMsg");
+    await spm.load();
+    spm['email'] = Globals.currentUser!.email;
+    await spm.save();
     sub();
   }
 
   static void onLogout() async {
     unsub();
+    var spm = SPManager("firebaseMsg");
+    await spm.load();
+    spm['email'] = null;
+    await spm.save();
     _clearAll();
   }
 
