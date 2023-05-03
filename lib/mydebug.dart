@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 // see also Globals.dart
 
@@ -34,6 +35,7 @@ Map<MyPrintType, bool> myPrintTypes = {
 // myPrint:  connectionTest() success == true                          <Mongo2Test  22:01:04>
 // myPrint:  ---         obj.toString()   ---  ---     padding    ---  <MyPrintType    now  >
 myPrint(Object? obj, MyPrintType type) {
+  if (!kDebugMode) return;
   if (myPrintTypes[type] ?? false) {
     String prefix = "myPrint:  $obj";
     String suffix = " <${type.toString().split(".").last}";

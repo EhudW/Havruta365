@@ -27,10 +27,15 @@ class ChatModel {
         StreamController<List<MapEntry<ChatMessage, int>>>.broadcast();
     stream =
         _controller.stream.map((List<MapEntry<ChatMessage, int>> postsData) {
-      return postsData;
+      return postsData
+          .where((e) => !onlyPrivateChats || !e.key.isForum)
+          .toList();
     });
     streamAsEntryKey = stream.map((List<MapEntry<ChatMessage, int>> postsData) {
-      return postsData.map((e) => e.key).toList();
+      return postsData
+          .where((e) => !onlyPrivateChats || !e.key.isForum)
+          .map((e) => e.key)
+          .toList();
     });
     if (refreshNow) {
       refresh();
@@ -38,10 +43,14 @@ class ChatModel {
   }
   void msgWasSeen(types.TextMessage msg) {
     if (otherPerson == null) throw Exception();
-    if (isForum) return;
     if (_shouldNotSendSeen.contains(msg.id)) return;
     _shouldNotSendSeen.add(msg.id);
     ChatMessage m = ChatMessage.fromTypesTextMsg(msg);
+    if (isForum) {
+      counter = m.counter;
+      return;
+    }
+    if (m.id == null) return; // if src==mymail
     if (m.dst_mail != myMail || m.status == types.Status.seen) return;
     Globals.db!.setMsgsStatus([m.id], 2);
   }
@@ -49,7 +58,8 @@ class ChatModel {
   Future<List<MapEntry<ChatMessage, int>>> _getExampleServerData() async {
     return Future.delayed(MyConsts.defaultDelay, () async {
       return otherPerson == null
-          ? (await Globals.db!.getAllMyLastMessageWithEachFriend(myMail,
+          ? (await Globals.db!.getAllMyLastMessageWithEachFriendAndForums(
+              myMail,
               fetchDstUserData: true))
           : (isForum
                   ? (await Globals.db!
@@ -103,7 +113,9 @@ class ChatModel {
     tmp.key.message = delmsg;
     simulateRefresh(tmp);
     //return Globals.db!.deleteMsgs([msg.id], null).whenComplete(() {
-    return Globals.db!.editMsg(msg.id, delmsg).then((success) {
+    return Globals.db!
+        .editMsg(msg.id, delmsg, message: tmp.key)
+        .then((success) {
       tmp.key.status = success ? types.Status.sent : types.Status.error;
       tmp.key.tagNow();
       simulateRefresh(tmp);
@@ -112,10 +124,29 @@ class ChatModel {
     });
   }
 
+  int __counter = 0; //keep track of max counter msg
+  int get counter => __counter;
+  set counter(int v) {
+    if (v <= __counter) return;
+    if (isForum == false) return;
+    __counter = v;
+    Map tmp = Globals.currentUser!.subs_topics;
+    tmp[otherPerson] = tmp[otherPerson] ?? {};
+    int x = (tmp[otherPerson]['seen'] ?? 0);
+    if (x >= v) return;
+    tmp[otherPerson]['seen'] = v;
+    var collection = (Globals.db!.db as Db).collection('Users');
+    collection.updateOne(where.eq('email', Globals.currentUser!.email),
+        ModifierBuilder().set('subs_topics', Globals.currentUser!.subs_topics));
+  }
+
+  bool onlyPrivateChats = false;
   Future send(ChatMessage msg) {
     if (otherPerson == null) throw Exception();
-    msg.status = types.Status.sending;
     _isLoading = true;
+    msg.status = types.Status.sending;
+    counter++;
+    msg.counter = counter;
     //ChatMessage? prevLastToBeSent = lastToBeSent;
     //lastToBeSent = msg;
     var msgEntry = MapEntry(msg, -1);
@@ -191,7 +222,7 @@ class ChatModel {
         for (var id in totalIds) {
           var m1x = m1[id];
           var m2x = m2[id];
-          var last = (m1x?.key.tag ?? 0) > (m2x?.key.tag ?? 0) ? m1x : m2x;
+          var last = (m1x?.key.tag ?? 0) >= (m2x?.key.tag ?? 0) ? m1x : m2x;
           combined.add(last!);
           times.add(last.key.datetime!);
         }

@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
       Globals.onNewMsg = () => this.setState(() {});
       nnim!.refreshMe[this] = () => setState(() {});
       nnim!.start();
-      if (andRefreshNow) setState(() {});
+      if (andRefreshNow && mounted) setState(() {});
     } else {
       Globals.onNewMsg = () => null;
       nnim!.refreshMe[this] = () => null;
@@ -103,9 +103,10 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           IconButton(
                             icon: Icon(FontAwesomeIcons.envelope),
-                            color: Globals.hasNewMsg
+                            color: /*Globals.hasNewMsg
                                 ? Colors.redAccent
-                                : Colors.white54,
+                                :*/
+                                Colors.white54,
                             onPressed: () async {
                               setRefresh(false);
                               Navigator.push(
@@ -155,24 +156,64 @@ class _HomePageState extends State<HomePage> {
 
   appBar(BuildContext context) {
     return new AppBar(
-      leadingWidth: Globals.scaler.getWidth(3),
+      leadingWidth: Globals.scaler.getWidth(7),
       toolbarHeight: Globals.scaler.getHeight(2.2),
       elevation: 10,
       leading: Builder(
           builder: (context) => new IconButton(
-                icon: Center(
-                  child: Icon(
-                      (NewNotificationManager.onlyLast?.newNotification ??
-                              false)
-                          ? Icons.notification_important
-                          : Icons.notifications,
-                      color:
-                          (NewNotificationManager.onlyLast?.newNotification ??
-                                  false)
+                icon:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Stack(
+                    children: [
+                      Row(children: [
+                        SizedBox(
+                            width: Globals.scaler.getWidth(
+                                (NewNotificationManager
+                                                .onlyLast?.newNotification ??
+                                            0) >
+                                        0
+                                    ? 1.2
+                                    : 0)),
+                        Icon(
+                            /*((NewNotificationManager.onlyLast?.newNotification ??
+                                      0) >
+                                  0)
+                              ? Icons.notification_important
+                              : */
+                            Icons.notifications,
+                            color: /*((NewNotificationManager
+                                          .onlyLast?.newNotification ??
+                                      0) >
+                                  0)
                               ? Colors.redAccent
-                              : Colors.teal[400],
-                      size: scaler.getTextSize(10)),
-                ),
+                              :*/
+                                Colors.teal[400],
+                            size: scaler.getTextSize(10)),
+                      ]),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: CircleAvatar(
+                          radius: (NewNotificationManager
+                                          .onlyLast?.newNotification ??
+                                      0) >
+                                  0
+                              ? 13
+                              : 0,
+                          backgroundColor: Colors.red[900],
+                          child: Text(
+                            (NewNotificationManager.onlyLast?.newNotification ??
+                                    0)
+                                .toString(),
+                            style: TextStyle(
+                                //fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ]),
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
                 onPressed: () {
                   if (_scaffoldKey.currentState!.isDrawerOpen == false) {

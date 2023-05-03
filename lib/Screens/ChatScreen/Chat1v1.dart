@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
@@ -12,6 +13,7 @@ import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/mytimer.dart';
 import 'package:loading_animations/loading_animations.dart';
 
+import '../../FCM/fcm.dart';
 import '../FindMeAChavruta/Next_Button.dart';
 
 class ChatL10nHe extends ChatL10n {
@@ -23,6 +25,57 @@ class ChatL10nHe extends ChatL10n {
             inputPlaceholder: "הודעה...",
             sendButtonAccessibilityLabel: "שלח",
             unreadMessagesLabel: "הודעות שלא נקראו");
+}
+
+class IconSwitch extends StatefulWidget {
+  final bool on;
+  final Map<bool, IconData> icons;
+  final Map<bool, String> tooltip;
+  final Function(bool, Function) action;
+  const IconSwitch(this.on, this.action,
+      {Map<bool, IconData>? icons, Map<bool, String>? tooltip, Key? key})
+      : icons = icons ??
+            const {true: FontAwesomeIcons.plus, false: FontAwesomeIcons.minus},
+        tooltip = tooltip ?? const {true: "פועל", false: "כבוי"},
+        super(key: key);
+
+  @override
+  State<IconSwitch> createState() => IconSwitchState();
+}
+
+class IconSwitchState extends State<IconSwitch> {
+  bool on = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    on = widget.on;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(left: 20),
+        // SizedBox(
+        //   width: Globals.scaler.getWidth(2),
+        // ),
+        child: IconButton(
+          tooltip: "ללחוץ עבור " + widget.tooltip[!on]!,
+          icon: Center(
+            child: Icon(widget.icons[!on],
+                color: !on ? Colors.teal[400] : Colors.red[400],
+                size: ScreenScaler().getTextSize(10)),
+          ),
+          //tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          onPressed: () {
+            widget.action(
+                !on,
+                () => setState(() {
+                      on = !on;
+                    }));
+          },
+        ));
+  }
 }
 
 class ChatPage extends StatefulWidget {
@@ -56,7 +109,16 @@ class _ChatPageState extends State<ChatPage> {
         forum: widget.forumName != null);
     timer = MyTimer(
       duration: MyConsts.checkNewMessageInChatSec,
-      function: () => model.refresh().then((value) => true),
+      function: () async {
+        // ignore all unread msg from opened chat, for fcm
+        var spm = SPManager("openChat");
+        await spm.load();
+        int now = DateTime.now().millisecondsSinceEpoch;
+        spm['time'] = now;
+        spm['chat'] = widget.otherPerson;
+        await spm.save();
+        return model.refresh().then((value) => true);
+      },
     );
     timer.start(true);
   }
@@ -86,7 +148,40 @@ class _ChatPageState extends State<ChatPage> {
       toolbarHeight: Globals.scaler.getHeight(4.4),
       elevation: 10,
       leading: widget.forumName != null
-          ? null
+          ? Builder(builder: (context) {
+              // true => sub
+              bool on = Globals.currentUser!.subs_topics
+                  .containsKey(widget.otherPerson);
+              return IconSwitch(
+                on,
+                (bool toBe, Function flip) {
+                  if (toBe == true) {
+                    Globals.db!.updateUserSubs_Topics(add: {
+                      widget.otherPerson: {"seen": model.counter}
+                    });
+                    flip();
+                  } else {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: ((builder) => NextButton.bottomSheet(
+                            context,
+                            "האם לבטל מעקב אחר הפורום?",
+                            () {
+                              Navigator.pop(context);
+                              flip();
+                              Globals.db!.updateUserSubs_Topics(
+                                  remove: [widget.otherPerson]);
+                            },
+                            () {
+                              Navigator.pop(context);
+                            },
+                          )),
+                    );
+                  }
+                },
+                tooltip: {true: "הוספת עוקב", false: "הסרת עוקב"},
+              );
+            })
           : Builder(
               builder: (context) => Container(
                     margin: EdgeInsets.only(left: 20),
@@ -223,7 +318,7 @@ class _ChatPageState extends State<ChatPage> {
                             textDirection: TextDirection.rtl,
                             child: Chat(
                               onMessageVisibilityChanged: (p0, visible) =>
-                                  !visible || (widget.forumName != null)
+                                  !visible //|| (widget.forumName != null)
                                       ? null
                                       : model
                                           .msgWasSeen(p0 as types.TextMessage),

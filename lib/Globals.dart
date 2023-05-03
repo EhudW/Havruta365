@@ -1,3 +1,4 @@
+import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/rec_system.dart';
 
@@ -13,6 +14,15 @@ import 'mydebug.dart' as MyDebug;
 
 // see also mydebug.dart
 class Globals {
+  static void onNewLogin(User user) {
+    // new login
+    // Update current user
+    Globals.currentUser = user;
+    Globals.updateRec();
+    Globals.msgWithFriends.restart([], true);
+    FCM.onLogin();
+  }
+
   // one time heavy calc;
   static LoadProperty<List<Event>> rec = LoadProperty(
     (setter) async {
@@ -58,10 +68,35 @@ class Globals {
   static LoadProperty<List<MapEntry<ChatMessage, int>>> msgWithFriends =
       LoadProperty(
     (setter) async {
-      var x = await db!.getAllMyLastMessageWithEachFriend(
+      //var x = await db!.getAllMyLastMessageWithEachFriend(
+      var x = await db!.getAllMyLastMessageWithEachFriendAndForums(
           Globals.currentUser!.email!,
           fetchDstUserData: true);
       msgWithFriendsUnread = x.fold(0, (s, c) => s + c.value);
+      // ignore all unread msg from opened chat, for fcm
+      var spm = SPManager("openChat");
+      String? chat;
+      await spm.load();
+      int now = DateTime.now().millisecondsSinceEpoch;
+      int curr = spm['time'] ?? 0;
+      int extra = 1000 * (MyDebug.MyConsts.checkNewMessageOutsideChatSec);
+      if (curr + extra < now) {
+        chat = spm['chat'];
+      }
+      var unreadMsgEntries =
+          x.where((e) => e.value > 0 && e.key.dst_mail != chat).toList();
+      var unreadSenders =
+          unreadMsgEntries.map((e) => e.key.otherPersonMail).toList();
+      unreadMsgEntries.isNotEmpty
+          ? FCM.resetTo(
+              "msgs",
+              unreadMsgEntries.fold(
+                  0, (s, c) => s + c.value), // <= msgwithFriendsUnread
+              unreadMsgEntries.first.key.name!,
+              unreadMsgEntries.first.key.message!,
+              "??",
+              unreadSenders)
+          : FCM.reset("msgs");
       //hasNewMsg = x.any((element) => element.value != 0);
       setter(x);
       return true;

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
 import 'package:havruta_project/Screens/ChatScreen/chatStreamModel.dart';
+import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:havruta_project/Screens/UserScreen/User_details_page.dart';
 
@@ -13,6 +14,7 @@ import 'package:havruta_project/Widgets/SplashScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/mytimer.dart';
 import 'package:loading_animations/loading_animations.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mg;
 import '../../Globals.dart';
 import 'ChatMessage.dart';
 import 'package:intl/intl.dart';
@@ -31,9 +33,10 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     timer = MyTimer(
-      //duration: MyConsts.checkNewMessageOutsideChatSec,
-      duration: 1,
+      duration: MyConsts.checkNewMessageOutsideChatSec,
       function: () => model
+          //.refresh(Globals.db!.getAllMyForums(
+          //    Globals.msgWithFriends.waitData().then((v) => v!)))
           .refresh(Globals.msgWithFriends.waitData().then((v) => v!))
           .then((value) => true),
     );
@@ -87,6 +90,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                   builder: (context) => ChatPage(
                                     otherPerson: message.otherPersonMail,
                                     otherPersonName: message.otherPersonName!,
+                                    forumName: message.isForum
+                                        ? message.otherPersonName
+                                        : null,
                                   ),
                                 )).then((value) => timer.start(true));
                           },
@@ -101,8 +107,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => UserScreen(
-                                              message.otherPersonMail),
+                                          builder: (context) => message.isForum
+                                              ? EventScreen(
+                                                  mg.ObjectId.fromHexString(
+                                                      message.dst_mail!
+                                                          .split('"')[1]))
+                                              : UserScreen(
+                                                  message.otherPersonMail),
                                         )).then((value) => timer.start(true));
                                   },
                                   child: CircleAvatar(
@@ -129,9 +140,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                 width: 16.0,
                               ),
                               Text(
-                                  (message.amITheSender
-                                          ? "נשלחה ל "
-                                          : "התקבלה מ") +
+                                  (!message.isForum
+                                          ? (message.amITheSender
+                                              ? "נשלחה ל : "
+                                              : "התקבלה מ : ")
+                                          : "") +
                                       message.otherPersonName!,
                                   textDirection: ui.TextDirection.rtl),
                             ],
@@ -139,10 +152,18 @@ class _ChatScreenState extends State<ChatScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
+                              message.isForum
+                                  ? Text(
+                                      (" 🗨 פורום 🗨 "),
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: Colors.deepOrange),
+                                    )
+                                  : SizedBox(),
                               Text(
                                 DateFormat('HH:mm  d-M-yyyy')
                                     .format(message.datetime!.toLocal()),
-                                style: TextStyle(fontSize: 12.0),
+                                style: TextStyle(fontSize: 14.0),
                               ),
                               Text(message.message!,
                                   textDirection: ui.TextDirection.rtl),
@@ -164,7 +185,17 @@ class _ChatScreenState extends State<ChatScreen> {
   appBar(BuildContext context) {
     ScreenScaler scaler = new ScreenScaler();
     return new AppBar(
-        leadingWidth: 0,
+        leadingWidth: Globals.scaler.getWidth(6),
+        leading: IconSwitch(
+          true,
+          (toBe, flip) {
+            model.onlyPrivateChats = !toBe;
+            model.simulateRefresh();
+            flip();
+          },
+          icons: {true: Icons.filter_alt_off_sharp, false: Icons.chat_outlined},
+          tooltip: {true: "עם פורומים", false: "בלי פורומים"},
+        ),
         toolbarHeight: 40,
         elevation: 30,
         shadowColor: Colors.teal[400],

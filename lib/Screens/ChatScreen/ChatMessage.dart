@@ -20,7 +20,8 @@ class ChatMessage {
     types.Status.delivered
   ];
   bool isForum;
-  // 11 fields [8, 1 id, 2 otherPerson]
+  int counter;
+  // 11 fields [8, 1 id, 2 otherPerson] + _tag
   String? otherPersonAvatar; //only in program
   String? otherPersonName; //only in program
   types.Status status;
@@ -32,17 +33,18 @@ class ChatMessage {
   int get statusAsInt => statuses.indexOf(status);
   String get otherPersonMail => amITheSender ? this.dst_mail! : this.src_mail!;
   bool get amITheSender => Globals.currentUser!.email == this.src_mail;
-  // 9 of 11 [8/8, 1/1 id, 0/2 otherPerson]
+  // 9 of 11 [8/8, 1/1 id, 0/2 otherPerson] without _tag
   ChatMessage(
       {this.name,
       this.isForum = false,
       this.status = types.Status.sending,
       this.avatar,
       this.src_mail,
-      this.datetime,
+      this.datetime, // no need _tag here
       this.message,
       this.dst_mail,
-      this.id});
+      this.id,
+      this.counter = 0});
   dynamic id;
   // SrcUser details
   String? name;
@@ -55,42 +57,48 @@ class ChatMessage {
   String? message;
   // Dst of message - mail of user
   String? dst_mail;
-  // 8 of 11  [8/8, 0/1 id, 0/2 otherPerson]
+  // 8 of 11  [8/8, 0/1 id, 0/2 otherPerson] + _tag
   Map<String, dynamic> toJson() => {
         'avatar': avatar ?? "",
         'name': name ?? "",
         'src_mail': src_mail ?? "",
         'datetime': datetime ?? DateTime.now(),
+        'tag': tag,
         'message': message ?? "",
         'dst_mail': dst_mail ?? "",
         'status': statusAsInt,
         'isForum': isForum,
+        'counter': counter,
       };
-  // 11 of 11  [8/8, 1/1 id, 2/2 otherPerson]
+  // 11 of 11  [8/8, 1/1 id, 2/2 otherPerson] + _tag
   ChatMessage.cloneWith(ChatMessage old, {types.Status? newStatus})
       : name = old.name,
         avatar = old.avatar,
         isForum = old.isForum,
         src_mail = old.src_mail,
         datetime = old.datetime,
+        _tag = old.tag,
         message = old.message,
         dst_mail = old.dst_mail,
         status = newStatus ?? old.status,
         otherPersonAvatar = old.otherPersonAvatar,
         otherPersonName = old.otherPersonName,
+        counter = old.counter,
         id = old.id;
-  // 9 of 11  [8/8, 1/1 id, 0/2 otherPerson]
+  // 9 of 11  [8/8, 1/1 id, 0/2 otherPerson] + _tag
   ChatMessage.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         isForum = json['isForum'] ?? false,
         avatar = json['avatar'],
         src_mail = json['src_mail'],
         datetime = json['datetime'],
+        _tag = json['tag'] ?? 0,
         message = json['message'],
         dst_mail = json['dst_mail'],
         status = statuses[json['status'] ?? 1],
+        counter = json['counter'] ?? 0,
         id = json['_id'];
-  // 11 of 11  [8/8, 1/1 id, 2/2 otherPerson]
+  // 11 of 11  [8/8, 1/1 id, 2/2 otherPerson] + _tag
   types.TextMessage toTypesTextMsg() {
     return types.TextMessage(
         author: types.User(id: src_mail!, firstName: name, imageUrl: avatar),
@@ -104,6 +112,8 @@ class ChatMessage {
         status: status,
         id: (id as ObjectId?)?.$oid ?? "NULL",
         metadata: {
+          "counter": counter,
+          "tag": tag,
           "otherPersonAvatar": otherPersonAvatar,
           "otherPersonName": otherPersonName,
           "dst_mail": dst_mail,
@@ -111,7 +121,7 @@ class ChatMessage {
         });
   }
 
-  // 9 of 11  [8/8, 1/1 id, 2/2 otherPerson]
+  // 9 of 11  [8/8, 1/1 id, 2/2 otherPerson] + _tag
   ChatMessage.fromTypesTextMsg(types.TextMessage m)
       : name = m.author.firstName,
         avatar = m.author.imageUrl,
@@ -119,8 +129,10 @@ class ChatMessage {
         isForum = m.metadata?["isForum"] ?? false,
         datetime = DateTime.fromMillisecondsSinceEpoch(m.createdAt!).toLocal(),
         message = m.text,
+        counter = m.metadata?["counter"] ?? 0,
         status = m.status ?? statuses[0],
         dst_mail = m.metadata?["dst_mail"],
+        _tag = m.metadata?["tag"] ?? 0,
         otherPersonAvatar = m.metadata?["otherPersonAvatar"],
         otherPersonName = m.metadata?["otherPersonName"],
         id = m.id != "NULL" ? ObjectId.fromHexString(m.id) : null;

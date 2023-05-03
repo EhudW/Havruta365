@@ -259,10 +259,11 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             onTap: () async {
               // ignore: unused_local_variable
               var currentUser;
+              // new logout
               Globals.currentUser = null;
               Globals.rec.cancel([]);
               Globals.msgWithFriends.cancel([]);
-              FCM.clearAll();
+              FCM.onLogout();
               if (await (GoogleSignInApi.isSignedIn())) {
                 currentUser = GoogleSignInApi.currentUser();
                 await GoogleSignInApi.logout();

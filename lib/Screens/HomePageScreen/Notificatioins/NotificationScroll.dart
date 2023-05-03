@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/NotificationView.dart';
 import 'package:havruta_project/main.dart';
 
@@ -42,9 +43,19 @@ class _notificationsScrollState extends State<notificationsScroll> {
                                     .remove(index)
                                     .catchError((err) => null);
                                 // refresh ui if this delete cause that
-                                if (widget.nnim.model.isDataEmpty) {
-                                  widget.nnim.newNotification = false;
+                                if (widget.nnim.model.dataLen == 0) {
+                                  FCM.reset("notis");
+                                  widget.nnim.newNotification = 0;
                                   widget.nnim.refreshAll();
+                                } else {
+                                  var newest = widget.nnim.model.getNewest();
+                                  if (newest != null)
+                                    FCM.resetTo(
+                                        "notis",
+                                        widget.nnim.model.dataLen,
+                                        newest.name!,
+                                        newest.message!,
+                                        "??");
                                 }
                               },
                               child: NotificationView(

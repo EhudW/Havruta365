@@ -53,7 +53,7 @@ class NewNotificationManager {
 
   // for ui update when updateNotification() called
   Map<Object, Function> refreshMe = {};
-  bool newNotification = false; // for state
+  int newNotification = 0; // for state
   // refresh needed ui, without accessing model
   void refreshAll() {
     for (Function refresh in refreshMe.values) {
@@ -68,12 +68,20 @@ class NewNotificationManager {
         .refresh()
         .then((_) {
           var oldValue = newNotification;
-          newNotification = !model.isDataEmpty;
+          newNotification = model.dataLen;
           MyDebug.myPrint(
               "newNotification: $newNotification    [${this.hashCode}]",
               MyDebug.MyPrintType.Nnim);
           if (oldValue != newNotification) {
             refreshAll();
+          }
+          if (newNotification == 0) {
+            FCM.reset("notis");
+          } else {
+            var newest = model.getNewest();
+            if (newest != null)
+              FCM.resetTo("notis", newNotification, newest.name!,
+                  newest.message!, "??");
           }
           return true;
         })
@@ -134,7 +142,6 @@ class _MyAppState extends State<MyApp> {
       );
       timer!.start(false);
     }
-    Future.delayed(Duration(seconds: 5), () => FCM.foreground());
   }
 
   @override
@@ -192,10 +199,7 @@ class _MyAppState extends State<MyApp> {
                                       case ConnectionState.waiting:
                                         return const CircularProgressIndicator();
                                       case ConnectionState.done:
-                                        Globals.currentUser = snapshot.data;
-                                        Globals.updateRec();
-                                        Globals.msgWithFriends
-                                            .restart([], true);
+                                        Globals.onNewLogin(snapshot.data!);
                                         return HomePage();
                                       //break;
                                       default:

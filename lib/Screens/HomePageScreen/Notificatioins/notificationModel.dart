@@ -9,7 +9,15 @@ class notificationModel {
   bool _wasFetched = false;
   Stream<List<NotificationUser>>? stream;
   List<NotificationUser>? _data;
-  bool get isDataEmpty => _data?.isEmpty ?? true;
+  NotificationUser? getNewest() {
+    try {
+      return _data!.first;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  int get dataLen => _data?.length ?? 0;
   late StreamController<List<NotificationUser>?> _controller;
   bool ignoreRequests = false;
   notificationModel() {
