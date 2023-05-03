@@ -46,6 +46,47 @@ class _EventPageState extends State<EventPage> {
     setState(() {});
   }
 
+  Widget bottomSheet(BuildContext context, Function ok, Function ignore) {
+    return Container(
+      height: Globals.scaler.getHeight(8.5),
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: Globals.scaler.getWidth(3),
+        vertical: Globals.scaler.getHeight(1),
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            Globals.currentUser!.gender == 'F' ? "את בטוחה?" : "אתה בטוח?",
+            textDirection: ui.TextDirection.rtl,
+            style: TextStyle(
+              fontSize: Globals.scaler.getTextSize(8.5),
+            ),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(1),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            TextButton.icon(
+              icon: Icon(FontAwesomeIcons.check),
+              onPressed: () {
+                ok();
+              },
+              label: Text("בטוח"),
+            ),
+            TextButton.icon(
+              icon: Icon(FontAwesomeIcons.circleXmark),
+              onPressed: () {
+                ignore();
+              },
+              label: Text("בטל פעולה"),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Future creator = widget.getUser(widget.event!.creatorUser);
@@ -53,6 +94,11 @@ class _EventPageState extends State<EventPage> {
     String type = widget.event?.type == "H" ? "חברותא" : "שיעור";
     String topic = widget.event?.topic?.trim() ?? "";
     String book = widget.event?.book?.trim() ?? "";
+    String t_event_type = widget.event!.type == "H" ? "חברותא" : "שיעור";
+    String t_book_name =
+        widget.event!.book != "" ? " ב" + widget.event!.book! : "";
+    String t_topic =
+        widget.event!.topic != "" ? " ב" + widget.event!.topic! : "";
     String study = book == "" ? topic : "";
     study = topic != "" && book != "" ? topic + "/ " + book : topic + book;
     String nextEvent = "-נגמר-";
@@ -67,7 +113,65 @@ class _EventPageState extends State<EventPage> {
           .format((widget.event!.dates![0] as DateTime).toLocal());
     }
     String duration = widget.event!.duration.toString() + " דקות";
+    var myMail = Globals.currentUser!.email;
     bool notMyTarget = !Globals.currentUser!.isTargetedForMe(widget.event!);
+    var amIParticipant = widget.event!.participants!.contains(myMail);
+    var amICreator = widget.event!.creatorUser == myMail;
+    var waitingQueue = widget.event!.waitingQueue ?? [];
+    var remainedPlaces = widget.event!.maxParticipants! -
+        widget.event!.participants!.length; /*-waitingQueue.length*/
+    String t_pre = "*הודעת תפוצה*" + "\n";
+    String t_suffix = t_event_type + t_topic + t_book_name + ":\n";
+
+    var initPub =
+        (bool wq) => t_pre + (wq ? "למבקשים להצטרף ל" : "למשתתפי ה") + t_suffix;
+
+    var rejectOrAcceptFactory = (func) => (userMail) {
+          showModalBottomSheet(
+            context: context,
+            builder: ((builder) => bottomSheet(context, () {
+                  Navigator.pop(context);
+                  func(userMail);
+                  refresh();
+                }, () => Navigator.pop(context))),
+          );
+        };
+    var reject = rejectOrAcceptFactory((userMail) {
+      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
+      NotificationUser notification = NotificationUser.fromJson({
+        'creatorUser': Globals.currentUser!.email,
+        'destinationUser': userMail,
+        'creationDate': DateTime.now(),
+        'message': "לצערי דחיתי את בקשתך לחברותא",
+        'type': 'joinReject',
+        'idEvent': widget.event!.id,
+        'name': Globals.currentUser!.name,
+      });
+      Globals.db!.insertNotification(notification);
+      if (widget.event!.waitingQueue == null) {
+        widget.event!.waitingQueue = [];
+      }
+      widget.event!.waitingQueue!.remove(userMail);
+    });
+    var accept = rejectOrAcceptFactory((userMail) {
+      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
+      Globals.db!.addParticipant(userMail, widget.event!.id);
+      NotificationUser notification = NotificationUser.fromJson({
+        'creatorUser': Globals.currentUser!.email,
+        'destinationUser': userMail,
+        'creationDate': DateTime.now(),
+        'message': "אישרתי את בקשתך לחברותא",
+        'type': 'joinAccept',
+        'idEvent': widget.event!.id,
+        'name': Globals.currentUser!.name,
+      });
+      Globals.db!.insertNotification(notification);
+      if (widget.event!.waitingQueue == null) {
+        widget.event!.waitingQueue = [];
+      }
+      widget.event!.waitingQueue!.remove(userMail);
+      widget.event!.participants!.add(userMail);
+    });
 
     return FutureBuilder(
         future: creator,
@@ -265,7 +369,24 @@ class _EventPageState extends State<EventPage> {
                               notifyParent: refresh),
                       SizedBox(height: 8.0),
                       Divider(),
-                      // participants
+                      widget.event!.type == "L" || amIParticipant || amICreator
+                          ? ParticipentsScroller(
+                              //TODO: edit widget
+                              widget.event!.participants,
+                              title: "משתתפים",
+                              initPubMsgText: initPub(false),
+                            )
+                          : Container(),
+                      amICreator && widget.event!.type == 'H'
+                          ? ParticipentsScroller(
+                              widget.event!.waitingQueue,
+                              title: "ממתינים לאישור",
+                              initPubMsgText: initPub(true),
+                              accept: accept,
+                              reject: reject,
+                            )
+                          : Container(),
+                      SizedBox(height: Globals.scaler.getHeight(1)),
                     ],
                   ),
                 ),
