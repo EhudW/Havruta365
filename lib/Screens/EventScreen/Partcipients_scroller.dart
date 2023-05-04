@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
 import 'package:havruta_project/Screens/ChatScreen/SendScreen.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
+import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 import 'dart:ui' as ui;
@@ -24,7 +26,8 @@ class ParticipentsScroller extends StatelessWidget {
   var userColl;
   void Function(String)? accept;
   void Function(String)? reject;
-  bool get hasButton => reject != null || accept != null;
+  //bool get hasButton => reject != null || accept != null;
+  final bool hasButton = true;
   Future getUser(String? userMail) async {
     var user = await userColl.findOne(where.eq('email', '$userMail'));
     return user;
@@ -56,10 +59,10 @@ class ParticipentsScroller extends StatelessWidget {
             var profile = [
               CircleAvatar(
                 backgroundImage: NetworkImage(snapshot.data['avatar']),
-                radius: 40.0,
+                radius: 20.0,
                 child: IconButton(
                     icon: Icon(FontAwesomeIcons.houseUser),
-                    iconSize: 40.0,
+                    iconSize: 20.0,
                     color: Colors.white.withOpacity(0),
                     onPressed: () {
                       Navigator.push(
@@ -114,7 +117,24 @@ class ParticipentsScroller extends StatelessWidget {
                         child: Text("דחה"),
                         style: TextButton.styleFrom(
                             backgroundColor: Colors.red,
-                            foregroundColor: Colors.white))
+                            foregroundColor: Colors.white)),
+                SizedBox(
+                  width: 8,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                    otherPerson: snapshot.data['email'],
+                                    otherPersonName: snapshot.data['name'],
+                                  )));
+                    },
+                    child: Text('צאט'),
+                    style: TextButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        foregroundColor: Colors.white))
               ])
             ];
             _inner = _inner
