@@ -1,6 +1,8 @@
 import 'package:another_flushbar/flushbar.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
+import 'package:havruta_project/Screens/EventScreen/Add2Calendar.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,11 +96,11 @@ class _EventPageState extends State<EventPage> {
     String type = widget.event?.type == "H" ? "חברותא" : "שיעור";
     String topic = widget.event?.topic?.trim() ?? "";
     String book = widget.event?.book?.trim() ?? "";
+    String t_book = book != "" ? " ב" + book : "";
+    String t_topic = topic != "" ? " ב" + topic : "";
     String t_event_type = widget.event!.type == "H" ? "חברותא" : "שיעור";
     String t_book_name =
         widget.event!.book != "" ? " ב" + widget.event!.book! : "";
-    String t_topic =
-        widget.event!.topic != "" ? " ב" + widget.event!.topic! : "";
     String study = book == "" ? topic : "";
     study = topic != "" && book != "" ? topic + "/ " + book : topic + book;
     String nextEvent = "-נגמר-";
@@ -173,6 +175,15 @@ class _EventPageState extends State<EventPage> {
       widget.event!.participants!.add(userMail);
     });
 
+    var drawer_navigation_line = (line_title, navigation_func) {
+      return ListTile(
+        title: Text(line_title),
+        onTap: () async {
+          Navigator.push(context, MaterialPageRoute(builder: navigation_func));
+        },
+      );
+    };
+
     return FutureBuilder(
         future: creator,
         builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -201,7 +212,7 @@ class _EventPageState extends State<EventPage> {
                         //TODO: shreenk
                         foregroundImage: NetworkImage(snapshot.data['avatar']),
                         backgroundColor: Colors.transparent,
-                        radius: 60.0, //here
+                        radius: 40.0, //here
                         child: IconButton(
                             icon: Icon(Icons.quiz_sharp),
                             iconSize: 40.0,
@@ -227,18 +238,43 @@ class _EventPageState extends State<EventPage> {
                           color: Colors.blue,
                         ),
                       ),
+                      drawer_navigation_line(
+                          'פורום',
+                          (context) => ChatPage(
+                                otherPerson: widget.event!.id.toString(),
+                                otherPersonName: widget.event!.id.toString(),
+                                forumName: type + t_topic + t_book,
+                              )),
+                      drawer_navigation_line(
+                          'לוח זמנים מלא',
+                          (context) => EventDatesList(
+                              widget.event!, widget.allUserEvents ?? [])),
                       ListTile(
-                        title: Text('פורום'),
+                        title: Text('הוסף ליומן'),
                         onTap: () {
-                          // Update the state of the app.
-                          // ...
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: add2calendar(widget.event!),
+                            ),
+                          );
                         },
                       ),
+                      drawer_navigation_line(
+                          'פרטים נוספים',
+                          (context) => //Add further details page
+                              EventDatesList(
+                                  widget.event!, widget.allUserEvents ?? [])),
                       ListTile(
-                        title: Text('לוח זמנים מלא'),
+                        title: Text('המלץ לחבר'),
                         onTap: () {
-                          // Update the state of the app.
-                          // ...
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EventDatesList(
+                                  widget.event!, widget.allUserEvents ?? []),
+                            ),
+                          );
                         },
                       ),
                     ],

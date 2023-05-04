@@ -221,7 +221,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
                     iAmCreator
                         ? SizedBox()
                         : SizedBox(width: Globals.scaler.getWidth(1)),
-                    Add2Calendar(widget.event)
+                    //Add2Calendar(widget.event)
                   ],
                 ),
               ],
