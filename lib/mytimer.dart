@@ -106,6 +106,9 @@ abstract class ILoadProperty<T> {
 }
 
 class LoadProperty<T> extends ILoadProperty<T> {
+  StreamController<MapEntry<bool, T?>>? _controller;
+  Stream<MapEntry<bool, T?>> get stream => _controller!.stream;
+
   static Map<String, LoadProperty> avoidRepeatPropertyTimer = {};
   T? _data;
   MyTimer? _timer;
@@ -152,6 +155,7 @@ class LoadProperty<T> extends ILoadProperty<T> {
     var dataSetter = (T value) {
       if (!_useInstead) {
         _data = value;
+        _controller?.add(MapEntry(true, value));
         _dataWasLoaded = true;
       }
     };
@@ -177,6 +181,8 @@ class LoadProperty<T> extends ILoadProperty<T> {
       _dataWasLoaded = false;
       _useInstead = false;
       _timerHadStart = true;
+      _controller =
+          oneLoadOnly ? null : StreamController<MapEntry<bool, T?>>.broadcast();
       _timer!.start(beforeDuration);
     }
   }
@@ -201,6 +207,11 @@ class LoadProperty<T> extends ILoadProperty<T> {
         MyDebug.MyPrintType.LoadProperty);
     _useInstead = true;
     _instead = instead;
+
+    _controller?.add(MapEntry(false, instead));
+    _controller?.close();
+    _controller = null;
+
     _timer?.cancel();
   }
 
