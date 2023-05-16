@@ -18,6 +18,7 @@ class notificationModel {
   }
 
   int get dataLen => _data?.length ?? 0;
+  int get unseenLen => _data?.where((e) => e.unseen).length ?? 0;
   late StreamController<List<NotificationUser>?> _controller;
   bool ignoreRequests = false;
   notificationModel() {
@@ -29,6 +30,12 @@ class notificationModel {
       }).toList();
     });
     refresh();
+  }
+  Future seenAll() async {
+    await Globals.db!.seenNoti(
+        _data?.where((element) => element.unseen).map((e) => e.id).toList() ??
+            []);
+    await refresh();
   }
 
   Future<List<NotificationUser>> getData(int length) async {

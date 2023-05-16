@@ -68,7 +68,7 @@ class NewNotificationManager {
         .refresh()
         .then((_) {
           var oldValue = newNotification;
-          newNotification = model.dataLen;
+          newNotification = model.unseenLen;
           MyDebug.myPrint(
               "newNotification: $newNotification    [${this.hashCode}]",
               MyDebug.MyPrintType.Nnim);
