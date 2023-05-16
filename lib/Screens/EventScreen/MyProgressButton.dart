@@ -164,49 +164,52 @@ class MyProgressButtonState extends State<MyProgressButton> {
     var progressTextButton = Column(children: [
       iAmCreator
           ? SizedBox()
-          : ProgressButton(
-              stateWidgets: {
-                ButtonState.idle: forIdle("הירשם לשיעור!"),
-                ButtonState.idle2: forIdle("בקש להצטרף לחברותא"),
-                ButtonState.loading: Text(
-                  "...עובד",
-                  style: textStyle,
-                ),
-                ButtonState.fail: Text(
-                  message,
-                  textDirection: ui.TextDirection.rtl,
-                  style: textStyle,
-                ),
-                ButtonState.fail2: Text(
-                  message2,
-                  textDirection: ui.TextDirection.rtl,
-                  style: textStyle,
-                ),
-                ButtonState.success: Text(
-                  widget.event!.type == 'H'
-                      ? "!היכנס לחברותא"
-                      : "!היכנס לשיעור",
-                  style: textStyle,
-                ),
-                ButtonState.full: Text(
-                  widget.event!.type == 'H'
-                      ? "החברותא בתפוסה מלאה! לא ניתן להירשם"
-                      : "השיעור בתפוסה מלאה! לא ניתן להירשם",
-                  style: textStyle,
-                )
-              },
-              stateColors: {
-                ButtonState.idle: Colors.teal[400],
-                ButtonState.idle2: Colors.teal[400],
-                ButtonState.loading: Colors.grey,
-                ButtonState.fail: Colors.green[300],
-                ButtonState.fail2: Colors.orange[300],
-                ButtonState.success: Colors.green,
-                ButtonState.full: Colors.redAccent
-              },
-              onPressed: onPressedCustomButton,
-              state: stateOnlyText,
-              padding: EdgeInsets.all(8.0),
+          : SizedBox(
+              width: 375,
+              child: ProgressButton(
+                stateWidgets: {
+                  ButtonState.idle: forIdle("הירשם לשיעור!"),
+                  ButtonState.idle2: forIdle("בקש להצטרף לחברותא"),
+                  ButtonState.loading: Text(
+                    "...עובד",
+                    style: textStyle,
+                  ),
+                  ButtonState.fail: Text(
+                    message,
+                    textDirection: ui.TextDirection.rtl,
+                    style: textStyle,
+                  ),
+                  ButtonState.fail2: Text(
+                    message2,
+                    textDirection: ui.TextDirection.rtl,
+                    style: textStyle,
+                  ),
+                  ButtonState.success: Text(
+                    widget.event!.type == 'H'
+                        ? "!היכנס לחברותא"
+                        : "!היכנס לשיעור",
+                    style: textStyle,
+                  ),
+                  ButtonState.full: Text(
+                    widget.event!.type == 'H'
+                        ? "החברותא בתפוסה מלאה! לא ניתן להירשם"
+                        : "השיעור בתפוסה מלאה! לא ניתן להירשם",
+                    style: textStyle,
+                  )
+                },
+                stateColors: {
+                  ButtonState.idle: Colors.teal[400],
+                  ButtonState.idle2: Colors.teal[400],
+                  ButtonState.loading: Colors.grey,
+                  ButtonState.fail: Colors.green[300],
+                  ButtonState.fail2: Colors.orange[300],
+                  ButtonState.success: Colors.green,
+                  ButtonState.full: Colors.redAccent
+                },
+                onPressed: onPressedCustomButton,
+                state: stateOnlyText,
+                padding: EdgeInsets.all(8.0),
+              ),
             ),
       iAmParticipant || iAmInWaitingQueue || iAmCreator
           ? Column(
@@ -221,7 +224,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
                     iAmCreator
                         ? SizedBox()
                         : SizedBox(width: Globals.scaler.getWidth(1)),
-                    Add2Calendar(widget.event)
+                    //Add2Calendar(widget.event)
                   ],
                 ),
               ],

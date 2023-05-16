@@ -87,10 +87,35 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
+  String FormatCountdownString(BuildContext context, int countdown_minutes) {
+    String countdown_string = "";
+    if (countdown_minutes > 0) {
+      countdown_string = "האירוע יתחיל בעוד ";
+      if (countdown_minutes >= 1440) {
+        countdown_string +=
+            (countdown_minutes / 1440).floor().toString() + " ימים ו ";
+        countdown_minutes = countdown_minutes % 1440;
+      }
+      if (countdown_minutes >= 60) {
+        countdown_string +=
+            (countdown_minutes / 60).floor().toString() + " שעות.";
+        //countdown_minutes = countdown_minutes % 60;
+      }
+      //countdown_string += countdown_minutes.toString() + " דקות";
+    } else if (countdown_minutes == 0) {
+      countdown_string = "האירוע מתקיים כעת!";
+    } else {
+      countdown_string = "האירוע נגמר ";
+    }
+    return countdown_string;
+  }
+
   @override
   Widget build(BuildContext context) {
     Future creator = widget.getUser(widget.event!.creatorUser);
 
+    int countdown_minutes = widget.event!.startIn;
+    String countdown_string = FormatCountdownString(context, countdown_minutes);
     String type = widget.event?.type == "H" ? "חברותא" : "שיעור";
     String topic = widget.event?.topic?.trim() ?? "";
     String book = widget.event?.book?.trim() ?? "";
@@ -277,7 +302,7 @@ class _EventPageState extends State<EventPage> {
                         textDirection: ui.TextDirection.rtl,
                       ),
                       // countdown
-                      Text("TODO: Countdown",
+                      Text(countdown_string,
                           textDirection: ui.TextDirection.rtl,
                           style: GoogleFonts.alef(
                               fontSize: 16.0,
