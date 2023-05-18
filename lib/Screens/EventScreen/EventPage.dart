@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:another_flushbar/flushbar.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:havruta_project/Screens/EventScreen/FurtherDetailsScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,18 +13,24 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
+import 'package:share_plus/share_plus.dart';
 //import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' as query;
 import 'package:url_launcher/url_launcher.dart';
 import '../../DataBase_auth/Notification.dart';
+import '../ChatScreen/Chat1v1.dart';
+import '../ChatScreen/ChatMessage.dart';
+import '../ChatScreen/chatStreamModel.dart';
+import 'Add2Calendar.dart';
 import 'arc_banner_image.dart';
 import 'EventDatesList.dart';
 import 'Partcipients_scroller.dart';
 import 'Event_detail_header.dart';
 import 'story_line.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'dart:ui' as ui;
 
 class EventPage extends StatefulWidget {
@@ -122,8 +131,9 @@ class _EventPageState extends State<EventPage> {
     String t_event_type = widget.event!.type == "H" ? "חברותא" : "שיעור";
     String t_book_name =
         widget.event!.book != "" ? " ב" + widget.event!.book! : "";
-    String t_topic =
-        widget.event!.topic != "" ? " ב" + widget.event!.topic! : "";
+    //String t_topic = widget.event!.topic != "" ? " ב" + widget.event!.topic! : "";
+    String t_topic = topic != "" ? " ב" + topic : "";
+    String t_book = book != "" ? " ב" + book : "";
     String study = book == "" ? topic : "";
     study = topic != "" && book != "" ? topic + "/ " + book : topic + book;
     String nextEvent = "-נגמר-";
@@ -147,6 +157,14 @@ class _EventPageState extends State<EventPage> {
         widget.event!.participants!.length; /*-waitingQueue.length*/
     String t_pre = "*הודעת תפוצה*" + "\n";
     String t_suffix = t_event_type + t_topic + t_book_name + ":\n";
+    String share_string = "אשמח להזמין אותך ל" +
+        type +
+        " בנושא " +
+        study +
+        ", מפי הרב " +
+        widget.event!.lecturer! +
+        ".\n";
+    ChatModel model = ChatModel(myMail: Globals.currentUser!.email!);
 
     var initPub =
         (bool wq) => t_pre + (wq ? "למבקשים להצטרף ל" : "למשתתפי ה") + t_suffix;
@@ -198,6 +216,15 @@ class _EventPageState extends State<EventPage> {
       widget.event!.participants!.add(userMail);
     });
 
+    var drawer_navigation_line = (line_title, navigation_func) {
+      return ListTile(
+        title: Text(line_title),
+        onTap: () async {
+          Navigator.push(context, MaterialPageRoute(builder: navigation_func));
+        },
+      );
+    };
+
     return FutureBuilder(
         future: creator,
         builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -226,7 +253,7 @@ class _EventPageState extends State<EventPage> {
                         //TODO: shreenk
                         foregroundImage: NetworkImage(snapshot.data['avatar']),
                         backgroundColor: Colors.transparent,
-                        radius: 60.0, //here
+                        radius: 40.0, //here
                         child: IconButton(
                             icon: Icon(Icons.quiz_sharp),
                             iconSize: 40.0,
@@ -252,168 +279,188 @@ class _EventPageState extends State<EventPage> {
                           color: Colors.blue,
                         ),
                       ),
+                      drawer_navigation_line(
+                          'פורום',
+                          (context) => ChatPage(
+                                otherPerson: widget.event!.id.toString(),
+                                otherPersonName: widget.event!.id.toString(),
+                                forumName: type + t_topic + t_book,
+                              )),
                       ListTile(
-                        title: Text('פורום'),
+                        title: Text('הוסף ליומן'),
                         onTap: () {
-                          // Update the state of the app.
-                          // ...
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: add2calendar(widget.event!),
+                            ),
+                          );
                         },
                       ),
+                      drawer_navigation_line(
+                          'פרטים נוספים',
+                          (context) => //Add further details page
+                              FurtherDetailsScreen(event: widget.event!)),
                       ListTile(
-                        title: Text('לוח זמנים מלא'),
+                        title: Text('המלץ לחבר'),
                         onTap: () {
-                          // Update the state of the app.
-                          // ...
+                          Share.share(
+                              share_string + "\n https://www.google.com/",
+                              subject: "https://www.google.com/");
                         },
                       ),
                     ],
                   ),
                 ),
                 body: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Text("לימוד:",
-                          textDirection: ui.TextDirection.rtl,
-                          style: GoogleFonts.alef(
-                              fontSize: 16.0, color: Colors.grey[700])),
-                      Text(study,
-                          textDirection: ui.TextDirection.rtl,
-                          style: GoogleFonts.secularOne(fontSize: 20.0)),
-                      // times should be exported to a function together with countdown
-                      Text(
-                        (widget.event!.dates!.isNotEmpty &&
-                                isNow(widget.event!.dates![0],
-                                    widget.event!.duration ?? 0))
-                            ? "   האירוע מתקיים כעת ב:    "
-                            : "   האירוע מתקיים ב:    ",
-                        style: GoogleFonts.secularOne(fontSize: 14.0),
-                        //textAlign: TextAlign.end,
+                  child: Column(children: [
+                    Text("לימוד:",
                         textDirection: ui.TextDirection.rtl,
-                      ),
-                      Text(
-                        time == ""
-                            ? ""
-                            : (isNow(widget.event!.dates![0],
-                                    widget.event!.duration ?? 0)
-                                ? nextEvent + "    בשעה  " + time
-                                : nextEvent + "   בשעה  " + time),
-                        style: GoogleFonts.secularOne(fontSize: 20.0),
-                        textAlign: TextAlign.center,
+                        style: GoogleFonts.alef(
+                            fontSize: 16.0, color: Colors.grey[700])),
+                    Text(study,
                         textDirection: ui.TextDirection.rtl,
-                      ),
-                      // countdown
-                      Text(countdown_string,
-                          textDirection: ui.TextDirection.rtl,
-                          style: GoogleFonts.alef(
-                              fontSize: 16.0,
-                              color: Color.fromARGB(255, 40, 204, 29))),
-                      Text("תיאור:", // TODO: remove
-                          textDirection: ui.TextDirection.rtl,
-                          style: GoogleFonts.alef(
-                              fontSize: 16.0, color: Colors.grey[700])),
-                      Text(widget.event!.description.toString(), // TODO: remove
-                          textDirection: ui.TextDirection.rtl,
-                          style: GoogleFonts.secularOne(fontSize: 23.0)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          //const SizedBox(width: 40.0),
-                          Container(
-                            decoration: new BoxDecoration(
-                              color: Colors.grey.shade300,
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            width: 120,
-                            height: 70,
-                            child: Column(children: [
-                              Text(
-                                "תפוסה:",
-                                textAlign: TextAlign.center,
-                                textDirection: ui.TextDirection.rtl,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                capacity,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.green.shade800,
-                                    fontSize: 27,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
+                        style: GoogleFonts.secularOne(fontSize: 20.0)),
+                    // times should be exported to a function together with countdown
+                    Text(
+                      (widget.event!.dates!.isNotEmpty &&
+                              isNow(widget.event!.dates![0],
+                                  widget.event!.duration ?? 0))
+                          ? "   האירוע מתקיים כעת ב:    "
+                          : "   האירוע מתקיים ב:    ",
+                      style: GoogleFonts.secularOne(fontSize: 14.0),
+                      //textAlign: TextAlign.end,
+                      textDirection: ui.TextDirection.rtl,
+                    ),
+                    Text(
+                      time == ""
+                          ? ""
+                          : (isNow(widget.event!.dates![0],
+                                  widget.event!.duration ?? 0)
+                              ? nextEvent + "    בשעה  " + time
+                              : nextEvent + "   בשעה  " + time),
+                      style: GoogleFonts.secularOne(fontSize: 20.0),
+                      textAlign: TextAlign.center,
+                      textDirection: ui.TextDirection.rtl,
+                    ),
+                    // countdown
+                    Text(countdown_string,
+                        textDirection: ui.TextDirection.rtl,
+                        style: GoogleFonts.alef(
+                            fontSize: 16.0,
+                            color: Color.fromARGB(255, 40, 204, 29))),
+                    Text("תיאור:", // TODO: remove
+                        textDirection: ui.TextDirection.rtl,
+                        style: GoogleFonts.alef(
+                            fontSize: 16.0, color: Colors.grey[700])),
+                    Text(widget.event!.description.toString(), // TODO: remove
+                        textDirection: ui.TextDirection.rtl,
+                        style: GoogleFonts.secularOne(fontSize: 23.0)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //const SizedBox(width: 40.0),
+                        Container(
+                          decoration: new BoxDecoration(
+                            color: Colors.grey.shade300,
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
                           ),
-                          const SizedBox(width: 15.0),
-                          Container(
-                            decoration: new BoxDecoration(
-                              color: Colors.grey.shade300,
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
+                          width: 120,
+                          height: 70,
+                          child: Column(children: [
+                            Text(
+                              "תפוסה:",
+                              textAlign: TextAlign.center,
+                              textDirection: ui.TextDirection.rtl,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            width: 120,
-                            height: 70,
-                            child: Column(children: [
-                              Text(
-                                "משך הלימוד:",
-                                textAlign: TextAlign.center,
-                                textDirection: ui.TextDirection.rtl,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                duration,
-                                textAlign: TextAlign.center,
-                                textDirection: ui.TextDirection.rtl,
-                                style: TextStyle(
-                                    color: Colors.green.shade800,
-                                    fontSize: 27,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
+                            Text(
+                              capacity,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.green.shade800,
+                                  fontSize: 27,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ]),
+                        ),
+                        const SizedBox(width: 15.0),
+                        Container(
+                          decoration: new BoxDecoration(
+                            color: Colors.grey.shade300,
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
                           ),
-                        ],
-                      ),
-                      Divider(),
-                      widget.event!.dates!.isEmpty || notMyTarget
-                          ? Container()
-                          : SizedBox(height: 8),
-                      widget.event!.dates!.isEmpty || notMyTarget
-                          ? Container()
-                          : MyProgressButton(
-                              event: widget.event,
-                              allUserEvents: widget.allUserEvents,
-                              notifyParent: refresh),
-                      SizedBox(height: 8.0),
-                      Divider(),
-                      widget.event!.type == "L" || amIParticipant || amICreator
-                          ? ParticipentsScroller(
-                              //TODO: edit widget
-                              widget.event!.participants,
-                              title: "משתתפים",
-                              initPubMsgText: initPub(false),
-                            )
-                          : Container(),
-                      amICreator && widget.event!.type == 'H'
-                          ? ParticipentsScroller(
-                              widget.event!.waitingQueue,
-                              title: "ממתינים לאישור",
-                              initPubMsgText: initPub(true),
-                              accept: accept,
-                              reject: reject,
-                            )
-                          : Container(),
-                      SizedBox(height: Globals.scaler.getHeight(1)),
-                    ],
-                  ),
+                          width: 120,
+                          height: 70,
+                          child: Column(children: [
+                            Text(
+                              "משך הלימוד:",
+                              textAlign: TextAlign.center,
+                              textDirection: ui.TextDirection.rtl,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              duration,
+                              textAlign: TextAlign.center,
+                              textDirection: ui.TextDirection.rtl,
+                              style: TextStyle(
+                                  color: Colors.green.shade800,
+                                  fontSize: 27,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ]),
+                        ),
+                      ],
+                    ),
+                    Divider(),
+                    widget.event!.dates!.isEmpty || notMyTarget
+                        ? Container()
+                        : SizedBox(height: 8),
+                    widget.event!.dates!.isEmpty || notMyTarget
+                        ? Container()
+                        : MyProgressButton(
+                            event: widget.event,
+                            allUserEvents: widget.allUserEvents,
+                            notifyParent: refresh),
+                    SizedBox(height: 8.0),
+                    Divider(),
+                    /*Container(
+                      height: Globals.scaler.getHeight(5),
+                      child:*/
+                    widget.event!.type == "L" || amIParticipant || amICreator
+                        ? ParticipentsScroller(
+                            //TODO: edit widget
+                            widget.event!.participants,
+                            title: "משתתפים",
+                            initPubMsgText: initPub(false),
+                          )
+                        : Container(),
+
+                    amICreator && widget.event!.type == 'H'
+                        ? ParticipentsScroller(
+                            widget.event!.waitingQueue,
+                            title: "ממתינים לאישור",
+                            initPubMsgText: initPub(true),
+                            accept: accept,
+                            reject: reject,
+                          )
+                        : Container(),
+
+                    //),
+                    SizedBox(height: Globals.scaler.getHeight(1)),
+                  ]),
                 ),
               );
             default:
