@@ -298,6 +298,11 @@ class _EventPageState extends State<EventPage> {
                         },
                       ),
                       drawer_navigation_line(
+                          'לוח זמנים מלא',
+                          (context) => //Add further details page
+                              EventDatesList(
+                                  widget.event!, widget.allUserEvents ?? [])),
+                      drawer_navigation_line(
                           'פרטים נוספים',
                           (context) => //Add further details page
                               FurtherDetailsScreen(event: widget.event!)),
