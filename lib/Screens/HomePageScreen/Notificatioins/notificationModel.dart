@@ -70,6 +70,12 @@ class notificationModel {
     if (ignoreRequests) return Future.value();
 
     return getData(10).then((postsData) {
+      postsData.forEach((element) {
+        if (element.type == "eventUpdated:rejected" ||
+            element.type == "joinReject")
+          Globals.db!
+              .updateUserSubs_Topics(remove: [element.idEvent.toString()]);
+      });
       if (clearCachedData) {
         _data = postsData;
       } else {

@@ -127,7 +127,12 @@ class Mongo {
   Future<void> insertNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     var e = notification.toJson();
-    await collection.insertOne(e);
+    var result = await collection.insertOne(e);
+    result.hasWriteErrors
+        ? null
+        : sendMessageNodeJS(notification.name!, notification.message!,
+            notification.destinationUser!,
+            notitype: notification.type!);
     var url = Uri.parse('http://yonatangat.pythonanywhere.com/mail');
     var x = {
       "subject": "פרוייקט חברותא+",
@@ -248,11 +253,12 @@ class Mongo {
         user.subs_topics.keys.toSet().difference(future.keys.toSet()).isEmpty)
       return;
     user.subs_topics = future;
-    print(user.subs_topics);
+    //print(user.subs_topics);
     var collection = db.collection('Users');
     // Check if the user exist
     await collection.updateOne(where.eq('email', user.email),
         modify.set('subs_topics', user.subs_topics));
+    await FCM.resetIgnore(future.keys.toList());
     await FCM.unsub();
     await FCM.sub();
   }
@@ -361,7 +367,8 @@ class Mongo {
     return topic;
   }
 
-  Future sendMessageNodeJS(String name, String msg, String dst_mail) async {
+  Future sendMessageNodeJS(String name, String msg, String dst_mail,
+      {String notitype = 'NONE'}) async {
     String? myMail = Globals.currentUser!.email;
     if (dst_mail == myMail) return; // don't notify for chat 1v1 me-myself
     String topic = topicReplace(dst_mail);
@@ -371,7 +378,7 @@ class Mongo {
     String link = "??$dst_mail"; //todo
     try {
       await http.get(Uri.parse(
-          "https://adorable-crab-outfit.cyclic.app/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link&avoidMyself=$myMail"));
+          "https://adorable-crab-outfit.cyclic.app/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link&avoidMyself=$myMail&notitype=$notitype"));
     } catch (err) {}
   }
 

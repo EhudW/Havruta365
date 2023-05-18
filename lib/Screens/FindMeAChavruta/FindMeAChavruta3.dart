@@ -351,6 +351,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                       (_) {
                                     // for each user that is/was in my event
                                     for (String personToNotify in toNotify) {
+                                      String type = "eventUpdated";
                                       // notify msg format:
                                       var t = widget.event!.type == 'H'
                                           ? "חברותא"
@@ -364,6 +365,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                         msg = Globals.currentUser!.gender == 'F'
                                             ? "ביטלה רישומך"
                                             : "ביטל רישומך";
+                                        type = "eventUpdated:rejected";
                                       }
                                       if (waiting.contains(personToNotify)) {
                                         msg = Globals.currentUser!.gender == 'F'
@@ -381,7 +383,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                         'destinationUser': personToNotify,
                                         'creationDate': DateTime.now(),
                                         'message': msg, // rejected / notify
-                                        'type': 'eventUpdated',
+                                        'type': type,
                                         'idEvent': e.id,
                                         'name': Globals.currentUser!.name,
                                       };

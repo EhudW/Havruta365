@@ -53,6 +53,7 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
   String body = message.data["body"] ?? "";
   String mgt = message.data["msgGroupType"] ?? "";
   String sender = message.data["sender"] ?? "";
+  String notitype = message.data["notitype"] ?? "NONE";
   String link = message.data["link"] ?? "";
   if (!{"events", "msgs", "notis"}.contains(mgt)) return;
   var func = () async {
@@ -60,7 +61,14 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
     //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
     var spm = SPManager("firebaseMsg");
     await spm.load();
-    if (message.data["avoidMyself"] == spm["email"]) return;
+    if (notitype != "NONE") {
+      spm['notitype'] = spm['notitype'] ?? {};
+      spm['notitype'][sender] = notitype;
+    }
+
+    if (message.data["avoidMyself"] == spm["email"] ||
+        {"joinReject", "eventUpdated:rejected"}
+            .contains((spm['notitype'] ?? {})[sender])) return;
     spm[mgt] = spm[mgt] ?? {"counter": 0, "senders": {}};
     spm[mgt]["counter"] = (spm[mgt]["counter"] ?? 0) + 1;
     spm[mgt]["senders"] = spm[mgt]["senders"] ?? {};
@@ -78,6 +86,14 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
 }
 
 class FCM {
+  static Future resetIgnore(List<dynamic> topics) async {
+    var spm = SPManager("firebaseMsg");
+    await spm.load();
+    spm['notitype'] = spm['notitype'] ?? {};
+    for (String t in topics) spm['notitype'][t] = 'NONE';
+    await spm.save();
+  }
+
   static Future tag_applyIfInactive(
       String subject, int nextMilSecInactive, Function func,
       [bool tryAgain = true]) async {
