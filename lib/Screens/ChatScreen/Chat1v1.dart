@@ -149,6 +149,7 @@ class _ChatPageState extends State<ChatPage> {
       elevation: 10,
       leading: widget.forumName != null
           ? Builder(builder: (context) {
+              return SizedBox(); // sub/unsub to forum is only via join/leave event
               // true => sub
               bool on = Globals.currentUser!.subs_topics
                   .containsKey(widget.otherPerson);

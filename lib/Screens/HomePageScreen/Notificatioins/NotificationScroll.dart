@@ -28,6 +28,7 @@ class _notificationsScrollState extends State<notificationsScroll> {
                   this.widget.nnim.model.simulateRefresh();
                   return Center(child: CircularProgressIndicator());
                 } else {
+                  widget.nnim.model.seenAll();
                   return RefreshIndicator(
                     onRefresh: this.widget.nnim.model.refresh,
                     child: ListView.builder(
@@ -43,7 +44,7 @@ class _notificationsScrollState extends State<notificationsScroll> {
                                     .remove(index)
                                     .catchError((err) => null);
                                 // refresh ui if this delete cause that
-                                if (widget.nnim.model.dataLen == 0) {
+                                if (widget.nnim.model.unseenLen == 0) {
                                   FCM.reset("notis");
                                   widget.nnim.newNotification = 0;
                                   widget.nnim.refreshAll();
@@ -52,7 +53,7 @@ class _notificationsScrollState extends State<notificationsScroll> {
                                   if (newest != null)
                                     FCM.resetTo(
                                         "notis",
-                                        widget.nnim.model.dataLen,
+                                        widget.nnim.model.unseenLen,
                                         newest.name!,
                                         newest.message!,
                                         "??");

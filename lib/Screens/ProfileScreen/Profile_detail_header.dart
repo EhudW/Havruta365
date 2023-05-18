@@ -20,15 +20,22 @@ class ProfileDetailHeader extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
 
     var userInformation = Align(
-      alignment: AlignmentDirectional.center,
-      child: Text(user!.name!,
-          textDirection: TextDirection.rtl,
-          style: GoogleFonts.alef(
-              fontSize: Globals.scaler.getTextSize(10),
-              textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
-              fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center),
-    );
+        alignment: AlignmentDirectional.center,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UserScreen(user!.email)),
+            );
+          },
+          child: Text(user!.name!,
+              textDirection: TextDirection.rtl,
+              style: GoogleFonts.alef(
+                  fontSize: Globals.scaler.getTextSize(10),
+                  textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center),
+        ));
 
     return Stack(
       children: [

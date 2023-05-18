@@ -117,6 +117,13 @@ class Mongo {
         where.eq('_id', id), ModifierBuilder().push('waitingQueue', mail));
   }
 
+  Future<void> seenNoti(List ids) async {
+    var collection = Globals.db!.db.collection('Notifications');
+    // ignore: unused_local_variable
+    return await collection.update(
+        where.oneFrom('_id', ids), ModifierBuilder().set('unseen', false));
+  }
+
   Future<void> insertNotification(NotificationUser notification) async {
     var collection = db.collection('Notifications');
     var e = notification.toJson();

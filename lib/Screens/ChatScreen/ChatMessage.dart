@@ -31,7 +31,8 @@ class ChatMessage {
   void tagNow() => tag = DateTime.now().millisecondsSinceEpoch;
 
   int get statusAsInt => statuses.indexOf(status);
-  String get otherPersonMail => amITheSender ? this.dst_mail! : this.src_mail!;
+  String get otherPersonMail =>
+      amITheSender || isForum ? this.dst_mail! : this.src_mail!;
   bool get amITheSender => Globals.currentUser!.email == this.src_mail;
   // 9 of 11 [8/8, 1/1 id, 0/2 otherPerson] without _tag
   ChatMessage(
