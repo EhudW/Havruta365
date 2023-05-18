@@ -165,7 +165,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
       iAmCreator
           ? SizedBox()
           : SizedBox(
-              width: 375,
+              width: 360,
               child: ProgressButton(
                 stateWidgets: {
                   ButtonState.idle: forIdle("הירשם לשיעור!"),
