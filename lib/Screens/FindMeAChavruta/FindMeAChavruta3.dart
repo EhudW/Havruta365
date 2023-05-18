@@ -136,8 +136,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              suffixText: "קישור אונליין",
-                              hintText: "...קישור אונליין",
+                              hintText: "קישור אונליין",
                               focusColor: Colors.teal,
                               contentPadding: EdgeInsets.fromLTRB(
                                   Globals.scaler.getWidth(2),
@@ -169,8 +168,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        suffixText: "מיקום ודרכי הגעה",
-                        hintText: "...מיקום ודרכי הגעה",
+                        hintText: "מיקום ודרכי הגעה",
                         focusColor: Colors.teal,
                         contentPadding: EdgeInsets.fromLTRB(
                             Globals.scaler.getWidth(2),

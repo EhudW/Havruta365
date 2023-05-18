@@ -263,7 +263,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               Globals.currentUser = null;
               Globals.rec.cancel([]);
               Globals.msgWithFriends.cancel([]);
-              FCM.onLogout();
+              await FCM.onLogout();
               if (await (GoogleSignInApi.isSignedIn())) {
                 currentUser = GoogleSignInApi.currentUser();
                 await GoogleSignInApi.logout();
