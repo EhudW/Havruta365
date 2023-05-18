@@ -68,6 +68,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
               }
               var list = snapshot.data!;
+              if (list.isEmpty) {
+                return Center(
+                  child: Text(
+                    "אין הודעות",
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                );
+              }
 
               return Container(
                 child: ListView.builder(
