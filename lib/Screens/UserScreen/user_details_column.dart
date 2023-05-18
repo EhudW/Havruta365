@@ -88,6 +88,28 @@ class UserDetailsColumn extends StatelessWidget {
               color: Colors.grey[600],
             ),
           ]),
+          user!.heightcm != null ? SizedBox(height: 15.0) : SizedBox(),
+          user!.heightcm != null
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                      Text(user!.heightcm!.toString(),
+                          style: GoogleFonts.alef(
+                              fontSize: size_field,
+                              fontWeight: FontWeight.bold),
+                          textDirection: TextDirection.ltr),
+                      SizedBox(width: Globals.scaler.getWidth(0.5)),
+                      Text("גובה - ס\"מ",
+                          style: GoogleFonts.alef(fontSize: size_header),
+                          textDirection: TextDirection.rtl),
+                      SizedBox(width: Globals.scaler.getWidth(0.5)),
+                      Icon(
+                        FontAwesomeIcons.rulerVertical,
+                        size: 26.0,
+                        color: Colors.grey[600],
+                      ),
+                    ])
+              : SizedBox(),
           SizedBox(height: 15.0),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
             Text(user!.status!,

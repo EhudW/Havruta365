@@ -7,6 +7,7 @@ import 'package:havruta_project/Globals.dart';
 class User {
   User(
       {this.name,
+      this.heightcm,
       this.email,
       this.password,
       this.phone,
@@ -34,6 +35,7 @@ class User {
       description,
       gender,
       status;
+  int? heightcm;
   DateTime? birthDate;
   List<dynamic>? interestList;
   Map subs_topics; // {topic:{"seen":0}}
@@ -88,10 +90,12 @@ class User {
         'interest': interestList ?? [],
         'phone': phone ?? "",
         'subs_topics': subs_topics,
+        'heightcm': heightcm,
       };
 
   User.fromJson(Map<String, dynamic> json)
       : name = json['name'],
+        heightcm = json['heightcm'],
         email = json['email'],
         password = json['password'],
         birthDate = json['birthDate'],

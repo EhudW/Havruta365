@@ -232,6 +232,8 @@ class Mongo {
     await collection.updateOne(where.eq('email', user.email),
         modify.set('description', user.description));
     await collection.updateOne(
+        where.eq('email', user.email), modify.set('heightcm', user.heightcm));
+    await collection.updateOne(
         where.eq('email', user.email), modify.set('status', user.status));
     await collection.updateOne(
         where.eq('email', user.email), modify.set('avatar', user.avatar));
@@ -282,6 +284,8 @@ class Mongo {
         where.eq('email', user.email), modify.set('yeshiva', user.yeshiva));
     await collection.updateOne(where.eq('email', user.email),
         modify.set('description', user.description));
+    await collection.updateOne(
+        where.eq('email', user.email), modify.set('heightcm', user.heightcm));
     await collection.updateOne(
         where.eq('email', user.email), modify.set('status', user.status));
     await collection.updateOne(

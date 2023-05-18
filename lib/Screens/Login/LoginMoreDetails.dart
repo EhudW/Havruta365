@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,6 +25,8 @@ class LoginMoreDetails extends StatefulWidget {
 class _HomePageState extends State<LoginMoreDetails> {
   final yeshiva = TextEditingController();
   String yeshiva_str = " ";
+  final heightcm = TextEditingController();
+  String heightcm_str = "";
   final description = TextEditingController();
   String description_str = " ";
   final status = TextEditingController();
@@ -110,6 +113,14 @@ class _HomePageState extends State<LoginMoreDetails> {
                 ),
                 newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה",
                     FontAwesomeIcons.book, 3.0, TextDirection.rtl),
+                newFiled(
+                    heightcm,
+                    heightcm_str,
+                    "גובה - ס\"מ",
+                    FontAwesomeIcons.rulerVertical,
+                    3.0,
+                    TextDirection.ltr,
+                    true),
                 newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
                     FontAwesomeIcons.list, 8.0, TextDirection.rtl),
                 SizedBox(height: Globals.scaler.getHeight(1)),
@@ -134,8 +145,11 @@ class _HomePageState extends State<LoginMoreDetails> {
                   onPressed: () async {
                     Globals.db!.saveIdLocally();
                     yeshiva_str = yeshiva.text;
+                    heightcm_str = heightcm.text;
                     description_str = description.text;
                     Globals.currentUser!.yeshiva = yeshiva_str;
+                    Globals.currentUser!.heightcm =
+                        int.tryParse(heightcm_str.trim());
                     Globals.currentUser!.description = description_str;
                     Globals.currentUser!.status =
                         status_str == "סטטוס משפחתי" ? "לא ידוע" : status_str;
@@ -275,7 +289,8 @@ class _HomePageState extends State<LoginMoreDetails> {
   }
 }
 
-newFiled(controller, str, text, icon, size, [TextDirection? dir]) {
+newFiled(controller, str, text, icon, size,
+    [TextDirection? dir, bool number = false]) {
   return FadeAnimation(
     1.7,
     new Column(children: <Widget>[
@@ -314,6 +329,12 @@ newFiled(controller, str, text, icon, size, [TextDirection? dir]) {
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
                   hintText: text),
+              keyboardType: number ? TextInputType.number : null,
+              inputFormatters: number
+                  ? [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ]
+                  : null,
               onChanged: (text) {
                 str = controller.text;
               }),

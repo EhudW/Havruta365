@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,6 +34,8 @@ class _HomePageState extends State<ChangesDetails> {
   String address_str = "";
   final yeshiva = TextEditingController();
   String yeshiva_str = " ";
+  final heightcm = TextEditingController();
+  String heightcm_str = " ";
   final description = TextEditingController();
   String description_str = " ";
   final status = TextEditingController();
@@ -139,6 +142,15 @@ class _HomePageState extends State<ChangesDetails> {
             ),
             newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה", FontAwesomeIcons.book,
                 3.0, Globals.currentUser!.yeshiva, TextDirection.rtl),
+            newFiled(
+                heightcm,
+                heightcm_str,
+                "גובה - ס\"מ",
+                FontAwesomeIcons.rulerVertical,
+                3.0,
+                Globals.currentUser!.heightcm?.toString() ?? "",
+                TextDirection.ltr,
+                true),
             newFiled1(
                 description,
                 description_str,
@@ -172,6 +184,7 @@ class _HomePageState extends State<ChangesDetails> {
 
                 name_str = name.text;
                 yeshiva_str = yeshiva.text;
+                heightcm_str = heightcm.text;
                 address_str = address.text;
                 description_str = description.text;
                 if (address_str.isEmpty ||
@@ -194,6 +207,7 @@ class _HomePageState extends State<ChangesDetails> {
                 user.name = name_str;
                 user.status = status_str;
                 user.yeshiva = yeshiva_str;
+                user.heightcm = int.tryParse(heightcm_str.trim());
                 user.description = description_str;
                 user.birthDate = _dateTime;
                 Globals.db!.changeDeatailsUser(user);
@@ -332,7 +346,8 @@ class _HomePageState extends State<ChangesDetails> {
   }
 }
 
-newFiled(controller, str, text, icon, size, init, [TextDirection? dir]) {
+newFiled(controller, str, text, icon, size, init,
+    [TextDirection? dir, bool number = false]) {
   return new FadeAnimation(
       1.7,
       Column(children: <Widget>[
@@ -371,6 +386,12 @@ newFiled(controller, str, text, icon, size, init, [TextDirection? dir]) {
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
                     hintText: text),
+                keyboardType: number ? TextInputType.number : null,
+                inputFormatters: number
+                    ? [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ]
+                    : null,
                 onChanged: (text) {
                   str = controller.text;
                 }),
