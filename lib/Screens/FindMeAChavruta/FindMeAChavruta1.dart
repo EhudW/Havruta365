@@ -368,42 +368,62 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Container(
                                         width: Globals.scaler.getWidth(29),
-                                        child: TextField(
-                                          controller: maxController,
-                                          textAlign: TextAlign.center,
-                                          autocorrect: true,
-                                          style: TextStyle(
-                                              color: Colors.teal,
-                                              fontSize: Globals.scaler
-                                                  .getTextSize(7.2)),
-                                          decoration: InputDecoration(
-                                            suffixText: "מספר משתתפים",
-                                            hintText: "מספר משתתפים",
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.fromLTRB(
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
+                                        child: Stack(
+                                          children: [
+                                            Align(
+                                              child: Text("מספר משתתפים   "),
+                                              alignment: Alignment.centerRight,
                                             ),
-                                          ),
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
+                                            Container(
+                                              width:
+                                                  Globals.scaler.getWidth(15),
+                                              child: TextField(
+                                                controller: maxController,
+                                                textAlign: TextAlign.center,
+                                                autocorrect: true,
+                                                style: TextStyle(
+                                                    color: Colors.teal,
+                                                    fontSize: Globals.scaler
+                                                        .getTextSize(7.2)),
+                                                decoration: InputDecoration(
+                                                  //suffixText: "מספר משתתפים",
+                                                  //hintText: "מספר משתתפים",
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.fromLTRB(
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                  ),
+                                                ),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                ],
+                                                maxLines: 1,
+                                                onChanged: (newVal) {
+                                                  int? numOfParticapints =
+                                                      int.tryParse(newVal);
+                                                  if (numOfParticapints ==
+                                                      null) {
+                                                    event.maxParticipants =
+                                                        event.maxParticipants ??
+                                                            1;
+                                                  } else {
+                                                    event.maxParticipants =
+                                                        numOfParticapints;
+                                                  }
+                                                },
+                                              ),
+                                            )
                                           ],
-                                          maxLines: 1,
-                                          onChanged: (newVal) {
-                                            int? numOfParticapints =
-                                                int.tryParse(newVal);
-                                            if (numOfParticapints == null) {
-                                              event.maxParticipants =
-                                                  event.maxParticipants ?? 1;
-                                            } else {
-                                              event.maxParticipants =
-                                                  numOfParticapints;
-                                            }
-                                          },
                                         ),
                                       ),
                                     )),
@@ -577,38 +597,53 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Container(
                                         width: Globals.scaler.getWidth(29),
-                                        child: TextField(
-                                          controller: minAgeController,
-                                          textAlign: TextAlign.center,
-                                          autocorrect: true,
-                                          style: TextStyle(
-                                              color: Colors.teal,
-                                              fontSize: Globals.scaler
-                                                  .getTextSize(7.2)),
-                                          decoration: InputDecoration(
-                                            suffixText: "גיל מינימלי",
-                                            hintText: "גיל מינימלי",
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.fromLTRB(
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
-                                            ),
+                                        child: Stack(children: [
+                                          Align(
+                                            child: Text("גיל מינימלי   "),
+                                            alignment: Alignment.centerRight,
                                           ),
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
-                                          ],
-                                          maxLines: 1,
-                                          onChanged: (newVal) {
-                                            int? n = int.tryParse(newVal);
-                                            if (n != null) {
-                                              event.minAge = n;
-                                            }
-                                          },
-                                        ),
+                                          Container(
+                                              width:
+                                                  Globals.scaler.getWidth(15),
+                                              child: TextField(
+                                                controller: minAgeController,
+                                                textAlign: TextAlign.center,
+                                                autocorrect: true,
+                                                style: TextStyle(
+                                                    color: Colors.teal,
+                                                    fontSize: Globals.scaler
+                                                        .getTextSize(7.2)),
+                                                decoration: InputDecoration(
+                                                  // suffixText: "גיל מינימלי",
+                                                  // hintText: "גיל מינימלי",
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.fromLTRB(
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                  ),
+                                                ),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                ],
+                                                maxLines: 1,
+                                                onChanged: (newVal) {
+                                                  int? n = int.tryParse(newVal);
+                                                  if (n != null) {
+                                                    event.minAge = n;
+                                                  }
+                                                },
+                                              ))
+                                        ]),
                                       ),
                                     )),
                                 SizedBox(
@@ -649,40 +684,55 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       elevation: Globals.scaler.getHeight(2),
                                       borderRadius: BorderRadius.circular(50.0),
                                       child: Container(
-                                        width: Globals.scaler.getWidth(29),
-                                        child: TextField(
-                                          controller: maxAgeController,
-                                          textAlign: TextAlign.center,
-                                          autocorrect: true,
-                                          style: TextStyle(
-                                              color: Colors.teal,
-                                              fontSize: Globals.scaler
-                                                  .getTextSize(7.2)),
-                                          decoration: InputDecoration(
-                                            suffixText: "גיל מקסימלי",
-                                            hintText: "גיל מקסימלי",
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.fromLTRB(
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
-                                              Globals.scaler.getWidth(1.3),
+                                          width: Globals.scaler.getWidth(29),
+                                          child: Stack(children: [
+                                            Align(
+                                              child: Text("גיל מקסימלי   "),
+                                              alignment: Alignment.centerRight,
                                             ),
-                                          ),
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
-                                          ],
-                                          maxLines: 1,
-                                          onChanged: (newVal) {
-                                            int? n = int.tryParse(newVal);
-                                            if (n != null) {
-                                              event.maxAge = n;
-                                            }
-                                          },
-                                        ),
-                                      ),
+                                            Container(
+                                              width:
+                                                  Globals.scaler.getWidth(15),
+                                              child: TextField(
+                                                controller: maxAgeController,
+                                                textAlign: TextAlign.center,
+                                                autocorrect: true,
+                                                style: TextStyle(
+                                                    color: Colors.teal,
+                                                    fontSize: Globals.scaler
+                                                        .getTextSize(7.2)),
+                                                decoration: InputDecoration(
+                                                  //  suffixText: "גיל מקסימלי",
+                                                  //  hintText: "גיל מקסימלי",
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.fromLTRB(
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                    Globals.scaler
+                                                        .getWidth(1.3),
+                                                  ),
+                                                ),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                ],
+                                                maxLines: 1,
+                                                onChanged: (newVal) {
+                                                  int? n = int.tryParse(newVal);
+                                                  if (n != null) {
+                                                    event.maxAge = n;
+                                                  }
+                                                },
+                                              ),
+                                            )
+                                          ])),
                                     )),
                                 SizedBox(
                                   width: 8,

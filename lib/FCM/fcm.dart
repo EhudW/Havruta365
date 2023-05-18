@@ -170,8 +170,8 @@ class FCM {
     sub();
   }
 
-  static void onLogout() async {
-    unsub();
+  static Future onLogout() async {
+    await unsub();
     var spm = SPManager("firebaseMsg");
     await spm.load();
     spm['email'] = null;

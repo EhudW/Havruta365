@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
@@ -318,6 +319,59 @@ class _ChatPageState extends State<ChatPage> {
                           return Directionality(
                             textDirection: TextDirection.rtl,
                             child: Chat(
+                              dateHeaderThreshold:
+                                  60 * 60 * 1000, //min*sec*mill
+                              bubbleBuilder: (child,
+                                  {required message,
+                                  required nextMessageInGroup}) {
+                                bool currentUserIsAuthor = message.author.id ==
+                                    Globals.currentUser!.email;
+                                var w = isConsistsOfEmojis(
+                                  EmojiEnlargementBehavior.multi,
+                                  message as types.TextMessage,
+                                )
+                                    ? child
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                    30)
+                                                .copyWith(
+                                                    bottomRight:
+                                                        !currentUserIsAuthor // || nextMessageInGroup
+                                                            ? null
+                                                            : Radius.zero,
+                                                    bottomLeft:
+                                                        currentUserIsAuthor // || nextMessageInGroup
+                                                            ? null
+                                                            : Radius.zero),
+                                            color: !currentUserIsAuthor ||
+                                                    message.type ==
+                                                        types.MessageType.image
+                                                ? Colors.white70
+                                                : Colors.teal),
+                                        child: ClipRRect(
+                                          //borderRadius: 0.0,
+                                          child: child,
+                                        ),
+                                      );
+
+                                var time = DateTimeFormat.format(
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                            message.createdAt!)
+                                        .toLocal(),
+                                    format: "H:i");
+
+                                var t = Text(
+                                  time,
+                                  style: TextStyle(color: Colors.grey
+                                      // fontWeight: FontWeight.bold,
+                                      ),
+                                );
+                                return Column(
+                                  children: [w, t],
+                                );
+                              },
+
                               onMessageVisibilityChanged: (p0, visible) =>
                                   !visible //|| (widget.forumName != null)
                                       ? null
