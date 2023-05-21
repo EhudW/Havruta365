@@ -82,7 +82,7 @@ class ParticipentsScroller extends StatelessWidget {
             ];
             var profileInk = InkWell(
               child: hasButton
-                  ? Row(children: profile)
+                  ? Row(children: profile.reversed.toList())
                   : Column(children: profile),
               onTap: () {
                 Navigator.push(
@@ -137,7 +137,8 @@ class ParticipentsScroller extends StatelessWidget {
                         foregroundColor: Colors.white))
               ])
             ];
-            _inner = _inner
+            _inner = _inner.reversed
+                .toList()
                 .map((e) => Container(
                       padding: EdgeInsets.only(
                           top: hasButton ? 16 : 0, left: hasButton ? 0 : 16),
@@ -211,7 +212,7 @@ class ParticipentsScroller extends StatelessWidget {
         Align(
           alignment: Alignment.center,
           child: Padding(
-            padding: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.only(top: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
