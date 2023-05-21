@@ -336,15 +336,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     var rejectOrAcceptFactory = (func) => (userMail) {
           showModalBottomSheet(
             context: context,
-            builder: ((builder) => bottomSheet(context, () {
+            builder: ((builder) => bottomSheet(context, () async {
                   Navigator.pop(context);
-                  func(userMail);
+                  await func(userMail);
                   refresh();
                 }, () => Navigator.pop(context))),
           );
         };
-    var reject = rejectOrAcceptFactory((userMail) {
-      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
+    var reject = rejectOrAcceptFactory((userMail) async {
+      await widget.event!.reject(userMail);
       NotificationUser notification = NotificationUser.fromJson({
         'creatorUser': Globals.currentUser!.email,
         'destinationUser': userMail,
@@ -355,14 +355,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         'name': Globals.currentUser!.name,
       });
       Globals.db!.insertNotification(notification);
-      if (widget.event!.waitingQueue == null) {
-        widget.event!.waitingQueue = [];
-      }
-      widget.event!.waitingQueue!.remove(userMail);
     });
-    var accept = rejectOrAcceptFactory((userMail) {
-      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
-      Globals.db!.addParticipant(userMail, widget.event!.id);
+    var accept = rejectOrAcceptFactory((userMail) async {
+      await widget.event!.accept(userMail);
       NotificationUser notification = NotificationUser.fromJson({
         'creatorUser': Globals.currentUser!.email,
         'destinationUser': userMail,
@@ -373,11 +368,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         'name': Globals.currentUser!.name,
       });
       Globals.db!.insertNotification(notification);
-      if (widget.event!.waitingQueue == null) {
-        widget.event!.waitingQueue = [];
-      }
-      widget.event!.waitingQueue!.remove(userMail);
-      widget.event!.participants!.add(userMail);
     });
     String? storyline =
         widget.event!.description; //TODO:new description without location.

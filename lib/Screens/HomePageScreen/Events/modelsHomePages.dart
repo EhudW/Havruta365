@@ -126,6 +126,8 @@ class EventsModel {
         withParticipant2: _filterData["withParticipant2"],
         withParticipant: _filterData["withParticipant"],
         withWaitingQueue: true, //_filterData["withWaitingQueue"],
+        // don't show rejected as 'my classes', but show it in cross mode(where I\Him the lecturer of the havruta)
+        withRejectedQueue: _filterData["withParticipant2"] != null,
       );
     });
   }

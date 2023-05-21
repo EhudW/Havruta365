@@ -242,11 +242,9 @@ class MyProgressButtonState extends State<MyProgressButton> {
 // idleType ==1 > join lecture   idleType ==2 >  send request to join havruta, meanwhile wait in waiting queue
 // idleType == 1  <> event.type=='L'
   void idleCase(int idleType) {
-    var addMe = idleType == 1
-        ? Globals.db!.addParticipant
-        : Globals.db!.addToWaitingQueue;
+    var addMe = idleType == 1 ? widget.event!.join : widget.event!.joinWaiting;
     // ignore: non_constant_identifier_names
-    var add_future = addMe(Globals.currentUser!.email, widget.event!.id);
+    var add_future = addMe(Globals.currentUser!.email!);
 
     String message =
         idleType == 1 ? "הצטרפ/ה לשיעור שלך" : "רוצה להצטרף לחברותא שלך";
@@ -273,14 +271,6 @@ class MyProgressButtonState extends State<MyProgressButton> {
       )));
       Globals.updateRec(force: true);
       // ------------------------ Maybe need to DELETE --------------
-      if (idleType == 1) {
-        widget.event!.participants!.add(Globals.currentUser!.email);
-      } else {
-        if (widget.event!.waitingQueue == null) {
-          widget.event!.waitingQueue = [];
-        }
-        widget.event!.waitingQueue!.add(Globals.currentUser!.email);
-      }
       widget.notifyParent();
       setState(() {
         // if idleType == 2<>event.type='H' then probably the request not accepted yet.

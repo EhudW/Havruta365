@@ -101,12 +101,25 @@ class EventsSelectorBuilder {
   }
 
   EventsSelectorBuilder withParticipant(String? mail,
-      [bool withWaitingQueue = true]) {
+      [bool withWaitingQueue = true, bool withRejectedQueue = false]) {
+    assert(withWaitingQueue || !withRejectedQueue);
     if (mail == null || assigned.contains("withParticipant/noWQ: $mail"))
       return this;
     if (withWaitingQueue) {
       if (assigned.contains("withParticipant/WQ: $mail")) {
         return this;
+      }
+      if (withRejectedQueue) {
+        if (assigned.contains("withParticipant/RQ: $mail")) {
+          return this;
+        }
+
+        return this.plus(
+            where
+                .eq('participants', mail)
+                .or(where.eq('waitingQueue', mail))
+                .or(where.eq('rejectedQueue', mail)),
+            ["withParticipant/RQ: $mail", "avoidTargetFilter"]);
       }
       return this.plus(
           where.eq('participants', mail).or(where.eq('waitingQueue', mail)),
@@ -117,6 +130,7 @@ class EventsSelectorBuilder {
     }
   }
 
+  // not including rejected / left queues that have my mail
   EventsSelectorBuilder withInvolved(String? mail,
       [bool withWaitingQueue = true]) {
     if (mail == null ||
@@ -126,15 +140,20 @@ class EventsSelectorBuilder {
     var wq = where.eq('waitingQueue', mail);
     var c = where.eq('creatorUser', mail);
     if (withWaitingQueue) {
+      if (assigned.contains("withParticipant/RQ: $mail")) {
+        // but with withRejectedQueue==false
+        return this.withParticipant(mail, true, false);
+      }
       if (assigned.contains("withParticipant/WQ: $mail")) {
         return this;
       }
       return this.plus(c.or(p.or(wq)),
           ["withParticipant/WQ & createdBy: $mail", "avoidTargetFilter"]);
     } else {
-      if (assigned.contains("withParticipant/WQ: $mail")) {
+      if (assigned.contains("withParticipant/WQ: $mail") ||
+          assigned.contains("withParticipant/RQ: $mail")) {
         // but with withWaitingQueue==false
-        return this.withParticipant(mail, false);
+        return this.withParticipant(mail, false, false);
       }
       return this.plus(c.or(p),
           ["withParticipant/noWQ & createdBy: $mail", "avoidTargetFilter"]);
@@ -150,10 +169,11 @@ class EventsSelectorBuilder {
     return this.plus(where.ne("waitingQueue", null).ne("waitingQueue", []));
   }
 
-  EventsSelectorBuilder cross(String mail1, String mail2) {
+  EventsSelectorBuilder cross(
+      String mail1, String mail2, bool withRejectedQueue) {
     //clear selector, but avoid what already in this
     var suffix = () => EventsSelectorBuilder(null, assigned);
-    bool mail1_p_cond = assigned.contains("withParticipant/noWQ: $mail1");
+    /*bool mail1_p_cond = assigned.contains("withParticipant/noWQ: $mail1");
     bool mail1_pw_cond =
         mail1_p_cond || assigned.contains("withParticipant/WQ: $mail1");
     bool mail1_c_cond = assigned.contains("createdBy: $mail1");
@@ -161,22 +181,27 @@ class EventsSelectorBuilder {
     bool mail2_p_cond = assigned.contains("withParticipant/noWQ: $mail2");
     bool mail2_pw_cond =
         mail2_p_cond || assigned.contains("withParticipant/WQ: $mail2");
-    bool mail2_c_cond = assigned.contains("createdBy: $mail2");
+    bool mail2_c_cond = assigned.contains("createdBy: $mail2");*/
     EventsSelectorBuilder? op1, op2, op3;
     List<String> assign = ["avoidTargetFilter"];
-    if (mail1_c_cond) assign.add("withParticipant/WQ: $mail2");
+    /*if (mail1_c_cond) assign.add("withParticipant/WQ: $mail2");
     if (mail2_c_cond) assign.add("withParticipant/WQ: $mail1");
     if (mail1_pw_cond && mail2_pw_cond) {
       assign.add("withParticipant/noWQ: $mail1");
       assign.add("withParticipant/noWQ: $mail2");
-    }
-    if (!mail2_pw_cond && !mail1_c_cond)
-      op1 = suffix().withParticipant(mail1, true).createdBy(mail2);
-    if (!mail1_pw_cond && !mail2_c_cond)
-      op2 = suffix().withParticipant(mail2, true).createdBy(mail1);
-    if (!mail1_c_cond && !mail2_c_cond)
-      op3 =
-          suffix().withParticipant(mail1, false).withParticipant(mail2, false);
+    }*/
+    //if (!mail2_pw_cond && !mail1_c_cond)
+    op1 = suffix()
+        .withParticipant(mail1, true, withRejectedQueue)
+        .createdBy(mail2);
+    //if (!mail1_pw_cond && !mail2_c_cond)
+    op2 = suffix()
+        .withParticipant(mail2, true, withRejectedQueue)
+        .createdBy(mail1);
+    //if (!mail1_c_cond && !mail2_c_cond)
+    op3 = suffix()
+        .withParticipant(mail1, false, false)
+        .withParticipant(mail2, false, false);
     List<EventsSelectorBuilder?> list = [op1, op2, op3]
         .where((e) => e != null && e.assigned.length != this.assigned.length)
         .toList();
@@ -257,6 +282,7 @@ class EventsSelectorBuilder {
     //relevant only if withParticipant != null
     //then not only joined but also waiting;
     bool withWaitingQueue = true,
+    required bool withRejectedQueue,
     String? withParticipant2, //email
     //
     String? search,
@@ -278,8 +304,9 @@ class EventsSelectorBuilder {
     }
     EventsSelectorBuilder esb = ESB;
     esb = withParticipant2 != null
-        ? esb.cross(withParticipant!, withParticipant2)
-        : esb.withParticipant(withParticipant, withWaitingQueue);
+        ? esb.cross(withParticipant!, withParticipant2, withRejectedQueue)
+        : esb.withParticipant(
+            withParticipant, withWaitingQueue, withRejectedQueue);
     esb = esb.createdBy(createdBy);
     esb = onlyReq ? esb.withWaitingQueueNotEmpty(true) : esb;
     esb = esb

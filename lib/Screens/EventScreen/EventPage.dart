@@ -142,7 +142,6 @@ class _EventPageState extends State<EventPage> {
     bool notMyTarget = !Globals.currentUser!.isTargetedForMe(widget.event!);
     var amIParticipant = widget.event!.participants!.contains(myMail);
     var amICreator = widget.event!.creatorUser == myMail;
-    var waitingQueue = widget.event!.waitingQueue ?? [];
     var remainedPlaces = widget.event!.maxParticipants! -
         widget.event!.participants!.length; /*-waitingQueue.length*/
     String t_pre = "*הודעת תפוצה*" + "\n";
@@ -154,15 +153,15 @@ class _EventPageState extends State<EventPage> {
     var rejectOrAcceptFactory = (func) => (userMail) {
           showModalBottomSheet(
             context: context,
-            builder: ((builder) => bottomSheet(context, () {
+            builder: ((builder) => bottomSheet(context, () async {
                   Navigator.pop(context);
-                  func(userMail);
+                  await func(userMail);
                   refresh();
                 }, () => Navigator.pop(context))),
           );
         };
-    var reject = rejectOrAcceptFactory((userMail) {
-      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
+    var reject = rejectOrAcceptFactory((userMail) async {
+      await widget.event!.reject(userMail);
       NotificationUser notification = NotificationUser.fromJson({
         'creatorUser': Globals.currentUser!.email,
         'destinationUser': userMail,
@@ -173,14 +172,9 @@ class _EventPageState extends State<EventPage> {
         'name': Globals.currentUser!.name,
       });
       Globals.db!.insertNotification(notification);
-      if (widget.event!.waitingQueue == null) {
-        widget.event!.waitingQueue = [];
-      }
-      widget.event!.waitingQueue!.remove(userMail);
     });
-    var accept = rejectOrAcceptFactory((userMail) {
-      Globals.db!.deleteFromEventWaitingQueue(widget.event!.id, userMail);
-      Globals.db!.addParticipant(userMail, widget.event!.id);
+    var accept = rejectOrAcceptFactory((userMail) async {
+      await widget.event!.accept(userMail);
       NotificationUser notification = NotificationUser.fromJson({
         'creatorUser': Globals.currentUser!.email,
         'destinationUser': userMail,
@@ -191,11 +185,6 @@ class _EventPageState extends State<EventPage> {
         'name': Globals.currentUser!.name,
       });
       Globals.db!.insertNotification(notification);
-      if (widget.event!.waitingQueue == null) {
-        widget.event!.waitingQueue = [];
-      }
-      widget.event!.waitingQueue!.remove(userMail);
-      widget.event!.participants!.add(userMail);
     });
 
     return FutureBuilder(

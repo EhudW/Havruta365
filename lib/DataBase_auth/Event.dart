@@ -7,6 +7,8 @@ import 'package:havruta_project/Globals.dart';
 
 import 'User.dart';
 
+enum EventQueues { Participants, Waiting, Rejected, Left }
+
 class Event {
   String get shortStr {
     String _topic = this.topic?.trim() ?? "";
@@ -85,6 +87,8 @@ class Event {
       dates: dates == null ? null : List.of(dates!),
       participants: participants == null ? null : List.of(participants!),
       waitingQueue: waitingQueue == null ? null : List.of(waitingQueue!),
+      rejectedQueue: List.of(rejectedQueue),
+      leftQueue: List.of(leftQueue),
       description: description,
       duration: duration,
       eventImage: eventImage,
@@ -102,6 +106,54 @@ class Event {
     rslt.targetGender = targetGender;
     rslt.shouldDuplicate = shouldDuplicate;
     return rslt;
+  }
+
+  List<dynamic> of(EventQueues q) {
+    switch (q) {
+      case EventQueues.Left:
+        return this.leftQueue;
+      case EventQueues.Participants:
+        return this.participants!;
+      case EventQueues.Rejected:
+        return this.rejectedQueue;
+      case EventQueues.Waiting:
+        return this.waitingQueue!;
+    }
+  }
+
+  static String toMongoField(EventQueues q) {
+    var name = q.name.toLowerCase();
+    if (q == EventQueues.Participants) return name;
+    return name + "Queue";
+  }
+
+  // only for this event / in mongodb,  not sending here notification, no subs update
+  Future<bool> leave(String email) => moveToQueue(email, EventQueues.Left);
+  Future<bool> accept(String email) =>
+      moveToQueue(email, EventQueues.Participants);
+  Future<bool> reject(String email) => moveToQueue(email, EventQueues.Rejected);
+  Future<bool> join(String email) =>
+      moveToQueue(email, EventQueues.Participants);
+  Future<bool> joinWaiting(String email) =>
+      moveToQueue(email, EventQueues.Waiting);
+
+  Future<bool> moveToQueue(String email, EventQueues queue,
+      {bool serverUpdate = true, bool thisUpdate = true}) async {
+    var rslt = !serverUpdate ||
+        (await Globals.db!.moveToEventQueue(this.id, email, queue));
+    if (rslt == false) return false;
+    if (thisUpdate) {
+      for (var option in EventQueues.values) {
+        List<dynamic> l = of(option);
+        if (queue == option && !l.contains(email)) {
+          l.add(email);
+        }
+        if (queue != option) {
+          l.remove(email);
+        }
+      }
+    }
+    return true;
   }
 
   static bool isStatusOk(Event e, String? status) {
@@ -145,13 +197,17 @@ class Event {
       this.eventImage,
       this.lecturer,
       this.participants,
+      List<dynamic>? rejectedQueue,
+      List<dynamic>? leftQueue,
       this.waitingQueue,
       this.dates,
       this.maxAge = 120,
       this.minAge = 0,
       this.onlyForStatus,
       this.duration,
-      this.maxParticipants}) {
+      this.maxParticipants})
+      : rejectedQueue = rejectedQueue ?? [],
+        leftQueue = leftQueue ?? [] {
     this.onlyForStatus = onlyForStatus ?? onlyForStatus_Options[0][0];
     this.firstInitTargetGender = targetGender;
     this.firstInitType = type;
@@ -188,6 +244,8 @@ class Event {
   DateTime? creationDate;
   List<dynamic>? participants;
   List<dynamic>? waitingQueue;
+  List<dynamic> rejectedQueue;
+  List<dynamic> leftQueue;
   List<dynamic>? dates;
 
   // Return JSON of the event
@@ -205,6 +263,8 @@ class Event {
         'eventImage': eventImage,
         'lecturer': lecturer ?? "לא ידוע",
         'participants': participants ?? [],
+        'rejectedQueue': rejectedQueue,
+        'leftQueue': leftQueue,
         'waitingQueue': waitingQueue ?? [],
         'maxParticipants': maxParticipants ?? 15,
         'maxAge': maxAge,
@@ -230,6 +290,8 @@ class Event {
         lecturer = json['lecturer'] ?? "לא ידוע",
         waitingQueue = json['waitingQueue'] ?? [],
         participants = json['participants'] ?? [],
+        rejectedQueue = json['rejectedQueue'] ?? [],
+        leftQueue = json['leftQueue'] ?? [],
         maxParticipants = json['maxParticipants'] ?? 15,
         maxAge = json['maxAge'] ?? 120,
         minAge = json['minAge'] ?? 0,

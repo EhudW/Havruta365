@@ -97,8 +97,9 @@ class EventViewFeed extends StatelessWidget {
                   },
             child: Container(
               decoration: user2View != null &&
-                      event.waitingQueue != null &&
-                      event.waitingQueue!.contains(user2View!)
+                      ((event.waitingQueue != null &&
+                              event.waitingQueue!.contains(user2View!)) ||
+                          event.rejectedQueue.contains(user2View))
                   ? BoxDecoration(
                       gradient: LinearGradient(
                       begin: Alignment.topLeft,

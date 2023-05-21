@@ -101,7 +101,20 @@ class Mongo {
     return data;
   }
 
-  Future<void> addParticipant(String? mail, ObjectId? id) async {
+  Future<bool> moveToEventQueue(
+      ObjectId eventId, String email, EventQueues queue) async {
+    var mb = ModifierBuilder();
+    var collection = Globals.db!.db.collection('Events');
+    for (EventQueues option in EventQueues.values) {
+      var field = Event.toMongoField(option);
+      await collection.updateOne(where.eq('_id', eventId).notExists(field),
+          ModifierBuilder().set(field, []));
+      mb = queue == option ? mb.push(field, email) : mb.pull(field, email);
+    }
+    var res = await collection.updateOne(where.eq('_id', eventId), mb);
+    return res;
+  }
+  /*Future<void> addParticipant(String? mail, ObjectId? id) async {
     var collection = Globals.db!.db.collection('Events');
     // Get event by id and Add mail to participants array
     // ignore: unused_local_variable
@@ -115,7 +128,7 @@ class Mongo {
     // ignore: unused_local_variable
     var res = await collection.updateOne(
         where.eq('_id', id), ModifierBuilder().push('waitingQueue', mail));
-  }
+  }*/
 
   Future<void> seenNoti(List ids) async {
     var collection = Globals.db!.db.collection('Notifications');
@@ -162,7 +175,7 @@ class Mongo {
         "${ids.length} notifications  DELETED", MyDebug.MyPrintType.Nnim);
   }
 
-  deleteFromEvent(ObjectId? id, String? email) async {
+  /*deleteFromEvent(ObjectId? id, String? email) async {
     var collection = Globals.db!.db.collection('Events');
     // Get event by id and Add mail to participants array
     // ignore: unused_local_variable
@@ -175,7 +188,7 @@ class Mongo {
     // ignore: unused_local_variable
     var res = await collection.updateOne(
         where.eq('_id', id), ModifierBuilder().pull('waitingQueue', email));
-  }
+  }*/
 
   // Check if user exist
   Future<bool> isUserExist(String mail) async {

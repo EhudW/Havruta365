@@ -251,6 +251,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   widget.event!.creationDate = DateTime.now();
                                   widget.event!.participants = [];
                                   widget.event!.waitingQueue = [];
+                                  widget.event!.rejectedQueue = [];
+                                  widget.event!.leftQueue = [];
                                   mongoDB!.insertEvent(widget.event!).then(
                                       (value) => Navigator.push(
                                           context,
@@ -345,6 +347,10 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   ///
                                   accepted = accepted.difference(rejected);
                                   waiting = waiting.difference(rejected);
+                                  rejected.addAll(widget.event!.rejectedQueue);
+                                  widget.event!.rejectedQueue =
+                                      rejected.toList();
+
                                   // update event
                                   mongoDB!.updateEvent(widget.event!).then(
                                       // then

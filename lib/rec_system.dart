@@ -254,12 +254,13 @@ class MultiConsiderations extends RecommendationSystem<Event> {
   // auto filtered by EvenesSelectorBuildder.targetForMe()
   static Future<List<Event>> getAllEvents([int maxEvents = 100]) =>
       EventsSelectorBuilder.fetchFrom(
-        startFrom: 0,
-        maxEvents: maxEvents,
-        filterOldEvents: true,
-        filterOldDates: true,
-        newestFirst: true,
-      );
+          startFrom: 0,
+          maxEvents: maxEvents,
+          filterOldEvents: true,
+          filterOldDates: true,
+          newestFirst: true,
+          withRejectedQueue: false // useless since withParticipant == null
+          );
   //Globals.db!.getSomeEvents(0, null, limit: 100, newestFirst: true);
   static Future<List<Event>> getMyEvents(String myMail,
           {bool filterOld = false}) =>
@@ -270,7 +271,10 @@ class MultiConsiderations extends RecommendationSystem<Event> {
           filterOldEvents: filterOld,
           maxEvents: null,
           startFrom: null,
-          withWaitingQueue: true);
+          withWaitingQueue: true,
+          withRejectedQueue:
+              false // don't consider those events, not for good, not for bad
+          );
   // won't check isTargetedForMe
   static bool thisEventIsNewForMeAndAvailable(
       Event e, String myMail, DateTime timeNow) {
@@ -292,6 +296,8 @@ class MultiConsiderations extends RecommendationSystem<Event> {
     isNew = isNew && timeIsNew;
     isNew = isNew && !(e.participants ?? []).contains(myMail);
     isNew = isNew && !(e.waitingQueue ?? []).contains(myMail);
+    isNew = isNew && !e.rejectedQueue.contains(myMail);
+    isNew = isNew && !e.leftQueue.contains(myMail);
     return isNew;
   }
 
