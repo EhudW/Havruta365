@@ -46,7 +46,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   // To make setState from children
   refresh() {
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   _deleteEvent() async {

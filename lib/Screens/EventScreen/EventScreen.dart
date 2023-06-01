@@ -7,10 +7,17 @@ import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' as m;
 import 'Event_details_page.dart';
 
+String onlyHex(String s) =>
+    s.replaceAll("ObjectId(\"", "").replaceAll("\")", "");
+m.ObjectId fromHex(String ObjectIdAndHex) =>
+    m.ObjectId.fromHexString(onlyHex(ObjectIdAndHex));
+
 class EventScreen extends StatefulWidget {
   final m.ObjectId eventId;
 
   EventScreen(this.eventId);
+  EventScreen.fromString(String ObjectIdAndHex)
+      : eventId = fromHex(ObjectIdAndHex);
 
   @override
   _EventScreenState createState() => _EventScreenState();

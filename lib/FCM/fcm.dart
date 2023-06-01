@@ -4,10 +4,16 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:havruta_project/FCM/token_monitor.dart';
 import 'package:havruta_project/Globals.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
+import 'package:havruta_project/Screens/ChatScreen/ChatScreen.dart';
+import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
+import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,22 +59,56 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
   String body = message.data["body"] ?? "";
   String mgt = message.data["msgGroupType"] ?? "";
   String sender = message.data["sender"] ?? "";
+  sender = sender == "" ? "NONE" : sender;
+  // FCM.init(); //DEBUG
+  // FCM._showFCM(1222, title + "|" + sender, body, ""); //DEBUG
   String notitype = message.data["notitype"] ?? "NONE";
   String link = message.data["link"] ?? "";
   if (!{"events", "msgs", "notis"}.contains(mgt)) return;
+  var spm = SPManager("preventDoubleFcmGms");
+  await spm.load();
+  if (spm[message.messageId] == true) return;
+  spm[message.messageId] = true;
+  await spm.save();
+
   var func = () async {
     //spm > spmanger_firebaseMsg > mgt > counter
     //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
     var spm = SPManager("firebaseMsg");
     await spm.load();
-    if (notitype != "NONE") {
-      spm['notitype'] = spm['notitype'] ?? {};
-      spm['notitype'][sender] = notitype;
-    }
+    if (message.data["avoidMyself"] == spm["email"]) return;
+    if (mgt == "notis" && notitype != "NONE") {
+      spm['ignoreNextNotis'] = spm['ignoreNextNotis'] ?? {};
+      bool ignoreme = (spm['ignoreNextNotis'][sender] ?? false);
+      bool ignorenext = ignoreme;
+      switch (notitype) {
+        case "joinReject":
+        case "eventUpdated:rejected":
+          ignorenext = true;
+          ignoreme = false;
+          break;
+        case "joinAccept":
+          ignoreme = false;
+          ignorenext = false;
+          break;
+        case "join":
+        case "joinRequest":
+          ignoreme = false;
+          ignorenext = false;
+          break;
+        case "eventDeleted":
+        case "eventUpdated":
+          ignoreme = ignoreme;
+          ignorenext = ignorenext;
+          break;
+        //case "NONE":
+        default:
+          break;
+      }
+      spm['ignoreNextNotis'][sender] = ignorenext;
 
-    if (message.data["avoidMyself"] == spm["email"] ||
-        {"joinReject", "eventUpdated:rejected"}
-            .contains((spm['notitype'] ?? {})[sender])) return;
+      if (ignoreme) return await spm.save();
+    }
     spm[mgt] = spm[mgt] ?? {"counter": 0, "senders": {}};
     spm[mgt]["counter"] = (spm[mgt]["counter"] ?? 0) + 1;
     spm[mgt]["senders"] = spm[mgt]["senders"] ?? {};
@@ -76,6 +116,9 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
     await spm.save();
 
     await FCM.init();
+    //FCM._showFCM(1422, title + "|" + JsonEncoder().convert(spm[mgt]["senders"]),
+    //    body, ""); //DEBUG
+    if (spm[mgt]["senders"].length > 1 && mgt == 'msgs') link = 'msgs';
     FCM.showFCM(
         mgt, spm[mgt]["counter"], title, body, spm[mgt]["senders"], link);
   };
@@ -89,8 +132,8 @@ class FCM {
   static Future resetIgnore(List<dynamic> topics) async {
     var spm = SPManager("firebaseMsg");
     await spm.load();
-    spm['notitype'] = spm['notitype'] ?? {};
-    for (String t in topics) spm['notitype'][t] = 'NONE';
+    spm['ignoreNextNotis'] = spm['ignoreNextNotis'] ?? {};
+    for (String t in topics) spm['ignoreNextNotis'][t] = false;
     await spm.save();
   }
 
@@ -119,6 +162,12 @@ class FCM {
 
   static reset(String mgt) async {
     if (!{"events", "msgs", "notis"}.contains(mgt)) return;
+    if (mgt == "msgs") {
+      var spm = SPManager("preventDoubleFcmGms");
+      await spm.load();
+      spm.data = {};
+      await spm.save();
+    }
     await tag_setActiveNow("afi$mgt");
     var spm = SPManager("firebaseMsg");
     await spm.load();
@@ -133,6 +182,10 @@ class FCM {
       [List<String> senders = const []]) async {
     if (counter == 0) return reset(mgt);
     if (!{"events", "msgs", "notis"}.contains(mgt)) return;
+    /*if (senders.isNotEmpty) {
+      await FCM.init();
+      FCM._showFCM(1223, title + "|" + senders.first, body, ""); //DEBUG
+    }*/
     await tag_setActiveNow("afi$mgt");
     //spm > spmanger_firebaseMsg > mgt > counter
     //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
@@ -148,6 +201,7 @@ class FCM {
     await spm.save();
 
     await FCM.init();
+    if (senders.length > 1 && mgt == 'msgs') link = 'msgs';
     FCM.showFCM(
         mgt, spm[mgt]["counter"], title, body, spm[mgt]["senders"], link);
   }
@@ -206,7 +260,7 @@ class FCM {
           android: AndroidNotificationDetails(
             _channel.id,
             _channel.name,
-            _channel.description,
+            channelDescription: _channel.description,
             icon: '@mipmap/ic_launcher',
           ),
         ),
@@ -215,11 +269,74 @@ class FCM {
 
   static StreamSubscription<RemoteMessage>? _subs;
 
-  static Future Function(String payload) onMessageTap = (e) async {
-    print("object\n\n\n\n\n\n\n\n$e\n\n\n\n\nobject");
-    // TODO should be converted to navigator.pushroute && be checked for terminated state
-  };
-  static Future<dynamic> checkInitMsg(String? payload) async {
+  static Future onMessageTap(String payload) async {
+    // e = "msgs" v
+    //payload = "msg::::e2@e.e::::חשבון פיתוח";
+    //payload =
+    //    "msg::::ObjectId(\"64208b342fb621f911f3aa52\")::::שיעור בנביאים בשמואל ב::::forum";
+    //payload = "event::::ObjectId(\"64208b342fb621f911f3aa52\")";
+    // payload = "notis";
+    List<String> parts = payload.split("::::");
+    // myUser is null / false / ""   >  no matter the current login state
+    // myUser is true   >  need to be login to some user
+    // myUser is "mail@gmail.com"   >  need to be login to specific user
+    // retry = true so it will wait until login in order to move to page,
+    // for now it's false since it's done in main.dart
+    // (only then the parse will happen or it will happen twice: ontap on fcm notification && on main.dart)
+    Future push(myUser, builder, [bool retry = false]) async {
+      bool condition1 = myUser != null && myUser != false && myUser != "";
+      bool condition2 = myUser == true && Globals.currentUser == null;
+      bool condition3 = myUser != true && myUser != Globals.currentUser;
+      bool problem = condition1 && (condition2 || condition3);
+      if (problem && !retry) return;
+      if (problem && retry) {
+        await Future.delayed(Duration(seconds: 1));
+        return push(myUser, builder, retry);
+      }
+      var state = Globals.navKey.currentState;
+      if (state != null) {
+        state.push(MaterialPageRoute(builder: builder));
+      } else {
+        await Future.delayed(Duration(seconds: 1));
+        return push(myUser, builder, retry);
+      }
+    }
+
+    switch (parts.first) {
+      case "msgs":
+        push(true, (context) => ChatScreen());
+        break;
+      case "msg":
+        push(
+            true,
+            (context) => ChatPage(
+                  otherPerson: parts[1],
+                  otherPersonName: parts[2],
+                  forumName: parts.length == 3 ? null : parts[2],
+                ));
+        break;
+      case "event":
+        push(false, (context) => EventScreen.fromString(parts[1]));
+        break;
+      case "notis":
+        push(
+            true,
+            (context) => HomePage(
+                  openNotificationOnStart: true,
+                ));
+        break;
+      default:
+        break;
+    }
+  }
+
+  static Future<dynamic> checkInitMsg([NotificationResponse? r]) async {
+    await FCM.init();
+    r = r ??
+        (await flutterLocalNotificationsPlugin
+                .getNotificationAppLaunchDetails())
+            ?.notificationResponse;
+    String? payload = r?.payload;
     //await _setupFlutterNotifications();
     // var m =
     //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
@@ -281,7 +398,8 @@ class FCM {
       'high_importance_channel', // id
       'High Importance Notifications', // title
 
-      'This channel is used for important notifications.', // description
+      description:
+          'This channel is used for important notifications.', // description
       importance: Importance.high,
     );
 
@@ -298,7 +416,7 @@ class FCM {
     flutterLocalNotificationsPlugin.initialize(
         InitializationSettings(
             android: AndroidInitializationSettings('@mipmap/ic_launcher')),
-        onSelectNotification: checkInitMsg);
+        onDidReceiveNotificationResponse: checkInitMsg);
 
     /// Update the iOS foreground notification presentation options to allow
     /// heads up notifications.

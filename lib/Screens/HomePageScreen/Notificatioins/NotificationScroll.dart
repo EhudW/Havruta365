@@ -56,7 +56,7 @@ class _notificationsScrollState extends State<notificationsScroll> {
                                         widget.nnim.model.unseenLen,
                                         newest.name!,
                                         newest.message!,
-                                        "??");
+                                        "notis");
                                 }
                               },
                               child: NotificationView(

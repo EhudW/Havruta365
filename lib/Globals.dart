@@ -14,6 +14,7 @@ import 'mydebug.dart' as MyDebug;
 
 // see also mydebug.dart
 class Globals {
+  static GlobalKey<NavigatorState> navKey = GlobalKey();
   static void onNewLogin(User user) {
     // new login
     // Update current user
@@ -87,16 +88,19 @@ class Globals {
           x.where((e) => e.value > 0 && e.key.dst_mail != chat).toList();
       var unreadSenders =
           unreadMsgEntries.map((e) => e.key.otherPersonMail).toList();
-      unreadMsgEntries.isNotEmpty
-          ? FCM.resetTo(
-              "msgs",
-              unreadMsgEntries.fold(
-                  0, (s, c) => s + c.value), // <= msgwithFriendsUnread
-              unreadMsgEntries.first.key.name!,
-              unreadMsgEntries.first.key.message!,
-              "??",
-              unreadSenders)
-          : FCM.reset("msgs");
+      if (unreadMsgEntries.isNotEmpty) {
+        var rslt = await Mongo.sendMessageNodeJS(
+            dry: true, message: unreadMsgEntries.first.key);
+        FCM.resetTo(
+            "msgs",
+            unreadMsgEntries.fold(
+                0, (s, c) => s + c.value), // <= msgwithFriendsUnread
+            rslt['title']!,
+            rslt['body'],
+            rslt['link'],
+            unreadSenders);
+      } else
+        FCM.reset("msgs");
       //hasNewMsg = x.any((element) => element.value != 0);
       setter(x);
       return true;

@@ -93,7 +93,7 @@ class ChatMessage {
         avatar = json['avatar'],
         src_mail = json['src_mail'],
         datetime = json['datetime'],
-        _tag = json['tag'] ?? 0,
+        _tag = json['tag']?.toInt() ?? 0,
         message = json['message'],
         dst_mail = json['dst_mail'],
         status = statuses[json['status'] ?? 1],

@@ -81,7 +81,7 @@ class NewNotificationManager {
             var newest = model.getNewest();
             if (newest != null)
               FCM.resetTo("notis", newNotification, newest.name!,
-                  newest.message!, "??");
+                  newest.message!, "notis");
           }
           return true;
         })
@@ -155,6 +155,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: Globals.navKey,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           body: Container(
@@ -200,6 +201,9 @@ class _MyAppState extends State<MyApp> {
                                         return const CircularProgressIndicator();
                                       case ConnectionState.done:
                                         Globals.onNewLogin(snapshot.data!);
+                                        Future.delayed(
+                                            Duration(milliseconds: 300),
+                                            () => FCM.checkInitMsg());
                                         return HomePage();
                                       //break;
                                       default:

@@ -28,13 +28,23 @@ class ProfileDetailHeader extends StatelessWidget {
               MaterialPageRoute(builder: (context) => UserScreen(user!.email)),
             );
           },
-          child: Text(user!.name!,
-              textDirection: TextDirection.rtl,
-              style: GoogleFonts.alef(
-                  fontSize: Globals.scaler.getTextSize(10),
-                  textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center),
+          child: Column(children: [
+            Text(user!.name!,
+                textDirection: TextDirection.rtl,
+                style: GoogleFonts.alef(
+                    fontSize: Globals.scaler.getTextSize(10),
+                    textStyle: TextStyle(color: Colors.teal, letterSpacing: 2),
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center),
+            Text(user!.email!,
+                textDirection: TextDirection.rtl,
+                style: GoogleFonts.alef(
+                    fontSize: Globals.scaler.getTextSize(7),
+                    textStyle:
+                        TextStyle(color: Colors.teal[600], letterSpacing: 1),
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center)
+          ]),
         ));
 
     return Stack(

@@ -9,6 +9,7 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
+import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import '../mydebug.dart' as MyDebug;
 import './mongo2.dart' as Db2;
@@ -141,11 +142,7 @@ class Mongo {
     var collection = db.collection('Notifications');
     var e = notification.toJson();
     var result = await collection.insertOne(e);
-    result.hasWriteErrors
-        ? null
-        : sendMessageNodeJS(notification.name!, notification.message!,
-            notification.destinationUser!,
-            notitype: notification.type!);
+    result.hasWriteErrors ? null : sendMessageNodeJS(noti: notification);
     var url = Uri.parse('http://yonatangat.pythonanywhere.com/mail');
     var x = {
       "subject": "פרוייקט חברותא+",
@@ -384,19 +381,52 @@ class Mongo {
     return topic;
   }
 
-  Future sendMessageNodeJS(String name, String msg, String dst_mail,
-      {String notitype = 'NONE'}) async {
-    String? myMail = Globals.currentUser!.email;
-    if (dst_mail == myMail) return; // don't notify for chat 1v1 me-myself
-    String topic = topicReplace(dst_mail);
-    String mgt = "msgs";
-    String title = name;
-    String body = msg;
-    String link = "??$dst_mail"; //todo
+  static Future sendMessageNodeJS(
+      {ChatMessage? message, NotificationUser? noti, bool dry = false}) async {
+    String? srcMail = message?.src_mail ?? noti?.creatorUser;
+    String srcName = message?.name ?? noti!.name!;
+    String dst_mail = message?.dst_mail ?? noti!.destinationUser!;
+    if (dst_mail == srcMail && !dry)
+      return; // don't notify for chat 1v1 me-myself
+    String topic = Mongo.topicReplace(dst_mail);
+    String mgt = noti == null ? "msgs" : "notis";
+    String title = srcName;
+    String body = message?.message ?? noti!.message!;
+    String notitype = noti?.type ?? "NONE";
+    String link = "";
+    String sender = "NONE";
+    if (message == null) {
+      link = "notis";
+    } else {
+      String sep = "::::";
+      bool forum = dst_mail.contains("ObjectId(");
+      String? name = forum
+          ? (await Globals.db!.getEventById(fromHex(dst_mail)))?.shortStr
+          : srcName;
+      if (name == null) return;
+      String mail = forum ? dst_mail : srcMail!;
+      String prefix = forum ? "$sep true" : "";
+
+      link = "msg$sep$mail$sep$name$prefix";
+      sender = mail;
+    }
+    String myMail = Globals.currentUser!.email!;
     try {
-      await http.get(Uri.parse(
-          "https://adorable-crab-outfit.cyclic.app/?topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link&avoidMyself=$myMail&notitype=$notitype"));
+      dry == true
+          ? null
+          : await http.get(Uri.parse(
+              "https://adorable-crab-outfit.cyclic.app/?sender=$sender&topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link&avoidMyself=$myMail&notitype=$notitype"));
     } catch (err) {}
+    return {
+      "sender": sender,
+      "topic": topic,
+      "mgt": mgt,
+      "title": title,
+      "body": body,
+      "link": link,
+      "avoidMyself": myMail,
+      "notitype": notitype
+    };
   }
 
   // Get message and insert it to the DB
@@ -405,9 +435,7 @@ class Mongo {
     var m = ChatMessage.cloneWith(message, newStatus: ChatMessage.statuses[1])
         .toJson();
     WriteResult result = await collection.insertOne(m);
-    result.hasWriteErrors
-        ? null
-        : sendMessageNodeJS(message.name!, message.message!, message.dst_mail!);
+    result.hasWriteErrors ? null : sendMessageNodeJS(message: message);
     return !result.hasWriteErrors;
   }
 
@@ -603,9 +631,7 @@ class Mongo {
         where.eq('_id', id), modify.set('message', text));
     await collection.updateOne(where.eq('_id', id), modify.set('status', 1));
     await collection.updateOne(where.eq('_id', id), modify.set('tag', tag));
-    result.hasWriteErrors
-        ? null
-        : sendMessageNodeJS(message.name!, message.message!, message.dst_mail!);
+    result.hasWriteErrors ? null : sendMessageNodeJS(message: message);
     return !result.hasWriteErrors;
   }
 

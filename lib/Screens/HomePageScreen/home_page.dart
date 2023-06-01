@@ -1,4 +1,6 @@
 //import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,7 +21,11 @@ import 'dart:ui' as ui;
 import 'Events/modelsHomePages.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  final bool openNotificationOnStart;
+  HomePage({
+    Key? key,
+    this.openNotificationOnStart = false,
+  }) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -40,8 +46,8 @@ class _HomePageState extends State<HomePage> {
   // call before/then each navigator.push
   setRefresh(bool on, {bool andRefreshNow = true}) {
     if (on) {
-      Globals.onNewMsg = () => this.setState(() {});
-      nnim!.refreshMe[this] = () => setState(() {});
+      Globals.onNewMsg = () => !mounted ? null : setState(() {});
+      nnim!.refreshMe[this] = () => !mounted ? null : setState(() {});
       nnim!.start();
       if (andRefreshNow && mounted) setState(() {});
     } else {
@@ -56,6 +62,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     nnim = NewNotificationManager();
     setRefresh(true);
+    if (widget.openNotificationOnStart)
+      Timer(Duration(milliseconds: 700),
+          () => _scaffoldKey.currentState?.openDrawer());
   }
 
   @override

@@ -52,7 +52,7 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   refresh() {
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   Widget bottomSheet(BuildContext context, Function ok, Function ignore) {
