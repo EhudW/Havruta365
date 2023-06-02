@@ -102,8 +102,8 @@ class _MainDetailsState extends State<MainDetails> {
       // countdown
       Text(countdown_string,
           textDirection: ui.TextDirection.rtl,
-          style: GoogleFonts.alef(
-              fontSize: 16.0, color: Color.fromARGB(255, 40, 204, 29))),
+          style:
+              GoogleFonts.alef(fontSize: 16.0, color: Colors.green.shade800)),
       Text("תיאור:",
           textDirection: ui.TextDirection.rtl,
           style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
