@@ -40,23 +40,44 @@ class FurtherDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     String teacher =
         event_!.type == 'L' ? event_!.lecturer! : event_!.creatorName!;
+
     // should we add extra text to differ between teacher and creator?
+    String location = event_!.location?.trim() ?? '';
+    String link = event_!.link?.trim() ?? '';
+    String lecturer = event_!.lecturer?.trim() ?? '';
+    String creator_name = event_!.creatorName?.trim() ?? '';
+    //String creator_user = event_!.creatorUser?.trim() ?? '';
+    String target_gender = event_!.targetGender?.trim() ?? '';
+    String min_age = event_!.minAge?.toString() ?? '';
+    String max_age = event_!.maxAge?.toString() ?? '';
+    //String creation_date = event_!.creationDate?.toString() ?? '';
+    //String first_init_date = event_!.firstInitDates?.toString() ?? '';
+
+    var myMail = Globals.currentUser!.email;
+    var amIParticipant = event_!.participants!.contains(myMail);
+    var amICreator = event_!.creatorUser == myMail;
+    var isHavruta = event_?.type == "H";
+
     var asBasic = (String str) => str.toLowerCase().trim();
     var myCmp = (a, b) => asBasic(a) == asBasic(b);
     final String creatorDescription =
         myCmp(teacher, event_!.creatorName!) ? "" : event_!.creatorName!;
 
-    var str_to_header = (String str) => Text(str,
-        textDirection: ui.TextDirection.rtl,
-        textAlign: TextAlign.right,
-        style: GoogleFonts.alef(fontSize: 15.0, color: Colors.grey[700]));
+    var str_to_header = (String str) => Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: Text(str,
+            textDirection: ui.TextDirection.rtl,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.alef(fontSize: 15.0, color: Colors.grey[700])));
 
-    var str_to_text = (String str) => Text(
+    var str_to_text = (String str) => Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: Text(
           str,
           style: GoogleFonts.secularOne(fontSize: 18.0),
           textAlign: TextAlign.right,
           textDirection: ui.TextDirection.rtl,
-        );
+        ));
 
     var create_field = (String header, String text) => Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -69,17 +90,6 @@ class FurtherDetailsScreen extends StatelessWidget {
     var conditional_field_creation = (String header, String text) =>
         text == '' ? Container() : create_field(header, text);
 
-    String location = event_!.location?.trim() ?? '';
-    String link = event_!.link?.trim() ?? '';
-    String lecturer = event_!.lecturer?.trim() ?? '';
-    String creator_name = event_!.creatorName?.trim() ?? '';
-    String creator_user = event_!.creatorUser?.trim() ?? '';
-    String target_gender = event_!.targetGender?.trim() ?? '';
-    String min_age = event_!.minAge?.toString() ?? '';
-    String max_age = event_!.maxAge?.toString() ?? '';
-    //String creation_date = event_!.creationDate?.toString() ?? '';
-    //String first_init_date = event_!.firstInitDates?.toString() ?? '';
-
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       backgroundColor: Colors.teal[100],
@@ -88,15 +98,15 @@ class FurtherDetailsScreen extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
         MainDetails(event_),
         //create_field()
-        conditional_field_creation("מקום:", location),
-        conditional_field_creation("קישור:", link),
         conditional_field_creation("מרצה:", lecturer),
+        conditional_field_creation("יוצר:", creator_name),
+        conditional_field_creation("מיקום:", location),
+        !isHavruta || amICreator || amIParticipant
+            ? conditional_field_creation("קישור:", link)
+            : Container(),
         conditional_field_creation("גיל מינימלי:", min_age),
         conditional_field_creation("גיל מקסימלי:", max_age),
-        conditional_field_creation("יוצר:", creator_name),
-        //conditional_field_creation("תאריך יצירה:", creation_date),
-        conditional_field_creation("יוצר:", creator_user),
-        //conditional_field_creation("תאריך ראשון:", first_init_date),
+        //conditional_field_creation("יוצר:", creator_user),
         conditional_field_creation("מין יעד:", target_gender),
       ])),
     );
