@@ -5,6 +5,8 @@ import '../../DataBase_auth/Event.dart';
 import '../../Globals.dart';
 import 'dart:ui' as ui;
 
+import 'MainDetails.dart';
+
 class FurtherDetailsScreen extends StatelessWidget {
   final Event? event_;
   FurtherDetailsScreen({Key? key, Event? event})
@@ -44,63 +46,59 @@ class FurtherDetailsScreen extends StatelessWidget {
     final String creatorDescription =
         myCmp(teacher, event_!.creatorName!) ? "" : event_!.creatorName!;
 
+    var str_to_header = (String str) => Text(str,
+        textDirection: ui.TextDirection.rtl,
+        textAlign: TextAlign.right,
+        style: GoogleFonts.alef(fontSize: 15.0, color: Colors.grey[700]));
+
+    var str_to_text = (String str) => Text(
+          str,
+          style: GoogleFonts.secularOne(fontSize: 18.0),
+          textAlign: TextAlign.right,
+          textDirection: ui.TextDirection.rtl,
+        );
+
+    var create_field = (String header, String text) => Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            str_to_header(header),
+            str_to_text(text),
+          ],
+        );
+
+    var conditional_field_creation = (String header, String text) =>
+        text == '' ? Container() : create_field(header, text);
+
+    String location = event_!.location?.trim() ?? '';
+    String link = event_!.link?.trim() ?? '';
+    String lecturer = event_!.lecturer?.trim() ?? '';
+    String creator_name = event_!.creatorName?.trim() ?? '';
+    String creator_user = event_!.creatorUser?.trim() ?? '';
+    String target_gender = event_!.targetGender?.trim() ?? '';
+    String min_age = event_!.minAge?.toString() ?? '';
+    String max_age = event_!.maxAge?.toString() ?? '';
+    //String creation_date = event_!.creationDate?.toString() ?? '';
+    //String first_init_date = event_!.firstInitDates?.toString() ?? '';
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       backgroundColor: Colors.teal[100],
       appBar: appBar(context),
       body: SingleChildScrollView(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-            SizedBox(height: Globals.scaler.getHeight(1)),
-            Row(
-              textDirection: ui.TextDirection.rtl,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("גברים/נשים: ", //TODO: into further details
-                    textDirection: ui.TextDirection.rtl,
-                    style: GoogleFonts.suezOne(
-                        fontSize: 20.0, color: Colors.grey[700])),
-                Text(event_!.targetGender!,
-                    textDirection: ui.TextDirection.rtl,
-                    style: GoogleFonts.suezOne(
-                        fontSize: 20.0, color: Colors.grey[700])),
-              ],
-            ),
-            Text(
-              // TODO: add limud: before the text
-              event_!.topic!,
-              textDirection: TextDirection.rtl,
-              style: GoogleFonts.secularOne(fontSize: 26.0),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              event_!.book!, //TODO: combine with topic
-              textDirection: TextDirection.rtl,
-              style: GoogleFonts.secularOne(fontSize: 22.0),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              //TODO: remove this
-              teacher,
-              textDirection: TextDirection.rtl,
-              style: GoogleFonts.secularOne(fontSize: 22.0),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              // TODO: remove this
-              creatorDescription == "" ? "" : "ביוזמת",
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-            ),
-            Text(
-              creatorDescription,
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-            ),
-          ])),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        MainDetails(event_),
+        //create_field()
+        conditional_field_creation("מקום:", location),
+        conditional_field_creation("קישור:", link),
+        conditional_field_creation("מרצה:", lecturer),
+        conditional_field_creation("גיל מינימלי:", min_age),
+        conditional_field_creation("גיל מקסימלי:", max_age),
+        conditional_field_creation("יוצר:", creator_name),
+        //conditional_field_creation("תאריך יצירה:", creation_date),
+        conditional_field_creation("יוצר:", creator_user),
+        //conditional_field_creation("תאריך ראשון:", first_init_date),
+        conditional_field_creation("מין יעד:", target_gender),
+      ])),
     );
   }
 }

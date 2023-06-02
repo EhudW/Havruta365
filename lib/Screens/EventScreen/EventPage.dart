@@ -1,37 +1,25 @@
-import 'dart:io';
+//import 'dart:io';
 
-import 'package:another_flushbar/flushbar.dart';
-//import 'package:flutter/cupertino.dart';
+//import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Screens/EventScreen/FurtherDetailsScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
-import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:havruta_project/Screens/EventScreen/MyProgressButton.dart';
-import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:share_plus/share_plus.dart';
-//import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
-import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' as query;
-import 'package:url_launcher/url_launcher.dart';
 import '../../DataBase_auth/Notification.dart';
 import '../ChatScreen/Chat1v1.dart';
-import '../ChatScreen/ChatMessage.dart';
 import '../ChatScreen/chatStreamModel.dart';
 import 'Add2Calendar.dart';
 import 'arc_banner_image.dart';
 import 'EventDatesList.dart';
 import 'Partcipients_scroller.dart';
-import 'Event_detail_header.dart';
-import 'story_line.dart';
-import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 import 'dart:ui' as ui;
+import 'MainDetails.dart';
 
 class EventPage extends StatefulWidget {
   Event? event;
@@ -96,58 +84,116 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  String FormatCountdownString(BuildContext context, int countdown_minutes) {
-    String countdown_string = "";
-    if (countdown_minutes > 0) {
-      countdown_string = "האירוע יתחיל בעוד ";
-      if (countdown_minutes >= 1440) {
-        countdown_string +=
-            (countdown_minutes / 1440).floor().toString() + " ימים ו ";
-        countdown_minutes = countdown_minutes % 1440;
-      }
-      if (countdown_minutes >= 60) {
-        countdown_string +=
-            (countdown_minutes / 60).floor().toString() + " שעות.";
-        //countdown_minutes = countdown_minutes % 60;
-      }
-      //countdown_string += countdown_minutes.toString() + " דקות";
-    } else if (countdown_minutes == 0) {
-      countdown_string = "האירוע מתקיים כעת!";
-    } else {
-      countdown_string = "האירוע נגמר ";
-    }
-    return countdown_string;
+  AppBar BuildAppBar(snapshot, type) {
+    return AppBar(
+        title: Text(type),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        flexibleSpace:
+            ArcBannerImage(widget.event!.eventImage, imgHeight: 80.0),
+        actions: [
+          CircleAvatar(
+            //TODO: shreenk
+            foregroundImage: NetworkImage(snapshot.data['avatar']),
+            backgroundColor: Colors.transparent,
+            radius: 40.0, //here
+            child: IconButton(
+                icon: Icon(Icons.quiz_sharp),
+                iconSize: 40.0,
+                //color: Colors.white.withOpacity(0),
+                color: Colors.white.withOpacity(0),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            UserScreen(snapshot.data['email'])),
+                  );
+                }),
+          )
+        ]);
+  }
+
+  Drawer BuildDrawer(type) {
+    String topic = widget.event?.topic?.trim() ?? "";
+    String book = widget.event?.book?.trim() ?? "";
+    String t_topic = topic != "" ? " ב" + topic : "";
+    String t_book = book != "" ? " ב" + book : "";
+    String study = book == "" ? topic : "";
+    String share_string = "אשמח להזמין אותך ל" +
+        type +
+        " בנושא " +
+        study +
+        ", מפי הרב " +
+        widget.event!.lecturer! +
+        ".\n";
+    var drawer_navigation_line = (line_title, navigation_func) {
+      return ListTile(
+        title: Text(line_title),
+        onTap: () async {
+          Navigator.push(context, MaterialPageRoute(builder: navigation_func));
+        },
+      );
+    };
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            child: Text('Drawer Header'),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+          ),
+          drawer_navigation_line(
+              'פורום',
+              (context) => ChatPage(
+                    otherPerson: widget.event!.id.toString(),
+                    otherPersonName: widget.event!.id.toString(),
+                    forumName: type + t_topic + t_book,
+                  )),
+          ListTile(
+            title: Text('הוסף ליומן'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: add2calendar(widget.event!),
+                ),
+              );
+            },
+          ),
+          drawer_navigation_line(
+              'לוח זמנים מלא',
+              (context) => //Add further details page
+                  EventDatesList(widget.event!, widget.allUserEvents ?? [])),
+          drawer_navigation_line(
+              'פרטים נוספים',
+              (context) => //Add further details page
+                  FurtherDetailsScreen(event: widget.event!)),
+          ListTile(
+            title: Text('המלץ לחבר'),
+            onTap: () {
+              Share.share(share_string + "\n https://www.google.com/",
+                  subject: "https://www.google.com/");
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     Future creator = widget.getUser(widget.event!.creatorUser);
 
-    int countdown_minutes = widget.event!.startIn;
-    String countdown_string = FormatCountdownString(context, countdown_minutes);
     String type = widget.event?.type == "H" ? "חברותא" : "שיעור";
     String topic = widget.event?.topic?.trim() ?? "";
     String book = widget.event?.book?.trim() ?? "";
     String t_event_type = widget.event!.type == "H" ? "חברותא" : "שיעור";
     String t_book_name =
         widget.event!.book != "" ? " ב" + widget.event!.book! : "";
-    //String t_topic = widget.event!.topic != "" ? " ב" + widget.event!.topic! : "";
     String t_topic = topic != "" ? " ב" + topic : "";
-    String t_book = book != "" ? " ב" + book : "";
-    String study = book == "" ? topic : "";
-    study = topic != "" && book != "" ? topic + "/ " + book : topic + book;
-    String nextEvent = "-נגמר-";
-    String time = '';
-    String capacity = widget.event!.participants!.length.toString() +
-        "/" +
-        widget.event!.maxParticipants.toString();
-    if (widget.event!.dates!.isNotEmpty) {
-      nextEvent = DateFormat('yyyy - MM - dd')
-          .format((widget.event!.dates![0] as DateTime).toLocal());
-      time = DateFormat('HH:mm')
-          .format((widget.event!.dates![0] as DateTime).toLocal());
-    }
-    String duration = widget.event!.duration.toString() + " דקות";
     var myMail = Globals.currentUser!.email;
     bool notMyTarget = !Globals.currentUser!.isTargetedForMe(widget.event!);
     var amIParticipant = widget.event!.participants!.contains(myMail);
@@ -156,13 +202,7 @@ class _EventPageState extends State<EventPage> {
         widget.event!.participants!.length; /*-waitingQueue.length*/
     String t_pre = "*הודעת תפוצה*" + "\n";
     String t_suffix = t_event_type + t_topic + t_book_name + ":\n";
-    String share_string = "אשמח להזמין אותך ל" +
-        type +
-        " בנושא " +
-        study +
-        ", מפי הרב " +
-        widget.event!.lecturer! +
-        ".\n";
+
     ChatModel model = ChatModel(myMail: Globals.currentUser!.email!);
 
     var initPub =
@@ -205,15 +245,6 @@ class _EventPageState extends State<EventPage> {
       Globals.db!.insertNotification(notification);
     });
 
-    var drawer_navigation_line = (line_title, navigation_func) {
-      return ListTile(
-        title: Text(line_title),
-        onTap: () async {
-          Navigator.push(context, MaterialPageRoute(builder: navigation_func));
-        },
-      );
-    };
-
     return FutureBuilder(
         future: creator,
         builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -231,193 +262,11 @@ class _EventPageState extends State<EventPage> {
               );
             case ConnectionState.done:
               return Scaffold(
-                appBar: AppBar(
-                    title: Text(type),
-                    centerTitle: true,
-                    backgroundColor: Colors.transparent,
-                    flexibleSpace: ArcBannerImage(widget.event!.eventImage,
-                        imgHeight: 80.0),
-                    actions: [
-                      CircleAvatar(
-                        //TODO: shreenk
-                        foregroundImage: NetworkImage(snapshot.data['avatar']),
-                        backgroundColor: Colors.transparent,
-                        radius: 40.0, //here
-                        child: IconButton(
-                            icon: Icon(Icons.quiz_sharp),
-                            iconSize: 40.0,
-                            //color: Colors.white.withOpacity(0),
-                            color: Colors.white.withOpacity(0),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        UserScreen(snapshot.data['email'])),
-                              );
-                            }),
-                      )
-                    ]),
-                drawer: Drawer(
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      DrawerHeader(
-                        child: Text('Drawer Header'),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      drawer_navigation_line(
-                          'פורום',
-                          (context) => ChatPage(
-                                otherPerson: widget.event!.id.toString(),
-                                otherPersonName: widget.event!.id.toString(),
-                                forumName: type + t_topic + t_book,
-                              )),
-                      ListTile(
-                        title: Text('הוסף ליומן'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: add2calendar(widget.event!),
-                            ),
-                          );
-                        },
-                      ),
-                      drawer_navigation_line(
-                          'לוח זמנים מלא',
-                          (context) => //Add further details page
-                              EventDatesList(
-                                  widget.event!, widget.allUserEvents ?? [])),
-                      drawer_navigation_line(
-                          'פרטים נוספים',
-                          (context) => //Add further details page
-                              FurtherDetailsScreen(event: widget.event!)),
-                      ListTile(
-                        title: Text('המלץ לחבר'),
-                        onTap: () {
-                          Share.share(
-                              share_string + "\n https://www.google.com/",
-                              subject: "https://www.google.com/");
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                appBar: BuildAppBar(snapshot, type),
+                drawer: BuildDrawer(type),
                 body: SingleChildScrollView(
                   child: Column(children: [
-                    Text("לימוד:",
-                        textDirection: ui.TextDirection.rtl,
-                        style: GoogleFonts.alef(
-                            fontSize: 16.0, color: Colors.grey[700])),
-                    Text(study,
-                        textDirection: ui.TextDirection.rtl,
-                        style: GoogleFonts.secularOne(fontSize: 20.0)),
-                    // times should be exported to a function together with countdown
-                    Text(
-                      (widget.event!.dates!.isNotEmpty &&
-                              isNow(widget.event!.dates![0],
-                                  widget.event!.duration ?? 0))
-                          ? "   האירוע מתקיים כעת ב:    "
-                          : "   האירוע מתקיים ב:    ",
-                      style: GoogleFonts.secularOne(fontSize: 14.0),
-                      //textAlign: TextAlign.end,
-                      textDirection: ui.TextDirection.rtl,
-                    ),
-                    Text(
-                      time == ""
-                          ? ""
-                          : (isNow(widget.event!.dates![0],
-                                  widget.event!.duration ?? 0)
-                              ? nextEvent + "    בשעה  " + time
-                              : nextEvent + "   בשעה  " + time),
-                      style: GoogleFonts.secularOne(fontSize: 20.0),
-                      textAlign: TextAlign.center,
-                      textDirection: ui.TextDirection.rtl,
-                    ),
-                    // countdown
-                    Text(countdown_string,
-                        textDirection: ui.TextDirection.rtl,
-                        style: GoogleFonts.alef(
-                            fontSize: 16.0,
-                            color: Color.fromARGB(255, 40, 204, 29))),
-                    Text("תיאור:", // TODO: remove
-                        textDirection: ui.TextDirection.rtl,
-                        style: GoogleFonts.alef(
-                            fontSize: 16.0, color: Colors.grey[700])),
-                    Text(widget.event!.description.toString(), // TODO: remove
-                        textDirection: ui.TextDirection.rtl,
-                        style: GoogleFonts.secularOne(fontSize: 23.0)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //const SizedBox(width: 40.0),
-                        Container(
-                          decoration: new BoxDecoration(
-                            color: Colors.grey.shade300,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
-                          ),
-                          width: 120,
-                          height: 70,
-                          child: Column(children: [
-                            Text(
-                              "תפוסה:",
-                              textAlign: TextAlign.center,
-                              textDirection: ui.TextDirection.rtl,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              capacity,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.green.shade800,
-                                  fontSize: 27,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ]),
-                        ),
-                        const SizedBox(width: 15.0),
-                        Container(
-                          decoration: new BoxDecoration(
-                            color: Colors.grey.shade300,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
-                          ),
-                          width: 120,
-                          height: 70,
-                          child: Column(children: [
-                            Text(
-                              "משך הלימוד:",
-                              textAlign: TextAlign.center,
-                              textDirection: ui.TextDirection.rtl,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              duration,
-                              textAlign: TextAlign.center,
-                              textDirection: ui.TextDirection.rtl,
-                              style: TextStyle(
-                                  color: Colors.green.shade800,
-                                  fontSize: 27,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ]),
-                        ),
-                      ],
-                    ),
+                    MainDetails(widget.event!),
                     Divider(),
                     widget.event!.dates!.isEmpty || notMyTarget
                         ? Container()
