@@ -28,7 +28,8 @@ class NotificationView extends StatelessWidget {
         splashColor: Colors.teal[400],
         onTap: () async {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            if (notification.idEvent != null) {
+            if (notification.idEvent != null &&
+                notification.type != "eventDeleted") {
               return EventScreen(notification.idEvent!);
             }
             return UserScreen(notification.creatorUser);

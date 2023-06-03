@@ -68,7 +68,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           'creationDate': DateTime.now(),
           'message': msg,
           'type': 'eventDeleted',
-          'idEvent': null,
+          'idEvent': widget.event!.id,
           'name': Globals.currentUser!.name,
         }));
       }

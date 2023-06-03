@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:date_time_format/date_time_format.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -77,11 +78,17 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
     var spm = SPManager("firebaseMsg");
     await spm.load();
     if (message.data["avoidMyself"] == spm["email"]) return;
+    if (mgt == "events") {
+      spm['ignoreNextNotis'] = spm['ignoreNextNotis'] ?? {};
+      bool ignoreme = (spm['ignoreNextNotis'][sender] ?? false);
+      if (ignoreme) return;
+    }
     if (mgt == "notis" && notitype != "NONE") {
       spm['ignoreNextNotis'] = spm['ignoreNextNotis'] ?? {};
       bool ignoreme = (spm['ignoreNextNotis'][sender] ?? false);
       bool ignorenext = ignoreme;
       switch (notitype) {
+        case "eventDeleted":
         case "joinReject":
         case "eventUpdated:rejected":
           ignorenext = true;
@@ -96,7 +103,6 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
           ignoreme = false;
           ignorenext = false;
           break;
-        case "eventDeleted":
         case "eventUpdated":
           ignoreme = ignoreme;
           ignorenext = ignorenext;
@@ -210,6 +216,15 @@ class FCM {
       Map senders, String payload) {
     switch (mgt) {
       case "events":
+        int? n = int.tryParse(body);
+        if (n == null) return;
+        DateTime startD = DateTime.fromMillisecondsSinceEpoch(n);
+        if (DateTime.now().isAfter(startD.add(Duration(minutes: 5)))) return;
+        String start = DateTimeFormat.format(startD.toLocal(), format: "H:i");
+        start = "התחלה ב $start";
+        String shortStr = title ?? "יש לך שיעור";
+        body = start;
+        title = shortStr;
         break;
       case "notis":
         body = counter == 1 ? body : "יש לך $counter התראות";
