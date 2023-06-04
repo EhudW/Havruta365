@@ -108,6 +108,8 @@ abstract class ILoadProperty<T> {
 class LoadProperty<T> extends ILoadProperty<T> {
   StreamController<MapEntry<bool, T?>>? _controller;
   Stream<MapEntry<bool, T?>> get stream => _controller!.stream;
+  Future streamSimulate() async =>
+      _controller?.add(MapEntry(true, await waitData()));
 
   static Map<String, LoadProperty> avoidRepeatPropertyTimer = {};
   T? _data;

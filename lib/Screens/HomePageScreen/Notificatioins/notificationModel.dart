@@ -72,7 +72,8 @@ class notificationModel {
     return getData(10).then((postsData) {
       postsData.forEach((element) {
         if (element.type == "eventUpdated:rejected" ||
-            element.type == "joinReject")
+            element.type ==
+                "joinReject") // stay sub to forum of deleted event "eventDeleted" ?
           Globals.db!
               .updateUserSubs_Topics(remove: [element.idEvent.toString()]);
       });

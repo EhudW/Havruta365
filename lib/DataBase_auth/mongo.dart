@@ -394,7 +394,7 @@ class Mongo {
     String body = message?.message ?? noti!.message!;
     String notitype = noti?.type ?? "NONE";
     String link = "";
-    String sender = "NONE";
+    String sender = noti?.idEvent?.toString() ?? "NONE";
     if (message == null) {
       link = "notis";
     } else {
