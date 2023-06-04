@@ -1,3 +1,4 @@
+import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/rec_system.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -246,14 +247,19 @@ class EventsSelectorBuilder {
     final events = (await collection.find(realSelector).toList());
     // if  filterOldDates = false  -> filterOldEvents = false
     if (!filterOldDates) {
-      List<Event> tmp = List.from(events.map((i) => new Event.fromJson(i)));
+      List<Event> tmp = [];
+      for (var i in events) {
+        tmp.add(
+            Event.fromJson(await Mongo.getUpdateUserInfo(i, isEvent: true)));
+      }
       return applyTesters(tmp, eventTesters);
     }
     // filterOldDates = true, but maybe we still won't filterOldEvents
     List<Event> data = [];
     DateTime timeNow = DateTime.now();
     for (var i in events) {
-      Event e = new Event.fromJson(i);
+      Event e =
+          new Event.fromJson(await Mongo.getUpdateUserInfo(i, isEvent: true));
       var len = e.dates!.length;
       // filterOldDate=true :
       for (int j = 0; j < len; j++) {
