@@ -113,7 +113,7 @@ class Mongo {
       mb = queue == option ? mb.push(field, email) : mb.pull(field, email);
     }
     var res = await collection.updateOne(where.eq('_id', eventId), mb);
-    return res;
+    return !res.hasWriteErrors;
   }
   /*Future<void> addParticipant(String? mail, ObjectId? id) async {
     var collection = Globals.db!.db.collection('Events');
