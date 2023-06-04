@@ -288,6 +288,7 @@ class _EventPageState extends State<EventPage> {
                             widget.event!.participants,
                             title: "משתתפים",
                             initPubMsgText: initPub(false),
+                            event: widget.event,
                           )
                         : Container(),
 
@@ -298,6 +299,7 @@ class _EventPageState extends State<EventPage> {
                             initPubMsgText: initPub(true),
                             accept: accept,
                             reject: reject,
+                            event: widget.event,
                           )
                         : Container(),
 
