@@ -174,10 +174,10 @@ Widget genderField(gender_str) {
       child: GenderPickerWithImage(
         maleText: 'גבר',
         femaleText: 'אישה',
-        maleImage: NetworkImage(
-            'https://image.flaticon.com/icons/png/512/180/180644.png'),
-        femaleImage: NetworkImage(
-            'https://image.flaticon.com/icons/png/512/180/180678.png'),
+        maleImage: NetworkImage(Globals.boyAvatar),
+        //'https://image.flaticon.com/icons/png/512/180/180644.png'),
+        femaleImage: NetworkImage(Globals.girlAvatar),
+        //'https://image.flaticon.com/icons/png/512/180/180678.png'),
         verticalAlignedText: true,
         selectedGenderTextStyle: TextStyle(
             color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
