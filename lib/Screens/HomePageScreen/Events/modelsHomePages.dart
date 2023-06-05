@@ -127,7 +127,12 @@ class EventsModel {
         withParticipant: _filterData["withParticipant"],
         withWaitingQueue: true, //_filterData["withWaitingQueue"],
         // don't show rejected as 'my classes', but show it in cross mode(where I\Him the lecturer of the havruta)
-        withRejectedQueue: _filterData["withParticipant2"] != null,
+        withRejectedLeftQueue: _filterData["withParticipant2"] != null,
+        // cross mode -> withRejectedLeftQueue = true, so null filter on rejectedQueue
+        // only created / myevents filter / all events then filter where I was rejected
+        ensureNotRejected: _filterData["withParticipant2"] != null
+            ? null
+            : _filterData["withParticipant"],
       );
     });
   }

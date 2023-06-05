@@ -264,92 +264,84 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   // notify all that the event was updated, or they rejected
                                   var e = widget.event!;
                                   var m = e.maxParticipants!;
-                                  var p = e.participants!;
-                                  var wq = e.waitingQueue!;
+                                  var pQ = e.participants!;
+                                  var wQ = e.waitingQueue!;
+                                  var rQ = e
+                                      .rejectedQueue; // no-change unless not targeted
+                                  var lQ = e
+                                      .leftQueue; // no-change unless not targeted
                                   List toNotify = [];
-                                  toNotify.addAll(p);
-                                  toNotify.addAll(wq);
-                                  Set rejected = {};
+                                  toNotify.addAll(pQ);
+                                  toNotify.addAll(wQ);
+                                  // (maxParticipants, not target, typeChange),
+
+                                  // so rejected people will be "forget" and may rejoin/re-send invite
+                                  Set noQueue = {}; // like new user for the app
                                   Set accepted = {};
                                   Set waiting = {};
+                                  var popAll = (from, to1, [to2]) {
+                                    to1.addAll(from);
+                                    to2?.addAll(from);
+                                    from.clear();
+                                  };
+                                  bool maxParticipantsConflict = false;
 
-                                  ///
-                                  /// maxParticipants conflict [affect rejected,waitingQueue,participants]
-                                  ///
-                                  // due to the new max participants value, reset lists:
-                                  if (m >= p.length + wq.length) {
-                                    // don't reset lists
-                                  } else if (m >= p.length) {
-                                    /*// reset only wq
-                                    rejected.addAll(wq);
-                                    widget.event!.waitingQueue = [];*/
-                                  } else {
-                                    // reset both p wq
-                                    rejected.addAll(p);
-                                    rejected.addAll(wq);
-                                    widget.event!.participants = [];
-                                    widget.event!.waitingQueue = [];
-                                  }
-
-                                  //////
-                                  /// type conflict  [affect waiting,accepted,waitingQueue,participants]
-                                  ///
-                                  wq = widget.event!.waitingQueue!;
-                                  p = widget.event!.participants!;
-                                  if (e.type == 'L') {
-                                    // if there is place,
-                                    if (m >= wq.length + p.length) {
-                                      // auto accept all waiting
-                                      e.participants!.addAll(e.waitingQueue!);
-                                      accepted.addAll(e.waitingQueue!);
-                                      e.waitingQueue = [];
+                                  /// maxParticipants conflict
+                                  // reset both pQ wQ
+                                  if (m < pQ.length) {
+                                    maxParticipantsConflict = true;
+                                    if (e.type == "H") {
+                                      popAll(pQ, wQ, waiting);
                                     } else {
-                                      // reset only wq
-                                      rejected.addAll(wq);
-                                      widget.event!.waitingQueue = [];
+                                      popAll(pQ, noQueue);
+                                      popAll(wQ, noQueue);
                                     }
-                                  } else if (e.type == 'H' &&
-                                      e.firstInitType != 'H') {
+                                  }
+
+                                  /// type conflict
+
+                                  if (e.type == 'L') {
+                                    // empty wQ for Shiur,
+                                    var thereIsPlace =
+                                        m >= wQ.length + pQ.length;
+                                    if (thereIsPlace) {
+                                      // auto accept all waiting
+                                      popAll(wQ, pQ, accepted);
+                                    } else {
+                                      popAll(wQ, noQueue);
+                                    }
+                                  }
+                                  if (e.type == 'H' && e.firstInitType != 'H') {
                                     // auto move all to waiting
-                                    e.waitingQueue!.addAll(e.participants!);
-                                    waiting.addAll(e.participants!);
-                                    e.participants = [];
+                                    popAll(pQ, wQ, waiting);
                                   }
 
                                   ///
-                                  /// target[Gender] conflict  [affect rejected,waitingQueue,participants]
+                                  /// target conflict
                                   ///
                                   Set<String> tmp = {};
-                                  var rejectDueGender = (List list) async =>
-                                      Future.wait(list.map((mail) =>
+                                  await Future.wait((pQ + wQ + lQ + rQ).map(
+                                      (mail) =>
                                           mongoDB!.getUser(mail).then((user) {
-                                            /*String? avoid = <String?, String>{
-                                              "F": "גברים",
-                                              "M": "נשים"
-                                            }[user.gender];
-                                            if (avoid == e.targetGender) {*/
                                             if (!user.isTargetedForMe(e)) {
                                               tmp.add(user.email!);
                                             }
                                           })));
-                                  await rejectDueGender(e.participants!);
-                                  await rejectDueGender(e.waitingQueue!);
-                                  rejected.addAll(tmp);
-                                  e.participants = e.participants!
-                                      .where((v) => !tmp.contains(v))
-                                      .toList();
-                                  e.waitingQueue = e.waitingQueue!
-                                      .where((v) => !tmp.contains(v))
-                                      .toList();
+
+                                  tmp.forEach((element) {
+                                    pQ.remove(element);
+                                    wQ.remove(element);
+                                    lQ.remove(element);
+                                    rQ.remove(element);
+                                    noQueue.add(element);
+                                  });
+
                                   //////
                                   /// dates conflict
                                   /// probably overwritten, or maybe not, anyway it done in ChooseDates.dart
                                   ///
-                                  accepted = accepted.difference(rejected);
-                                  waiting = waiting.difference(rejected);
-                                  rejected.addAll(widget.event!.rejectedQueue);
-                                  widget.event!.rejectedQueue =
-                                      rejected.toList();
+                                  accepted = accepted.difference(noQueue);
+                                  waiting = waiting.difference(noQueue);
 
                                   // update event
                                   mongoDB!.updateEvent(widget.event!).then(
@@ -367,7 +359,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                           : "עידכן";
                                       var msg = g + " " + t;
                                       // rejected msg format:
-                                      if (rejected.contains(personToNotify)) {
+                                      if (noQueue.contains(personToNotify)) {
                                         msg = Globals.currentUser!.gender == 'F'
                                             ? "ביטלה רישומך"
                                             : "ביטל רישומך";
@@ -377,6 +369,9 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                         msg = Globals.currentUser!.gender == 'F'
                                             ? "הפכה השיעור לחברותא. נרשמת לתור המתנה"
                                             : "הפך השיעור לחברותא. נרשמת לתור המתנה";
+                                        if (maxParticipantsConflict) {
+                                          msg = "הועברת לתור המתנה";
+                                        }
                                       }
                                       if (accepted.contains(personToNotify)) {
                                         msg = Globals.currentUser!.gender == 'F'
