@@ -10,14 +10,27 @@ import 'iconed_button.dart';
 //
 // [L,H] loading - loading...
 // [L,H] success - this shiur/havruta is online
+// cant join:
 // [L,H] full - you can't join shiur\ask to join havruta since it full
+// [L,H] rejected - you can't join unless the creator accept you
+// [L,H] notForMe - Globals.currentUser?.isTargetedForMe(event)!=true
 // examples:
 // shiur[L]:      idle  <-> loading <-> success / fail
 //               or start at full
 // HAVRUTA[H]:    idle2 <-> loading <-> fail2
 //               or start at[if creator accept request]: fail/full/success
 //
-enum ButtonState { idle, loading, success, fail, full, idle2, fail2 }
+enum ButtonState {
+  idle,
+  loading,
+  success,
+  fail,
+  full,
+  idle2,
+  fail2,
+  rejected,
+  notForMe
+}
 
 class ProgressButton extends StatefulWidget {
   final Map<ButtonState, Widget> stateWidgets;
@@ -105,7 +118,11 @@ class ProgressButton extends StatefulWidget {
       ButtonState.success: buildChildWithIcon(
           iconedButtons[ButtonState.success]!, iconPadding, textStyle),
       ButtonState.full: buildChildWithIcon(
-          iconedButtons[ButtonState.full]!, iconPadding, textStyle)
+          iconedButtons[ButtonState.full]!, iconPadding, textStyle),
+      ButtonState.rejected: buildChildWithIcon(
+          iconedButtons[ButtonState.rejected]!, iconPadding, textStyle),
+      ButtonState.notForMe: buildChildWithIcon(
+          iconedButtons[ButtonState.notForMe]!, iconPadding, textStyle),
     };
 
     Map<ButtonState, Color?> stateColors = {
@@ -115,7 +132,9 @@ class ProgressButton extends StatefulWidget {
       ButtonState.fail: iconedButtons[ButtonState.fail]!.color,
       ButtonState.fail2: iconedButtons[ButtonState.fail2]!.color,
       ButtonState.success: iconedButtons[ButtonState.success]!.color,
-      ButtonState.full: iconedButtons[ButtonState.full]!.color
+      ButtonState.full: iconedButtons[ButtonState.full]!.color,
+      ButtonState.rejected: iconedButtons[ButtonState.rejected]!.color,
+      ButtonState.notForMe: iconedButtons[ButtonState.notForMe]!.color,
     };
 
     return ProgressButton(

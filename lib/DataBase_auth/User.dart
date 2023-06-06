@@ -53,13 +53,16 @@ class User {
     else if (gender == 'female') this.avatar = Globals.femaleAvatar;
   }
   // both User.isForMe && EventsSelectorBuilder.targetForMe should have same logic
-  bool isTargetedForMe(Event e, [bool okWhenCreator = true]) {
-    bool isOk = true;
-    String? avoid = {"F": "גברים", "M": "נשים"}[this.gender];
-    isOk = isOk && (avoid == null || avoid != e.targetGender);
-    isOk = isOk && Event.isStatusOk(e, status);
-    isOk = isOk && e.minAge <= age && age <= e.maxAge;
-    return isOk || (okWhenCreator && e.creatorUser == this.email);
+  // not consider rejectedQueue
+  bool isTargetedForMe(Event e, [bool okWhenCreator = true]) =>
+      whyIsNotTargetedForMe(e, okWhenCreator) == null;
+  String? whyIsNotTargetedForMe(Event e, [bool okWhenCreator = true]) {
+    if (okWhenCreator && e.creatorUser == this.email) return null;
+    String? avoid = {"גברים": "F", "נשים": "M"}[e.targetGender];
+    if (avoid != null && avoid == this.gender) return "מגדר";
+    if (!Event.isStatusOk(e, status)) return "סטטוס משפחתי";
+    if (e.minAge > age || age > e.maxAge) return "טווח גילאים";
+    return null;
   }
 
   int get age {
