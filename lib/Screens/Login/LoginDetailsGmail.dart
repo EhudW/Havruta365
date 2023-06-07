@@ -176,7 +176,7 @@ Widget genderField(gender_str) {
         femaleText: 'אישה',
         maleImage: NetworkImage(Globals.boyAvatar),
         //'https://image.flaticon.com/icons/png/512/180/180644.png'),
-        femaleImage: NetworkImage(Globals.girlAvatar),
+        femaleImage: NetworkImage(Globals.femaleAvatar),
         //'https://image.flaticon.com/icons/png/512/180/180678.png'),
         verticalAlignedText: true,
         selectedGenderTextStyle: TextStyle(
