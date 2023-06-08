@@ -136,8 +136,8 @@ class Event {
       moveToQueue(email, EventQueues.Participants);
   Future<bool> joinWaiting(String email) =>
       moveToQueue(email, EventQueues.Waiting);
-
-  Future<bool> moveToQueue(String email, EventQueues queue,
+  Future<bool> removeFromAllQueues(String email) => moveToQueue(email, null);
+  Future<bool> moveToQueue(String email, EventQueues? queue,
       {bool serverUpdate = true, bool thisUpdate = true}) async {
     var rslt = !serverUpdate ||
         (await Globals.db!.moveToEventQueue(this.id, email, queue));

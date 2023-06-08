@@ -128,7 +128,7 @@ class Mongo {
   }
 
   Future<bool> moveToEventQueue(
-      ObjectId eventId, String email, EventQueues queue) async {
+      ObjectId eventId, String email, EventQueues? queue) async {
     var mb = ModifierBuilder();
     var collection = Globals.db!.db.collection('Events');
     for (EventQueues option in EventQueues.values) {
