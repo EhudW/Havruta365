@@ -23,12 +23,12 @@ enum MyPrintType {
 
 Map<MyPrintType, bool> myPrintTypes = {
   MyPrintType.None: true,
-  MyPrintType.TimerTick: true,
-  MyPrintType.LoadProperty: true,
-  MyPrintType.Mongo2: true,
-  MyPrintType.Mongo2Test: true,
-  MyPrintType.Rethrow: true,
-  MyPrintType.Nnim: true,
+  MyPrintType.TimerTick: false,
+  MyPrintType.LoadProperty: false,
+  MyPrintType.Mongo2: false,
+  MyPrintType.Mongo2Test: false,
+  MyPrintType.Rethrow: false,
+  MyPrintType.Nnim: false,
 };
 // print formatted log:
 // example:

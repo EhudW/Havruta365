@@ -143,7 +143,11 @@ class _HomePageState extends State<LoginMoreDetails> {
                       // <-- Button color
                       foregroundColor: Colors.teal),
                   onPressed: () async {
-                    Globals.db!.saveIdLocally();
+                    Globals.currentUser = Globals.tmpNextUser;
+                    // ignore: unused_local_variable
+                    var res =
+                        await Globals.db!.insertNewUser(Globals.currentUser!);
+                    await Globals.db!.saveIdLocally();
                     yeshiva_str = yeshiva.text;
                     heightcm_str = heightcm.text;
                     description_str = description.text;
@@ -156,11 +160,14 @@ class _HomePageState extends State<LoginMoreDetails> {
                     if (Globals.currentUser!.avatar == null)
                       Globals.currentUser!.avatar =
                           'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
-                    Globals.db!.updateUser(Globals.currentUser!);
+                    await Globals.db!.updateUser(Globals.currentUser!);
                     Globals.onNewLogin(Globals.currentUser!);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) {
+                        Globals.tmpNextUser = null;
+                        return HomePage();
+                      }),
                     );
                   },
                 ),
@@ -187,8 +194,8 @@ class _HomePageState extends State<LoginMoreDetails> {
           child: CircleAvatar(
             radius: 60.0,
             backgroundColor: Colors.teal,
-            backgroundImage: (Globals.currentUser!.avatar != null)
-                ? NetworkImage(Globals.currentUser!.avatar!)
+            backgroundImage: (Globals.tmpNextUser?.avatar != null)
+                ? NetworkImage(Globals.tmpNextUser!.avatar!)
                 : null,
           ),
         ),
@@ -270,7 +277,7 @@ class _HomePageState extends State<LoginMoreDetails> {
     var file = File(image?.path ?? "");
     //String fileName = ObjectId().toString();
     String fileName = sha1
-        .convert(utf8.encode(Globals.currentUser!.email! + "avatar"))
+        .convert(utf8.encode(Globals.tmpNextUser!.email! + "avatar"))
         .toString();
     //check if an image was picked
     if (image != null) {
@@ -278,11 +285,11 @@ class _HomePageState extends State<LoginMoreDetails> {
           await _storage.ref().child('Images/$fileName').putFile(file);
       var downloadUrl = await snapshot.ref.getDownloadURL();
       setState(() {
-        Globals.currentUser!.avatar = downloadUrl;
+        Globals.tmpNextUser!.avatar = downloadUrl;
       });
     } else {
       setState(() {
-        Globals.currentUser!.avatar =
+        Globals.tmpNextUser!.avatar =
             'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
       });
     }

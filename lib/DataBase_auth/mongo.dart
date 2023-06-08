@@ -61,9 +61,10 @@ class Mongo {
     await collection.insertOne(e);
   }
 
-  Future<User> getUser(String userMail) async {
+  Future<User?> getUser(String userMail) async {
     var coll = Globals.db!.db.collection('Users');
     var user_json = await coll.findOne(where.eq('email', '$userMail'));
+    if (user_json == null) return null;
     User user = User.fromJson(user_json);
     return user;
   }
@@ -475,7 +476,7 @@ class Mongo {
       }
       String currDstMail = curr.dst_mail!;
       if (currDstMail.startsWith("ObjectId(")) continue;
-      cache[currDstMail] = cache[currDstMail] ?? await getUser(currDstMail);
+      cache[currDstMail] = cache[currDstMail] ?? (await getUser(currDstMail))!;
       User u = cache[currDstMail]!;
       curr.otherPersonAvatar = u.avatar!;
       curr.otherPersonName = u.name!;

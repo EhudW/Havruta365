@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
-
+// Login > LoginDetails      > LoginMoreDetails > HomePage   (regular email-pass)
+// Login > LoginDetailsGmail > LoginMoreDetails > HomePage   (signup using google)
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:havruta_project/Screens/Login/ForgetPassword.dart';
@@ -336,15 +337,18 @@ class _HomePageState extends State<Login> {
 
   Future signIn() async {
     // Try to connect via Google_Sign_In
+    try {
+      await GoogleSignInApi.logout();
+    } catch (e) {}
     final google_user = await GoogleSignInApi.login();
     if (google_user == null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('התחברות נכשלה')));
     } else {
       // if user exist --> HomePage
-      bool userExist = await Globals.db!.isUserExist(google_user.email);
-      if (userExist) {
-        Globals.onNewLogin(await Globals.db!.getUser(google_user.email));
+      User? user = await Globals.db!.getUser(google_user.email);
+      if (user != null) {
+        Globals.onNewLogin(user);
         // Save a token in user device
         Globals.db!.saveIdLocally();
         Navigator.of(context).pushReplacement(
@@ -356,7 +360,7 @@ class _HomePageState extends State<Login> {
         user.avatar = g_user.photoUrl;
         user.name = g_user.displayName;
         user.email = g_user.email;
-        Globals.currentUser = user;
+        Globals.tmpNextUser = user;
         // TODO - GO TO NEW SCREEN - SPECIFIC FOR GOOGLE
         // TODO - JUST REMOVE EMAIL AND NAME
         Navigator.of(context).pushReplacement(

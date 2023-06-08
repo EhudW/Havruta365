@@ -278,7 +278,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void onAvatarClick(types.User u) async {
-    User user = await Globals.db!.getUser(u.id);
+    User user = (await Globals.db!.getUser(u.id))!;
     timer.cancel();
     Navigator.push(context,
             MaterialPageRoute(builder: ((context) => UserDetailsPage(user))))

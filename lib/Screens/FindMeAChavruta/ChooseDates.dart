@@ -31,7 +31,7 @@ class ChooseDates extends StatefulWidget {
 class _ChooseDates extends State<ChooseDates> {
   final AuthService authenticate = AuthService();
 
-  DateTime firstDate = DateTime.now();
+  late DateTime firstDate;
   TimeOfDay time = TimeOfDay.now();
   DateTime? lastDate = DateTime.now();
   String? frequency = "יומי";
@@ -43,8 +43,9 @@ class _ChooseDates extends State<ChooseDates> {
       Event event = widget.event!;
       final DateTime now = DateTime.now();
       event.dates = (event.dates ?? []).where((t) => t.isAfter(now)).toList();
-      firstDate =
-          event.dates!.isNotEmpty ? event.dates!.first.toLocal() : firstDate;
+      firstDate = event.dates!.isNotEmpty
+          ? event.dates!.first.toLocal()
+          : DateTime.now().add(Duration(days: 1));
       lastDate =
           event.dates!.isNotEmpty ? event.dates!.last.toLocal() : lastDate;
       time = TimeOfDay.fromDateTime(firstDate);

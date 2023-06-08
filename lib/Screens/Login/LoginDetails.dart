@@ -195,9 +195,7 @@ class _HomePageState extends State<LoginDetails> {
                 // print("Digest as hex string: $digest");
                 user.password = digest.toString();
                 //user.password = password_str;
-                Globals.currentUser = user;
-                // ignore: unused_local_variable
-                var res = Globals.db!.insertNewUser(user);
+                Globals.tmpNextUser = user;
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginMoreDetails()),

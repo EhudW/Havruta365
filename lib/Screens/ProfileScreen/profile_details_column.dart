@@ -276,7 +276,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                             color: Colors.black,
                             letterSpacing: Globals.scaler.getWidth(.5))),
                     textDirection: TextDirection.rtl),
-                FontAwesomeIcons.userPen),
+                FontAwesomeIcons.shareNodes),
           ),
           SizedBox(
             height: Globals.scaler.getHeight(0.8),

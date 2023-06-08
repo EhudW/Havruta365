@@ -323,7 +323,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   await Future.wait((pQ + wQ + lQ + rQ).map(
                                       (mail) =>
                                           mongoDB!.getUser(mail).then((user) {
-                                            if (!user.isTargetedForMe(e)) {
+                                            if (user!.isTargetedForMe(e) ==
+                                                false) {
                                               tmp.add(user.email!);
                                             }
                                           })));

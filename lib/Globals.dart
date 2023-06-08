@@ -24,6 +24,7 @@ class Globals {
     FCM.onLogin();
   }
 
+  static User? tmpNextUser; //only for tmp use in the sign-up new user
   // one time heavy calc;
   static LoadProperty<List<Event>> rec = LoadProperty(
     (setter) async {

@@ -39,6 +39,14 @@ class _HomePageState extends State<LoginDetailsGmail> {
           children: <Widget>[
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
+                alignment: Alignment.center,
+                child: Text(
+                  Globals.tmpNextUser!.email!,
+                  style:
+                      GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
+                )),
+            SizedBox(height: Globals.scaler.getHeight(1)),
+            Align(
                 alignment: Alignment.centerRight,
                 child: Text(
                   "פרטים אישיים   ",
@@ -98,13 +106,10 @@ class _HomePageState extends State<LoginDetailsGmail> {
                   )..show(context);
                   return;
                 }
-                User user = Globals.currentUser!;
+                User user = Globals.tmpNextUser!;
                 user.address = address_str;
                 user.gender = gender_str;
                 user.birthDate = _dateTime;
-                // ignore: unused_local_variable
-                var res = Globals.db!.insertNewUser(user);
-                // .then((_) => Globals.updateRec()); done at LoginMoreDetails
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginMoreDetails()),
