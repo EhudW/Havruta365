@@ -132,41 +132,44 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
             /// Add mark box to allow the user select and mark a few users.
             bool check_box_value = widget.selected_users.contains(userMail);
             var multi_select_box = Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(width: 3.0, color: Colors.blue),
-                  left: BorderSide(width: 3.0, color: Colors.blue),
-                  right: BorderSide(width: 3.0, color: Colors.blue),
-                  bottom: BorderSide(width: 3.0, color: Colors.blue),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    top: BorderSide(width: 3.0, color: Colors.blue),
+                    left: BorderSide(width: 3.0, color: Colors.blue),
+                    right: BorderSide(width: 3.0, color: Colors.blue),
+                    bottom: BorderSide(width: 3.0, color: Colors.blue),
+                  ),
+                  shape: BoxShape.circle,
                 ),
-                shape: BoxShape.circle,
-              ),
-              width: 20,
-              height: 20,
-              child: Checkbox(
-                value: check_box_value,
-                side: BorderSide(
-                  color: Colors.blue,
-                  width: 0.0,
-                ),
-                checkColor: Colors.blue,
-                // fillColor: Colors.blue,
-                activeColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                splashRadius: 100.0,
-                onChanged: (bool? value_) {
-                  setState(() {
-                    check_box_value = value_!;
-                  });
-                  if (value_!)
-                    widget.selected_users.add(userMail);
-                  else
-                    widget.selected_users.remove(userMail);
-                },
-              ),
-            );
+                width: 20,
+                height: 20,
+                child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return Checkbox(
+                      value: check_box_value,
+                      side: BorderSide(
+                        color: Colors.blue,
+                        width: 0.0,
+                      ),
+                      checkColor: Colors.blue,
+                      // fillColor: Colors.blue,
+                      activeColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      splashRadius: 100.0,
+                      onChanged: (bool? value_) {
+                        setState(() {
+                          check_box_value = value_!;
+                        });
+                        if (value_!)
+                          widget.selected_users.add(userMail);
+                        else
+                          widget.selected_users.remove(userMail);
+                      },
+                    );
+                  },
+                ));
 
             var profile = [
               widget.is_creator && !widget.event!.leftQueue.contains(userMail)
