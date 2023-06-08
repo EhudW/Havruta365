@@ -25,6 +25,23 @@ class UserDetailsColumn extends StatelessWidget {
     var size_field = Globals.scaler.getTextSize(8);
     var size_header = Globals.scaler.getTextSize(8);
 
+    var split_str = (String str, int split_every_word_longer_than) {
+      var words = str.split(' ');
+      var new_str = '';
+      for (var word in words) {
+        if (word.length <= split_every_word_longer_than) {
+          new_str += word + ' ';
+        } else {
+          while (word.length > split_every_word_longer_than) {
+            new_str += word.substring(0, split_every_word_longer_than) + '\n';
+            word = word.substring(split_every_word_longer_than);
+          }
+          new_str += word + ' ';
+        }
+      }
+      return new_str;
+    };
+
     var shorten_str = (String str, int length) =>
         str.length > length ? str.substring(0, length) + '...' : str;
 
@@ -32,8 +49,7 @@ class UserDetailsColumn extends StatelessWidget {
         style: GoogleFonts.alef(fontSize: size_header),
         textDirection: TextDirection.rtl);
 
-    var str_to_field = (String str, int length) => Text(
-        shorten_str(str, length),
+    var str_to_field = (String str) => Text(str,
         style:
             GoogleFonts.alef(fontSize: size_field, fontWeight: FontWeight.bold),
         textDirection: TextDirection.rtl);
@@ -46,7 +62,7 @@ class UserDetailsColumn extends StatelessWidget {
 
     var create_long_row = (IconData icon, String header, String field) =>
         Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-          str_to_field(field, 26 - header.length),
+          str_to_field(shorten_str(field, 26 - header.length)),
           SizedBox(width: Globals.scaler.getWidth(0.5)),
           str_to_header(header, size_header),
           SizedBox(width: Globals.scaler.getWidth(0.5)),
@@ -56,7 +72,7 @@ class UserDetailsColumn extends StatelessWidget {
     var create_short_row = (IconData icon, String field) => Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            str_to_field(field, 25),
+            str_to_field(split_str(field, 30)),
             SizedBox(width: Globals.scaler.getWidth(0.5)),
             icon_to_widget(icon),
           ],
