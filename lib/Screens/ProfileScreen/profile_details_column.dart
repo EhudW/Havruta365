@@ -11,6 +11,7 @@ import 'package:havruta_project/Screens/HomePageScreen/Events/MyEventsPage.dart'
 import 'package:havruta_project/Screens/HomePageScreen/Events/modelsHomePages.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/UserChanges/ChangesDetails.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -71,6 +72,30 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
   Widget build(BuildContext context) {
     var size_header = Globals.scaler.getTextSize(8.5);
     var icon_size = Globals.scaler.getTextSize(11);
+
+    var create_button_container = (Text text, IconData icon) => Container(
+          height: Globals.scaler.getHeight(3),
+          width: Globals.scaler.getWidth(26),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(0),
+              border: Border.all(
+                  width: Globals.scaler.getWidth(0.1),
+                  color: Colors.grey[350]!),
+              color: Colors.white),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(left: Globals.scaler.getWidth(0))),
+                text,
+                SizedBox(width: Globals.scaler.getWidth(1.5)),
+                Icon(
+                  icon,
+                  size: icon_size,
+                  color: Colors.brown[400],
+                ),
+              ]),
+        );
     return Expanded(
       child: SingleChildScrollView(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -220,37 +245,38 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChangesDetails()));
             },
-            child: Container(
-              height: Globals.scaler.getHeight(3),
-              width: Globals.scaler.getWidth(26),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(0),
-                  border: Border.all(
-                      width: Globals.scaler.getWidth(0.1),
-                      color: Colors.grey[350]!),
-                  color: Colors.white),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: Globals.scaler.getWidth(0))),
-                    Text("עדכון פרטים",
-                        style: GoogleFonts.secularOne(
-                            fontSize: size_header,
-                            fontWeight: FontWeight.bold,
-                            textStyle: TextStyle(
-                                color: Colors.black,
-                                letterSpacing: Globals.scaler.getWidth(.5))),
-                        textDirection: TextDirection.rtl),
-                    SizedBox(width: Globals.scaler.getWidth(1.5)),
-                    Icon(
-                      FontAwesomeIcons.userPen,
-                      size: icon_size,
-                      color: Colors.brown[400],
-                    ),
-                  ]),
-            ),
+            child: create_button_container(
+                Text("עדכון פרטים",
+                    style: GoogleFonts.secularOne(
+                        fontSize: size_header,
+                        fontWeight: FontWeight.bold,
+                        textStyle: TextStyle(
+                            color: Colors.black,
+                            letterSpacing: Globals.scaler.getWidth(.5))),
+                    textDirection: TextDirection.rtl),
+                FontAwesomeIcons.userPen),
+          ),
+          SizedBox(
+            height: Globals.scaler.getHeight(0.8),
+          ),
+          GestureDetector(
+            onTap: () {
+              Share.share(
+                  "היי! הייתי רוצה להמליץ לך על האפליקציה חברותא+" +
+                      "\n https://play.google.com/store/apps/details?id=not.exist.yet.main",
+                  subject:
+                      "https://play.google.com/store/apps/details?id=not.exist.yet.main");
+            },
+            child: create_button_container(
+                Text("המלץ לחבר",
+                    style: GoogleFonts.secularOne(
+                        fontSize: size_header,
+                        fontWeight: FontWeight.bold,
+                        textStyle: TextStyle(
+                            color: Colors.black,
+                            letterSpacing: Globals.scaler.getWidth(.5))),
+                    textDirection: TextDirection.rtl),
+                FontAwesomeIcons.userPen),
           ),
           SizedBox(
             height: Globals.scaler.getHeight(0.8),
@@ -268,44 +294,17 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                 currentUser = GoogleSignInApi.currentUser();
                 await GoogleSignInApi.logout();
               }
-              // if (currentUser != null) {
-              //   // Disconnect from gmail
-              //   // await FirebaseAuth.instance.signOut();
-              //   await GoogleSignInApi.logout();
-              // }
-              // Remove mail from local phone and go to Login page
               final SharedPreferences prefs = await _prefs;
               await prefs.setString('id', "");
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => Login()));
             },
-            child: Container(
-              height: Globals.scaler.getHeight(3),
-              width: Globals.scaler.getWidth(26),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(0),
-                  border: Border.all(
-                      width: Globals.scaler.getWidth(0.1),
-                      color: Colors.grey[350]!),
-                  color: Colors.white),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: Globals.scaler.getWidth(3))),
-                    Text("התנתק",
-                        style: GoogleFonts.secularOne(
-                            fontSize: size_header, fontWeight: FontWeight.bold),
-                        textDirection: TextDirection.rtl),
-                    SizedBox(width: Globals.scaler.getWidth(5)),
-                    Icon(
-                      FontAwesomeIcons.rightFromBracket,
-                      size: icon_size,
-                      color: Colors.brown[400],
-                    ),
-                  ]),
-            ),
+            child: create_button_container(
+                Text("התנתק",
+                    style: GoogleFonts.secularOne(
+                        fontSize: size_header, fontWeight: FontWeight.bold),
+                    textDirection: TextDirection.rtl),
+                FontAwesomeIcons.rightFromBracket),
           )
         ]),
       ),

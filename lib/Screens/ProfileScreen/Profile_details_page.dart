@@ -28,7 +28,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ProfileDetailHeader(widget.user),
-            SizedBox(height: Globals.scaler.getHeight(6)),
+            SizedBox(height: Globals.scaler.getHeight(4)),
             ProfileDetailsColumn(widget.user),
           ],
         ),

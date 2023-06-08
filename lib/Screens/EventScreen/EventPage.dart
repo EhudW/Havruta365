@@ -1,8 +1,11 @@
 //import 'dart:io';
 
 //import 'package:another_flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/Screens/EventScreen/FurtherDetailsScreen.dart';
+import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
+import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
@@ -84,6 +87,61 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
+  _deleteEvent() async {
+    // notify persons who joined/waiting to be joined
+    var toNotify = [];
+    toNotify.addAll(widget.event!.participants ?? []);
+    toNotify.addAll(widget.event!.waitingQueue ?? []);
+    var t = widget.event!.type == 'H' ? "חברותא" : "שיעור";
+    var g = Globals.currentUser!.gender == 'F' ? "ביטלה" : "ביטל";
+    var msg = g + " " + t;
+    // try to delete event
+    var succeed = await Globals.db!.deleteEvent(widget.event!.id);
+    // notify the people
+    if (succeed) {
+      for (String personToNotify in toNotify) {
+        Globals.db!.insertNotification(NotificationUser.fromJson({
+          'creatorUser': Globals.currentUser!.email,
+          'destinationUser': personToNotify,
+          'creationDate': DateTime.now(),
+          'message': msg,
+          'type': 'eventDeleted',
+          'idEvent': widget.event!.id,
+          'name': Globals.currentUser!.name,
+        }));
+      }
+    }
+    // show flushbar to the creator
+    if (!succeed) {
+      Flushbar(
+        title: 'מחיקת אירוע',
+        messageText: Text('אירעה שגיאה בתהליך המחיקה !',
+            textDirection: ui.TextDirection.rtl,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+        duration: Duration(seconds: 3),
+      )..show(context);
+    } else {
+      Flushbar(
+        title: 'האירוע נמחק',
+        messageText: Text('מיד תועבר לעמוד הבית !',
+            textDirection: ui.TextDirection.rtl,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.teal[400], fontSize: 20)),
+        duration: Duration(seconds: 2),
+      )..show(context);
+    }
+    // move creator to the home page
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      });
+    });
+  }
+
   AppBar BuildAppBar(snapshot, type) {
     return AppBar(
         title: Text(type),
@@ -114,7 +172,7 @@ class _EventPageState extends State<EventPage> {
         ]);
   }
 
-  Drawer BuildDrawer(type) {
+  Drawer BuildDrawer(type, amICreator) {
     String topic = widget.event?.topic?.trim() ?? "";
     String book = widget.event?.book?.trim() ?? "";
     String t_topic = topic != "" ? " ב" + topic : "";
@@ -178,6 +236,55 @@ class _EventPageState extends State<EventPage> {
                   subject: "https://www.google.com/");
             },
           ),
+          amICreator
+              ? ListTile(
+                  title: Text('צור על בסיס'),
+                  onTap: () async {
+                    widget.event!.shouldDuplicate = true;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FindMeAChavruta1(
+                                initEvent: widget.event,
+                              )),
+                    );
+                  },
+                )
+              : Container(),
+          amICreator
+              ? ListTile(
+                  title: Text('ערוך אירוע'),
+                  onTap: () async {
+                    widget.event!.shouldDuplicate = false;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FindMeAChavruta1(
+                                initEvent: widget.event,
+                                barTitle: "עריכת אירוע קיים  ",
+                              )),
+                    );
+                  },
+                )
+              : Container(),
+          amICreator
+              ? ListTile(
+                  title: Text('מחק אירוע'),
+                  onTap: () async {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: ((builder) => bottomSheet(
+                            context,
+                            () {
+                              Navigator.pop(context);
+                              _deleteEvent();
+                            },
+                            () => Navigator.pop(context),
+                          )),
+                    );
+                  },
+                )
+              : Container(),
         ],
       ),
     );
@@ -208,15 +315,15 @@ class _EventPageState extends State<EventPage> {
     var initPub =
         (bool wq) => t_pre + (wq ? "למבקשים להצטרף ל" : "למשתתפי ה") + t_suffix;
 
-    var rejectOrAcceptFactory = (func) => (userMail) {
-          showModalBottomSheet(
+    var rejectOrAcceptFactory = (func) => (userMail) async {
+          /*showModalBottomSheet(
             context: context,
-            builder: ((builder) => bottomSheet(context, () async {
-                  Navigator.pop(context);
-                  await func(userMail);
-                  refresh();
-                }, () => Navigator.pop(context))),
-          );
+            builder: ((builder) => bottomSheet(context, () async {*/
+          //Navigator.pop(context);
+          await func(userMail);
+          refresh();
+          //, () => Navigator.pop(context));
+          //);
         };
     var reject = rejectOrAcceptFactory((userMail) async {
       await widget.event!.reject(userMail);
@@ -263,7 +370,7 @@ class _EventPageState extends State<EventPage> {
             case ConnectionState.done:
               return Scaffold(
                 appBar: BuildAppBar(snapshot, type),
-                drawer: BuildDrawer(type),
+                drawer: BuildDrawer(type, amICreator),
                 body: SingleChildScrollView(
                   child: Column(children: [
                     MainDetails(widget.event!),
@@ -279,29 +386,16 @@ class _EventPageState extends State<EventPage> {
                             notifyParent: refresh),
                     SizedBox(height: 8.0),
                     Divider(),
-                    /*Container(
-                      height: Globals.scaler.getHeight(5),
-                      child:*/
                     widget.event!.type == "L" || amIParticipant || amICreator
                         ? ParticipentsScroller(
-                            //TODO: edit widget
-                            widget.event!.participants,
-                            title: "משתתפים",
-                            initPubMsgText: initPub(false),
-                          )
-                        : Container(),
-
-                    amICreator && widget.event!.type == 'H'
-                        ? ParticipentsScroller(
-                            widget.event!.waitingQueue,
-                            title: "ממתינים לאישור",
-                            initPubMsgText: initPub(true),
                             accept: accept,
                             reject: reject,
+                            title: "משתתפים",
+                            initPubMsgText: initPub(
+                                amICreator && widget.event!.type == 'H'),
+                            event: widget.event,
                           )
                         : Container(),
-
-                    //),
                     SizedBox(height: Globals.scaler.getHeight(1)),
                   ]),
                 ),

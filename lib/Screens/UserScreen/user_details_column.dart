@@ -24,118 +24,84 @@ class UserDetailsColumn extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
     var size_field = Globals.scaler.getTextSize(8);
     var size_header = Globals.scaler.getTextSize(8);
+
+    var split_str = (String str, int split_every_word_longer_than) {
+      var words = str.split(' ');
+      var new_str = '';
+      for (var word in words) {
+        if (word.length <= split_every_word_longer_than) {
+          new_str += word + ' ';
+        } else {
+          while (word.length > split_every_word_longer_than) {
+            new_str += word.substring(0, split_every_word_longer_than) + '\n';
+            word = word.substring(split_every_word_longer_than);
+          }
+          new_str += word + ' ';
+        }
+      }
+      return new_str;
+    };
+
+    var shorten_str = (String str, int length) =>
+        str.length > length ? str.substring(0, length) + '...' : str;
+
+    var str_to_header = (String str, double font_size) => Text(str,
+        style: GoogleFonts.alef(fontSize: size_header),
+        textDirection: TextDirection.rtl);
+
+    var str_to_field = (String str) => Text(str,
+        style:
+            GoogleFonts.alef(fontSize: size_field, fontWeight: FontWeight.bold),
+        textDirection: TextDirection.rtl);
+
+    var icon_to_widget = (IconData icon) => Icon(
+          icon,
+          size: 26.0,
+          color: Colors.grey[600],
+        );
+
+    var create_long_row = (IconData icon, String header, String field) =>
+        Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+          str_to_field(shorten_str(field, 26 - header.length)),
+          SizedBox(width: Globals.scaler.getWidth(0.5)),
+          str_to_header(header, size_header),
+          SizedBox(width: Globals.scaler.getWidth(0.5)),
+          icon_to_widget(icon),
+        ]);
+
+    var create_short_row = (IconData icon, String field) => Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            str_to_field(split_str(field, 30)),
+            SizedBox(width: Globals.scaler.getWidth(0.5)),
+            icon_to_widget(icon),
+          ],
+        );
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user!.yeshiva!,
-                style: GoogleFonts.alef(
-                    fontSize: size_field, fontWeight: FontWeight.bold),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: Globals.scaler.getWidth(0.5)),
-            Text("למד ב-",
-                style: GoogleFonts.alef(fontSize: size_header),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: Globals.scaler.getWidth(0.5)),
-            Icon(
-              FontAwesomeIcons.userGraduate,
-              size: 26.0,
-              color: Colors.grey[600],
-            ),
-          ]),
+          create_long_row(
+              FontAwesomeIcons.userGraduate, "למד ב-", user!.yeshiva!),
           SizedBox(height: 15.0),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user!.address!,
-                style: GoogleFonts.alef(
-                    fontSize: size_field, fontWeight: FontWeight.bold),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: 5.0),
-            Text("גר ב-",
-                style: GoogleFonts.alef(fontSize: size_header),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: 10.0),
-            Icon(
-              FontAwesomeIcons.locationDot,
-              size: 26.0,
-              color: Colors.grey[600],
-            ),
-          ]),
+          create_long_row(
+              FontAwesomeIcons.locationDot, "גר ב-", user!.address!),
           SizedBox(height: 15.0),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(gender(),
-                style: GoogleFonts.alef(
-                    fontSize: size_field, fontWeight: FontWeight.bold),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: 10.0),
-            Icon(
-              FontAwesomeIcons.restroom,
-              size: 26.0,
-              color: Colors.grey[600],
-            ),
-          ]),
+          create_short_row(FontAwesomeIcons.restroom, gender()),
           SizedBox(height: 15.0),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text("בגיל " + user!.age.toString(),
-                style: GoogleFonts.alef(
-                    fontSize: size_field, fontWeight: FontWeight.bold),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: 10.0),
-            Icon(
-              FontAwesomeIcons.calendarDay,
-              size: 26.0,
-              color: Colors.grey[600],
-            ),
-          ]),
+          create_short_row(
+              FontAwesomeIcons.calendarDay, "בגיל " + user!.age.toString()),
           user!.heightcm != null ? SizedBox(height: 15.0) : SizedBox(),
           user!.heightcm != null
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                      Text(user!.heightcm!.toString(),
-                          style: GoogleFonts.alef(
-                              fontSize: size_field,
-                              fontWeight: FontWeight.bold),
-                          textDirection: TextDirection.ltr),
-                      SizedBox(width: Globals.scaler.getWidth(0.5)),
-                      Text("גובה - ס\"מ",
-                          style: GoogleFonts.alef(fontSize: size_header),
-                          textDirection: TextDirection.rtl),
-                      SizedBox(width: Globals.scaler.getWidth(0.5)),
-                      Icon(
-                        FontAwesomeIcons.rulerVertical,
-                        size: 26.0,
-                        color: Colors.grey[600],
-                      ),
-                    ])
+              ? create_long_row(FontAwesomeIcons.rulerVertical, "גובה - ס\"מ",
+                  user!.heightcm!.toString())
               : SizedBox(),
           SizedBox(height: 15.0),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user!.status!,
-                style: GoogleFonts.alef(
-                    fontSize: size_field, fontWeight: FontWeight.bold),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: 10.0),
-            Icon(
-              FontAwesomeIcons.heart,
-              size: 26.0,
-              color: Colors.grey[600],
-            ),
-          ]),
+          create_short_row(FontAwesomeIcons.heart, user!.status!),
           SizedBox(height: 15.0),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            Text(user!.description!,
-                style: GoogleFonts.alef(
-                    fontSize: size_field, fontWeight: FontWeight.bold),
-                textDirection: TextDirection.rtl),
-            SizedBox(width: 10.0),
-            Icon(
-              FontAwesomeIcons.circleInfo,
-              size: 26.0,
-              color: Colors.grey[600],
-            ),
-          ])
+          create_short_row(FontAwesomeIcons.circleInfo, user!.description!),
         ],
       ),
     );
