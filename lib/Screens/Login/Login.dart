@@ -210,7 +210,7 @@ class _HomePageState extends State<Login> {
                                         await _prefs;
                                     await prefs.setString('id', id.toString());
                                     // Go to HomePage
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => HomePage()),
@@ -363,8 +363,8 @@ class _HomePageState extends State<Login> {
         Globals.tmpNextUser = user;
         // TODO - GO TO NEW SCREEN - SPECIFIC FOR GOOGLE
         // TODO - JUST REMOVE EMAIL AND NAME
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => LoginDetailsGmail()));
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => LoginDetailsGmail()));
       }
     }
   }

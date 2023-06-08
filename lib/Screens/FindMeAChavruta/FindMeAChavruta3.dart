@@ -254,7 +254,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                   widget.event!.rejectedQueue = [];
                                   widget.event!.leftQueue = [];
                                   mongoDB!.insertEvent(widget.event!).then(
-                                      (value) => Navigator.push(
+                                      (value) => Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
@@ -393,7 +393,7 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                       Globals.db!.insertNotification(
                                           NotificationUser.fromJson(m));
                                     }
-                                  }).then((value) => Navigator.push(
+                                  }).then((value) => Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => HomePage())));

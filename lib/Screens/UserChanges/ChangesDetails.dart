@@ -217,7 +217,7 @@ class _HomePageState extends State<ChangesDetails> {
                 //var res = Globals.db.insertNewUser(user);
                 print("change details Succeeded");
 
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => HomePage()),
                 );

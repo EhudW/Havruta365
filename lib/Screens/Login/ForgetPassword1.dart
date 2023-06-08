@@ -119,7 +119,7 @@ class _HomePageState extends State<ForgetPassword1> {
                 )..show(context);
                 Future.delayed(Duration(seconds: 3), () {
                   setState(() {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => Login()),
                     );
