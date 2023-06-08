@@ -14,7 +14,7 @@ import 'dart:ui' as ui;
 // ignore: must_be_immutable
 class ParticipentsScroller extends StatefulWidget {
   String initPubMsgText;
-  ParticipentsScroller(List<dynamic>? usersMail,
+  ParticipentsScroller(
       {this.title = "משתתפים",
       this.accept,
       this.reject,
@@ -22,20 +22,16 @@ class ParticipentsScroller extends StatefulWidget {
       this.event}) {
     var current_user = Globals.currentUser!.email;
     this.is_creator = event!.creatorUser == current_user;
-    this.usersMail = this.is_creator
-        ? {event!.participants!, event!.waitingQueue!}.toList()
-        : event!.participants!;
-    this.usersMail.remove(current_user);
-    this.usersMail = usersMail ?? [];
+    //this.usersMail = usersMail ?? [];
     this.selected_users = [];
     this.userColl = Globals.db!.db.collection('Users');
   }
   String title;
   var is_creator;
-  var usersMail;
+  Set<dynamic> usersMail = {};
+  var selected_users;
   var userColl;
   Event? event;
-  var selected_users;
   void Function(String)? accept;
   void Function(String)? reject;
 
@@ -46,19 +42,49 @@ class ParticipentsScroller extends StatefulWidget {
 class _ParticipentsScrollerState extends State<ParticipentsScroller> {
   //bool get hasButton => reject != null || accept != null;
   final bool hasButton = true;
+  //List<dynamic> usersMail = [];
 
   Future getUser(String? userMail) async {
     var user = await widget.userColl.findOne(where.eq('email', '$userMail'));
     return user;
   }
 
+  void _rejectList() {
+    setState(() {
+      for (var user in widget.selected_users) {
+        if (widget.event!.rejectedQueue!.contains(user)) return;
+
+        widget.reject!(user);
+        widget.event!.rejectedQueue!.add(user);
+        widget.event!.leftQueue!.remove(user);
+        widget.event!.participants!.remove(user);
+        widget.event!.waitingQueue!.remove(user);
+      }
+      widget.selected_users.clear();
+    });
+  }
+
+  void _acceptList() {
+    setState(() {
+      for (var user in widget.selected_users) {
+        if (widget.event!.participants!.contains(user)) return;
+        //if (widget.event!.rejectedQueue!.contains(user)) {}
+        widget.accept!(user);
+        widget.event!.participants!.add(user);
+        widget.event!.waitingQueue!.remove(user);
+        widget.event!.leftQueue!.remove(user);
+        widget.event!.rejectedQueue!.remove(user);
+      }
+      widget.selected_users.clear();
+    });
+  }
+
   Widget _creatorCommands() {
-    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       widget.reject == null
           ? SizedBox()
           : TextButton(
-              onPressed: () =>
-                  widget.selected_users.map((x) => widget.reject!(x)),
+              onPressed: () => _rejectList(),
               child: Text("דחה"),
               style: TextButton.styleFrom(
                   backgroundColor: Colors.red, foregroundColor: Colors.white)),
@@ -68,8 +94,7 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
       widget.accept == null
           ? SizedBox()
           : TextButton(
-              onPressed: () =>
-                  widget.selected_users.map((x) => widget.accept!(x)),
+              onPressed: () => _acceptList(),
               child: Text("אשר"),
               style: TextButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -81,7 +106,7 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
   }
 
   Widget _buildActor(BuildContext ctx, int index) {
-    var userMail = widget.usersMail[index];
+    var userMail = widget.usersMail.elementAt(index);
     // TODO find user via mail and get it from the mongo
     // build user: avatar, name, button to the user profile
     //Future<User> user = Globals.db.getUser(userMail);
@@ -106,20 +131,54 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
 
             /// Add mark box to allow the user select and mark a few users.
             bool check_box_value = widget.selected_users.contains(userMail);
-            var multi_select_box = Checkbox(
-              value: check_box_value,
-              onChanged: (bool? value_) {
-                setState(() {
+            var multi_select_box = Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(width: 3.0, color: Colors.blue),
+                  left: BorderSide(width: 3.0, color: Colors.blue),
+                  right: BorderSide(width: 3.0, color: Colors.blue),
+                  bottom: BorderSide(width: 3.0, color: Colors.blue),
+                ),
+                shape: BoxShape.circle,
+              ),
+              width: 20,
+              height: 20,
+              child: Checkbox(
+                value: check_box_value,
+                side: BorderSide(
+                  color: Colors.blue,
+                  width: 0.0,
+                ),
+                checkColor: Colors.blue,
+                // fillColor: Colors.blue,
+                activeColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                splashRadius: 100.0,
+                onChanged: (bool? value_) {
+                  setState(() {
+                    check_box_value = value_!;
+                  });
                   if (value_!)
                     widget.selected_users.add(userMail);
                   else
                     widget.selected_users.remove(userMail);
-                  check_box_value = value_!;
-                });
-              },
+                },
+              ),
             );
+
             var profile = [
-              widget.is_creator ? multi_select_box : Container(),
+              widget.is_creator && !widget.event!.leftQueue.contains(userMail)
+                  ? multi_select_box
+                  : SizedBox(
+                      width: 20,
+                    ),
+              widget.is_creator
+                  ? SizedBox(
+                      width: 8,
+                    )
+                  : Container(),
               CircleAvatar(
                 backgroundImage: NetworkImage(snapshot.data['avatar']),
                 radius: 20.0,
@@ -135,6 +194,9 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
                                 UserScreen(snapshot.data['email'])),
                       );
                     }),
+              ),
+              SizedBox(
+                width: 8,
               ),
               Padding(
                 padding: EdgeInsets.only(
@@ -158,24 +220,40 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
                 );
               },
             );
+            double iconSize = 10;
 
             Icon icons = Icon(
               FontAwesomeIcons.solidCircleCheck,
               size: Globals.scaler.getTextSize(0),
               color: Colors.green,
             );
+            ;
+            if (widget.event!.rejectedQueue!.contains(userMail))
+              icons = Icon(
+                FontAwesomeIcons.solidCircleXmark,
+                size: Globals.scaler.getTextSize(iconSize),
+                color: Colors.red,
+              );
+            if (widget.event!.leftQueue!.contains(userMail)) {
+              icons = Icon(
+                FontAwesomeIcons.circle,
+                size: Globals.scaler.getTextSize(iconSize),
+                color: Colors.red,
+              );
+            }
             if (widget.event!.participants!.contains(userMail))
               icons = Icon(
                 FontAwesomeIcons.solidCircleCheck,
-                size: Globals.scaler.getTextSize(8),
+                size: Globals.scaler.getTextSize(iconSize),
                 color: Colors.green,
               ); // V
-            if (widget.event!.rejectedQueue!.contains(userMail))
-              Icon(
-                FontAwesomeIcons.solidCircleXmark,
-                size: Globals.scaler.getTextSize(8),
-                color: Colors.red,
+            if (widget.event!.waitingQueue!.contains(userMail)) {
+              icons = Icon(
+                FontAwesomeIcons.solidCircleCheck,
+                size: Globals.scaler.getTextSize(0),
+                color: Colors.green,
               );
+            }
 
             List<Widget> _inner = [
               //Padding(
@@ -196,7 +274,7 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
                   },
                   child: Icon(
                     FontAwesomeIcons.solidMessage,
-                    size: Globals.scaler.getTextSize(8),
+                    size: Globals.scaler.getTextSize(iconSize),
                     color: Colors.blue,
                   ),
                 ),
@@ -208,23 +286,38 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
                     : SizedBox.shrink()
               ])
             ];
-            _inner = _inner.reversed
-                .toList()
-                .map((e) => Container(
-                      padding: EdgeInsets.only(
-                          top: hasButton ? 16 : 0, left: hasButton ? 0 : 16),
-                      margin: hasButton ? EdgeInsets.only(left: 16) : null,
-                      child: e,
-                    ))
-                .toList();
-            return hasButton
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: _inner,
-                  )
-                : Column(
-                    children: _inner,
-                  );
+            Map<Widget, bool> _inner_map = {};
+            _inner = _inner.reversed.toList();
+            widget.is_creator
+                ? _inner = _inner
+                    .map((e) => Container(
+                          padding: EdgeInsets.only(
+                              top: hasButton ? 16 : 0,
+                              left: hasButton ? 0 : 16),
+                          margin: hasButton ? EdgeInsets.only(left: 16) : null,
+                          child: e,
+                        ))
+                    .toList()
+                : _inner_map = {
+                    for (var v in _inner
+                        .toList()
+                        .map((e) => Container(
+                              padding: EdgeInsets.only(
+                                  top: hasButton ? 16 : 0,
+                                  left: hasButton ? 0 : 16),
+                              margin:
+                                  hasButton ? EdgeInsets.only(left: 16) : null,
+                              child: e,
+                            ))
+                        .toList())
+                      v: false
+                  };
+            //return widget.is_creator
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: _inner,
+            );
+
           default:
             return Text('default');
         }
@@ -234,6 +327,15 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
 
   @override
   Widget build(BuildContext context) {
+    widget.usersMail = widget.is_creator
+        ? {
+            widget.event!.participants!,
+            widget.event!.waitingQueue!,
+            widget.event!.rejectedQueue,
+            widget.event!.leftQueue
+          }.expand((x) => x).toList().toSet()
+        : widget.event!.participants!.toSet();
+    //widget.selected_users_ =   List.generate(widget.usersMail.length, (index) => false);
     // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
     //double extraHeight = 0;
@@ -287,7 +389,7 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
         Align(
           alignment: Alignment.center,
           child: Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -297,7 +399,8 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => SendScreen(
-                                  widget.usersMail, this.widget.initPubMsgText),
+                                  widget.usersMail.toList(),
+                                  this.widget.initPubMsgText),
                             )),
                         icon: Icon(FontAwesomeIcons.envelope, size: 18),
                         label: Text("שליחת הודעה לרשימה זו"),
