@@ -14,8 +14,9 @@ class MainDetails extends StatefulWidget {
   _MainDetailsState createState() => _MainDetailsState();
 }
 
-String FormatCountdownString(BuildContext context, int countdown_minutes) {
+String FormatCountdownString(BuildContext context, int total_minutes) {
   String countdown_string = "";
+  var countdown_minutes = total_minutes;
   if (countdown_minutes > 0) {
     countdown_string = "האירוע יתחיל בעוד ";
     if (countdown_minutes >= 1440) {
@@ -26,7 +27,15 @@ String FormatCountdownString(BuildContext context, int countdown_minutes) {
     if (countdown_minutes >= 60) {
       countdown_string +=
           (countdown_minutes / 60).floor().toString() + " שעות.";
-      //countdown_minutes = countdown_minutes % 60;
+    }
+    if (total_minutes >= 60 &&
+        countdown_minutes % 60 != 0 &&
+        countdown_minutes < 100) {
+      countdown_string += " ו";
+      countdown_string += (countdown_minutes % 60).toString() + " דקות.";
+    }
+    if (countdown_minutes % 60 != 0 && countdown_minutes < 100) {
+      countdown_string += countdown_minutes.toString() + " דקות.";
     }
     //countdown_string += countdown_minutes.toString() + " דקות";
   } else if (countdown_minutes == 0) {
