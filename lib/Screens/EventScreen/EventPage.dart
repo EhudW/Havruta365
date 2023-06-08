@@ -386,12 +386,8 @@ class _EventPageState extends State<EventPage> {
                             notifyParent: refresh),
                     SizedBox(height: 8.0),
                     Divider(),
-                    /*Container(
-                      height: Globals.scaler.getHeight(5),
-                      child:*/
                     widget.event!.type == "L" || amIParticipant || amICreator
                         ? ParticipentsScroller(
-                            //TODO: edit widget
                             accept: accept,
                             reject: reject,
                             title: "משתתפים",
@@ -400,17 +396,6 @@ class _EventPageState extends State<EventPage> {
                             event: widget.event,
                           )
                         : Container(),
-/*
-                    amICreator && widget.event!.type == 'H'
-                        ? ParticipentsScroller(
-                            widget.event!.waitingQueue,
-                            title: "ממתינים לאישור",
-                            initPubMsgText: initPub(true),
-                            event: widget.event,
-                          )
-                        : Container(),*/
-
-                    //),
                     SizedBox(height: Globals.scaler.getHeight(1)),
                   ]),
                 ),
