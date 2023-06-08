@@ -371,7 +371,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                         child: Stack(
                                           children: [
                                             Align(
-                                              child: Text("מספר משתתפים   "),
+                                              child: Text(
+                                                "מספר משתתפים   ",
+                                                style: TextStyle(
+                                                    color: Colors.grey[700]),
+                                              ),
                                               alignment: Alignment.centerRight,
                                             ),
                                             Container(
@@ -599,7 +603,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                         width: Globals.scaler.getWidth(29),
                                         child: Stack(children: [
                                           Align(
-                                            child: Text("גיל מינימלי   "),
+                                            child: Text(
+                                              "גיל מינימלי   ",
+                                              style: TextStyle(
+                                                  color: Colors.grey[700]),
+                                            ),
                                             alignment: Alignment.centerRight,
                                           ),
                                           Container(
@@ -687,7 +695,11 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                           width: Globals.scaler.getWidth(29),
                                           child: Stack(children: [
                                             Align(
-                                              child: Text("גיל מקסימלי   "),
+                                              child: Text(
+                                                "גיל מקסימלי   ",
+                                                style: TextStyle(
+                                                    color: Colors.grey[700]),
+                                              ),
                                               alignment: Alignment.centerRight,
                                             ),
                                             Container(

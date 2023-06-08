@@ -52,7 +52,7 @@ class _ChooseDates extends State<ChooseDates> {
       if (event.dates!.isEmpty) {
         frequency = frequency;
       } else if (event.dates!.first == event.dates!.last) {
-        frequency = "ללא";
+        frequency = "חד פעמי";
       } else if (event.dates![1].difference(event.dates!.first).inDays > 8) {
         frequency = "חודשי";
       } else if (event.dates![1].difference(event.dates!.first).inDays > 2) {
@@ -272,7 +272,7 @@ class _ChooseDates extends State<ChooseDates> {
                     frequency = newValue;
                   });
                 },
-                items: <String>['יומי', 'שבועי', 'חודשי', 'ללא']
+                items: <String>['יומי', 'שבועי', 'חודשי', 'חד פעמי']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -291,7 +291,7 @@ class _ChooseDates extends State<ChooseDates> {
             SizedBox(height: Globals.scaler.getHeight(1)),
             // Last date
             Column(
-              children: frequency == "ללא"
+              children: frequency == "חד פעמי"
                   ? []
                   : [
                       Align(
@@ -354,7 +354,7 @@ class _ChooseDates extends State<ChooseDates> {
                   // <-- Button color
                   foregroundColor: Colors.teal),
               onPressed: () async {
-                lastDate = frequency == "ללא" ? firstDate : lastDate;
+                lastDate = frequency == "חד פעמי" ? firstDate : lastDate;
 
                 if (isDatesValid(firstDate, time, lastDate!, context)) {
                   // Calculate dates
@@ -417,7 +417,7 @@ int convertFrquency2Int(String? frequency) {
         return 30;
       }
     //break;
-    case 'ללא':
+    case 'חד פעמי':
       {
         return 0;
       }

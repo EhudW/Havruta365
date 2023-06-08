@@ -1,3 +1,4 @@
+import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/rec_system.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -78,6 +79,14 @@ class EventsSelectorBuilder {
     return this.plus(prefix);
   }
 
+  EventsSelectorBuilder notInRejectedQueue(String? mail) {
+    return mail == null
+        ? this
+        : this.plus(where
+            .notExists("rejectedQueue")
+            .or(where.ne("rejectedQueue", mail)));
+  }
+
   EventsSelectorBuilder typeFilter(String? type) {
     return type == null ? this : this.plus(where.eq("type", type));
   }
@@ -101,15 +110,15 @@ class EventsSelectorBuilder {
   }
 
   EventsSelectorBuilder withParticipant(String? mail,
-      [bool withWaitingQueue = true, bool withRejectedQueue = false]) {
-    assert(withWaitingQueue || !withRejectedQueue);
+      [bool withWaitingQueue = true, bool withRejectedLeftQueue = false]) {
+    assert(withWaitingQueue || !withRejectedLeftQueue);
     if (mail == null || assigned.contains("withParticipant/noWQ: $mail"))
       return this;
     if (withWaitingQueue) {
       if (assigned.contains("withParticipant/WQ: $mail")) {
         return this;
       }
-      if (withRejectedQueue) {
+      if (withRejectedLeftQueue) {
         if (assigned.contains("withParticipant/RQ: $mail")) {
           return this;
         }
@@ -118,7 +127,8 @@ class EventsSelectorBuilder {
             where
                 .eq('participants', mail)
                 .or(where.eq('waitingQueue', mail))
-                .or(where.eq('rejectedQueue', mail)),
+                .or(where.eq('rejectedQueue', mail))
+                .or(where.eq('leftQueue', mail)),
             ["withParticipant/RQ: $mail", "avoidTargetFilter"]);
       }
       return this.plus(
@@ -170,7 +180,7 @@ class EventsSelectorBuilder {
   }
 
   EventsSelectorBuilder cross(
-      String mail1, String mail2, bool withRejectedQueue) {
+      String mail1, String mail2, bool withRejectedLeftQueue) {
     //clear selector, but avoid what already in this
     var suffix = () => EventsSelectorBuilder(null, assigned);
     /*bool mail1_p_cond = assigned.contains("withParticipant/noWQ: $mail1");
@@ -192,11 +202,11 @@ class EventsSelectorBuilder {
     }*/
     //if (!mail2_pw_cond && !mail1_c_cond)
     op1 = suffix()
-        .withParticipant(mail1, true, withRejectedQueue)
+        .withParticipant(mail1, true, withRejectedLeftQueue)
         .createdBy(mail2);
     //if (!mail1_pw_cond && !mail2_c_cond)
     op2 = suffix()
-        .withParticipant(mail2, true, withRejectedQueue)
+        .withParticipant(mail2, true, withRejectedLeftQueue)
         .createdBy(mail1);
     //if (!mail1_c_cond && !mail2_c_cond)
     op3 = suffix()
@@ -246,14 +256,19 @@ class EventsSelectorBuilder {
     final events = (await collection.find(realSelector).toList());
     // if  filterOldDates = false  -> filterOldEvents = false
     if (!filterOldDates) {
-      List<Event> tmp = List.from(events.map((i) => new Event.fromJson(i)));
+      List<Event> tmp = [];
+      for (var i in events) {
+        tmp.add(
+            Event.fromJson(await Mongo.getUpdateUserInfo(i, isEvent: true)));
+      }
       return applyTesters(tmp, eventTesters);
     }
     // filterOldDates = true, but maybe we still won't filterOldEvents
     List<Event> data = [];
     DateTime timeNow = DateTime.now();
     for (var i in events) {
-      Event e = new Event.fromJson(i);
+      Event e =
+          new Event.fromJson(await Mongo.getUpdateUserInfo(i, isEvent: true));
       var len = e.dates!.length;
       // filterOldDate=true :
       for (int j = 0; j < len; j++) {
@@ -282,7 +297,11 @@ class EventsSelectorBuilder {
     //relevant only if withParticipant != null
     //then not only joined but also waiting;
     bool withWaitingQueue = true,
-    required bool withRejectedQueue,
+    // if withParticipant != null, and withWaitingQueue =true, then maybe also include even if in rejected queue
+    required bool withRejectedLeftQueue,
+    // relevant for createdBy & withParticipant == null -> then it will filter(like targetForMe() for all possible events)
+    // [will filter out in any case]
+    required String? ensureNotRejected,
     String? withParticipant2, //email
     //
     String? search,
@@ -304,9 +323,9 @@ class EventsSelectorBuilder {
     }
     EventsSelectorBuilder esb = ESB;
     esb = withParticipant2 != null
-        ? esb.cross(withParticipant!, withParticipant2, withRejectedQueue)
+        ? esb.cross(withParticipant!, withParticipant2, withRejectedLeftQueue)
         : esb.withParticipant(
-            withParticipant, withWaitingQueue, withRejectedQueue);
+            withParticipant, withWaitingQueue, withRejectedLeftQueue);
     esb = esb.createdBy(createdBy);
     esb = onlyReq ? esb.withWaitingQueueNotEmpty(true) : esb;
     esb = esb
@@ -317,6 +336,7 @@ class EventsSelectorBuilder {
         //      so there is no need to filter when these not null:
         // withParticipant() createdBy(*see targetForMe()) cross() withInvolved()
         .targetForMe()
+        .notInRejectedQueue(ensureNotRejected)
         .sortById(newestFirst)
         .skip_limit(startFrom, maxEvents);
     return esb.fetch(filterOldEvents,

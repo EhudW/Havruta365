@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:havruta_project/Screens/Login/ForgetPassword.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -31,6 +32,7 @@ class _HomePageState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final bool showRegularMailPassSignin = kDebugMode;
     final width = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async => false,
@@ -73,232 +75,256 @@ class _HomePageState extends State<Login> {
               SizedBox(
                 height: Globals.scaler.getHeight(1),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    FadeAnimation(
-                        1.5,
-                        Text(
-                          "פרוייקט חברותא+",
-                          textDirection: ui.TextDirection.rtl,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.alef(
-                              fontSize: Globals.scaler.getTextSize(10)),
-                        )),
-                    SizedBox(
-                      height: Globals.scaler.getHeight(1),
-                    ),
-                    FadeAnimation(
-                        1.7,
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.teal,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 10),
-                                )
-                              ]),
-                          child: Column(
-                            children: <Widget>[
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      FadeAnimation(
+                          1.5,
+                          Text(
+                            "פרוייקט חברותא+",
+                            textDirection: ui.TextDirection.rtl,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.alef(
+                                fontSize: Globals.scaler.getTextSize(10)),
+                          )),
+                      !showRegularMailPassSignin
+                          ? SizedBox()
+                          : SizedBox(
+                              height: Globals.scaler.getHeight(1),
+                            ),
+                      !showRegularMailPassSignin
+                          ? SizedBox()
+                          : FadeAnimation(
+                              1.7,
                               Container(
-                                padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: Colors.grey[200]!))),
-                                child: TextField(
-                                    controller: mail,
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "כתובת המייל",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey)),
-                                    onChanged: (String text) {
-                                      mail_str = mail.text;
-                                    }),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                child: TextField(
-                                    obscureText: true,
-                                    controller: password,
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "סיסמא",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey)),
-                                    onChanged: (String text) {
-                                      password_str = password.text;
-                                    }),
-                              ),
-                            ],
-                          ),
-                        )),
-                    SizedBox(
-                      height: Globals.scaler.getHeight(2),
-                    ),
-                    FadeAnimation(
-                        1.9,
-                        Container(
-                          height: Globals.scaler.getHeight(2.5),
-                          width: Globals.scaler.getWidth(19),
-                          margin: EdgeInsets.symmetric(horizontal: 60),
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 10,
-                                offset: Offset(0, 10),
-                              )
-                            ],
-                            borderRadius: BorderRadius.circular(50),
-                            color: Colors.red,
-                          ),
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.teal,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 10),
+                                      )
+                                    ]),
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color: Colors.grey[200]!))),
+                                      child: TextField(
+                                          controller: mail,
+                                          textAlign: TextAlign.center,
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "כתובת המייל",
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey)),
+                                          onChanged: (String text) {
+                                            mail_str = mail.text;
+                                          }),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: TextField(
+                                          obscureText: true,
+                                          controller: password,
+                                          textAlign: TextAlign.center,
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "סיסמא",
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey)),
+                                          onChanged: (String text) {
+                                            password_str = password.text;
+                                          }),
+                                    ),
+                                  ],
                                 ),
-                              ),
+                              )),
+                      !showRegularMailPassSignin
+                          ? SizedBox()
+                          : SizedBox(
+                              height: Globals.scaler.getHeight(2),
                             ),
-                            onPressed: () async {
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              var coll = Globals.db!.db.collection('Users');
-                              var bytes = utf8.encode(password_str);
-                              password_str = sha1.convert(bytes).toString();
-                              var user_json = await coll.findOne({
-                                'email':
-                                    mail_str.replaceAll(new RegExp(r"\s+"), ""),
-                                'password': password_str
-                              });
-                              if (user_json == null) {
-                                Flushbar(
-                                  title: 'שגיאה בהתחברות',
-                                  message: 'פרטי התחברות אינם נכונים',
-                                  duration: Duration(seconds: 3),
-                                )..show(context);
-                                return;
-                              }
-                              Globals.onNewLogin(User.fromJson(user_json));
-                              // This is ObjectID!!
-                              var id = user_json['_id'];
-                              final SharedPreferences prefs = await _prefs;
-                              await prefs.setString('id', id.toString());
-                              // Go to HomePage
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage()),
-                              );
-                            },
-                            child: Center(
-                              child: Text(
-                                "כניסה",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                            ),
-                          ),
-                        )),
-                    SizedBox(
-                      height: Globals.scaler.getHeight(1),
-                    ),
-                    FadeAnimation(
-                        1.9,
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            // not suppurted:  splashColor: Colors.grey,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40)),
-                            elevation: 0,
-                            side: BorderSide(color: Colors.grey),
-                          ),
-                          onPressed: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            signIn();
-                          },
-                          child: Container(
-                            height: Globals.scaler.getHeight(2.5),
-                            width: Globals.scaler.getWidth(16),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Image(
-                                    image: NetworkImage(
-                                        "https://assets.materialup.com/uploads/82eae29e-33b7-4ff7-be10-df432402b2b6/preview"),
-                                    width: 30,
-                                    height: 20),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(
-                                    'Sign in with Google',
-                                    style: TextStyle(
-                                      fontSize: 15,
+                      !showRegularMailPassSignin
+                          ? SizedBox()
+                          : FadeAnimation(
+                              1.9,
+                              Container(
+                                height: Globals.scaler.getHeight(2.5),
+                                width: Globals.scaler.getWidth(19),
+                                margin: EdgeInsets.symmetric(horizontal: 60),
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
                                       color: Colors.grey,
+                                      blurRadius: 10,
+                                      offset: Offset(0, 10),
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.red,
+                                ),
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
                                     ),
                                   ),
-                                )
-                              ],
+                                  onPressed: () async {
+                                    FocusScope.of(context)
+                                        .requestFocus(FocusNode());
+                                    var coll =
+                                        Globals.db!.db.collection('Users');
+                                    var bytes = utf8.encode(password_str);
+                                    password_str =
+                                        sha1.convert(bytes).toString();
+                                    var user_json = await coll.findOne({
+                                      'email': mail_str.replaceAll(
+                                          new RegExp(r"\s+"), ""),
+                                      'password': password_str
+                                    });
+                                    if (user_json == null) {
+                                      Flushbar(
+                                        title: 'שגיאה בהתחברות',
+                                        message: 'פרטי התחברות אינם נכונים',
+                                        duration: Duration(seconds: 3),
+                                      )..show(context);
+                                      return;
+                                    }
+                                    Globals.onNewLogin(
+                                        User.fromJson(user_json));
+                                    // This is ObjectID!!
+                                    var id = user_json['_id'];
+                                    final SharedPreferences prefs =
+                                        await _prefs;
+                                    await prefs.setString('id', id.toString());
+                                    // Go to HomePage
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => HomePage()),
+                                    );
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      "כניסה",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                      SizedBox(
+                        height: Globals.scaler
+                            .getHeight(!showRegularMailPassSignin ? 6 : 1),
+                      ),
+                      FadeAnimation(
+                          1.9,
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              // not suppurted:  splashColor: Colors.grey,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40)),
+                              elevation: 0,
+                              side: BorderSide(color: Colors.grey),
                             ),
-                          ),
-                        )),
-                    SizedBox(
-                      height: Globals.scaler.getHeight(1),
-                    ),
-                    FadeAnimation(
-                        2,
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginDetails()),
-                                  );
-                                },
-                                child: Center(
+                            onPressed: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              signIn();
+                            },
+                            child: Container(
+                              height: Globals.scaler.getHeight(2.5),
+                              width: Globals.scaler.getWidth(16),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Image(
+                                      image: NetworkImage(
+                                          "https://assets.materialup.com/uploads/82eae29e-33b7-4ff7-be10-df432402b2b6/preview"),
+                                      width: 30,
+                                      height: 20),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
                                     child: Text(
-                                  "משתמש חדש",
-                                  style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: Globals.scaler.getTextSize(7)),
-                                )),
+                                      'Sign in with Google',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                              SizedBox(
-                                width: Globals.scaler.getWidth(3),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ForgetPassword()),
-                                  );
-                                },
-                                child: Center(
-                                    child: Text(
-                                  "שכחתי סיסמא",
-                                  style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: Globals.scaler.getTextSize(7)),
-                                )),
-                              )
-                            ])),
-                    SizedBox(
-                      height: Globals.scaler.getHeight(1),
-                    ),
-                  ],
+                            ),
+                          )),
+                      !showRegularMailPassSignin
+                          ? SizedBox()
+                          : SizedBox(
+                              height: Globals.scaler.getHeight(1),
+                            ),
+                      !showRegularMailPassSignin
+                          ? SizedBox()
+                          : FadeAnimation(
+                              2,
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LoginDetails()),
+                                        );
+                                      },
+                                      child: Center(
+                                          child: Text(
+                                        "משתמש חדש",
+                                        style: TextStyle(
+                                            color: Colors.blueAccent,
+                                            fontSize:
+                                                Globals.scaler.getTextSize(7)),
+                                      )),
+                                    ),
+                                    SizedBox(
+                                      width: Globals.scaler.getWidth(3),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ForgetPassword()),
+                                        );
+                                      },
+                                      child: Center(
+                                          child: Text(
+                                        "שכחתי סיסמא",
+                                        style: TextStyle(
+                                            color: Colors.blueAccent,
+                                            fontSize:
+                                                Globals.scaler.getTextSize(7)),
+                                      )),
+                                    )
+                                  ])),
+                      SizedBox(
+                        height: Globals.scaler.getHeight(1),
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],

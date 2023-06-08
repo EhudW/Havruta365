@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/EventsSelectorBuilder.dart';
 import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
 import 'package:havruta_project/Screens/EventScreen/EventPage.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' as m;
@@ -56,9 +57,28 @@ class _EventScreenState extends State<EventScreen> {
                 case ConnectionState.done:
                   List<dynamic> data = snapshot.data! as List<dynamic>;
                   if (data[0] == null) {
-                    return NoEventScreen();
+                    return NoEventScreen(lbl: "האירוע לא נמצא\nככל הנראה נמחק");
                   }
-                  return EventPage(data[0] as Event?, data[1] as List<Event>?);
+                  var event = data[0] as Event?;
+                  String? targetProblem =
+                      Globals.currentUser!.whyIsNotTargetedForMe(event!);
+                  bool rejectProblem = event!.rejectedQueue
+                      .contains(Globals.currentUser!.email!);
+                  if (targetProblem != null) {
+                    return NoEventScreen(
+                        eventname: event.typeAsStr,
+                        lbl: "אינך בקהל היעד המתאים - בגלל ה" + targetProblem);
+                  }
+                  if (rejectProblem) {
+                    return NoEventScreen(
+                      lbl:
+                          'רישומך נדחה ע"י היוזמ/ת. ניתן לשלוח בקשה בהודעה אישית',
+                      otheruser: event.creatorUser,
+                      otherusername: event.creatorName,
+                      eventname: event.typeAsStr,
+                    );
+                  }
+                  return EventPage(event, data[1] as List<Event>?);
                 default:
                   return Text('default');
               }
@@ -67,7 +87,17 @@ class _EventScreenState extends State<EventScreen> {
 }
 
 class NoEventScreen extends StatelessWidget {
-  const NoEventScreen({Key? key}) : super(key: key);
+  final String lbl;
+  final String? otheruser;
+  final String? otherusername;
+  final String? eventname;
+  const NoEventScreen(
+      {Key? key,
+      required this.lbl,
+      this.eventname,
+      this.otheruser,
+      this.otherusername})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +107,22 @@ class NoEventScreen extends StatelessWidget {
         children: [
           Center(
               child: Text(
-            "האירוע לא נמצא\nככל הנראה נמחק",
+            eventname ?? "" + "\n" + lbl,
             textAlign: TextAlign.right,
           )),
+          otheruser == null
+              ? SizedBox()
+              : Center(
+                  child: ElevatedButton(
+                      child: Text("שלח הודעה"),
+                      onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                    otherPerson: otheruser!,
+                                    otherPersonName: otherusername!)),
+                          )),
+                ),
           Center(
               child: ElevatedButton(
             child: Text("חזרה"),

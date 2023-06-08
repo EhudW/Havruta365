@@ -117,18 +117,21 @@ class CriticMyEvents<O> {
   O Function(Event)? classify;
   List<O> Function(Event)? classifyList;
   num weight;
+  num Function(Event) weightOfEvent;
   CriticMyEvents(
       {this.field, // not needed for calc
       required this.myEvents,
       required this.classify,
       required this.classifyList,
-      this.weight = 1.0}) {
+      this.weight = 1.0,
+      required num Function(Event) this.weightOfEvent}) {
     _calc();
     _norm(soft: 1);
   }
 
   void _calc() {
     myEvents.forEach((element) {
+      num eventW = this.weightOfEvent(element);
       if (classifyList != null) {
         var indexes;
         try {
@@ -137,7 +140,7 @@ class CriticMyEvents<O> {
           return;
         }
         for (var idx in indexes) {
-          rank[idx] = (rank[idx] ?? 0) + 1;
+          rank[idx] = (rank[idx] ?? 0) + eventW;
           _total++;
         }
       } else if (classify != null) {
@@ -148,7 +151,7 @@ class CriticMyEvents<O> {
           return;
         }
         _total++;
-        rank[idx] = (rank[idx] ?? 0) + 1;
+        rank[idx] = (rank[idx] ?? 0) + eventW;
       }
     });
   }
@@ -251,31 +254,37 @@ List<PartOfDay> getPartsOfDayOf(DateTime d, int duration) {
 }
 
 class MultiConsiderations extends RecommendationSystem<Event> {
-  // auto filtered by EvenesSelectorBuildder.targetForMe()
-  static Future<List<Event>> getAllEvents([int maxEvents = 100]) =>
+  // auto filtered by EvenesSelectorBuildder.targetForMe();
+  // rejected due to ensureNotRejected, leftQueue not filtered
+  static Future<List<Event>> getAllEvents(String? ensureNotRejected,
+          [int maxEvents = 100]) =>
       EventsSelectorBuilder.fetchFrom(
-          startFrom: 0,
-          maxEvents: maxEvents,
-          filterOldEvents: true,
-          filterOldDates: true,
-          newestFirst: true,
-          withRejectedQueue: false // useless since withParticipant == null
-          );
+        startFrom: 0,
+        maxEvents: maxEvents,
+        filterOldEvents: true,
+        filterOldDates: true,
+        newestFirst: true,
+        withRejectedLeftQueue: false, // useless since withParticipant == null
+        ensureNotRejected: ensureNotRejected, // still will filter
+      );
   //Globals.db!.getSomeEvents(0, null, limit: 100, newestFirst: true);
-  static Future<List<Event>> getMyEvents(String myMail,
+  // filter: EvenesSelectorBuildder.targetForMe(); leftQueue,rejectedQueue due withRejectedOrLeftQueue
+  static Future<List<Event>> getMyEvents(
+          String myMail, bool withRejectedOrLeftQueue,
           {bool filterOld = false}) =>
       // Globals.db!.getEvents(myMail, false, null);
       EventsSelectorBuilder.fetchFrom(
-          withParticipant: myMail,
-          filterOldDates: filterOld,
-          filterOldEvents: filterOld,
-          maxEvents: null,
-          startFrom: null,
-          withWaitingQueue: true,
-          withRejectedQueue:
-              false // don't consider those events, not for good, not for bad
-          );
-  // won't check isTargetedForMe
+        withParticipant: myMail,
+        filterOldDates: filterOld,
+        filterOldEvents: filterOld,
+        maxEvents: null,
+        startFrom: null,
+        withWaitingQueue: true,
+        withRejectedLeftQueue: withRejectedOrLeftQueue,
+        ensureNotRejected: null,
+      );
+  // won't check EvenesSelectorBuildder.targetForMe()
+  // will filter if myMail in any eventqueue
   static bool thisEventIsNewForMeAndAvailable(
       Event e, String myMail, DateTime timeNow) {
     if ((e.participants ?? []).length /*+ (e.waitingQueue ?? []).length*/ >=
@@ -503,7 +512,11 @@ class MultiConsiderations extends RecommendationSystem<Event> {
                 classifyList:
                     e["classifyList"] as List<dynamic> Function(Event)?,
                 weight: e["weight"] as num? ?? 1.0,
-                myEvents: events))
+                myEvents: events,
+                weightOfEvent: (Event e) =>
+                    e.rejectedQueue.contains(e) || e.leftQueue.contains(e)
+                        ? -1
+                        : 1))
             .toList();
 
     var getTotalRank =
@@ -530,9 +543,10 @@ class MultiConsiderations extends RecommendationSystem<Event> {
   @override
   Future<bool> calc([int? topAmount]) async {
     bool success = true;
-    // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
-    var possibleEvents = await ((this.data?['possibleEvents'] ?? getAllEvents())
-        .catchError((error) {
+    // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe(), but include also where I was rejected or left
+    var possibleEvents =
+        await ((this.data?['possibleEvents'] ?? getAllEvents(null))
+            .catchError((error) {
       success = false;
       return [];
     }));
@@ -540,8 +554,9 @@ class MultiConsiderations extends RecommendationSystem<Event> {
       return success;
     }
     var myMail = data!["myMail"] ?? Globals.currentUser!.email!;
-    var compareToMe = await ((this.data?['compareToMe'] ?? getMyEvents(myMail))
-        .catchError((error) {
+    var compareToMe =
+        await ((this.data?['compareToMe'] ?? getMyEvents(myMail, true))
+            .catchError((error) {
       success = false;
       return [];
     }));
@@ -551,20 +566,16 @@ class MultiConsiderations extends RecommendationSystem<Event> {
     }
     var timeNow = DateTime.now();
     // won't check isTargetedForMe, assuming given possibleEvents might filtered by it, if needed
-    this.top = getSortedList(await calcTotalRank(possibleEvents, compareToMe))
-        .where((Event e) => thisEventIsNewForMeAndAvailable(e, myMail, timeNow))
+    this.top = getSortedList(await calcTotalRank(possibleEvents,
+            compareToMe)) // only EvenesSelectorBuildder.targetForMe() filter, but also rejected & left
+        .where((Event e) => thisEventIsNewForMeAndAvailable(
+            e, myMail, timeNow)) // only targeted & not rejected & not left
         .toList();
     return success;
   }
 }
 
 class ByEventSuccess extends RecommendationSystem<Event> {
-  // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
-  static Future<List<Event>> getAllEvents() =>
-      MultiConsiderations.getAllEvents();
-  static Future<List<Event>> getMyEvents(String myMail) =>
-      MultiConsiderations.getMyEvents(myMail);
-
   ByEventSuccess({
     Future<List<Event>>? possibleEvents,
     String? myMail,
@@ -574,7 +585,8 @@ class ByEventSuccess extends RecommendationSystem<Event> {
   Future<bool> calc([int? topAmount]) async {
     bool success = true;
     // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
-    var possibleEvents = await ((this.data?['possibleEvents'] ?? getAllEvents())
+    var possibleEvents = await ((this.data?['possibleEvents'] ??
+            MultiConsiderations.getAllEvents(null))
         .catchError((error) {
       success = false;
       return [];
@@ -620,9 +632,9 @@ class ByEventSuccess extends RecommendationSystem<Event> {
 
 class ExampleRecommendationSystem {
   static MultiRecommendationSystem<Event> create(String myMail) {
-    var myEvents = MultiConsiderations.getMyEvents(myMail);
+    var myEvents = MultiConsiderations.getMyEvents(myMail, true);
     // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
-    var allEvents = MultiConsiderations.getAllEvents();
+    var allEvents = MultiConsiderations.getAllEvents(null);
     var data = {
       "compareToMe": myEvents,
       "possibleEvents": allEvents,
@@ -640,7 +652,7 @@ class ExampleRecommendationSystem {
   }
 
   static Future<List<Event>> calcAndGetTop10(String myMail,
-      {bool suppressException: true}) async {
+      {bool suppressException = true}) async {
     MultiRecommendationSystem<Event> r =
         ExampleRecommendationSystem.create(myMail);
     return r.calc().then((success) {
@@ -878,13 +890,18 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
   var usersEmail =
       await collection.find().map((user) => User.fromJson(user).email).toList();
   // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
-  var allEvents = await MultiConsiderations.getAllEvents();
+  var __allEvents = await MultiConsiderations.getAllEvents(null);
   Map<String, List<Event>> user_events_validate = {};
   Map<String, List<Event>> user_events_data = {};
   Map<String, List<Event>> user_rec = {};
   List<double> alluser_distance_tbl = [];
   for (var email in usersEmail) {
-    var list = await MultiConsiderations.getMyEvents(email!,
+    var allEvents = List.of(__allEvents.where((e) =>
+        !e.rejectedQueue.contains(email) && !e.leftQueue.contains(email)));
+    var list = await MultiConsiderations.getMyEvents(
+        email!,
+        // see below why using here rejected\left queue = without
+        false,
         // filterOld = true since we want the test/validate will be on same zone,
         // it isn't just recommendation but also test
         // and since we filter old events from getAllEvents, we need to do it here too...
@@ -915,6 +932,8 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
         topAmount: k,
         weights: [(k / 2).round(), (k / 2).round()]);
     system.setData(data);
+    // will auto filter thisEventIsNewForMeAndAvailable() ,
+    // so no events where EvenesSelectorBuildder.targetForMe(already filtered in above) OR email in any event queue(in calc())
     var success = await system.calc();
     if (success) {
       user_rec[email] = system.getTop();

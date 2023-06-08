@@ -108,6 +108,14 @@ class MyProgressButtonState extends State<MyProgressButton> {
     var iAmParticipant = widget.event!.participants!.contains(myMail);
     var waitingQueue = widget.event!.waitingQueue ?? [];
     var iAmInWaitingQueue = waitingQueue.contains(myMail);
+    if (widget.event!.rejectedQueue.contains(myMail)) {
+      stateOnlyText = ButtonState.rejected;
+      return;
+    }
+    if (Globals.currentUser!.isTargetedForMe(widget.event!) != true) {
+      stateOnlyText = ButtonState.notForMe;
+      return;
+    }
     // Am I already joined to this event?
     if (iAmParticipant) {
       // Check if there is event NOW
@@ -195,6 +203,14 @@ class MyProgressButtonState extends State<MyProgressButton> {
                         ? "החברותא בתפוסה מלאה! לא ניתן להירשם"
                         : "השיעור בתפוסה מלאה! לא ניתן להירשם",
                     style: textStyle,
+                  ),
+                  ButtonState.rejected: Text(
+                    'רישומך נדחה ע"י היוזמ/ת',
+                    style: textStyle,
+                  ),
+                  ButtonState.notForMe: Text(
+                    "אינך בקהל היעד של ה" + widget.event!.typeAsStr,
+                    style: textStyle,
                   )
                 },
                 stateColors: {
@@ -204,7 +220,9 @@ class MyProgressButtonState extends State<MyProgressButton> {
                   ButtonState.fail: Colors.green[300],
                   ButtonState.fail2: Colors.orange[300],
                   ButtonState.success: Colors.green,
-                  ButtonState.full: Colors.redAccent
+                  ButtonState.full: Colors.redAccent,
+                  ButtonState.rejected: Colors.redAccent,
+                  ButtonState.notForMe: Colors.redAccent
                 },
                 onPressed: onPressedCustomButton,
                 state: stateOnlyText,
@@ -352,6 +370,35 @@ class MyProgressButtonState extends State<MyProgressButton> {
           )..show(context);
           return;
         //break;
+        case ButtonState.rejected:
+          Flushbar(
+            title: 'שגיאה בהרשמה',
+            messageText: Text(
+                'רישומך נדחה ע"י היוזמ/ת. ניתן לשלוח בקשה בהודעה אישית',
+                textDirection: ui.TextDirection.rtl,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.teal[400],
+                    fontSize: Globals.scaler.getTextSize(8))),
+            duration: Duration(seconds: 3),
+          )..show(context);
+          return;
+        case ButtonState.notForMe:
+          Flushbar(
+            title: 'שגיאה בהרשמה',
+            messageText: Text(
+                "אינך בקהל היעד המתאים - בגלל ה" +
+                    Globals.currentUser!
+                        .whyIsNotTargetedForMe(widget.event!)
+                        .toString(),
+                textDirection: ui.TextDirection.rtl,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.teal[400],
+                    fontSize: Globals.scaler.getTextSize(8))),
+            duration: Duration(seconds: 3),
+          )..show(context);
+          return;
       }
     });
   }

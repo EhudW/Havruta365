@@ -68,6 +68,30 @@ class Mongo {
     return user;
   }
 
+  static Future<dynamic> ___getUpdateUserInfo(
+      dynamic m, String userMail, Map<String, String> K_to_update_V) async {
+    var coll = Globals.db!.db.collection('Users');
+    var user_json = await coll.findOne(where.eq('email', '$userMail'));
+    K_to_update_V.forEach((key, value) {
+      m[key] = user_json[value];
+    });
+    return m;
+  }
+
+  // this is for programming saving time
+  static Future<dynamic> getUpdateUserInfo(dynamic map,
+      {bool isChatMessage = false,
+      bool isEvent = false,
+      bool isNotification = false}) async {
+    if (isChatMessage)
+      return ___getUpdateUserInfo(map, map["src_mail"], {"name": "name"});
+    if (isEvent)
+      return ___getUpdateUserInfo(
+          map, map["creatorUser"], {"creatorName": "name"});
+    // if (isNotification)
+    return ___getUpdateUserInfo(map, map["creatorUser"], {"name": "name"});
+  }
+
   Future<User> getUserByID(String id) async {
     var coll = Globals.db!.db.collection('Users');
     String sub = id.substring(10, 34);
@@ -87,7 +111,8 @@ class Mongo {
             .sortBy('_id', descending: true))
         .toList();
     for (var i in notifications) {
-      data.add(new NotificationUser.fromJson(i));
+      data.add(new NotificationUser.fromJson(
+          await Mongo.getUpdateUserInfo(i, isNotification: true)));
     }
     return data;
   }
@@ -113,7 +138,7 @@ class Mongo {
       mb = queue == option ? mb.push(field, email) : mb.pull(field, email);
     }
     var res = await collection.updateOne(where.eq('_id', eventId), mb);
-    return res;
+    return !res.hasWriteErrors;
   }
   /*Future<void> addParticipant(String? mail, ObjectId? id) async {
     var collection = Globals.db!.db.collection('Events');
@@ -338,7 +363,7 @@ class Mongo {
     if (event == null) {
       return null;
     }
-    var e = Event.fromJson(event);
+    var e = Event.fromJson(await Mongo.getUpdateUserInfo(event, isEvent: true));
     var len = e.dates!.length;
     for (int j = 0; j < len; j++) {
       if (timeNow
@@ -352,11 +377,11 @@ class Mongo {
     return e;
   }
 
-  getEvent(String _id) async {
-    var collection = db.collection('Events');
-    var event = await collection.find(keyLimit: 10);
-    return event;
-  }
+  //getEvent(String _id) async {
+  //  var collection = db.collection('Events');
+  //  var event = await collection.find(keyLimit: 10);
+  //  return event;
+  //}
 
   // Save the id of the current user locally in the user phone.
   // for next session - automatic connect
@@ -485,7 +510,8 @@ class Mongo {
     }
     var messages = await collection.find(selector).toList();
     for (var i in messages) {
-      listMessages.add(ChatMessage.fromJson(i));
+      listMessages.add(ChatMessage.fromJson(
+          await Mongo.getUpdateUserInfo(i, isChatMessage: true)));
     }
     listMessages.sort((a, b) => a.datetime!.compareTo(b.datetime!));
     !fetchDstUserData ? null : await __fetchDstUserData(listMessages, dstMail);
@@ -519,7 +545,8 @@ class Mongo {
         var tmp = await collection.findOne(
             where.eq('dst_mail', topic).sortBy('_id', descending: true));
         if (tmp == null) continue;
-        var msg = ChatMessage.fromJson(tmp);
+        var msg = ChatMessage.fromJson(
+            await Mongo.getUpdateUserInfo(tmp, isChatMessage: true));
         var event = await getEventById(
             ObjectId.fromHexString(msg.dst_mail!.split("\"")[1]));
         msg.otherPersonAvatar = event!.eventImage!;
