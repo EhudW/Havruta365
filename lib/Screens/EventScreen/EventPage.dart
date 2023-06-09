@@ -178,6 +178,7 @@ class _EventPageState extends State<EventPage> {
     String t_topic = topic != "" ? " ב" + topic : "";
     String t_book = book != "" ? " ב" + book : "";
     String study = book == "" ? topic : "";
+    String share_link = "${Globals.Server}/event/${widget.event?.id.$oid}";
     String share_string = "אשמח להזמין אותך ל" +
         type +
         " בנושא " +
@@ -232,8 +233,8 @@ class _EventPageState extends State<EventPage> {
           ListTile(
             title: Text('המלץ לחבר'),
             onTap: () {
-              Share.share(share_string + "\n https://www.google.com/",
-                  subject: "https://www.google.com/");
+              Share.share(share_string + "\n" + share_link,
+                  subject: share_link);
             },
           ),
           amICreator

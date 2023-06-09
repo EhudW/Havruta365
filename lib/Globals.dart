@@ -14,6 +14,11 @@ import 'mydebug.dart' as MyDebug;
 
 // see also mydebug.dart
 class Globals {
+  static const String Server = "https://adorable-crab-outfit.cyclic.app/";
+  static const String ServerFCM = Server + "FCM";
+  static const String ServerCampaign = Server + "campaign";
+  static String? launchLink;
+  static bool MyAppStarted = false;
   static GlobalKey<NavigatorState> navKey = GlobalKey();
   static void onNewLogin(User user) {
     // new login

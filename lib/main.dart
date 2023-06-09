@@ -9,6 +9,7 @@ import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'Globals.dart';
@@ -16,9 +17,35 @@ import 'Widgets/SplashScreen.dart';
 import 'mytimer.dart';
 import 'mydebug.dart' as MyDebug;
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:go_router/go_router.dart';
 
+// put / at start of launchLink to make sure "/" is in the root rather than /inapp/...
+final rconfig = GoRouter(routes: [
+  GoRoute(
+    path: "/inapp/event/:fid",
+    builder: (context, state) {
+      String hex = state.location.replaceAll("/inapp/event/", "");
+      try {
+        mg.ObjectId.fromHexString(hex);
+        Globals.launchLink = "/" /*<--this*/ + "event::::$hex";
+      } catch (e) {
+        Globals.launchLink = null;
+      }
+      return MyApp();
+    },
+  ),
+  GoRoute(
+    path: "/",
+    builder: (context, state) {
+      return MyApp();
+    },
+  )
+]);
 void main() async {
-  initializeDateFormatting().then((_) => runApp(MyApp()));
+  initializeDateFormatting().then((_) => runApp(MaterialApp.router(
+        routerConfig: rconfig,
+        debugShowCheckedModeBanner: false,
+      )));
 }
 
 class NewNotificationManager {
@@ -110,9 +137,27 @@ class _MyAppState extends State<MyApp> {
   // handling timing reconnecting of mongodb
   MyTimer? timer;
 
+  Future getMgFuture() async {
+    if (Globals.isDbConnect == false) {
+      await Future.delayed(Duration(milliseconds: 300));
+      return await getMgFuture();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    Globals.navKey = GlobalKey();
+    mongoConnectFuture = getMgFuture();
+    if (Globals.launchLink?.startsWith("/") ?? false) {
+      // shift the root, to avoid inf loop when press back button
+      Globals.launchLink = Globals.launchLink!.substring(1);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration(milliseconds: 100), () => rconfig.replace("/"));
+      });
+    }
+    if (Globals.MyAppStarted) return;
+    Globals.MyAppStarted = true;
     initFirebase();
     Globals.db = new Mongo();
     bool useDb2 =
@@ -146,9 +191,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    timer?.cancel();
-    Globals.db!.db.close();
-    MyDebug.myPrint("MyApp dispose", MyDebug.MyPrintType.None);
+    // the only case for dispose is if another MyApp is inserted to widget tree instead,
+    // but we handled it in initState with Globals.MyAppStarted
+    //timer?.cancel();
+    //Globals.db!.db.close();
+    //MyDebug.myPrint("MyApp dispose", MyDebug.MyPrintType.None);
     super.dispose();
   }
 
@@ -191,7 +238,7 @@ class _MyAppState extends State<MyApp> {
                             else {
                               // ignore: non_constant_identifier_names
                               var current_user =
-                                  Globals.db!.getUserByID(snapshot.data!);
+                                  Globals.db!.getUserByID(snapshot.data!, true);
                               return FutureBuilder(
                                   future: current_user,
                                   builder: (BuildContext context,

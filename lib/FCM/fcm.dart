@@ -298,7 +298,7 @@ class FCM {
     // retry = true so it will wait until login in order to move to page,
     // for now it's false since it's done in main.dart
     // (only then the parse will happen or it will happen twice: ontap on fcm notification && on main.dart)
-    Future push(myUser, builder, [bool retry = false]) async {
+    Future push(myUser, builder, [bool retry = true]) async {
       bool condition1 = myUser != null && myUser != false && myUser != "";
       bool condition2 = myUser == true && Globals.currentUser == null;
       bool condition3 = myUser != true && myUser != Globals.currentUser;
@@ -352,6 +352,8 @@ class FCM {
                 .getNotificationAppLaunchDetails())
             ?.notificationResponse;
     String? payload = r?.payload;
+    payload = payload ?? Globals.launchLink;
+    Globals.launchLink = null;
     //await _setupFlutterNotifications();
     // var m =
     //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();

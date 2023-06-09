@@ -93,7 +93,13 @@ class Mongo {
     return ___getUpdateUserInfo(map, map["creatorUser"], {"name": "name"});
   }
 
-  Future<User> getUserByID(String id) async {
+  Future<User> getUserByID(String id, bool awaitToDBconnect) async {
+    if (awaitToDBconnect) {
+      if (Globals.isDbConnect == false) {
+        await Future.delayed(Duration(milliseconds: 300));
+        return await getUserByID(id, awaitToDBconnect);
+      }
+    }
     var coll = Globals.db!.db.collection('Users');
     String sub = id.substring(10, 34);
     ObjectId obj_id = ObjectId.fromHexString(sub);
@@ -441,7 +447,7 @@ class Mongo {
       dry == true
           ? null
           : await http.get(Uri.parse(
-              "https://adorable-crab-outfit.cyclic.app/?sender=$sender&topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link&avoidMyself=$myMail&notitype=$notitype"));
+              "${Globals.ServerFCM}?sender=$sender&topic=$topic&mgt=$mgt&title=$title&body=$body&link=$link&avoidMyself=$myMail&notitype=$notitype"));
     } catch (err) {}
     return {
       "sender": sender,
