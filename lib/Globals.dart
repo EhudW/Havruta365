@@ -18,6 +18,7 @@ class Globals {
   static const String Server = "https://adorable-crab-outfit.cyclic.app/";
   static const String ServerFCM = Server + "FCM";
   static const String ServerCampaign = Server + "campaign";
+  static String ServerEventLink(Event e) => Server + "inapp/event/${e.id.$oid}";
   static String? launchLink;
   static bool MyAppStarted = false;
   static GlobalKey<NavigatorState> navKey = GlobalKey();

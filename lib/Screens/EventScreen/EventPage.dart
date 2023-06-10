@@ -178,7 +178,7 @@ class _EventPageState extends State<EventPage> {
     String t_topic = topic != "" ? " ב" + topic : "";
     String t_book = book != "" ? " ב" + book : "";
     String study = book == "" ? topic : "";
-    String share_link = "${Globals.Server}/event/${widget.event?.id.$oid}";
+    String share_link = Globals.ServerEventLink(widget.event!);
     String share_string = "אשמח להזמין אותך ל" +
         type +
         " בנושא " +

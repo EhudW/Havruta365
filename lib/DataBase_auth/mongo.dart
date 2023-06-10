@@ -85,7 +85,8 @@ class Mongo {
       bool isEvent = false,
       bool isNotification = false}) async {
     if (isChatMessage)
-      return ___getUpdateUserInfo(map, map["src_mail"], {"name": "name"});
+      return ___getUpdateUserInfo(
+          map, map["src_mail"], {"name": "name", "avatar": "avatar"});
     if (isEvent)
       return ___getUpdateUserInfo(
           map, map["creatorUser"], {"creatorName": "name"});
