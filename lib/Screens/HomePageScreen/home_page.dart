@@ -42,25 +42,24 @@ class _HomePageState extends State<HomePage> {
   var em2 = new EventsModel(true);
   //GlobalKey<ScaffoldState> scaffold = new GlobalKey();
   //use NewNotificationManager.onlyLast for build()
-  NewNotificationManager? nnim;
+  NewNotificationManager? get nnim => NewNotificationManager.onlyLast;
   // call before/then each navigator.push
   setRefresh(bool on, {bool andRefreshNow = true}) {
     if (on) {
       Globals.onNewMsg = () => !mounted ? null : setState(() {});
       nnim!.refreshMe[this] = () => !mounted ? null : setState(() {});
-      nnim!.start();
+      //nnim!.start();
       if (andRefreshNow && mounted) setState(() {});
     } else {
       Globals.onNewMsg = () => null;
       nnim!.refreshMe[this] = () => null;
-      nnim!.cancel();
+      // nnim!.cancel(); keep looking for new notification even if not in this screen (for fcm update)
     }
   }
 
   @override
   void initState() {
     super.initState();
-    nnim = NewNotificationManager();
     setRefresh(true);
     if (widget.openNotificationOnStart)
       Timer(Duration(milliseconds: 700),

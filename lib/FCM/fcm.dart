@@ -14,7 +14,6 @@ import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatScreen.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
-import 'package:havruta_project/Screens/ProfileScreen/ProfileScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -180,7 +179,7 @@ class FCM {
     spm[mgt] = {"counter": 0, "senders": {}};
     await spm.save();
     await FCM.init();
-    flutterLocalNotificationsPlugin.cancel(mgt.hashCode);
+    flutterLocalNotificationsPlugin.cancel(lastMgtFcmNotificationId[mgt] ?? 0);
   }
 
   static resetTo(
@@ -238,10 +237,12 @@ class FCM {
       default:
         return;
     }
-
-    _showFCM(mgt.hashCode, title, body, payload);
+    lastMgtFcmNotificationId[mgt] =
+        DateTime.now().millisecondsSinceEpoch.toSigned(32);
+    _showFCM(lastMgtFcmNotificationId[mgt]!, title, body, payload);
   }
 
+  static Map<String, int> lastMgtFcmNotificationId = {};
   static void _clearAll() => !_isFlutterLocalNotificationsInitialized
       ? null
       : flutterLocalNotificationsPlugin.cancelAll();
@@ -283,6 +284,30 @@ class FCM {
   }
 
   static StreamSubscription<RemoteMessage>? _subs;
+// myUser is null / false / ""   >  no matter the current login state
+  // myUser is true   >  need to be login to some user
+  // myUser is "mail@gmail.com"   >  need to be login to specific user
+  // retry = true so it will wait until login in order to move to page,
+  // for now it's false since it's done in main.dart
+  // (only then the parse will happen or it will happen twice: ontap on fcm notification && on main.dart)
+  static Future push(myUser, builder, [bool retry = true]) async {
+    bool condition1 = myUser != null && myUser != false && myUser != "";
+    bool condition2 = myUser == true && Globals.currentUser == null;
+    bool condition3 = myUser != true && myUser != Globals.currentUser;
+    bool problem = condition1 && (condition2 || condition3);
+    if (problem && !retry) return;
+    if (problem && retry) {
+      await Future.delayed(Duration(seconds: 1));
+      return push(myUser, builder, retry);
+    }
+    var state = Globals.navKey.currentState;
+    if (state != null) {
+      state.push(MaterialPageRoute(builder: builder));
+    } else {
+      await Future.delayed(Duration(seconds: 1));
+      return push(myUser, builder, retry);
+    }
+  }
 
   static Future onMessageTap(String payload) async {
     // e = "msgs" v
@@ -292,30 +317,6 @@ class FCM {
     //payload = "event::::ObjectId(\"64208b342fb621f911f3aa52\")";
     // payload = "notis";
     List<String> parts = payload.split("::::");
-    // myUser is null / false / ""   >  no matter the current login state
-    // myUser is true   >  need to be login to some user
-    // myUser is "mail@gmail.com"   >  need to be login to specific user
-    // retry = true so it will wait until login in order to move to page,
-    // for now it's false since it's done in main.dart
-    // (only then the parse will happen or it will happen twice: ontap on fcm notification && on main.dart)
-    Future push(myUser, builder, [bool retry = true]) async {
-      bool condition1 = myUser != null && myUser != false && myUser != "";
-      bool condition2 = myUser == true && Globals.currentUser == null;
-      bool condition3 = myUser != true && myUser != Globals.currentUser;
-      bool problem = condition1 && (condition2 || condition3);
-      if (problem && !retry) return;
-      if (problem && retry) {
-        await Future.delayed(Duration(seconds: 1));
-        return push(myUser, builder, retry);
-      }
-      var state = Globals.navKey.currentState;
-      if (state != null) {
-        state.push(MaterialPageRoute(builder: builder));
-      } else {
-        await Future.delayed(Duration(seconds: 1));
-        return push(myUser, builder, retry);
-      }
-    }
 
     switch (parts.first) {
       case "msgs":
@@ -337,7 +338,7 @@ class FCM {
         push(
             true,
             (context) => HomePage(
-                  openNotificationOnStart: true,
+                //openNotificationOnStart: false, // to avoid inf loop
                 ));
         break;
       default:
@@ -345,12 +346,15 @@ class FCM {
     }
   }
 
+  static Set<int?> ignoreNR = Set<int?>();
   static Future<dynamic> checkInitMsg([NotificationResponse? r]) async {
     await FCM.init();
     r = r ??
         (await flutterLocalNotificationsPlugin
                 .getNotificationAppLaunchDetails())
             ?.notificationResponse;
+    if (ignoreNR.contains(r?.id)) r = null;
+    ignoreNR.add(r?.id);
     String? payload = r?.payload;
     payload = payload ?? Globals.launchLink;
     Globals.launchLink = null;

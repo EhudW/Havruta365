@@ -149,13 +149,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     Globals.navKey = GlobalKey();
     mongoConnectFuture = getMgFuture();
-    if (Globals.launchLink?.startsWith("/") ?? false) {
-      // shift the root, to avoid inf loop when press back button
-      Globals.launchLink = Globals.launchLink!.substring(1);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(Duration(milliseconds: 100), () => rconfig.replace("/"));
-      });
-    }
     if (Globals.MyAppStarted) return;
     Globals.MyAppStarted = true;
     initFirebase();
@@ -201,6 +194,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (Globals.launchLink?.startsWith("/") ?? false) {
+      // shift the root, to avoid inf loop when press back button
+      Globals.launchLink = Globals.launchLink!.substring(1);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration(milliseconds: 100), () => rconfig.replace("/"));
+      });
+    }
     return MaterialApp(
       navigatorKey: Globals.navKey,
       debugShowCheckedModeBanner: false,

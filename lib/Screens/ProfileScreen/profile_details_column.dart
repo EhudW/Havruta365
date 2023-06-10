@@ -11,6 +11,7 @@ import 'package:havruta_project/Screens/HomePageScreen/Events/MyEventsPage.dart'
 import 'package:havruta_project/Screens/HomePageScreen/Events/modelsHomePages.dart';
 import 'package:havruta_project/Screens/Login/Login.dart';
 import 'package:havruta_project/Screens/UserChanges/ChangesDetails.dart';
+import 'package:havruta_project/main.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -289,6 +290,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               Globals.currentUser = null;
               Globals.rec.cancel([]);
               Globals.msgWithFriends.cancel([]);
+              NewNotificationManager.onlyLast?.cancel();
               await FCM.onLogout();
               if (await (GoogleSignInApi.isSignedIn())) {
                 currentUser = GoogleSignInApi.currentUser();

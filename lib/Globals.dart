@@ -1,5 +1,6 @@
 import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
+import 'package:havruta_project/main.dart';
 import 'package:havruta_project/rec_system.dart';
 
 import 'DataBase_auth/Event.dart';
@@ -27,6 +28,8 @@ class Globals {
     Globals.updateRec();
     Globals.msgWithFriends.restart([], true);
     FCM.onLogin();
+    NewNotificationManager();
+    NewNotificationManager.onlyLast?.start();
   }
 
   static User? tmpNextUser; //only for tmp use in the sign-up new user
