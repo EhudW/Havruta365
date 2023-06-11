@@ -132,6 +132,7 @@ class _MyAppState extends State<MyApp> {
     await Firebase.initializeApp();
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     //FirebaseCrashlytics.instance.crash();
+    await Globals.prefs;
   }
 
   // handling timing reconnecting of mongodb

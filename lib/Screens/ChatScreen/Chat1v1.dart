@@ -101,9 +101,11 @@ class _ChatPageState extends State<ChatPage> {
       imageUrl: Globals.currentUser!.avatar);
   late ChatModel model;
   late MyTimer timer;
+  String? tce_init_string;
   @override
   void initState() {
     super.initState();
+    tce_init_string = Globals.prefsReadyOrNull?.getString(widget.otherPerson);
     model = ChatModel(
         myMail: Globals.currentUser!.email!,
         otherPerson: widget.otherPerson,
@@ -131,6 +133,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void onSend(types.PartialText pt) {
+    Globals.prefsReadyOrNull?.setString(widget.otherPerson, "");
     model.send(ChatMessage(
         isForum: widget.forumName != null,
         avatar: Globals.currentUser!.avatar,
@@ -371,7 +374,12 @@ class _ChatPageState extends State<ChatPage> {
                                   children: [w, t],
                                 );
                               },
-
+                              inputOptions: InputOptions(
+                                onTextChanged: (p0) => Globals.prefsReadyOrNull
+                                    ?.setString(widget.otherPerson, p0),
+                                textEditingController: TextEditingController(
+                                    text: tce_init_string),
+                              ),
                               onMessageVisibilityChanged: (p0, visible) =>
                                   !visible //|| (widget.forumName != null)
                                       ? null

@@ -144,7 +144,12 @@ class Globals {
     gradientEnd: Colors.blue,
     title: "",
   );
-  static Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+  static SharedPreferences? prefsReadyOrNull;
+  static Future<SharedPreferences> prefs =
+      SharedPreferences.getInstance().then((v) {
+    prefsReadyOrNull = v;
+    return v;
+  });
   static String maleAvatar =
       'https://mpng.subpng.com/20180418/whw/kisspng-computer-icons-professional-clipart-5ad7f6c3aafc17.2777946215241028517004.jpg';
   static String femaleAvatar =
