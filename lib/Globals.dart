@@ -31,6 +31,7 @@ class Globals {
     FCM.onLogin();
     NewNotificationManager();
     NewNotificationManager.onlyLast?.start();
+    Future.delayed(Duration(milliseconds: 300), () => FCM.checkInitMsg());
   }
 
   static User? tmpNextUser; //only for tmp use in the sign-up new user

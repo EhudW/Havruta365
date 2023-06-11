@@ -332,7 +332,7 @@ class FCM {
                 ));
         break;
       case "event":
-        push(false, (context) => EventScreen.fromString(parts[1]));
+        push(true, (context) => EventScreen.fromString(parts[1]));
         break;
       case "notis":
         push(

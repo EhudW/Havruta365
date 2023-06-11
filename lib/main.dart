@@ -248,9 +248,6 @@ class _MyAppState extends State<MyApp> {
                                         return const CircularProgressIndicator();
                                       case ConnectionState.done:
                                         Globals.onNewLogin(snapshot.data!);
-                                        Future.delayed(
-                                            Duration(milliseconds: 300),
-                                            () => FCM.checkInitMsg());
                                         return HomePage();
                                       //break;
                                       default:
