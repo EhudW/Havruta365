@@ -266,7 +266,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
                   "היי! הייתי רוצה להמליץ לך על האפליקציה חברותא+" +
                       "\n${Globals.ServerCampaign}",
                   //   "\n https://play.google.com/store/apps/details?id=not.exist.yet.main",
-                  subject: Globals.ServerCampaign);
+                  subject: "כדאי לך לנסות את חברותא פלוס");
             },
             child: create_button_container(
                 Text("המלץ לחבר",

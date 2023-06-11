@@ -16,9 +16,20 @@ import 'mydebug.dart' as MyDebug;
 // see also mydebug.dart
 class Globals {
   static const String Server = "https://adorable-crab-outfit.cyclic.app/";
+  static const String ServerIcon = Server + "images/AppIcon2.png";
   static const String ServerFCM = Server + "FCM";
-  static const String ServerCampaign = Server + "campaign";
-  static String ServerEventLink(Event e) => Server + "inapp/event/${e.id.$oid}";
+  static const String _ServerCampaign = Server + "campaign";
+  static String _ServerEventLink(Event e) =>
+      Server +
+      "inapp/event/${e.id.$oid}"; //will target server or will ask open app [not ask if typed in browser]
+  static String serverDynamicLink(String link, String description) =>
+      Uri.encodeFull(
+          "https://havruta.page.link/?st=חברותא פלוס&sd=$description&si=$ServerIcon&link=$link");
+  static String ServerCampaign =
+      serverDynamicLink(_ServerCampaign, "מצא חברותות ושיעורים");
+  static String ServerEventLink(Event e) => serverDynamicLink(
+      _ServerEventLink(e),
+      e.shortStr); //will pop app and suitable for any platform [firebase dynamic link]
   static String? launchLink;
   static bool MyAppStarted = false;
   static GlobalKey<NavigatorState> navKey = GlobalKey();

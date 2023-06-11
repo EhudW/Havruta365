@@ -234,7 +234,8 @@ class _EventPageState extends State<EventPage> {
             title: Text('המלץ לחבר'),
             onTap: () {
               Share.share(share_string + "\n" + share_link,
-                  subject: share_link);
+                  subject:
+                      "כדאי לך להירשם ל${widget.event!.typeAsStr} באפליקציית חברותא פלוס");
             },
           ),
           amICreator
