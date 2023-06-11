@@ -107,7 +107,7 @@ class NoEventScreen extends StatelessWidget {
         children: [
           Center(
               child: Text(
-            eventname ?? "" + "\n" + lbl,
+            (eventname ?? "") + "\n" + lbl,
             textAlign: TextAlign.right,
           )),
           otheruser == null

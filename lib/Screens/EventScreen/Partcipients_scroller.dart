@@ -14,12 +14,14 @@ import 'dart:ui' as ui;
 // ignore: must_be_immutable
 class ParticipentsScroller extends StatefulWidget {
   String initPubMsgText;
+  Function notifyParent;
   ParticipentsScroller(
       {this.title = "משתתפים",
       this.accept,
       this.reject,
       required this.initPubMsgText,
-      this.event}) {
+      this.event,
+      required this.notifyParent}) {
     var current_user = Globals.currentUser!.email;
     this.is_creator = event!.creatorUser == current_user;
     //this.usersMail = usersMail ?? [];
@@ -50,33 +52,27 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
   }
 
   void _rejectList() {
-    setState(() {
-      for (var user in widget.selected_users) {
-        if (widget.event!.rejectedQueue!.contains(user)) return;
-
-        widget.reject!(user);
-        widget.event!.rejectedQueue!.add(user);
-        widget.event!.leftQueue!.remove(user);
-        widget.event!.participants!.remove(user);
-        widget.event!.waitingQueue!.remove(user);
-      }
-      widget.selected_users.clear();
-    });
+    for (var user in widget.selected_users) {
+      bool didSomething = widget.event!
+          .rejectLocal(user); // so we wont need to await to mongodb
+      if (!didSomething)
+        continue; // to avoid notify fcm someone that already rejected
+      widget.reject!(user);
+    }
+    widget.selected_users.clear();
+    widget.notifyParent(); // we didnt waited for fcm/mongo db
   }
 
   void _acceptList() {
-    setState(() {
-      for (var user in widget.selected_users) {
-        if (widget.event!.participants!.contains(user)) return;
-        //if (widget.event!.rejectedQueue!.contains(user)) {}
-        widget.accept!(user);
-        widget.event!.participants!.add(user);
-        widget.event!.waitingQueue!.remove(user);
-        widget.event!.leftQueue!.remove(user);
-        widget.event!.rejectedQueue!.remove(user);
-      }
-      widget.selected_users.clear();
-    });
+    for (var user in widget.selected_users) {
+      bool didSomething = widget.event!
+          .acceptLocal(user); // so we wont need to await to mongodb
+      if (!didSomething)
+        continue; // to avoid notify fcm someone that already joined
+      widget.accept!(user);
+    }
+    widget.selected_users.clear();
+    widget.notifyParent(); // we didnt wait for mongodb or fcm
   }
 
   Widget _creatorCommands() {

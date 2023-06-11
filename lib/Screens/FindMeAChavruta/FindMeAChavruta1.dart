@@ -559,7 +559,8 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
                                       "בחרו קבוצת יעד",
                                       Event.onlyForStatus_Options
                                           .map((e) => DropdownMenuItem<String>(
-                                                child: dropDownContainer(e[0]),
+                                                child: dropDownContainer(
+                                                    Event.getNewLbl(e[0])),
                                                 value: e[0],
                                               ))
                                           .toList(),

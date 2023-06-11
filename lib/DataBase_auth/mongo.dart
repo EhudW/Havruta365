@@ -10,6 +10,7 @@ import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
+import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import '../mydebug.dart' as MyDebug;
 import './mongo2.dart' as Db2;
@@ -69,31 +70,26 @@ class Mongo {
     return user;
   }
 
-  static Future<dynamic> ___getUpdateUserInfo(
-      dynamic m, String userMail, Map<String, String> K_to_update_V) async {
-    var coll = Globals.db!.db.collection('Users');
-    var user_json = await coll.findOne(where.eq('email', '$userMail'));
-    K_to_update_V.forEach((key, value) {
-      m[key] = user_json[value];
-    });
-    return m;
+  void onUserUpdateHelper(String collection, String field, String to,
+      String whereis, String email) {
+    (db as Db)
+        .collection(collection)
+        .updateMany(where.eq(whereis, email), modify.set(field, to));
   }
 
-  // this is for programming saving time
-  static Future<dynamic> getUpdateUserInfo(dynamic map,
-      {bool isChatMessage = false,
-      bool isEvent = false,
-      bool isNotification = false}) async {
-    if (isChatMessage)
-      return ___getUpdateUserInfo(
-          map, map["src_mail"], {"name": "name", "avatar": "avatar"});
-    if (isEvent)
-      return ___getUpdateUserInfo(map, map["creatorUser"], {
-        "creatorName": "name",
-        /* only for format share str */ "creatorGender": "gender"
-      });
-    // if (isNotification)
-    return ___getUpdateUserInfo(map, map["creatorUser"], {"name": "name"});
+  Future onUserUpdate(User user) async {
+    var old = await getUser(user.email!);
+    if (old?.name != user.name) {
+      onUserUpdateHelper(
+          "Events", "creatorName", user.name!, "creatorUser", user.email!);
+      onUserUpdateHelper(
+          "Notifications", "name", user.name!, "creatorUser", user.email!);
+      onUserUpdateHelper("Chats", "name", user.name!, "src_mail", user.email!);
+    }
+    if (old?.avatar != user.avatar) {
+      onUserUpdateHelper(
+          "Chats", "avatar", user.avatar!, "src_mail", user.email!);
+    }
   }
 
   Future<User> getUserByID(String id, bool awaitToDBconnect) async {
@@ -121,8 +117,7 @@ class Mongo {
             .sortBy('_id', descending: true))
         .toList();
     for (var i in notifications) {
-      data.add(new NotificationUser.fromJson(
-          await Mongo.getUpdateUserInfo(i, isNotification: true)));
+      data.add(new NotificationUser.fromJson(i));
     }
     return data;
   }
@@ -270,6 +265,7 @@ class Mongo {
   }
 
   updateUser(User user) async {
+    await onUserUpdate(user);
     var collection = db.collection('Users');
     // Check if the user exist
     await collection.updateOne(
@@ -317,6 +313,7 @@ class Mongo {
   }
 
   changeDeatailsUser(User user) async {
+    await onUserUpdate(user);
     var collection = db.collection('Users');
     // Check if the user exist
     await collection.updateOne(
@@ -359,6 +356,7 @@ class Mongo {
   Remove user from the DB according to the mail.
    */
   void removeUser(mail) async {
+    //  WARNING ! will break the system
     db = await Db.create(CONNECT_TO_DB);
     await db.open();
     var collection = db.collection('Users');
@@ -373,7 +371,7 @@ class Mongo {
     if (event == null) {
       return null;
     }
-    var e = Event.fromJson(await Mongo.getUpdateUserInfo(event, isEvent: true));
+    var e = Event.fromJson(event);
     var len = e.dates!.length;
     for (int j = 0; j < len; j++) {
       if (timeNow
@@ -520,8 +518,7 @@ class Mongo {
     }
     var messages = await collection.find(selector).toList();
     for (var i in messages) {
-      listMessages.add(ChatMessage.fromJson(
-          await Mongo.getUpdateUserInfo(i, isChatMessage: true)));
+      listMessages.add(ChatMessage.fromJson(i));
     }
     listMessages.sort((a, b) => a.datetime!.compareTo(b.datetime!));
     !fetchDstUserData ? null : await __fetchDstUserData(listMessages, dstMail);
@@ -555,8 +552,7 @@ class Mongo {
         var tmp = await collection.findOne(
             where.eq('dst_mail', topic).sortBy('_id', descending: true));
         if (tmp == null) continue;
-        var msg = ChatMessage.fromJson(
-            await Mongo.getUpdateUserInfo(tmp, isChatMessage: true));
+        var msg = ChatMessage.fromJson(tmp);
         var event = await getEventById(
             ObjectId.fromHexString(msg.dst_mail!.split("\"")[1]));
         msg.otherPersonAvatar = event!.eventImage!;

@@ -172,7 +172,7 @@ class _EventPageState extends State<EventPage> {
         ]);
   }
 
-  Drawer BuildDrawer(type, amICreator) {
+  Drawer BuildDrawer(type, amICreator, snapshot) {
     String topic = widget.event?.topic?.trim() ?? "";
     String book = widget.event?.book?.trim() ?? "";
     String t_topic = topic != "" ? " ב" + topic : "";
@@ -182,7 +182,7 @@ class _EventPageState extends State<EventPage> {
     String share_string = "אשמח להזמין אותך ל" +
         widget.event!.shortStr +
         " מפי הרב" +
-        (widget.event!.creatorGender == 'F' ? "נית" : "") +
+        (snapshot.data?["gender"] == 'F' ? "נית" : "") +
         " " +
         widget.event!.creatorName! +
         ".\n";
@@ -323,7 +323,7 @@ class _EventPageState extends State<EventPage> {
             builder: ((builder) => bottomSheet(context, () async {*/
           //Navigator.pop(context);
           await func(userMail);
-          refresh();
+          //refresh(); -> done at ScrollerParticipant for fast sync time delay; and not needed twwice
           //, () => Navigator.pop(context));
           //);
         };
@@ -372,7 +372,7 @@ class _EventPageState extends State<EventPage> {
             case ConnectionState.done:
               return Scaffold(
                 appBar: BuildAppBar(snapshot, type),
-                drawer: BuildDrawer(type, amICreator),
+                drawer: BuildDrawer(type, amICreator, snapshot),
                 body: SingleChildScrollView(
                   child: Column(children: [
                     MainDetails(widget.event!),
@@ -382,10 +382,13 @@ class _EventPageState extends State<EventPage> {
                         : SizedBox(height: 8),
                     widget.event!.dates!.isEmpty || notMyTarget
                         ? Container()
-                        : MyProgressButton(
-                            event: widget.event,
-                            allUserEvents: widget.allUserEvents,
-                            notifyParent: refresh),
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 25, right: 25),
+                            child: MyProgressButton(
+                                event: widget.event,
+                                allUserEvents: widget.allUserEvents,
+                                notifyParent: refresh),
+                          ),
                     SizedBox(height: 8.0),
                     Divider(),
                     widget.event!.type == "L" || amIParticipant || amICreator
@@ -396,6 +399,7 @@ class _EventPageState extends State<EventPage> {
                             initPubMsgText: initPub(
                                 amICreator && widget.event!.type == 'H'),
                             event: widget.event,
+                            notifyParent: refresh,
                           )
                         : Container(),
                     SizedBox(height: Globals.scaler.getHeight(1)),

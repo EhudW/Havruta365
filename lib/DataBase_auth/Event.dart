@@ -19,7 +19,6 @@ class Event {
     return _type + t_topic + t_book;
   }
 
-  String creatorGender = 'M'; // only for format share string
   // minutes to next date. 0 online, -1 pass,
   int get startIn {
     if (dates == null || dates!.isEmpty) return -1;
@@ -70,6 +69,22 @@ class Event {
       [statusOps[2], statusOps[3], statusOps[4]]
     ]
   ];
+  static List<String> NEWlbl_onlyForStatus_Options = [
+    "מיועד לכולם",
+    "רק לרווקים/ות",
+    "רק לנשואים/ות",
+    "רק לגרושים/ות",
+    "רק לאלמנים/ות",
+    "לא נשואים/ות",
+    "גרושים/ות, נשואים/ות, אלמנים/ות",
+  ];
+  static String getNewLbl(String old) {
+    for (int i = 0; i < onlyForStatus_Options.length; i++)
+      if (onlyForStatus_Options[i][0] == old)
+        return NEWlbl_onlyForStatus_Options[i];
+    return NEWlbl_onlyForStatus_Options[0];
+  }
+
   static List statusesICanJoin() {
     String myStatus = Globals.currentUser!.status!;
     var rslt = onlyForStatus_Options
@@ -132,28 +147,45 @@ class Event {
   Future<bool> leave(String email) => moveToQueue(email, EventQueues.Left);
   Future<bool> accept(String email) =>
       moveToQueue(email, EventQueues.Participants);
+  bool acceptLocal(String email) => moveToQueueLocal(email,
+      EventQueues.Participants); // for sync prog; return if done something
   Future<bool> reject(String email) => moveToQueue(email, EventQueues.Rejected);
+  bool rejectLocal(String email) => moveToQueueLocal(
+      email, EventQueues.Rejected); //for sync prog; return if done something
   Future<bool> join(String email) =>
       moveToQueue(email, EventQueues.Participants);
   Future<bool> joinWaiting(String email) =>
       moveToQueue(email, EventQueues.Waiting);
   Future<bool> removeFromAllQueues(String email) => moveToQueue(email, null);
+  bool moveToQueueLocal(String email, EventQueues? queue) {
+    bool didSomething = false;
+    for (var option in EventQueues.values) {
+      List<dynamic> l = of(option);
+      if (queue == option && !l.contains(email)) {
+        l.add(email);
+        didSomething = true;
+      }
+      if (queue != option && l.contains(email)) {
+        l.remove(email);
+        didSomething = true;
+      }
+    }
+    return didSomething;
+  }
+
   Future<bool> moveToQueue(String email, EventQueues? queue,
-      {bool serverUpdate = true, bool thisUpdate = true}) async {
+      {bool serverUpdate = true,
+      bool thisUpdate = true,
+      bool skipIfCan = false}) async {
+    // dont use skip if can && moveToQueueLocal
+    if (skipIfCan && queue != null && of(queue).contains(email)) return true;
+    if (skipIfCan &&
+        queue == null &&
+        EventQueues.values.every((e) => !of(e).contains(email))) return true;
     var rslt = !serverUpdate ||
         (await Globals.db!.moveToEventQueue(this.id, email, queue));
     if (rslt == false) return false;
-    if (thisUpdate) {
-      for (var option in EventQueues.values) {
-        List<dynamic> l = of(option);
-        if (queue == option && !l.contains(email)) {
-          l.add(email);
-        }
-        if (queue != option) {
-          l.remove(email);
-        }
-      }
-    }
+    if (thisUpdate) moveToQueueLocal(email, queue);
     return true;
   }
 
@@ -277,8 +309,6 @@ class Event {
 
   Event.fromJson(Map<String, dynamic> json)
       : _id = json['_id'],
-        creatorGender =
-            json['creatorGender'] ?? 'M', // only for format share string
         creatorUser = json['creatorUser'] ?? "לא ידוע",
         creatorName = json['creatorName'] ?? "לא ידוע",
         creationDate = json['creationDate'],

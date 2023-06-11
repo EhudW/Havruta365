@@ -258,8 +258,7 @@ class EventsSelectorBuilder {
     if (!filterOldDates) {
       List<Event> tmp = [];
       for (var i in events) {
-        tmp.add(
-            Event.fromJson(await Mongo.getUpdateUserInfo(i, isEvent: true)));
+        tmp.add(Event.fromJson(i));
       }
       return applyTesters(tmp, eventTesters);
     }
@@ -267,8 +266,7 @@ class EventsSelectorBuilder {
     List<Event> data = [];
     DateTime timeNow = DateTime.now();
     for (var i in events) {
-      Event e =
-          new Event.fromJson(await Mongo.getUpdateUserInfo(i, isEvent: true));
+      Event e = new Event.fromJson(i);
       var len = e.dates!.length;
       // filterOldDate=true :
       for (int j = 0; j < len; j++) {
