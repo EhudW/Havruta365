@@ -19,6 +19,7 @@ class Event {
     return _type + t_topic + t_book;
   }
 
+  String creatorGender = 'M'; // only for format share string
   // minutes to next date. 0 online, -1 pass,
   int get startIn {
     if (dates == null || dates!.isEmpty) return -1;
@@ -276,6 +277,8 @@ class Event {
 
   Event.fromJson(Map<String, dynamic> json)
       : _id = json['_id'],
+        creatorGender =
+            json['creatorGender'] ?? 'M', // only for format share string
         creatorUser = json['creatorUser'] ?? "לא ידוע",
         creatorName = json['creatorName'] ?? "לא ידוע",
         creationDate = json['creationDate'],

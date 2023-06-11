@@ -180,11 +180,11 @@ class _EventPageState extends State<EventPage> {
     String study = book == "" ? topic : "";
     String share_link = Globals.ServerEventLink(widget.event!);
     String share_string = "אשמח להזמין אותך ל" +
-        type +
-        " בנושא " +
-        study +
-        ", מפי הרב " +
-        widget.event!.lecturer! +
+        widget.event!.shortStr +
+        " מפי הרב" +
+        (widget.event!.creatorGender == 'F' ? "נית" : "") +
+        " " +
+        widget.event!.creatorName! +
         ".\n";
     var drawer_navigation_line = (line_title, navigation_func) {
       return ListTile(

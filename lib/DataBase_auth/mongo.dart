@@ -88,8 +88,10 @@ class Mongo {
       return ___getUpdateUserInfo(
           map, map["src_mail"], {"name": "name", "avatar": "avatar"});
     if (isEvent)
-      return ___getUpdateUserInfo(
-          map, map["creatorUser"], {"creatorName": "name"});
+      return ___getUpdateUserInfo(map, map["creatorUser"], {
+        "creatorName": "name",
+        /* only for format share str */ "creatorGender": "gender"
+      });
     // if (isNotification)
     return ___getUpdateUserInfo(map, map["creatorUser"], {"name": "name"});
   }
