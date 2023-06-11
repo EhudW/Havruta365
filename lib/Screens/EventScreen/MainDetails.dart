@@ -17,24 +17,29 @@ class MainDetails extends StatefulWidget {
 String FormatCountdownString(BuildContext context, int total_minutes) {
   String countdown_string = "";
   var countdown_minutes = total_minutes;
+  int minutes_in_day = 1440;
   if (countdown_minutes > 0) {
     countdown_string = "האירוע יתחיל בעוד ";
     if (countdown_minutes >= 1440) {
+      countdown_string += (countdown_minutes / 1440).floor().toString();
+      countdown_string += " ימים";
       countdown_string +=
-          (countdown_minutes / 1440).floor().toString() + " ימים ו ";
-      countdown_minutes = countdown_minutes % 1440;
+          countdown_minutes % 60 == 0 || total_minutes > 3 * minutes_in_day
+              ? "."
+              : " ו";
+      countdown_minutes = countdown_minutes % minutes_in_day;
     }
-    if (countdown_minutes >= 60) {
+    if (countdown_minutes >= 60 && total_minutes < 3 * minutes_in_day) {
       countdown_string +=
           (countdown_minutes / 60).floor().toString() + " שעות.";
     }
     if (total_minutes >= 60 &&
         countdown_minutes % 60 != 0 &&
-        countdown_minutes < 100) {
+        total_minutes < 120) {
       countdown_string += " ו";
       countdown_string += (countdown_minutes % 60).toString() + " דקות.";
     }
-    if (countdown_minutes % 60 != 0 && countdown_minutes < 100) {
+    if (total_minutes % 60 != 0 && total_minutes < 60) {
       countdown_string += countdown_minutes.toString() + " דקות.";
     }
     //countdown_string += countdown_minutes.toString() + " דקות";
