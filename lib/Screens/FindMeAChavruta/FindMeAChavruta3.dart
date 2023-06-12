@@ -240,9 +240,10 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
                                 /// new and update event:
                                 widget.event!.creatorUser =
                                     Globals.currentUser!.email;
-                                if (widget.event!.eventImage == "") {
+                                if (widget.event!.eventImage == "" ||
+                                    widget.event!.eventImage == null) {
                                   widget.event!.eventImage =
-                                      'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+                                      MyDebug.MyConsts.DEFAULT_EVENT_IMG;
                                 }
 
                                 /// new event:
@@ -535,8 +536,8 @@ class _FindMeAChavruta3CreateState extends State<FindMeAChavruta3> {
       });
     } else {
       setState(() {
-        widget.event!.eventImage =
-            'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
+        // widget.event!.eventImage =
+        //     MyConsts.DEFAULT_EVENT_IMG;
       });
     }
   }

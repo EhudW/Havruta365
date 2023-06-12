@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/DataBase_auth/Notification.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Screens/EventScreen/Add2Calendar.dart';
 import 'package:havruta_project/Screens/EventScreen/DeleteFromEventButton.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:havruta_project/Screens/EventScreen/progress_button.dart';
@@ -100,6 +99,7 @@ class MyProgressButtonState extends State<MyProgressButton> {
   }
 
   void decideButtonState() {
+    if (stateOnlyText == ButtonState.loading) return;
     var myMail = Globals.currentUser!.email;
     var iAmCreator = widget.event!.creatorUser == myMail;
     if (iAmCreator) {

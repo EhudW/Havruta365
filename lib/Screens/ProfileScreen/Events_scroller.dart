@@ -7,6 +7,7 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Events/Events.dart';
 import 'package:havruta_project/Screens/HomePageScreen/Events/modelsHomePages.dart';
+import 'package:havruta_project/mydebug.dart';
 //import 'package:havruta_project/Screens/EventScreen/Event_api.dart';
 //import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -80,7 +81,8 @@ class _EventsScrollerState extends State<EventsScroller> {
       child: Column(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(event.eventImage!),
+            backgroundImage:
+                NetworkImage(event.eventImage ?? MyConsts.DEFAULT_EVENT_IMG),
             radius: 30.0,
             child: IconButton(
                 icon: Icon(FontAwesomeIcons.houseUser),

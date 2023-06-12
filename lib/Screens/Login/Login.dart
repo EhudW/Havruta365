@@ -11,6 +11,7 @@ import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
 import 'package:havruta_project/Screens/Login/LoginDetails.dart';
 import 'package:havruta_project/Screens/Login/LoginDetailsGmail.dart';
+import 'package:havruta_project/mydebug.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 import '../../Globals.dart';
@@ -57,8 +58,8 @@ class _HomePageState extends State<Login> {
                           decoration: BoxDecoration(
                               image: DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg')),
+                                  image:
+                                      NetworkImage(MyConsts.LOGIN_SCREEN_IMG)),
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(

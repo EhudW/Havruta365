@@ -7,6 +7,7 @@ import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Third_dot_row.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/Wavy_Header.dart';
 import 'package:havruta_project/DataBase_auth/Topic.dart';
+import 'package:havruta_project/mydebug.dart';
 //import 'MyData.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -267,7 +268,7 @@ class _FindMeAChavruta1CreateState extends State<FindMeAChavruta1> {
     event.dates = [];
     event.creatorName = Globals.currentUser!.name;
     event.creatorUser = Globals.currentUser!.email;
-    event.eventImage = '';
+    event.eventImage = MyConsts.DEFAULT_EVENT_IMG;
     event.participants = [];
     event.waitingQueue = [];
     event.link = '';

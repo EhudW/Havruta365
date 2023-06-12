@@ -3,9 +3,11 @@
 //import 'package:another_flushbar/flushbar.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:havruta_project/DataBase_auth/User.dart';
 import 'package:havruta_project/Screens/EventScreen/FurtherDetailsScreen.dart';
 import 'package:havruta_project/Screens/FindMeAChavruta/FindMeAChavruta1.dart';
 import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
+import 'package:havruta_project/mydebug.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
@@ -147,8 +149,9 @@ class _EventPageState extends State<EventPage> {
         title: Text(type),
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        flexibleSpace:
-            ArcBannerImage(widget.event!.eventImage, imgHeight: 80.0),
+        flexibleSpace: ArcBannerImage(
+            widget.event!.eventImage ?? MyConsts.DEFAULT_EVENT_IMG,
+            imgHeight: 80.0),
         actions: [
           CircleAvatar(
             //TODO: shreenk
@@ -180,11 +183,8 @@ class _EventPageState extends State<EventPage> {
     String study = book == "" ? topic : "";
     String share_link = Globals.ServerEventLink(widget.event!);
     String share_string = "אשמח להזמין אותך ל" +
-        widget.event!.shortStr +
-        " מפי הרב" +
-        (snapshot.data?["gender"] == 'F' ? "נית" : "") +
-        " " +
-        widget.event!.creatorName! +
+        widget.event!.longStr(
+            snapshot.data == null ? null : User.fromJson(snapshot.data)) +
         ".\n";
     var drawer_navigation_line = (line_title, navigation_func) {
       return ListTile(
@@ -199,7 +199,12 @@ class _EventPageState extends State<EventPage> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            child: Text('Drawer Header'),
+            child: Text(
+              "\n\n" + 'תפריט פעולות : ',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, letterSpacing: 2, fontSize: 25),
+              textDirection: ui.TextDirection.rtl,
+            ),
             decoration: BoxDecoration(
               color: Colors.blue,
             ),

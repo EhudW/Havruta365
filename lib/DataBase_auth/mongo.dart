@@ -356,7 +356,8 @@ class Mongo {
   Remove user from the DB according to the mail.
    */
   void removeUser(mail) async {
-    //  WARNING ! will break the system
+    throw (Exception(
+        "ERROR !\nremove user will break the system\nwhose mongo collections 'have' users (chat,event,...)"));
     db = await Db.create(CONNECT_TO_DB);
     await db.open();
     var collection = db.collection('Users');
@@ -555,8 +556,9 @@ class Mongo {
         var msg = ChatMessage.fromJson(tmp);
         var event = await getEventById(
             ObjectId.fromHexString(msg.dst_mail!.split("\"")[1]));
-        msg.otherPersonAvatar = event!.eventImage!;
-        msg.otherPersonName = event.shortStr;
+        msg.otherPersonAvatar =
+            event?.eventImage ?? MyDebug.MyConsts.DEFAULT_EVENT_IMG;
+        msg.otherPersonName = event?.shortStr ?? "אירוע נמחק";
         dynamic curr = Globals.currentUser!.subs_topics[msg.dst_mail];
         curr = curr?['seen'] ?? 0;
         int unseen = msg.counter - (curr as int);

@@ -19,6 +19,23 @@ class Event {
     return _type + t_topic + t_book;
   }
 
+  String longStr([User? __creatorUser]) {
+    if (__creatorUser != null && creatorUser != __creatorUser.email)
+      throw Exception("mismatch __creatorUser.email");
+    String __lecturer = lecturer?.trim() ?? "";
+    String __creatorName = creatorName?.trim() ?? "";
+    if (__lecturer != "") return shortStr + " מפי הרב/נית " + __lecturer;
+    if (__creatorName == "") return shortStr;
+    String rabbi = "הרב";
+    if (__creatorUser == null) rabbi += "/";
+    if (__creatorUser?.gender != 'M') rabbi += "נית";
+    return shortStr +
+        (type == 'L' ? " ביוזמת " : " עם ") +
+        rabbi +
+        " " +
+        __creatorName;
+  }
+
   // minutes to next date. 0 online, -1 pass,
   int get startIn {
     if (dates == null || dates!.isEmpty) return -1;

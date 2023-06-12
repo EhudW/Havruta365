@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
+import 'package:havruta_project/mydebug.dart';
 
 import '../../../Globals.dart';
 
@@ -22,7 +23,9 @@ class EventOnlineFeed extends StatelessWidget {
               height: Globals.scaler.getHeight(6),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    fit: BoxFit.cover, image: NetworkImage(event.eventImage!)),
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                        event.eventImage ?? MyConsts.DEFAULT_EVENT_IMG)),
                 borderRadius: BorderRadius.all(Radius.circular(0.0)),
                 color: Colors.redAccent,
               ),

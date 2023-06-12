@@ -237,6 +237,7 @@ class FCM {
       default:
         return;
     }
+    flutterLocalNotificationsPlugin.cancel(lastMgtFcmNotificationId[mgt] ?? 0);
     lastMgtFcmNotificationId[mgt] =
         DateTime.now().millisecondsSinceEpoch.toSigned(32);
     _showFCM(lastMgtFcmNotificationId[mgt]!, title, body, payload);

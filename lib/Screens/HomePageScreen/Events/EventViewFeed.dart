@@ -4,6 +4,7 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/EventScreen/EventScreen.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
+import 'package:havruta_project/mydebug.dart';
 //import 'package:flutter/cupertino.dart';
 //import 'package:havruta_project/DataBase_auth/User.dart';
 //import 'package:flutter/cupertino.dart';
@@ -249,7 +250,7 @@ class EventViewFeed extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(60),
                           child: Image.network(
-                            event.eventImage!,
+                            event.eventImage ?? MyConsts.DEFAULT_EVENT_IMG,
                             fit: BoxFit.cover,
                           ),
                         ),

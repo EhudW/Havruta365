@@ -4,6 +4,7 @@ import 'package:havruta_project/DataBase_auth/Event.dart';
 import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Screens/ChatScreen/Chat1v1.dart';
+import 'package:havruta_project/mydebug.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide Center;
 import '../UserScreen/UserScreen.dart';
@@ -66,7 +67,9 @@ class EventHeader extends StatelessWidget {
                   Padding(
                     //TODO: shreenk the image
                     padding: const EdgeInsets.only(bottom: 30.0),
-                    child: ArcBannerImage(event!.eventImage, imgHeight: 40.0),
+                    child: ArcBannerImage(
+                        event!.eventImage ?? MyConsts.DEFAULT_EVENT_IMG,
+                        imgHeight: 40.0),
                   ),
                   Container(
                     alignment: Alignment.center,

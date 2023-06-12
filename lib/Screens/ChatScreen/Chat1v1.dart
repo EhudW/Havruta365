@@ -105,7 +105,8 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    tce_init_string = Globals.prefsReadyOrNull?.getString(widget.otherPerson);
+    tce_init_string =
+        Globals.prefsReadyOrNull?.getString("DRAFT" + widget.otherPerson);
     model = ChatModel(
         myMail: Globals.currentUser!.email!,
         otherPerson: widget.otherPerson,
@@ -133,7 +134,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void onSend(types.PartialText pt) {
-    Globals.prefsReadyOrNull?.setString(widget.otherPerson, "");
+    Globals.prefsReadyOrNull?.setString("DRAFT" + widget.otherPerson, "");
     model.send(ChatMessage(
         isForum: widget.forumName != null,
         avatar: Globals.currentUser!.avatar,
@@ -376,7 +377,8 @@ class _ChatPageState extends State<ChatPage> {
                               },
                               inputOptions: InputOptions(
                                 onTextChanged: (p0) => Globals.prefsReadyOrNull
-                                    ?.setString(widget.otherPerson, p0),
+                                    ?.setString(
+                                        "DRAFT" + widget.otherPerson, p0),
                                 textEditingController: TextEditingController(
                                     text: tce_init_string),
                               ),
