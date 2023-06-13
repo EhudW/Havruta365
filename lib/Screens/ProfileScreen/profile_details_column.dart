@@ -264,7 +264,7 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
             onTap: () {
               Share.share(
                   "היי! הייתי רוצה להמליץ לך על האפליקציה חברותא+" +
-                      "\n${Globals.ServerCampaign}",
+                      "\n${Globals.ServerManuallyDynamicCampaign}",
                   //   "\n https://play.google.com/store/apps/details?id=not.exist.yet.main",
                   subject: "כדאי לך לנסות את חברותא פלוס");
             },

@@ -181,7 +181,8 @@ class _EventPageState extends State<EventPage> {
     String t_topic = topic != "" ? " ב" + topic : "";
     String t_book = book != "" ? " ב" + book : "";
     String study = book == "" ? topic : "";
-    String share_link = Globals.ServerEventLink(widget.event!);
+    Future<String> Function() share_link =
+        () => Globals.ServerDynamicEventLink(widget.event!);
     String share_string = "אשמח להזמין אותך ל" +
         widget.event!.longStr(
             snapshot.data == null ? null : User.fromJson(snapshot.data)) +
@@ -237,8 +238,8 @@ class _EventPageState extends State<EventPage> {
                   FurtherDetailsScreen(event: widget.event!)),
           ListTile(
             title: Text('המלץ לחבר'),
-            onTap: () {
-              Share.share(share_string + "\n" + share_link,
+            onTap: () async {
+              Share.share(share_string + "\n" + await share_link(),
                   subject:
                       "כדאי לך להירשם ל${widget.event!.typeAsStr} באפליקציית חברותא פלוס");
             },

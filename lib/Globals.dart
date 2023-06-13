@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:havruta_project/FCM/fcm.dart';
 import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
 import 'package:havruta_project/main.dart';
@@ -19,17 +20,34 @@ class Globals {
   static const String ServerIcon = Server + "images/AppIcon2.png";
   static const String ServerFCM = Server + "FCM";
   static const String _ServerCampaign = Server + "campaign";
+  // done via firebase dynamic links console
+  // fallback url = Server+start
+  static String ServerManuallyDynamicCampaign = "https://havruta.page.link/go";
   static String _ServerEventLink(Event e) =>
-      Server +
-      "inapp/event/${e.id.$oid}"; //will target server or will ask open app [not ask if typed in browser]
-  static String serverDynamicLink(String link, String description) =>
-      Uri.encodeFull(
-          "https://havruta.page.link/?st=חברותא פלוס&sd=$description&si=$ServerIcon&link=$link");
-  static String ServerCampaign =
-      serverDynamicLink(_ServerCampaign, "מצא חברותות ושיעורים");
-  static String ServerEventLink(Event e) => serverDynamicLink(
-      _ServerEventLink(e),
-      e.shortStr); //will pop app and suitable for any platform [firebase dynamic link]
+      "${Server}inapp/event/${e.id.$oid}";
+
+  // https://firebase.google.com/docs/dynamic-links/create-links
+  static Future<String> serverDynamicLink(String link, String description) =>
+      FirebaseDynamicLinks.instance
+          .buildShortLink(
+            DynamicLinkParameters(
+              longDynamicLink: Uri.parse(Uri.encodeFull(
+                  "https://havruta.page.link/" +
+                      "?st=חברותא פלוס" +
+                      "&sd=$description" +
+                      "&si=$ServerIcon" +
+                      "&link=$link" +
+                      "&ofl=$_ServerCampaign" +
+                      "&afl=$_ServerCampaign" +
+                      "&apn=com.havruta" +
+                      "&amv=1")),
+              link: Uri.parse(link),
+              uriPrefix: "https://havruta.page.link/",
+            ),
+          )
+          .then((link) => link.shortUrl.toString());
+  static Future<String> ServerDynamicEventLink(Event e) =>
+      serverDynamicLink(_ServerEventLink(e), e.shortStr);
   static String? launchLink;
   static bool MyAppStarted = false;
   static GlobalKey<NavigatorState> navKey = GlobalKey();

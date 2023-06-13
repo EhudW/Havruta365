@@ -113,30 +113,29 @@ class Event {
 
   Event deepClone() {
     var rslt = Event(
-      book: book,
-      creationDate: creationDate,
-      creatorName: creatorName,
-      creatorUser: creatorUser,
-      dates: dates == null ? null : List.of(dates!),
-      participants: participants == null ? null : List.of(participants!),
-      waitingQueue: waitingQueue == null ? null : List.of(waitingQueue!),
-      rejectedQueue: List.of(rejectedQueue),
-      leftQueue: List.of(leftQueue),
-      description: description,
-      duration: duration,
-      eventImage: eventImage,
-      lecturer: lecturer,
-      link: link,
-      location: location,
-      maxAge: maxAge,
-      maxParticipants: maxParticipants,
-      minAge: minAge,
-      onlyForStatus: onlyForStatus,
-      topic: topic,
-      type: type,
-    );
+        book: book,
+        creationDate: creationDate,
+        creatorName: creatorName,
+        creatorUser: creatorUser,
+        dates: dates == null ? null : List.of(dates!),
+        participants: participants == null ? null : List.of(participants!),
+        waitingQueue: waitingQueue == null ? null : List.of(waitingQueue!),
+        rejectedQueue: List.of(rejectedQueue),
+        leftQueue: List.of(leftQueue),
+        description: description,
+        duration: duration,
+        eventImage: eventImage,
+        lecturer: lecturer,
+        link: link,
+        location: location,
+        maxAge: maxAge,
+        maxParticipants: maxParticipants,
+        minAge: minAge,
+        onlyForStatus: onlyForStatus,
+        topic: topic,
+        type: type,
+        targetGender: targetGender);
     rslt.id = id;
-    rslt.targetGender = targetGender;
     rslt.shouldDuplicate = shouldDuplicate;
     return rslt;
   }
@@ -254,6 +253,7 @@ class Event {
       this.maxAge = 120,
       this.minAge = 0,
       this.onlyForStatus,
+      this.targetGender,
       this.duration,
       this.maxParticipants})
       : rejectedQueue = rejectedQueue ?? [],
@@ -286,7 +286,7 @@ class Event {
       location,
       description,
       eventImage,
-      targetGender,
+      targetGender, // "גברים" "נשים"
       lecturer;
   int? maxParticipants, duration;
   int minAge, maxAge;

@@ -35,11 +35,17 @@ final rconfig = GoRouter(routes: [
     },
   ),
   GoRoute(
+    path: "/start",
+    builder: (context, state) {
+      return MyApp();
+    },
+  ),
+  GoRoute(
     path: "/",
     builder: (context, state) {
       return MyApp();
     },
-  )
+  ),
 ]);
 void main() async {
   initializeDateFormatting().then((_) => runApp(MaterialApp.router(
