@@ -67,7 +67,7 @@ class notificationModel {
   Future<void> remove(NotificationUser noti, {bool autoSimulate = false}) {
     if (ignoreRequests) return Future.value();
     _ignore_ids.add(noti.id);
-    _data!.remove(noti);
+    _data!.removeWhere((item) => item.id == noti.id);
     if (autoSimulate) _controller.add(_data);
     return Globals.db!
         .deleteNotification(noti)
