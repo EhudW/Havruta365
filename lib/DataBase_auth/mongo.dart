@@ -162,9 +162,10 @@ class Mongo {
   }*/
 
   Future<void> seenNoti(List ids) async {
+    if (ids.isEmpty) return;
     var collection = Globals.db!.db.collection('Notifications');
     // ignore: unused_local_variable
-    return await collection.update(
+    return await collection.updateMany(
         where.oneFrom('_id', ids), ModifierBuilder().set('unseen', false));
   }
 

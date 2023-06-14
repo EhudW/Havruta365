@@ -39,8 +39,9 @@ class _NotificationsState extends State<Notifications> {
       floatingActionButton: StreamBuilder(
           stream: this.widget.nnim.model.stream,
           builder: (BuildContext _context, AsyncSnapshot _snapshot) {
-            if (!_snapshot.hasData || _snapshot.data?.isNotEmpty != true) {
-              widget.nnim.model.simulateRefresh();
+            if (_snapshot.hasData == false ||
+                _snapshot.data == null ||
+                _snapshot.data.isEmpty == true) {
               return SizedBox();
             } else {
               return SizedBox(
@@ -55,11 +56,13 @@ class _NotificationsState extends State<Notifications> {
                               await widget.nnim.model
                                   .removeAll()
                                   .catchError((err) => null);
-                              // refresh ui if this delete cause that
-                              if (widget.nnim.model.unseenLen == 0) {
-                                widget.nnim.newNotification = 0;
-                                widget.nnim.refreshAll();
-                              }
+                              // refresh ui,fcm if this delete cause that
+
+                              widget.nnim.refreshAll(
+                                  debuglbl: "rmv all",
+                                  forceRefresh: true,
+                                  tryAvoidNext2Sec: false);
+
                               Navigator.pop(context);
                             }, () => Navigator.pop(context))),
                     child: Icon(

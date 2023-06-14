@@ -41,23 +41,13 @@ class _notificationsScrollState extends State<notificationsScroll> {
                               key: UniqueKey(),
                               onDismissed: (direction) async {
                                 await widget.nnim.model
-                                    .remove(index)
+                                    .remove(_snapshot.data[index])
                                     .catchError((err) => null);
-                                // refresh ui if this delete cause that
-                                if (widget.nnim.model.unseenLen == 0) {
-                                  FCM.reset("notis");
-                                  widget.nnim.newNotification = 0;
-                                  widget.nnim.refreshAll();
-                                } else {
-                                  var newest = widget.nnim.model.getNewest();
-                                  if (newest != null)
-                                    FCM.resetTo(
-                                        "notis",
-                                        widget.nnim.model.unseenLen,
-                                        newest.name!,
-                                        newest.message!,
-                                        "notis");
-                                }
+                                // refresh ui,fcm if this delete cause that
+                                widget.nnim.refreshAll(
+                                    debuglbl: "rmv 1",
+                                    forceRefresh: false,
+                                    tryAvoidNext2Sec: true);
                               },
                               child: NotificationView(
                                 notification: _snapshot.data[index],

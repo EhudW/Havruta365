@@ -57,8 +57,9 @@ void main() async {
 class NewNotificationManager {
   // dispose on state not always work in time
   static NewNotificationManager? onlyLast;
-  static int checkEveryXSec = MyDebug.MyConsts.checkNewNotificationSec;
-  static int timeoutEveryXSec = MyDebug.MyConsts.checkNewNotificationTimeoutSec;
+  static int _checkEveryXSec = MyDebug.MyConsts.checkNewNotificationSec;
+  static int _timeoutEveryXSec =
+      MyDebug.MyConsts.checkNewNotificationTimeoutSec;
   // model for the notification
   final notificationModel model = notificationModel();
   late MyTimer _timer;
@@ -73,11 +74,11 @@ class NewNotificationManager {
 
     _timer = MyTimer(
       myDebugLabel: "nnim ${this.hashCode}",
-      duration: checkEveryXSec,
+      duration: _checkEveryXSec,
       function: () async {
-        return updateNotification();
+        return _updateNotification();
       },
-      timeout: timeoutEveryXSec,
+      timeout: _timeoutEveryXSec,
       onTimeout: null,
     );
   }
@@ -87,35 +88,53 @@ class NewNotificationManager {
   // for ui update when updateNotification() called
   Map<Object, Function> refreshMe = {};
   int newNotification = 0; // for state
-  // refresh needed ui, without accessing model
-  void refreshAll() {
-    for (Function refresh in refreshMe.values) {
-      refresh();
+  int _lastTimeRefreshed = 0;
+  // refresh needed ui,fcm, without accessing mongoDB;
+  //  after nnim.model.remove (modify mongoDb), call this nnim.refreshAll
+  // use tryAvoidNext2Sec only on user actions (like dismiss many notification in a row)
+  // use force only in user action
+  void refreshAll(
+      {bool tryAvoidNext2Sec = false,
+      String debuglbl = "",
+      forceRefresh = false}) {
+    final int now = DateTime.now().millisecondsSinceEpoch;
+    if (tryAvoidNext2Sec) _lastTimeRefreshed = now;
+    if (now - _lastTimeRefreshed < 2000 && forceRefresh == false) {
+      Future.delayed(
+          Duration(seconds: 2),
+          () => this._lastTimeRefreshed < now
+              ? refreshAll(debuglbl: "re:$debuglbl")
+              : null);
+      return;
+    }
+    _lastTimeRefreshed = now;
+    var oldValue = newNotification;
+    newNotification = model.unseenLen;
+    MyDebug.myPrint(
+        "newNotification: $newNotification  $debuglbl  [${this.hashCode}]",
+        MyDebug.MyPrintType.Nnim);
+    if (oldValue != newNotification) {
+      for (Function refresh in refreshMe.values) {
+        refresh();
+      }
+    }
+    if (newNotification == 0) {
+      FCM.reset("notis");
+    } else {
+      var newest = model.getNewest();
+      if (newest != null)
+        FCM.resetTo(
+            "notis", newNotification, newest.name!, newest.message!, "notis");
     }
   }
 
   // access model(and mongodb), refreshAll if needed
   // true on success; false on error
-  Future<bool> updateNotification() async {
+  Future<bool> _updateNotification() async {
     return await model
         .refresh()
         .then((_) {
-          var oldValue = newNotification;
-          newNotification = model.unseenLen;
-          MyDebug.myPrint(
-              "newNotification: $newNotification    [${this.hashCode}]",
-              MyDebug.MyPrintType.Nnim);
-          if (oldValue != newNotification) {
-            refreshAll();
-          }
-          if (newNotification == 0) {
-            FCM.reset("notis");
-          } else {
-            var newest = model.getNewest();
-            if (newest != null)
-              FCM.resetTo("notis", newNotification, newest.name!,
-                  newest.message!, "notis");
-          }
+          refreshAll(debuglbl: "by timer uN()");
           return true;
         })
         .catchError((err) => false)

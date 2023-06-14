@@ -81,7 +81,8 @@ class _MainDetailsState extends State<MainDetails> {
     String book = widget.event?.book?.trim() ?? "";
     String topic = widget.event?.topic?.trim() ?? "";
 
-    String study = book != "" ? topic : "";
+    String study =
+        (topic != "" && book != "") ? "$topic - $book" : "$topic$book";
 
     String nextEvent = "-נגמר-";
 

@@ -9,6 +9,7 @@ class notificationModel {
   bool _wasFetched = false;
   Stream<List<NotificationUser>>? stream;
   List<NotificationUser>? _data;
+  Set<dynamic> _ignore_ids = {};
   NotificationUser? getNewest() {
     try {
       return _data!.first;
@@ -17,7 +18,7 @@ class notificationModel {
     }
   }
 
-  int get dataLen => _data?.length ?? 0;
+  //int get dataLen => _data?.length ?? 0;
   int get unseenLen => _data?.where((e) => e.unseen).length ?? 0;
   late StreamController<List<NotificationUser>?> _controller;
   bool ignoreRequests = false;
@@ -25,16 +26,18 @@ class notificationModel {
     _data = <NotificationUser>[];
     _controller = StreamController<List<NotificationUser>?>.broadcast();
     stream = _controller.stream.map((List<NotificationUser>? postsData) {
-      return postsData!.map((NotificationUser eventData) {
-        return eventData;
+      return postsData!.where((NotificationUser eventData) {
+        return !_ignore_ids.contains(eventData.id);
       }).toList();
     });
     refresh();
   }
   Future seenAll() async {
-    await Globals.db!.seenNoti(
+    var notis =
         _data?.where((element) => element.unseen).map((e) => e.id).toList() ??
-            []);
+            [];
+    if (notis.isEmpty) return;
+    await Globals.db!.seenNoti(notis);
     await refresh();
   }
 
@@ -53,17 +56,22 @@ class notificationModel {
   Future<void> removeAll() {
     if (ignoreRequests) return Future.value();
     var noti = _data!;
+    _ignore_ids.addAll(noti.map((e) => e.id)); //avoid auto refresh interrupt
     _data = [];
     _controller.add([]);
-    return Globals.db!.deleteAllNotifications(noti);
+    return Globals.db!
+        .deleteAllNotifications(noti)
+        .catchError((value) => _ignore_ids.removeAll(noti.map((e) => e.id)));
   }
 
-  Future<void> remove(int idx) {
+  Future<void> remove(NotificationUser noti, {bool autoSimulate = false}) {
     if (ignoreRequests) return Future.value();
-    var noti = _data![idx];
+    _ignore_ids.add(noti.id);
     _data!.remove(noti);
-    _controller.add(_data);
-    return Globals.db!.deleteNotification(noti);
+    if (autoSimulate) _controller.add(_data);
+    return Globals.db!
+        .deleteNotification(noti)
+        .catchError((_) => _ignore_ids.remove(noti.id));
   }
 
   Future<void> loadMore({bool clearCachedData = false}) {

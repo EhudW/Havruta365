@@ -141,25 +141,16 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                             ],
                           ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 16.0,
-                              ),
-                              Text(
-                                  (!message.isForum
-                                          ? (message.amITheSender
-                                              ? "נשלחה ל : "
-                                              : "התקבלה מ : ")
-                                          : "") +
-                                      message.otherPersonName!,
-                                  textDirection: ui.TextDirection.rtl),
-                            ],
-                          ),
+                          title: null,
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
+                              Text(message.otherPersonName!,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                      fontSize: 16),
+                                  textDirection: ui.TextDirection.rtl),
                               message.isForum
                                   ? Text(
                                       (" 🗨 פורום 🗨 "),
@@ -173,8 +164,38 @@ class _ChatScreenState extends State<ChatScreen> {
                                     .format(message.datetime!.toLocal()),
                                 style: TextStyle(fontSize: 14.0),
                               ),
-                              Text(message.message!,
-                                  textDirection: ui.TextDirection.rtl),
+                              RichText(
+                                textDirection: ui.TextDirection.rtl,
+                                text: TextSpan(
+                                  text: '',
+                                  style: DefaultTextStyle.of(context)
+                                      .style
+                                      .merge(
+                                          TextStyle(color: Colors.grey[600])),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: (message.amITheSender
+                                                ? "אני"
+                                                : (message.name!
+                                                    .trim()
+                                                    .split(" ")[0])) +
+                                            ": ",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontStyle: FontStyle.italic,
+                                          /*decorationThickness: 1,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            decorationStyle:
+                                                TextDecorationStyle.solid,
+                                            decorationColor: Colors.black,
+                                            decoration:
+                                                TextDecoration.underline*/
+                                        )),
+                                    TextSpan(text: message.message!),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                           trailing: Icon(
