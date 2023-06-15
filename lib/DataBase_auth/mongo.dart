@@ -465,10 +465,11 @@ class Mongo {
   }
 
   // Get message and insert it to the DB
-  Future<bool> sendMessage(ChatMessage message) async {
+  Future<bool> sendMessage(ChatMessage message, {bool forceid = false}) async {
     var collection = Globals.db!.db.collection('Chats');
     var m = ChatMessage.cloneWith(message, newStatus: ChatMessage.statuses[1])
         .toJson();
+    if (forceid) m['_id'] = message.id;
     WriteResult result = await collection.insertOne(m);
     result.hasWriteErrors ? null : sendMessageNodeJS(message: message);
     return !result.hasWriteErrors;

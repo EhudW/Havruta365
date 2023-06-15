@@ -149,10 +149,11 @@ class ChatModel {
     msg.counter = counter;
     //ChatMessage? prevLastToBeSent = lastToBeSent;
     //lastToBeSent = msg;
+    msg.id = ObjectId();
     var msgEntry = MapEntry(msg, -1);
     _data.add(msgEntry);
     simulateRefresh();
-    return Globals.db!.sendMessage(msg).then((success) {
+    return Globals.db!.sendMessage(msg, forceid: true).then((success) {
       msgEntry.key.status = success ? types.Status.sent : types.Status.error;
       msgEntry.key.tagNow();
       simulateRefresh(msgEntry);
