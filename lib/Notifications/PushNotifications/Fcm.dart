@@ -12,9 +12,9 @@ import 'package:havruta_project/Event/Screens/EventPage/EventScreen.dart';
 import 'package:havruta_project/Globals.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:havruta_project/Chat/Chat1v1.dart';
-import 'package:havruta_project/Chat/Screens/ChatScreen.dart';
 import 'package:havruta_project/HomePage.dart';
+import 'package:havruta_project/Chat/Screens/SingleChatScreen.dart';
+import 'package:havruta_project/Chat/Screens/ChatsFeedScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -320,12 +320,12 @@ class FCM {
 
     switch (parts.first) {
       case "msgs":
-        push(true, (context) => ChatScreen());
+        push(true, (context) => ChatsFeedScreen());
         break;
       case "msg":
         push(
             true,
-            (context) => ChatPage(
+            (context) => SingleChatScreen(
                   otherPerson: parts[1],
                   otherPersonName: parts[2],
                   forumName: parts.length == 3 ? null : parts[2],

@@ -87,6 +87,8 @@ class MultiRecommendationSystem<T> extends RecommendationSystem<T> {
     return asOneResult;
   }
 
+  // MUST give amount! [it's optional only because the interface]
+  // use getTops for more flexible function
   @override
   List<T> getTop([int amount = 10]) {
     assert(amount == topAmount);
@@ -659,32 +661,42 @@ class ExampleRecommendationSystem {
       if (!success && !suppressException) {
         throw Exception("ExampleRecommendationSystem failed");
       }
-      // from list of some recommendations (matrix)  [[..] [..]]
-      List<List<Event>> eventsLists = r.getTops();
-      Set<ObjectId> eventsSet = Set();
-      List<Event> events = [];
-      int maxLen = eventsLists.fold(
-          0,
-          (previousValue, oneList) =>
-              previousValue > oneList.length ? previousValue : oneList.length);
-      // add to events (flattened array), max 10 events
-      for (int n = 0;
-          n < maxLen * eventsLists.length && events.length < 10;
-          n++) {
-        int i = n % eventsLists.length;
-        var list = eventsLists[i];
-        int j = (n / eventsLists.length).floor();
-        //each event must be unique
-        if (list.length > j && !eventsSet.contains(list[j].id)) {
-          events.add(list[j]);
-          eventsSet.add(list[j].id);
-        }
-      }
-      // return flattened array of unique events , combined [ [1,2] [a,b,c] ] -> [1,a,2,b,c] ,
       //(max 10, but probably so, because in create() we asked each system for 10)
-      return events;
+      return combinedTops(r.getTops());
     });
   }
+}
+
+// maxTop is null => maxTop = max {eventsLists[i].length}
+List<Event> combinedTops(List<List<Event>> eventsLists, [int? maxTop]) {
+  // from list of some recommendations (matrix)  [[..] [..]]
+  Set<ObjectId> eventsSet = Set();
+  List<Event> events = [];
+  int maxLen = eventsLists.fold(
+      0,
+      (previousValue, oneList) =>
+          previousValue > oneList.length ? previousValue : oneList.length);
+  maxTop = maxTop ?? maxLen;
+  // add to events (flattened array), max maxTop events
+  // for each cell in tbl of columns of j-top rows of i-system
+  for (int n = 0;
+      n < maxLen * eventsLists.length && events.length < maxTop;
+      n++) {
+    // i-system is alter every change of n, to give chance to each system to reccomend
+    // i from 0 to eventsLists.length
+    int i = n % eventsLists.length;
+    var list = eventsLists[i];
+    // j-top is alter only after all system had chanch to reccommend for their j-top
+    // j from 0 to maxLen
+    int j = (n / eventsLists.length).floor();
+    //each event must be unique
+    if (list.length > j && !eventsSet.contains(list[j].id)) {
+      events.add(list[j]);
+      eventsSet.add(list[j].id);
+    }
+  }
+  // return flattened array of unique events , combined [ [1,2] [a,b,c] ] -> [1,a,2,b,c] ,
+  return events;
 }
 
 ///////////////////////////
@@ -876,7 +888,8 @@ class EventModelEvaluation extends ModelEvalution<Event> {
   }
 }
 
-void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
+void testEventsRecommendation(
+    [int k = 4, int? put100IfYouSure, int? maxUsersForEventsFetch]) async {
   // very heavy calc & internet access
   if (put100IfYouSure != 100) {
     return;
@@ -889,6 +902,11 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
   var collection = db.collection('Users');
   var usersEmail =
       await collection.find().map((user) => User.fromJson(user).email).toList();
+  if (maxUsersForEventsFetch != null &&
+      maxUsersForEventsFetch < usersEmail.length) {
+    usersEmail.shuffle();
+    usersEmail = usersEmail.sublist(0, maxUsersForEventsFetch);
+  }
   // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
   var __allEvents = await MultiConsiderations.getAllEvents(null);
   Map<String, List<Event>> user_events_validate = {};
@@ -918,6 +936,7 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
       continue;
     }
     list.shuffle();
+    // valid can have more[change also next line]
     user_events_validate[email] = list.sublist(0, k + 1);
     user_events_data[email] = list.sublist(k + 1);
     var data = {
@@ -929,14 +948,17 @@ void testEventsRecommendation([int k = 4, int? put100IfYouSure]) async {
     };
     var system = MultiRecommendationSystem<Event>(
         systems: [MultiConsiderations(), ByEventSuccess()],
-        topAmount: k,
-        weights: [(k / 2).round(), (k / 2).round()]);
+        topAmount: 2 * k,
+        weights: [k, k]);
+    // can be topAmount=k weight=[k/2,k/2]
+    // if later user_rec[email]=system.getTop(k)
+    // but we want to test also the combinde function
     system.setData(data);
     // will auto filter thisEventIsNewForMeAndAvailable() ,
     // so no events where EvenesSelectorBuildder.targetForMe(already filtered in above) OR email in any event queue(in calc())
     var success = await system.calc();
     if (success) {
-      user_rec[email] = system.getTop();
+      user_rec[email] = combinedTops(system.getTops());
       // distance tbl
       var mcs = system.systems[0] as MultiConsiderations;
       var A = mcs.last_rank;

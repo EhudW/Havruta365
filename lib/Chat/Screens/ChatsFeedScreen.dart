@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:havruta_project/Chat/Chat1v1.dart';
+import 'package:havruta_project/Chat/Screens/SingleChatScreen.dart';
 import 'package:havruta_project/Chat/chatStreamModel.dart';
 import 'package:havruta_project/Event/Screens/EventPage/EventScreen.dart';
 import 'package:havruta_project/Users/Screens/UserScreen/UserScreen.dart';
@@ -21,12 +21,12 @@ import 'package:intl/intl.dart';
 import 'dart:ui' as ui;
 
 // ignore: must_be_immutable
-class ChatScreen extends StatefulWidget {
+class ChatsFeedScreen extends StatefulWidget {
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatsFeedScreenState createState() => _ChatsFeedScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatsFeedScreenState extends State<ChatsFeedScreen> {
   ChatModel model = ChatModel(myMail: Globals.currentUser!.email!);
   late MyTimer timer;
   @override
@@ -95,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatPage(
+                                  builder: (context) => SingleChatScreen(
                                     otherPerson: message.otherPersonMail,
                                     otherPersonName: message.otherPersonName!,
                                     forumName: message.isForum

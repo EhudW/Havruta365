@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Chat/Screens/ChatScreen.dart';
 import 'package:havruta_project/Notifications/Notificatioins/Notifications.dart';
+import 'package:havruta_project/Chat/Screens/ChatsFeedScreen.dart';
 import 'package:havruta_project/Users/Screens/ProfileScreen/ProfileScreen.dart';
 import 'package:havruta_project/main.dart';
 import 'Event/Screens/EventScrollerScreen/Events.dart';
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ChatScreen()),
+                                    builder: (context) => ChatsFeedScreen()),
                               ).then((value) => setRefresh(true));
                               // this.events.events.refresh();
                               // this.events.eventsOnline.refresh();
