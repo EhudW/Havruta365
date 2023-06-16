@@ -1,15 +1,15 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:havruta_project/FCM/fcm.dart';
-import 'package:havruta_project/Screens/ChatScreen/ChatMessage.dart';
+import 'package:havruta_project/DataBase/DataRepresentations/ChatMessage.dart';
+import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
+import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
+import 'package:havruta_project/DataBase/MongoCommands.dart';
+import 'package:havruta_project/Notifications/PushNotifications/Fcm.dart';
 import 'package:havruta_project/main.dart';
 import 'package:havruta_project/rec_system.dart';
 
-import 'DataBase_auth/Event.dart';
 import 'mytimer.dart';
 import 'package:flutter/material.dart';
-import 'package:havruta_project/DataBase_auth/mongo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'DataBase_auth/User.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'dart:async';
 import 'mydebug.dart' as MyDebug;
@@ -129,7 +129,7 @@ class Globals {
       var unreadSenders =
           unreadMsgEntries.map((e) => e.key.otherPersonMail).toList();
       if (unreadMsgEntries.isNotEmpty) {
-        var rslt = await Mongo.sendMessageNodeJS(
+        var rslt = await MongoCommands.sendMessageNodeJS(
             dry: true, message: unreadMsgEntries.first.key);
         FCM.resetTo(
             "msgs",
@@ -151,7 +151,7 @@ class Globals {
     duration: MyDebug.MyConsts.checkNewMessageOutsideChatSec,
   );
 
-  static Mongo? db;
+  static MongoCommands? db;
   static bool isDbConnect = false;
   static User? currentUser;
   static BuildContext? context;

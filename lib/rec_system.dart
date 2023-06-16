@@ -3,13 +3,13 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:havruta_project/DataBase_auth/User.dart';
+import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
+import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
+import 'package:havruta_project/Users/Screens/UserScreen/UserScreen.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import 'DataBase_auth/EventsSelectorBuilder.dart';
+import 'DataBase/EventsSelectorBuilder.dart';
 
 /// RecommendationSystem
 ///       abstract class RecommendationSystem<T> [interface]

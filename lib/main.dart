@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:havruta_project/DataBase_auth/User.dart';
-import 'package:havruta_project/DataBase_auth/mongo.dart';
-import 'package:havruta_project/DataBase_auth/mongo2.dart';
-import 'package:havruta_project/FCM/fcm.dart';
-import 'package:havruta_project/Screens/HomePageScreen/Notificatioins/notificationModel.dart';
-import 'package:havruta_project/Screens/HomePageScreen/home_page.dart';
-import 'package:havruta_project/Screens/Login/Login.dart';
+import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
+import 'package:havruta_project/DataBase/MongoCommands.dart';
+import 'package:havruta_project/DataBase/AutoReconectMongo.dart';
+import 'package:havruta_project/Notifications/PushNotifications/Fcm.dart';
+import 'package:havruta_project/Notifications/Notificatioins/notificationModel.dart';
+import 'package:havruta_project/home_page.dart';
+import 'package:havruta_project/Auth/Screens/Login/Login.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -178,7 +178,7 @@ class _MyAppState extends State<MyApp> {
     if (Globals.MyAppStarted) return;
     Globals.MyAppStarted = true;
     initFirebase();
-    Globals.db = new Mongo();
+    Globals.db = new MongoCommands();
     bool useDb2 =
         MyDebug.MyConsts.useDb2; // this control if to use reconnecting model
     mongoConnectFuture = Globals.db!.connect(useDb2: useDb2);
