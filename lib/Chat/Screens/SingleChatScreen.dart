@@ -148,6 +148,13 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   appBar(BuildContext context) {
+    String title = widget.forumName != null
+        ? "פורום - ${widget.forumName}"
+        : "שיחה - ${widget.otherPersonName}";
+    int maxTitleLen = 40;
+    title = title.length <= maxTitleLen
+        ? title
+        : title.substring(0, maxTitleLen - 3) + "...";
     var scaler = ScreenScaler();
     return new AppBar(
       leadingWidth: Globals.scaler.getWidth(6),
@@ -258,9 +265,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                 // Center(
                 //  child:
                 Text(
-                  widget.forumName != null
-                      ? "פורום - ${widget.forumName}"
-                      : "שיחה עם ${widget.otherPersonName}",
+                  title,
                   textDirection: TextDirection.rtl,
                   style: TextStyle(
                     //fontFamily: 'Yiddish',
