@@ -9,7 +9,7 @@ import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/ChatMessage.dart';
 import 'package:havruta_project/Chat/chatStreamModel.dart';
-import 'package:havruta_project/Users/Screens/UserScreen/User_details_page.dart';
+import 'package:havruta_project/Users/Screens/UserScreen/UserDetailsPage.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/mytimer.dart';
 import 'package:loading_animations/loading_animations.dart';

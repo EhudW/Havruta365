@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/Globals.dart';
 import '../UserScreen/UserScreen.dart';
-import '../../Utils/arc_banner_image.dart';
+import '../../Widgets/ArcBannerImage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable

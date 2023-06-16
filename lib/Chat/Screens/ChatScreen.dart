@@ -6,7 +6,7 @@ import 'package:havruta_project/Chat/Chat1v1.dart';
 import 'package:havruta_project/Chat/chatStreamModel.dart';
 import 'package:havruta_project/Event/Screens/EventPage/EventScreen.dart';
 import 'package:havruta_project/Users/Screens/UserScreen/UserScreen.dart';
-import 'package:havruta_project/Users/Screens/UserScreen/User_details_page.dart';
+import 'package:havruta_project/Users/Screens/UserScreen/UserDetailsPage.dart';
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 //import 'package:havruta_project/DataBase_auth/User.dart';
