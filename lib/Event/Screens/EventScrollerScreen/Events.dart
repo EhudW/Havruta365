@@ -144,26 +144,9 @@ class _EventsState extends State<Events> {
   @override
   void initState() {
     super.initState();
-    //this.widget.events = EventsModel(false);
-    //this.widget.eventsOnline = EventsModel(true);
-    Globals.onUpdateRec = () => null;
+    widget.events.refresh();
+    Globals.onUpdateRec = () => widget.eventsOnline?.refresh();
     Globals.updateRec(force: true);
-    /*scrollController.addListener(() {
-      if (scrollController.position.maxScrollExtent ==
-          scrollController.offset) {
-        this.widget.events.loadMore();
-      }
-    });
-    scrollControllerOnline.addListener(() {
-      if (scrollControllerOnline.position.maxScrollExtent ==
-          scrollControllerOnline.offset) {
-        this.widget.eventsOnline?.loadMore();
-      }
-    });*/
-
-    this.refresh();
-    final tmp = widget.eventsOnline;
-    Globals.onUpdateRec = () => tmp?.refresh();
   }
 
   @override

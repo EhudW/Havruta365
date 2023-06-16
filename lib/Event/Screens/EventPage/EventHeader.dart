@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
 import 'package:havruta_project/Notifications/PushNotifications/Fcm.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Chat/Chat1v1.dart';
+import 'package:havruta_project/Chat/Screens/SingleChatScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide Center;
