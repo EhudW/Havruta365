@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:havruta_project/Users/Utils/arc_banner_image.dart';
+import 'package:havruta_project/Users/Widgets/ArcBannerImage.dart';
 
 // ignore: must_be_immutable
 class UserDetailHeader extends StatelessWidget {

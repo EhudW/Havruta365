@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 //import 'package:havruta_project/Screens/ProfileScreen/interestsList.dart';
-import 'package:havruta_project/Users/Screens/ProfileScreen/profile_details_column.dart';
+import 'package:havruta_project/Users/Screens/ProfileScreen/ProfileDetailsColumn.dart';
 //import 'package:havruta_project/Screens/UserScreen/user_details_column.dart';
-import 'Profile_detail_header.dart';
+import 'ProfileDetailHeader.dart';
 import 'package:havruta_project/Globals.dart';
 
 // ignore: must_be_immutable

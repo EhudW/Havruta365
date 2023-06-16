@@ -1,9 +1,9 @@
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
-import 'package:havruta_project/Users/Utils/contact_buttons.dart';
-import 'package:havruta_project/Users/Screens/UserScreen/user_details_column.dart';
-import 'User_detail_header.dart';
+import 'package:havruta_project/Users/Widgets/ContactButtons.dart';
+import 'package:havruta_project/Users/Screens/UserScreen/UserDetailsColumn.dart';
+import 'UserDetailHeader.dart';
 //import 'interestsList.dart';
 import 'package:havruta_project/Globals.dart';
 

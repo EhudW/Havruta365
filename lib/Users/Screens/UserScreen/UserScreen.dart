@@ -5,7 +5,7 @@ import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
-import 'User_details_page.dart';
+import 'UserDetailsPage.dart';
 
 Future<User> getUser(String? userMail) async {
   var coll = Globals.db!.db.collection('Users');
