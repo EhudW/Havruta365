@@ -3,29 +3,29 @@
 // Login > LoginDetailsGmail > LoginMoreDetails > HomePage   (signup using google)
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:havruta_project/Auth/Screens/Login/ForgetPassword.dart';
+import 'package:havruta_project/Auth/Screens/RecoverPassword/ForgotPasswordScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:havruta_project/Auth/Functions/Google_sign_in.dart';
+import 'package:havruta_project/Auth/Functions/GoogleSignIn.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/home_page.dart';
-import 'package:havruta_project/Auth/Screens/Login/LoginDetails.dart';
-import 'package:havruta_project/Auth/Screens/Login/LoginDetailsGmail.dart';
+import 'package:havruta_project/Auth/Screens/SignUp/CreateUserScreen.dart';
+import 'package:havruta_project/Auth/Screens/SignUp/CreateUserAuthScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 import '../../../Globals.dart';
-import 'package:havruta_project/Auth/FadeAnimation.dart';
+import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
-class Login extends StatefulWidget {
+class LoginOnlyWithGmailScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<Login> {
+class _HomePageState extends State<LoginOnlyWithGmailScreen> {
   final mail = TextEditingController();
   String mail_str = "";
   final password = TextEditingController();
@@ -288,7 +288,7 @@ class _HomePageState extends State<Login> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  LoginDetails()),
+                                                  CreateUserScreen()),
                                         );
                                       },
                                       child: Center(
@@ -309,7 +309,7 @@ class _HomePageState extends State<Login> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ForgetPassword()),
+                                                  ForgotPasswordScreen()),
                                         );
                                       },
                                       child: Center(
@@ -364,8 +364,8 @@ class _HomePageState extends State<Login> {
         Globals.tmpNextUser = user;
         // TODO - GO TO NEW SCREEN - SPECIFIC FOR GOOGLE
         // TODO - JUST REMOVE EMAIL AND NAME
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => LoginDetailsGmail()));
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => CreateUserAuthScreen()));
       }
     }
   }

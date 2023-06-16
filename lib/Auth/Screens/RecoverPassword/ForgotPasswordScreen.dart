@@ -8,20 +8,20 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 //import 'package:crypto/crypto.dart';
 
-import '../../../Globals.dart';
-import '../../../main.dart';
-import 'package:havruta_project/Auth/FadeAnimation.dart';
+import 'package:havruta_project/Globals.dart';
+import 'package:havruta_project/main.dart';
+import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 
-import 'ForgetPassword1.dart';
+import 'ChangePasswordScreen.dart';
 
-class ForgetPassword extends StatefulWidget {
+class ForgotPasswordScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<ForgetPassword> {
+class _HomePageState extends State<ForgotPasswordScreen> {
   final address = TextEditingController();
   // ignore: non_constant_identifier_names
   String address_str = "";
@@ -79,7 +79,7 @@ class _HomePageState extends State<ForgetPassword> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              ForgetPassword1(code, address_str)),
+                              ChangePasswordScreen(code, address_str)),
                     );
                   } else {
                     Toast.show('Google' + 'יש לשנות את הסיסמא בפרופיל ',

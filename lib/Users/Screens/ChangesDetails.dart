@@ -13,7 +13,7 @@ import 'package:havruta_project/Event/CreateEvent/Authenitcate.dart';
 import 'package:havruta_project/home_page.dart';
 
 import '../../Globals.dart';
-import 'package:havruta_project/Auth/FadeAnimation.dart';
+import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'dart:io';

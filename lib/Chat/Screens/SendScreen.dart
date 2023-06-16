@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/ChatMessage.dart';
 import 'package:havruta_project/Event/CreateEvent/Next_Button.dart';
-import 'package:havruta_project/Auth/FadeAnimation.dart';
+import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'dart:ui' as ui;
 
 // ignore: must_be_immutable

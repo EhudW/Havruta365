@@ -10,23 +10,23 @@ import 'package:google_fonts/google_fonts.dart';
 //import 'package:http/http.dart' as http;
 
 import '../../../Globals.dart';
-import 'package:havruta_project/Auth/FadeAnimation.dart';
+import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 //import 'package:toast/toast.dart';
 
-import 'Login.dart';
+import '../Login/LoginOnlyWithGmailScreen.dart';
 
-class ForgetPassword1 extends StatefulWidget {
+class ChangePasswordScreen extends StatefulWidget {
   String code;
   String mail;
 
-  ForgetPassword1(this.code, this.mail);
+  ChangePasswordScreen(this.code, this.mail);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<ForgetPassword1> {
+class _HomePageState extends State<ChangePasswordScreen> {
   final code = TextEditingController();
   String code_str = "";
   final password = TextEditingController();
@@ -121,7 +121,8 @@ class _HomePageState extends State<ForgetPassword1> {
                   setState(() {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => Login()),
+                      MaterialPageRoute(
+                          builder: (context) => LoginOnlyWithGmailScreen()),
                     );
                   });
                 });

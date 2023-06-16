@@ -7,22 +7,22 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
-import 'package:havruta_project/Auth/Screens/Login/LoginMoreDetails.dart';
+import 'package:havruta_project/Auth/Screens/SignUp/SignUpFurtherDetails.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
 import 'package:crypto/crypto.dart';
 
 import '../../../Globals.dart';
-import 'package:havruta_project/Auth/FadeAnimation.dart';
+import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
-class LoginDetails extends StatefulWidget {
+class CreateUserScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<LoginDetails> {
+class _HomePageState extends State<CreateUserScreen> {
   final name = TextEditingController();
   String name_str = "";
   final mail = TextEditingController();

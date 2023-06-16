@@ -8,7 +8,7 @@ import 'package:havruta_project/DataBase/AutoReconectMongo.dart';
 import 'package:havruta_project/Notifications/PushNotifications/Fcm.dart';
 import 'package:havruta_project/Notifications/Notificatioins/notificationModel.dart';
 import 'package:havruta_project/home_page.dart';
-import 'package:havruta_project/Auth/Screens/Login/Login.dart';
+import 'package:havruta_project/Auth/Screens/Login/LoginOnlyWithGmailScreen.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -258,7 +258,7 @@ class _MyAppState extends State<MyApp> {
                           } else {
                             // Not connected - go to Login
                             if (snapshot.data == "") {
-                              return Login();
+                              return LoginOnlyWithGmailScreen();
                             }
                             // Connected - update current_user and go to home page
                             else {

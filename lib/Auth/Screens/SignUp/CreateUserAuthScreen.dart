@@ -14,12 +14,12 @@ import '../../../Globals.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
-class LoginDetailsGmail extends StatefulWidget {
+class CreateUserAuthScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<LoginDetailsGmail> {
+class _HomePageState extends State<CreateUserAuthScreen> {
   final address = TextEditingController();
   String address_str = "";
   final gender = TextEditingController();

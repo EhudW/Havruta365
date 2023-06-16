@@ -4,11 +4,11 @@ import 'dart:convert';
 
 import 'package:date_time_format/date_time_format.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:havruta_project/Notifications/PushNotifications/token_monitor.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/MongoCommands.dart';
 import 'package:havruta_project/Event/Screens/EventPage/EventScreen.dart';
-import 'package:havruta_project/FCM/token_monitor.dart';
 import 'package:havruta_project/Globals.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
