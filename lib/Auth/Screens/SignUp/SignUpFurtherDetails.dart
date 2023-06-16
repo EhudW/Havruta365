@@ -10,7 +10,7 @@ import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Event/CreateEvent/Authenitcate.dart';
-import 'package:havruta_project/home_page.dart';
+import 'package:havruta_project/HomePage.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../Globals.dart';

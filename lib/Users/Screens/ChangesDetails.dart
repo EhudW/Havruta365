@@ -10,7 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/Event/CreateEvent/Authenitcate.dart';
-import 'package:havruta_project/home_page.dart';
+import 'package:havruta_project/HomePage.dart';
 
 import '../../Globals.dart';
 import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';

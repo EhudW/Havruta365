@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Chat/Screens/ChatScreen.dart';
-import 'package:havruta_project/Notifications/Notificatioins/notifications.dart';
+import 'package:havruta_project/Notifications/Notificatioins/Notifications.dart';
 import 'package:havruta_project/Users/Screens/ProfileScreen/ProfileScreen.dart';
 import 'package:havruta_project/main.dart';
 import 'Event/Screens/EventScrollerScreen/Events.dart';

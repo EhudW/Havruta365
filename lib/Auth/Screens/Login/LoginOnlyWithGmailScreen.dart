@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:havruta_project/Auth/Functions/GoogleSignIn.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
-import 'package:havruta_project/home_page.dart';
+import 'package:havruta_project/HomePage.dart';
 import 'package:havruta_project/Auth/Screens/SignUp/CreateUserScreen.dart';
 import 'package:havruta_project/Auth/Screens/SignUp/CreateUserAuthScreen.dart';
 import 'package:havruta_project/mydebug.dart';

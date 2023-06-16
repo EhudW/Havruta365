@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/home_page.dart';
+import 'package:havruta_project/HomePage.dart';
 
 class DeleteFromEventButton extends StatefulWidget {
   DeleteFromEventButton(this.event);
