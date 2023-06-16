@@ -3,29 +3,29 @@
 // Login > LoginDetailsGmail > LoginMoreDetails > HomePage   (signup using google)
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
-import 'package:havruta_project/Auth/Screens/ForgetPasswordScreen.dart';
+import 'package:havruta_project/Auth/Screens/RecoverPassword/ForgotPasswordScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:havruta_project/Auth/Functions/GoogleSignIn.dart';
-import 'package:havruta_project/Auth/Screens/SignUp/CreateUserScreen.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/HomePage.dart';
+import 'package:havruta_project/Auth/Screens/SignUp/CreateUserScreen.dart';
 import 'package:havruta_project/Auth/Screens/SignUp/CreateUserAuthScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
-import '../../../Globals.dart';
+import '../../Globals.dart';
+import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
-class Login extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<Login> {
+class _HomePageState extends State<LoginScreen> {
   final mail = TextEditingController();
   String mail_str = "";
   final password = TextEditingController();
@@ -309,7 +309,7 @@ class _HomePageState extends State<Login> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ForgetPassword()),
+                                                  ForgotPasswordScreen()),
                                         );
                                       },
                                       child: Center(

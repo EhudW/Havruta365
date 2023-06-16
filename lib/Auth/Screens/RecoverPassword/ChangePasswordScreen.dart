@@ -14,7 +14,7 @@ import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 //import 'package:toast/toast.dart';
 
-import '../Login/LoginOnlyWithGmailScreen.dart';
+import '../LoginScreen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   String code;
@@ -121,8 +121,7 @@ class _HomePageState extends State<ChangePasswordScreen> {
                   setState(() {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => LoginOnlyWithGmailScreen()),
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   });
                 });

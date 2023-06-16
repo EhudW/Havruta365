@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/Auth/Functions/GoogleSignIn.dart';
 import 'package:havruta_project/Notifications/PushNotifications/Fcm.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Auth/Screens/Login/LoginOnlyWithGmailScreen.dart';
+import 'package:havruta_project/Auth/Screens/LoginScreen.dart';
 import 'package:havruta_project/Users/Screens/ChangesDetails.dart';
 import 'package:havruta_project/main.dart';
 import 'package:share_plus/share_plus.dart';
@@ -296,8 +296,8 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
               }
               final SharedPreferences prefs = await _prefs;
               await prefs.setString('id', "");
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => LoginOnlyWithGmailScreen()));
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
             },
             child: create_button_container(
                 Text("התנתק",
