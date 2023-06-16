@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
 import 'package:havruta_project/DataBase/EventsSelectorBuilder.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Chat/Chat1v1.dart';
+import 'package:havruta_project/Chat/Screens/SingleChatScreen.dart';
 import 'package:havruta_project/Event/Screens/EventPage/EventPage.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' as m;
@@ -117,7 +117,7 @@ class NoEventScreen extends StatelessWidget {
                       onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ChatPage(
+                                builder: (context) => SingleChatScreen(
                                     otherPerson: otheruser!,
                                     otherPersonName: otherusername!)),
                           )),

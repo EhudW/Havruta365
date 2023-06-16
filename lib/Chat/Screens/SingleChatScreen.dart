@@ -14,8 +14,8 @@ import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/mytimer.dart';
 import 'package:loading_animations/loading_animations.dart';
 
-import '../Notifications/PushNotifications/Fcm.dart';
-import '../Event/CreateEvent/Next_Button.dart';
+import '../../Notifications/PushNotifications/Fcm.dart';
+import '../../Event/CreateEvent/Next_Button.dart';
 
 class ChatL10nHe extends ChatL10n {
   ChatL10nHe()
@@ -79,11 +79,12 @@ class IconSwitchState extends State<IconSwitch> {
   }
 }
 
-class ChatPage extends StatefulWidget {
-  String otherPerson;
-  String otherPersonName;
-  String? forumName;
-  ChatPage(
+// also for forums, the chat itself, preview is in ChatsFeedScreen
+class SingleChatScreen extends StatefulWidget {
+  final String otherPerson;
+  final String otherPersonName;
+  final String? forumName;
+  SingleChatScreen(
       {Key? key,
       required this.otherPerson,
       required this.otherPersonName,
@@ -91,10 +92,10 @@ class ChatPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<SingleChatScreen> createState() => _SingleChatScreenState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _SingleChatScreenState extends State<SingleChatScreen> {
   final _myUser = types.User(
       id: Globals.currentUser!.email!,
       firstName: Globals.currentUser!.name,

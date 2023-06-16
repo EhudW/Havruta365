@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
 import 'package:havruta_project/Notifications/PushNotifications/Fcm.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Chat/Chat1v1.dart';
+import 'package:havruta_project/Chat/Screens/SingleChatScreen.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide Center;
@@ -167,7 +167,7 @@ class EventDetailHeader extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChatPage(
+                                builder: (context) => SingleChatScreen(
                                   otherPerson: event!.id.toString(),
                                   otherPersonName: event!.id.toString(),
                                   forumName: type + t_topic + t_book,

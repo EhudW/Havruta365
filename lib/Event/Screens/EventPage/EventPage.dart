@@ -17,7 +17,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:havruta_project/Users/Screens/UserScreen/UserScreen.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' as query;
 import '../../../DataBase/DataRepresentations/Notification.dart';
-import '../../../Chat/Chat1v1.dart';
+import '../../../Chat/Screens/SingleChatScreen.dart';
 import '../../../Chat/chatStreamModel.dart';
 import '../../Widgets/Add2Calendar.dart';
 import '../../Widgets/arc_banner_image.dart';
@@ -212,7 +212,7 @@ class _EventPageState extends State<EventPage> {
           ),
           drawer_navigation_line(
               'פורום',
-              (context) => ChatPage(
+              (context) => SingleChatScreen(
                     otherPerson: widget.event!.id.toString(),
                     otherPersonName: widget.event!.id.toString(),
                     forumName: type + t_topic + t_book,

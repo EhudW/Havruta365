@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Chat/Chat1v1.dart';
+import 'package:havruta_project/Chat/Screens/SingleChatScreen.dart';
 import 'package:havruta_project/Chat/Screens/SendScreen.dart';
 import 'package:havruta_project/Users/Screens/UserScreen/UserScreen.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
