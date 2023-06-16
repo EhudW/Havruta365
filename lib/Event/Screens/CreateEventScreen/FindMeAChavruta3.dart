@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/Globals.dart';
 import 'package:havruta_project/Event/CreateEvent/Authenitcate.dart';
 import 'package:havruta_project/Event/CreateEvent/First_Dot_Row.dart';
-import 'package:havruta_project/home_page.dart';
+import 'package:havruta_project/HomePage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
 import 'package:objectid/objectid.dart';

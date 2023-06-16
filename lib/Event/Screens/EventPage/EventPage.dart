@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/Event/Screens/FurtherDetailsScreen.dart';
 import 'package:havruta_project/Event/Screens/CreateEventScreen/FindMeAChavruta1.dart';
-import 'package:havruta_project/home_page.dart';
+import 'package:havruta_project/HomePage.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

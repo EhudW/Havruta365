@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:havruta_project/Event/CreateEvent/Next_Button.dart';
-import 'package:havruta_project/Notifications/Notificatioins/notificationModel.dart';
+import 'package:havruta_project/Notifications/Notificatioins/NotificationModel.dart';
 import 'package:havruta_project/main.dart';
 
 import 'NotificationScroll.dart';
