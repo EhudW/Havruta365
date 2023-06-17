@@ -19,6 +19,12 @@ class ChatMessage {
     types.Status.error,
     types.Status.delivered
   ];
+  static bool isOnMongo(types.Status? status) {
+    return {1, 2, 4}
+        .map((e) => statuses[e])
+        .contains(status); // 0 sending, 3 error
+  }
+
   bool isForum;
   int counter;
   // 11 fields [8, 1 id, 2 otherPerson] + _tag

@@ -81,6 +81,8 @@ class IconSwitchState extends State<IconSwitch> {
 
 // also for forums, the chat itself, preview is in ChatsFeedScreen
 class SingleChatScreen extends StatefulWidget {
+  // sub/unsub to forum is only via join/leave event
+  static bool hideSubUnsubButton = true;
   final String otherPerson;
   final String otherPersonName;
   final String? forumName;
@@ -147,6 +149,42 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         src_mail: Globals.currentUser!.email));
   }
 
+  Widget subUnsubButton({bool hide = false}) {
+    // sub/unsub to forum is only via join/leave event
+    if (hide) return SizedBox();
+    // true => sub
+    bool on = Globals.currentUser!.subs_topics.containsKey(widget.otherPerson);
+    return IconSwitch(
+      on,
+      (bool toBe, Function flip) {
+        if (toBe == true) {
+          Globals.db!.updateUserSubs_Topics(add: {
+            widget.otherPerson: {"seen": model.counter}
+          });
+          flip();
+        } else {
+          showModalBottomSheet(
+            context: context,
+            builder: ((builder) => NextButton.bottomSheet(
+                  context,
+                  "האם לבטל מעקב אחר הפורום?",
+                  () {
+                    Navigator.pop(context);
+                    flip();
+                    Globals.db!
+                        .updateUserSubs_Topics(remove: [widget.otherPerson]);
+                  },
+                  () {
+                    Navigator.pop(context);
+                  },
+                )),
+          );
+        }
+      },
+      tooltip: {true: "הוספת עוקב", false: "הסרת עוקב"},
+    );
+  }
+
   appBar(BuildContext context) {
     String title = widget.forumName != null
         ? "פורום - ${widget.forumName}"
@@ -162,39 +200,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       elevation: 10,
       leading: widget.forumName != null
           ? Builder(builder: (context) {
-              return SizedBox(); // sub/unsub to forum is only via join/leave event
-              // true => sub
-              bool on = Globals.currentUser!.subs_topics
-                  .containsKey(widget.otherPerson);
-              return IconSwitch(
-                on,
-                (bool toBe, Function flip) {
-                  if (toBe == true) {
-                    Globals.db!.updateUserSubs_Topics(add: {
-                      widget.otherPerson: {"seen": model.counter}
-                    });
-                    flip();
-                  } else {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: ((builder) => NextButton.bottomSheet(
-                            context,
-                            "האם לבטל מעקב אחר הפורום?",
-                            () {
-                              Navigator.pop(context);
-                              flip();
-                              Globals.db!.updateUserSubs_Topics(
-                                  remove: [widget.otherPerson]);
-                            },
-                            () {
-                              Navigator.pop(context);
-                            },
-                          )),
-                    );
-                  }
-                },
-                tooltip: {true: "הוספת עוקב", false: "הסרת עוקב"},
-              );
+              return subUnsubButton(hide: SingleChatScreen.hideSubUnsubButton);
             })
           : Builder(
               builder: (context) => Container(
@@ -404,7 +410,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                               ),
                               onMessageLongPress: (context, p1) {
                                 if (p1.author.id != _myUser.id ||
-                                    p1.id == "NULL") return;
+                                    p1.id == "NULL" ||
+                                    ChatMessage.isOnMongo(p1.status) == false)
+                                  return;
                                 showModalBottomSheet(
                                   context: context,
                                   builder: ((builder) => NextButton.bottomSheet(
