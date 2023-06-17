@@ -1,8 +1,5 @@
-//import 'dart:convert';
-//import 'dart:io';
-
+// This file is not in use
 import 'package:flutter/material.dart';
-//import 'package:havruta_project/DataBase_auth/mongo.dart';
 
 class SignupScreen extends StatefulWidget {
   @override

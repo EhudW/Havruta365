@@ -1,21 +1,17 @@
 import 'dart:convert';
 import 'dart:math';
-
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-//import 'package:crypto/crypto.dart';
-
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/main.dart';
 import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
-
 import 'ChangePasswordScreen.dart';
+import 'package:http/http.dart' as http;
 
+// Screen to send code to email, for reset password. reset(change) password is done in another screen
+// not working for now, since no smtp server
 class ForgotPasswordScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -23,8 +19,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _HomePageState extends State<ForgotPasswordScreen> {
   final address = TextEditingController();
-  // ignore: non_constant_identifier_names
-  String address_str = "";
+  String addressStr = "";
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +32,7 @@ class _HomePageState extends State<ForgotPasswordScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: Globals.scaler.getHeight(4)),
-            newFiled(address, address_str, "כתובת המייל",
+            newFiled(address, addressStr, "כתובת המייל",
                 FontAwesomeIcons.envelopesBulk, false),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
@@ -59,37 +54,33 @@ class _HomePageState extends State<ForgotPasswordScreen> {
                   // <-- Button color
                   foregroundColor: Colors.teal),
               onPressed: () async {
-                address_str = address.text;
-                if (!(address_str.contains("@") && address_str.contains("."))) {
+                addressStr = address.text;
+                if (!(addressStr.contains("@") && addressStr.contains("."))) {
                   Toast.show('כתובת המייל לא חוקית',
                       gravity: Toast.center, duration: 30);
-                  //duration: Toast.center, gravity: 30);
                   return;
                 }
-                bool check = await Globals.db!.isUserExist(address_str);
+                bool check = await Globals.db!.isUserExist(addressStr);
                 if (check == true) {
-                  bool checkPass = await Globals.db!.isPassNull(address_str);
+                  bool checkPass = await Globals.db!.isPassNull(addressStr);
                   if (checkPass == true) {
                     var code = getRandString(6);
-                    sendMail(address_str, code);
+                    sendMail(addressStr, code);
                     Toast.show('נשלח מייל לכתובת זו עם קוד לשינוי הסיסמא',
                         gravity: Toast.bottom, duration: 30);
-                    //duration: Toast.bottom, gravity: 30);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              ChangePasswordScreen(code, address_str)),
+                              ChangePasswordScreen(code, addressStr)),
                     );
                   } else {
                     Toast.show('Google' + 'יש לשנות את הסיסמא בפרופיל ',
                         gravity: Toast.center, duration: 30);
-                    //duration: Toast.CENTER, gravity: 30);
                   }
                 } else {
                   Toast.show('כתובת המייל לא קיימת',
                       gravity: Toast.center, duration: 30);
-                  //Toast.show('כתובת המייל לא קיימת', context,duration: Toast.CENTER,gravity: 30);
                 }
               },
             ),
@@ -154,6 +145,7 @@ newFiled(controller, str, text, icon, cover) {
       ]));
 }
 
+// NOT working since the server is not working
 sendMail(String mailUser, String code) async {
   var url = Uri.parse('http://yonatangat.pythonanywhere.com/mail');
   var x = {
@@ -163,10 +155,9 @@ sendMail(String mailUser, String code) async {
     "src_pass": "havruta365",
     "dst": mailUser
   };
-  /*var response = await http.post(url,
+  var response = await http.post(url,
       body: json.encode(x), headers: {'Content-Type': 'application/json'});
-  myPrint('Response status: ${response.statusCode}', MyPrintType.None);
-  myPrint('Response body: ${response.body}', MyPrintType.None);*/
+  return response.statusCode;
 }
 
 appBar(BuildContext context) {

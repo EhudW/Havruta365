@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Users/Screens/UserScreen/UserScreen.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import 'DataBase/EventsSelectorBuilder.dart';
@@ -87,7 +86,7 @@ class MultiRecommendationSystem<T> extends RecommendationSystem<T> {
     return asOneResult;
   }
 
-  // MUST give amount! [it's optional only because the interface]
+  // MUST give amount=topAmount! [it's optional only because the interface]
   // use getTops for more flexible function
   @override
   List<T> getTop([int amount = 10]) {
@@ -121,12 +120,12 @@ class CriticMyEvents<O> {
   num weight;
   num Function(Event) weightOfEvent;
   CriticMyEvents(
-      {this.field, // not needed for calc
+      {this.field, // not needed for calc only for debug
       required this.myEvents,
       required this.classify,
       required this.classifyList,
       this.weight = 1.0,
-      required num Function(Event) this.weightOfEvent}) {
+      required this.weightOfEvent}) {
     _calc();
     _norm(soft: 1);
   }
@@ -274,7 +273,6 @@ class MultiConsiderations extends RecommendationSystem<Event> {
   static Future<List<Event>> getMyEvents(
           String myMail, bool withRejectedOrLeftQueue,
           {bool filterOld = false}) =>
-      // Globals.db!.getEvents(myMail, false, null);
       EventsSelectorBuilder.fetchFrom(
         withParticipant: myMail,
         filterOldDates: filterOld,
@@ -348,16 +346,21 @@ class MultiConsiderations extends RecommendationSystem<Event> {
       return x == "" ? UniqueKey().toString() : x;
     };
 
-    var fillUsersCache = (List<Event> list) async {
+    /* var fillUsersCache = (List<Event> list) async {
       for (Event e in list) {
-        for (String user in e.participants ?? []) {
-          _users_cache[user] = _users_cache[user] ?? await getUser(user);
-        }
-        for (String user in e.waitingQueue ?? []) {
-          _users_cache[user] = _users_cache[user] ?? await getUser(user);
+        var users = e.participants ?? [];
+        users += e.waitingQueue ?? [];
+        for (String user in users) {
+          User? replace;
+          if (_users_cache[user] == null) {
+            replace = await Globals.db!.getUser(user);
+          }
+          if (replace != null) {
+            _users_cache[user] = replace;
+          }
         }
       }
-    };
+    }; */
 
     /// for rank for specific target group (people who preffer small/big lecture, etc..)
     var considerationsFactory = (events) => [
@@ -937,8 +940,10 @@ void testEventsRecommendation(
     }
     list.shuffle();
     // valid can have more[change also next line]
-    user_events_validate[email] = list.sublist(0, k + 1);
-    user_events_data[email] = list.sublist(k + 1);
+    int pivot = max(k, list.length ~/ 5);
+    //pivot >=k, ideal 20%=valid 80%=train(data)
+    user_events_validate[email] = list.sublist(0, pivot + 1);
+    user_events_data[email] = list.sublist(pivot + 1);
     var data = {
       "compareToMe": Future.value(user_events_data[email]),
       "possibleEvents": Future.value(allEvents),
@@ -955,7 +960,8 @@ void testEventsRecommendation(
     // but we want to test also the combinde function
     system.setData(data);
     // will auto filter thisEventIsNewForMeAndAvailable() ,
-    // so no events where EvenesSelectorBuildder.targetForMe(already filtered in above) OR email in any event queue(in calc())
+    // so no events where not EvenesSelectorBuildder.targetForMe(already filtered in above)
+    // OR email in any event queue(in calc())
     var success = await system.calc();
     if (success) {
       user_rec[email] = combinedTops(system.getTops());

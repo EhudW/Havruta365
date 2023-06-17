@@ -168,6 +168,8 @@ class Globals {
     prefsReadyOrNull = v;
     return v;
   });
+  static const String DEFAULT_USER_AVATAR =
+      "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png";
   static String maleAvatar =
       'https://mpng.subpng.com/20180418/whw/kisspng-computer-icons-professional-clipart-5ad7f6c3aafc17.2777946215241028517004.jpg';
   static String femaleAvatar =

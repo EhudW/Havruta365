@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,6 +12,7 @@ import '../../../Globals.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
+// Screen for step 1 in creatrion of new user, using Google auth
 class CreateUserAuthScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -21,9 +20,9 @@ class CreateUserAuthScreen extends StatefulWidget {
 
 class _HomePageState extends State<CreateUserAuthScreen> {
   final address = TextEditingController();
-  String address_str = "";
+  String addressStr = "";
   final gender = TextEditingController();
-  String gender_str = "";
+  String genderStr = "";
 
   DateTime? _dateTime;
 
@@ -67,12 +66,12 @@ class _HomePageState extends State<CreateUserAuthScreen> {
                 },
               ),
             ),
-            newFiled(address, address_str, "כתובת מגורים",
+            newFiled(address, addressStr, "כתובת מגורים",
                 FontAwesomeIcons.house, false, TextDirection.rtl),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
-                "תרשום אותי",
+                "המשך", // sign up is done only in next screen!
                 textAlign: TextAlign.center,
                 style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
               ),
@@ -88,14 +87,13 @@ class _HomePageState extends State<CreateUserAuthScreen> {
                   foregroundColor: Colors.teal),
               onPressed: () async {
                 gender.text == 'Gender.Female'
-                    ? gender_str = 'F'
-                    : gender_str = 'M';
+                    ? genderStr = 'F'
+                    : genderStr = 'M';
                 if (_dateTime == null) {
                   _dateTime = DateTime.now();
                 }
-                address_str = address.text;
-                if (address_str.isEmpty) {
-                  //|| address_str == null) {
+                addressStr = address.text;
+                if (addressStr.isEmpty) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('יש להכניס כתובת מגורים',
@@ -106,13 +104,16 @@ class _HomePageState extends State<CreateUserAuthScreen> {
                   )..show(context);
                   return;
                 }
+                // Globals.tmpNextUser keep data between step 1 [this screen]
+                // & step 2 of the sign up process
                 User user = Globals.tmpNextUser!;
-                user.address = address_str;
-                user.gender = gender_str;
+                user.address = addressStr;
+                user.gender = genderStr;
                 user.birthDate = _dateTime;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginMoreDetails()),
+                  MaterialPageRoute(
+                      builder: (context) => SignUpFurtherDetails()),
                 );
               },
             ),
@@ -124,6 +125,7 @@ class _HomePageState extends State<CreateUserAuthScreen> {
   }
 }
 
+// create new field row.  text is hint.  cover is bool if to hide with * the textbox
 newFiled(controller, str, text, icon, cover, [TextDirection? dir]) {
   return new FadeAnimation(
       1.7,
@@ -172,7 +174,7 @@ newFiled(controller, str, text, icon, cover, [TextDirection? dir]) {
       ]));
 }
 
-Widget genderField(gender_str) {
+Widget genderField(genderStr) {
   return Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
     SizedBox(width: Globals.scaler.getWidth(4)),
     Expanded(
@@ -189,7 +191,7 @@ Widget genderField(gender_str) {
         unSelectedGenderTextStyle:
             TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
         onChanged: (Gender? gender) {
-          gender_str.text = gender.toString();
+          genderStr.text = gender.toString();
         },
 
         equallyAligned: true,
@@ -202,27 +204,6 @@ Widget genderField(gender_str) {
       ),
     ),
   ]);
-}
-
-button(name_str) {
-  return OutlinedButton(
-    style: ButtonStyle(
-      shape: MaterialStateProperty.all(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
-        ),
-      ),
-    ),
-    onPressed: () async {
-      print(name_str);
-    },
-    child: Center(
-      child: Text(
-        "כניסה",
-        style: TextStyle(color: Colors.white, fontSize: 15),
-      ),
-    ),
-  );
 }
 
 appBar(BuildContext context) {

@@ -1,11 +1,7 @@
-// ignore_for_file: non_constant_identifier_names
-// Login > LoginDetails      > LoginMoreDetails > HomePage   (regular email-pass)
-// Login > LoginDetailsGmail > LoginMoreDetails > HomePage   (signup using google)
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:havruta_project/Auth/Screens/RecoverPassword/ForgotPasswordScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:havruta_project/Auth/Functions/GoogleSignIn.dart';
 import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
 import 'package:havruta_project/HomePage.dart';
@@ -20,6 +16,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
+// Screen to login or sign-up or forget password
+// for now only login/signup using google is shown when !kDebugMode
+// if login using google and the user isn't exist, it will count as signup using google
+// flows:
+// signup using google steps:      LoginScreen > CreateUserAuthScreen > SignUpFurtherDetails > HomePage
+// signup using email-pass steps:  LoginScreen > CreateUserScreen > SignUpFurtherDetails > HomePage
+// login using google or email-pass : LoginScreen > HomePage
+// reset password : LoginScreen > ForgotPasswordScreen > ChangePasswordScreen > LoginScreen
 class LoginScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -27,9 +31,9 @@ class LoginScreen extends StatefulWidget {
 
 class _HomePageState extends State<LoginScreen> {
   final mail = TextEditingController();
-  String mail_str = "";
+  String mailStr = "";
   final password = TextEditingController();
-  String password_str = "";
+  String passwordStr = "";
   Future<SharedPreferences> _prefs = Globals.prefs;
 
   @override
@@ -129,7 +133,7 @@ class _HomePageState extends State<LoginScreen> {
                                               hintStyle: TextStyle(
                                                   color: Colors.grey)),
                                           onChanged: (String text) {
-                                            mail_str = mail.text;
+                                            mailStr = mail.text;
                                           }),
                                     ),
                                     Container(
@@ -144,7 +148,7 @@ class _HomePageState extends State<LoginScreen> {
                                               hintStyle: TextStyle(
                                                   color: Colors.grey)),
                                           onChanged: (String text) {
-                                            password_str = password.text;
+                                            passwordStr = password.text;
                                           }),
                                     ),
                                   ],
@@ -185,17 +189,19 @@ class _HomePageState extends State<LoginScreen> {
                                   onPressed: () async {
                                     FocusScope.of(context)
                                         .requestFocus(FocusNode());
+                                    // try to get user with the hash(pass)
                                     var coll =
                                         Globals.db!.db.collection('Users');
-                                    var bytes = utf8.encode(password_str);
-                                    password_str =
+                                    var bytes = utf8.encode(passwordStr);
+                                    passwordStr =
                                         sha1.convert(bytes).toString();
-                                    var user_json = await coll.findOne({
-                                      'email': mail_str.replaceAll(
+                                    var userJson = await coll.findOne({
+                                      'email': mailStr.replaceAll(
                                           new RegExp(r"\s+"), ""),
-                                      'password': password_str
+                                      'password': passwordStr
                                     });
-                                    if (user_json == null) {
+                                    // no user or wrong pass
+                                    if (userJson == null) {
                                       Flushbar(
                                         title: 'שגיאה בהתחברות',
                                         message: 'פרטי התחברות אינם נכונים',
@@ -203,10 +209,9 @@ class _HomePageState extends State<LoginScreen> {
                                       )..show(context);
                                       return;
                                     }
-                                    Globals.onNewLogin(
-                                        User.fromJson(user_json));
+                                    Globals.onNewLogin(User.fromJson(userJson));
                                     // This is ObjectID!!
-                                    var id = user_json['_id'];
+                                    var id = userJson['_id'];
                                     final SharedPreferences prefs =
                                         await _prefs;
                                     await prefs.setString('id', id.toString());
@@ -336,34 +341,36 @@ class _HomePageState extends State<LoginScreen> {
     );
   }
 
+  // Try to connect via Google_Sign_In
+  // in app logic terms = login / signup with the given email
   Future signIn() async {
-    // Try to connect via Google_Sign_In
     try {
       await GoogleSignInApi.logout();
     } catch (e) {}
-    final google_user = await GoogleSignInApi.login();
-    if (google_user == null) {
+    final googleUser = await GoogleSignInApi.login();
+    if (googleUser == null) {
+      // on error
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('התחברות נכשלה')));
     } else {
-      // if user exist --> HomePage
-      User? user = await Globals.db!.getUser(google_user.email);
+      User? user = await Globals.db!.getUser(googleUser.email);
       if (user != null) {
+        // if user exist = login --> HomePage
         Globals.onNewLogin(user);
-        // Save a token in user device
+        // Save a token in user device         X
+        // Save the email info in user device  V
         Globals.db!.saveIdLocally();
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => HomePage()));
-        // New user --> LoginDetailsGmail
       } else {
-        GoogleSignInAccount g_user = google_user;
+        // New user = signup --> CreateUserAuthScreen
         User user = new User();
-        user.avatar = g_user.photoUrl;
-        user.name = g_user.displayName;
-        user.email = g_user.email;
+        user.avatar = googleUser.photoUrl;
+        user.name = googleUser.displayName;
+        user.email = googleUser.email;
+        // Globals.tmpNextUser keep data between step 1[CreateUserAuthScreen] [this is step 0]
+        // & step 2 of the sign up process
         Globals.tmpNextUser = user;
-        // TODO - GO TO NEW SCREEN - SPECIFIC FOR GOOGLE
-        // TODO - JUST REMOVE EMAIL AND NAME
         Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => CreateUserAuthScreen()));
       }

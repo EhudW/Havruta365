@@ -1,24 +1,16 @@
-//import 'dart:convert';
-
-// ignore_for_file: must_be_immutable, non_constant_identifier_names
-
 import 'package:another_flushbar/flushbar.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import 'package:http/http.dart' as http;
-
 import '../../../Globals.dart';
 import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
-//import 'package:toast/toast.dart';
-
 import '../LoginScreen.dart';
 
+// Screen to change password, using code from user's email
 class ChangePasswordScreen extends StatefulWidget {
-  String code;
-  String mail;
+  final String code;
+  final String mail;
 
   ChangePasswordScreen(this.code, this.mail);
 
@@ -28,11 +20,11 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _HomePageState extends State<ChangePasswordScreen> {
   final code = TextEditingController();
-  String code_str = "";
+  String codeStr = "";
   final password = TextEditingController();
-  String password_str = "";
-  final password_con = TextEditingController();
-  String password_con_str = "";
+  String passwordStr = "";
+  final passwordCon = TextEditingController();
+  String passwordConStr = "";
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +37,11 @@ class _HomePageState extends State<ChangePasswordScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: Globals.scaler.getHeight(4)),
-            newFiled(code, code_str, "הקוד שנשלח למייל", FontAwesomeIcons.code,
+            newFiled(
+                code, codeStr, "הקוד שנשלח למייל", FontAwesomeIcons.code, true),
+            newFiled(password, passwordStr, "סיסמא חדשה", FontAwesomeIcons.key,
                 true),
-            newFiled(password, password_str, "סיסמא חדשה", FontAwesomeIcons.key,
-                true),
-            newFiled(password_con, password_con_str, "אישור סיסמא",
+            newFiled(passwordCon, passwordConStr, "אישור סיסמא",
                 FontAwesomeIcons.check, true),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
@@ -71,10 +63,10 @@ class _HomePageState extends State<ChangePasswordScreen> {
                   // <-- Button color
                   foregroundColor: Colors.red),
               onPressed: () async {
-                code_str = code.text;
-                password_str = password.text;
-                password_con_str = password_con.text;
-                if (code_str != this.widget.code) {
+                codeStr = code.text;
+                passwordStr = password.text;
+                passwordConStr = passwordCon.text;
+                if (codeStr != this.widget.code) {
                   Flushbar(
                     title: 'שגיאה בהחלפת סיסמא',
                     messageText: Text('הקוד לא תואם ',
@@ -85,7 +77,7 @@ class _HomePageState extends State<ChangePasswordScreen> {
                   )..show(context);
                   return;
                 }
-                if (password_str.length < 6) {
+                if (passwordStr.length < 6) {
                   Flushbar(
                     title: 'שגיאה בהחלפת סיסמא ',
                     messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
@@ -97,7 +89,7 @@ class _HomePageState extends State<ChangePasswordScreen> {
                   return;
                 }
                 // Check if the passwords are equals
-                if (password_str != password_con_str) {
+                if (passwordStr != passwordConStr) {
                   Flushbar(
                     title: 'שגיאה בהחלפת סיסמא',
                     messageText: Text('סיסמאות לא תואמות',
@@ -108,7 +100,7 @@ class _HomePageState extends State<ChangePasswordScreen> {
                   )..show(context);
                   return;
                 }
-                Globals.db!.changePasswordUser(this.widget.mail, password_str);
+                Globals.db!.changePasswordUser(this.widget.mail, passwordStr);
                 Flushbar(
                   title: 'בוצע החלפת סיסמא',
                   messageText: Text('הסיסמא שונתה בהצלחה !',
@@ -135,6 +127,7 @@ class _HomePageState extends State<ChangePasswordScreen> {
   }
 }
 
+// format row of TextBox & label & icon
 newFiled(controller, str, text, icon, cover) {
   return new FadeAnimation(
       1.7,

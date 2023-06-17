@@ -1,11 +1,8 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'dart:io';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,20 +14,21 @@ import '../../../Globals.dart';
 import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 
-class LoginMoreDetails extends StatefulWidget {
+// this is the step 2 of signup for "with google" or "email-pass"
+class SignUpFurtherDetails extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<LoginMoreDetails> {
+class _HomePageState extends State<SignUpFurtherDetails> {
   final yeshiva = TextEditingController();
-  String yeshiva_str = " ";
+  String yeshivaStr = " ";
   final heightcm = TextEditingController();
-  String heightcm_str = "";
+  String heightCmStr = "";
   final description = TextEditingController();
-  String description_str = " ";
+  String descriptionStr = " ";
   final status = TextEditingController();
-  String? status_str = "סטטוס משפחתי";
+  String? statusStr = "סטטוס משפחתי";
   final AuthService authenticate = AuthService();
 
   @override
@@ -79,7 +77,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                       child: DropdownButton<String>(
                         iconDisabledColor: Colors.teal,
                         isExpanded: true,
-                        value: status_str,
+                        value: statusStr,
                         icon: Icon(Icons.arrow_drop_down),
                         iconSize: Globals.scaler.getTextSize(9),
                         // this increase the size
@@ -91,7 +89,7 @@ class _HomePageState extends State<LoginMoreDetails> {
                         underline: Container(),
                         onChanged: (String? newValue) {
                           setState(() {
-                            status_str = newValue;
+                            statusStr = newValue;
                           });
                         },
                         items: <String>[
@@ -111,17 +109,17 @@ class _HomePageState extends State<LoginMoreDetails> {
                         }).toList(),
                       )),
                 ),
-                newFiled(yeshiva, yeshiva_str, "ישיבה/מדרשה",
+                newFiled(yeshiva, yeshivaStr, "ישיבה/מדרשה",
                     FontAwesomeIcons.book, 3.0, TextDirection.rtl),
                 newFiled(
                     heightcm,
-                    heightcm_str,
+                    heightCmStr,
                     "גובה - ס\"מ",
                     FontAwesomeIcons.rulerVertical,
                     3.0,
                     TextDirection.ltr,
                     true),
-                newFiled1(description, description_str, "פרטים שחשוב לך לשתף",
+                newFiled1(description, descriptionStr, "פרטים שחשוב לך לשתף",
                     FontAwesomeIcons.list, 8.0, TextDirection.rtl),
                 SizedBox(height: Globals.scaler.getHeight(1)),
                 ElevatedButton(
@@ -143,23 +141,22 @@ class _HomePageState extends State<LoginMoreDetails> {
                       // <-- Button color
                       foregroundColor: Colors.teal),
                   onPressed: () async {
+                    // tmpNextUser is from step 1 of signup (this screen is step 2 and last)
                     Globals.currentUser = Globals.tmpNextUser;
-                    // ignore: unused_local_variable
-                    var res =
-                        await Globals.db!.insertNewUser(Globals.currentUser!);
+
+                    await Globals.db!.insertNewUser(Globals.currentUser!);
                     await Globals.db!.saveIdLocally();
-                    yeshiva_str = yeshiva.text;
-                    heightcm_str = heightcm.text;
-                    description_str = description.text;
-                    Globals.currentUser!.yeshiva = yeshiva_str;
+                    yeshivaStr = yeshiva.text;
+                    heightCmStr = heightcm.text;
+                    descriptionStr = description.text;
+                    Globals.currentUser!.yeshiva = yeshivaStr;
                     Globals.currentUser!.heightcm =
-                        int.tryParse(heightcm_str.trim());
-                    Globals.currentUser!.description = description_str;
+                        int.tryParse(heightCmStr.trim());
+                    Globals.currentUser!.description = descriptionStr;
                     Globals.currentUser!.status =
-                        status_str == "סטטוס משפחתי" ? "לא ידוע" : status_str;
+                        statusStr == "סטטוס משפחתי" ? "לא ידוע" : statusStr;
                     if (Globals.currentUser!.avatar == null)
-                      Globals.currentUser!.avatar =
-                          'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
+                      Globals.currentUser!.avatar = Globals.DEFAULT_USER_AVATAR;
                     await Globals.db!.updateUser(Globals.currentUser!);
                     Globals.onNewLogin(Globals.currentUser!);
                     Navigator.pushReplacement(
@@ -262,7 +259,6 @@ class _HomePageState extends State<LoginMoreDetails> {
     );
   }
 
-  // TODO: ?? Future<File> uploadImage(ImageSource source) async {
   Future<void> uploadImage(ImageSource source) async {
     final _storage = FirebaseStorage.instance;
     XFile? image;
@@ -275,7 +271,7 @@ class _HomePageState extends State<LoginMoreDetails> {
     }
     image = await picker.pickImage(source: source);
     var file = File(image?.path ?? "");
-    //String fileName = ObjectId().toString();
+    // fileName will be the same for same user's avatar
     String fileName = sha1
         .convert(utf8.encode(Globals.tmpNextUser!.email! + "avatar"))
         .toString();
@@ -288,10 +284,10 @@ class _HomePageState extends State<LoginMoreDetails> {
         Globals.tmpNextUser!.avatar = downloadUrl;
       });
     } else {
-      setState(() {
+      /*setState(() {
         Globals.tmpNextUser!.avatar =
-            'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
-      });
+            Globals.DEFAULT_USER_AVATAR;
+      });*/
     }
   }
 }

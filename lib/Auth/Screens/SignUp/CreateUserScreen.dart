@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_null_comparison
-
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -17,6 +15,7 @@ import 'package:havruta_project/Auth/Widgets/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
+// Screen for step 1 in creatrion of new user, using email-pass
 class CreateUserScreen extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -24,17 +23,17 @@ class CreateUserScreen extends StatefulWidget {
 
 class _HomePageState extends State<CreateUserScreen> {
   final name = TextEditingController();
-  String name_str = "";
+  String nameStr = "";
   final mail = TextEditingController();
-  String mail_str = "";
+  String mailStr = "";
   final password = TextEditingController();
-  String password_str = "";
-  final password_con = TextEditingController();
-  String password_con_str = "";
+  String passwordStr = "";
+  final passwordCon = TextEditingController();
+  String passwordConStr = "";
   final address = TextEditingController();
-  String address_str = "";
+  String addressStr = "";
   final gender = TextEditingController();
-  String gender_str = "";
+  String genderStr = ""; // F or M
 
   DateTime _dateTime = DateTime(1940, 1, 1);
 
@@ -79,11 +78,11 @@ class _HomePageState extends State<CreateUserScreen> {
               ),
             ),
             SizedBox(height: Globals.scaler.getHeight(1)),
-            newFiled(name, name_str, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
+            newFiled(name, nameStr, "שם פרטי ושם משפחה", FontAwesomeIcons.user,
                 false, TextDirection.rtl),
-            newFiled(address, address_str, "כתובת מגורים",
+            newFiled(address, addressStr, "כתובת מגורים",
                 FontAwesomeIcons.house, false, TextDirection.rtl),
-            newFiled(mail, mail_str, "כתובת המייל",
+            newFiled(mail, mailStr, "כתובת המייל",
                 FontAwesomeIcons.envelopesBulk, false, TextDirection.ltr),
             SizedBox(height: Globals.scaler.getHeight(1)),
             Align(
@@ -94,13 +93,13 @@ class _HomePageState extends State<CreateUserScreen> {
                       GoogleFonts.alef(fontSize: 18, color: Colors.teal[400]),
                 )),
             newFiled(
-                password, password_str, "סיסמא", FontAwesomeIcons.key, true),
-            newFiled(password_con, password_con_str, "אישור סיסמא",
+                password, passwordStr, "סיסמא", FontAwesomeIcons.key, true),
+            newFiled(passwordCon, passwordConStr, "אישור סיסמא",
                 FontAwesomeIcons.check, true),
             SizedBox(height: Globals.scaler.getHeight(2)),
             ElevatedButton(
               child: Text(
-                "תרשום אותי",
+                "המשך", // signup is done only in next step(screen)!
                 textAlign: TextAlign.center,
                 style: GoogleFonts.abel(fontSize: 23, color: Colors.white),
               ),
@@ -116,27 +115,21 @@ class _HomePageState extends State<CreateUserScreen> {
                   foregroundColor: Colors.teal),
               onPressed: () async {
                 gender.text == 'Gender.Female'
-                    ? gender_str = 'F'
-                    : gender_str = 'M';
-                if (_dateTime == null) {
-                  _dateTime = DateTime.now();
-                }
+                    ? genderStr = 'F'
+                    : genderStr = 'M';
 
-                address_str = address.text;
-                name_str = name.text;
-                password_str = password.text;
-                password_con_str = password_con.text;
-                mail_str = mail.text;
-                if (password_con_str.isEmpty ||
-                    password_con_str == null ||
-                    password_str.isEmpty ||
-                    password_str == null ||
-                    mail_str.isEmpty ||
-                    mail_str == null ||
-                    address_str.isEmpty ||
-                    address_str == null ||
-                    name_str.isEmpty ||
-                    name_str == null) {
+                _dateTime = DateTime.now();
+
+                addressStr = address.text;
+                nameStr = name.text;
+                passwordStr = password.text;
+                passwordConStr = passwordCon.text;
+                mailStr = mail.text;
+                if (passwordConStr.isEmpty ||
+                    passwordStr.isEmpty ||
+                    mailStr.isEmpty ||
+                    addressStr.isEmpty ||
+                    nameStr.isEmpty) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('ודא שמילאת את כל השדות',
@@ -147,7 +140,7 @@ class _HomePageState extends State<CreateUserScreen> {
                   )..show(context);
                   return;
                 }
-                if (password_str.length < 6) {
+                if (passwordStr.length < 6) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('אורך סיסמא חייב להיות לפחות 6 תווים ',
@@ -159,7 +152,7 @@ class _HomePageState extends State<CreateUserScreen> {
                   return;
                 }
                 // Check if the passwords are equals
-                if (password_str != password_con_str) {
+                if (passwordStr != passwordConStr) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
                     messageText: Text('סיסמאות לא תואמות',
@@ -170,7 +163,7 @@ class _HomePageState extends State<CreateUserScreen> {
                   )..show(context);
                   return;
                 }
-                bool userExist = await Globals.db!.isUserExist(mail_str);
+                bool userExist = await Globals.db!.isUserExist(mailStr);
                 if (userExist) {
                   Flushbar(
                     title: 'שגיאה בהרשמה',
@@ -183,22 +176,26 @@ class _HomePageState extends State<CreateUserScreen> {
                   return;
                 }
                 User user = new User();
-                user.name = name_str;
-                user.address = address_str;
-                user.email = mail_str;
-                user.gender = gender_str;
-                user.name = name_str;
+                user.name = nameStr;
+                user.address = addressStr;
+                user.email = mailStr;
+                user.gender = genderStr;
+                user.name = nameStr;
                 user.birthDate = _dateTime;
-                var bytes = utf8.encode(password_str);
+                var bytes = utf8.encode(passwordStr);
                 var digest = sha1.convert(bytes);
                 // print("Digest as bytes: ${digest.bytes}");
                 // print("Digest as hex string: $digest");
                 user.password = digest.toString();
-                //user.password = password_str;
+                //user.password = passwordStr;
+
+                // Globals.tmpNextUser keep data between step 1 [this screen]
+                // & step 2 of the sign up process
                 Globals.tmpNextUser = user;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginMoreDetails()),
+                  MaterialPageRoute(
+                      builder: (context) => SignUpFurtherDetails()),
                 );
               },
             ),
@@ -210,6 +207,7 @@ class _HomePageState extends State<CreateUserScreen> {
   }
 }
 
+// ui row for field, with textbox, text is hintText, cover is true for hide password with *
 newFiled(controller, str, text, icon, cover, [TextDirection? dir]) {
   return new FadeAnimation(
       1.7,
@@ -258,7 +256,7 @@ newFiled(controller, str, text, icon, cover, [TextDirection? dir]) {
       ]));
 }
 
-Widget genderField(gender_str) {
+Widget genderField(genderStr) {
   return Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
     SizedBox(width: Globals.scaler.getWidth(4)),
     Expanded(
@@ -275,7 +273,7 @@ Widget genderField(gender_str) {
         unSelectedGenderTextStyle:
             TextStyle(color: Colors.teal, fontWeight: FontWeight.normal),
         onChanged: (Gender? gender) {
-          gender_str.text = gender.toString();
+          genderStr.text = gender.toString();
         },
 
         equallyAligned: true,
@@ -288,27 +286,6 @@ Widget genderField(gender_str) {
       ),
     ),
   ]);
-}
-
-button(name_str) {
-  return OutlinedButton(
-    style: ButtonStyle(
-      shape: MaterialStateProperty.all(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
-        ),
-      ),
-    ),
-    onPressed: () async {
-      print(name_str);
-    },
-    child: Center(
-      child: Text(
-        "כניסה",
-        style: TextStyle(color: Colors.white, fontSize: 15),
-      ),
-    ),
-  );
 }
 
 appBar(BuildContext context) {

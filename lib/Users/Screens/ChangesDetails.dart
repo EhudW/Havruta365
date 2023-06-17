@@ -338,8 +338,7 @@ class _HomePageState extends State<ChangesDetails> {
       });
     } else {
       setState(() {
-        Globals.currentUser!.avatar =
-            'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png';
+        Globals.currentUser!.avatar = Globals.DEFAULT_USER_AVATAR;
       });
     }
   }
