@@ -3,7 +3,7 @@
 //import 'package:havruta_project/data_base_auth/User.dart';
 //import 'package:mongo_dart/mongo_dart.dart';
 
-import 'package:havruta_project/QQQglobals.dart';
+import 'package:havruta_project/globals.dart';
 
 import 'user.dart';
 

@@ -10,7 +10,7 @@ import 'package:havruta_project/home_page.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
-import '../../QQQglobals.dart';
+import '../../globals.dart';
 import 'package:havruta_project/auth/widgets/fade_animation.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';

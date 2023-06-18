@@ -1,4 +1,4 @@
-//import 'package:havruta_project/QQQglobals.dart';
+//import 'package:havruta_project/globals.dart';
 //import 'package:mongo_dart_query/mongo_dart_query.dart';
 
 // ignore_for_file: non_constant_identifier_names
@@ -6,7 +6,7 @@
 import 'dart:math';
 
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:havruta_project/QQQglobals.dart';
+import 'package:havruta_project/globals.dart';
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:mongo_dart/mongo_dart.dart';

@@ -10,7 +10,7 @@ import 'package:havruta_project/event/create_event/authenitcate.dart';
 import 'package:havruta_project/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../QQQglobals.dart';
+import '../../../globals.dart';
 import 'package:havruta_project/auth/widgets/fade_animation.dart';
 import 'package:flutter/material.dart';
 

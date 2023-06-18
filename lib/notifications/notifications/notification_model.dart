@@ -1,4 +1,4 @@
-import 'package:havruta_project/QQQglobals.dart';
+import 'package:havruta_project/globals.dart';
 import 'dart:async';
 import 'package:havruta_project/data_base/data_representations/notification.dart';
 

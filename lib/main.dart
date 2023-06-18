@@ -12,7 +12,7 @@ import 'package:havruta_project/notifications/push_notifications/fcm.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'QQQglobals.dart';
+import 'globals.dart';
 import 'widgets/splash_screen.dart';
 import 'mytimer.dart';
 import 'mydebug.dart' as MyDebug;

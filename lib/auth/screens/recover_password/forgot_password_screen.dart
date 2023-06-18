@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:havruta_project/QQQglobals.dart';
+import 'package:havruta_project/globals.dart';
 import 'package:havruta_project/auth/widgets/fade_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
