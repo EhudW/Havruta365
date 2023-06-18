@@ -6,6 +6,7 @@ import 'package:havruta_project/auth/screens/login_screen.dart';
 import '../../../globals.dart';
 import 'package:havruta_project/auth/widgets/fade_animation.dart';
 import 'package:flutter/material.dart';
+//
 
 // Screen to change password, using code from user's email
 class ChangePasswordScreen extends StatefulWidget {
