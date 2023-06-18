@@ -195,8 +195,8 @@ class FCM {
     //spm > spmanger_firebaseMsg > mgt  > senders > e@e.e
     var spm = SPManager("firebaseMsg");
     await spm.load();
-    Set x = (spm[mgt]["senders"] ?? {}).keys.toSet();
-    if ((spm[mgt]["counter"] ?? 0) == counter && // same counter
+    Set x = (spm[mgt]?["senders"] ?? {}).keys.toSet();
+    if ((spm[mgt]?["counter"] ?? 0) == counter && // same counter
             x.length == senders.length && // same size
             x.union(senders.toSet()).length ==
                 x.length //union not affect -> same
