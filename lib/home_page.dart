@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/event/screens/create_event_screen/create_event_sreen.dart';
-import 'package:havruta_project/globals.dart';
-import 'package:havruta_project/notifications/notifications/notifications.dart';
+import 'package:havruta_project/QQQglobals.dart';
+import 'package:havruta_project/notifications/notifications/notifications_side_screen.dart';
 import 'package:havruta_project/users/screens/profile_screen/profile_screen.dart';
 import 'package:havruta_project/chat/screens/chats_feed_screen.dart';
 import 'package:havruta_project/event/widgets/models_home_pages.dart';
 import 'package:havruta_project/main.dart';
-import 'Event/screens/event_scroller_screen/events.dart';
+import 'QQQevent/screens/event_scroller_screen/events.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.transparent,
                         child: Column(children: <Widget>[
                           Expanded(
-                              child: Notifications(
+                              child: NotificationsSideScreen(
                                   nnim: NewNotificationManager.onlyLast!))
                         ])))),
             backgroundColor: Colors.white,

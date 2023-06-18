@@ -10,7 +10,7 @@ import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
 import 'package:crypto/crypto.dart';
 
-import '../../../Globals.dart';
+import '../../../QQQglobals.dart';
 import 'package:havruta_project/auth/widgets/fade_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';

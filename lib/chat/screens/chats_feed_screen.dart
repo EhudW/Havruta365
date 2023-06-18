@@ -11,7 +11,7 @@ import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/mytimer.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mg;
-import '../../Globals.dart';
+import '../../QQQglobals.dart';
 import '../../data_base/data_representations/chat_message.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui' as ui;

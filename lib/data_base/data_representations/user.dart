@@ -2,7 +2,7 @@
 //import 'dart:convert';
 
 import 'package:havruta_project/data_base/data_representations/event.dart';
-import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/QQQglobals.dart';
 
 class User {
   User(

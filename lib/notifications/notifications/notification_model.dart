@@ -1,11 +1,11 @@
-import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/QQQglobals.dart';
 import 'dart:async';
 import 'package:havruta_project/data_base/data_representations/notification.dart';
 
 import '../../mydebug.dart';
 
 // ignore: camel_case_types
-class notificationModel {
+class NotificationModel {
   bool _wasFetched = false;
   Stream<List<NotificationUser>>? stream;
   List<NotificationUser>? _data;
@@ -22,7 +22,7 @@ class notificationModel {
   int get unseenLen => _data?.where((e) => e.unseen).length ?? 0;
   late StreamController<List<NotificationUser>?> _controller;
   bool ignoreRequests = false;
-  notificationModel() {
+  NotificationModel() {
     _data = <NotificationUser>[];
     _controller = StreamController<List<NotificationUser>?>.broadcast();
     stream = _controller.stream.map((List<NotificationUser>? postsData) {

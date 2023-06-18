@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/auth/screens/login_screen.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
-import 'package:havruta_project/data_base/auto_reconect_mongo.dart';
+import 'package:havruta_project/data_base/auto_reconnect_mongo.dart';
 import 'package:havruta_project/notifications/notifications/notification_model.dart';
 import 'package:havruta_project/home_page.dart';
 import 'package:havruta_project/notifications/push_notifications/fcm.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'globals.dart';
+import 'QQQglobals.dart';
 import 'widgets/splash_screen.dart';
 import 'mytimer.dart';
 import 'mydebug.dart' as MyDebug;
@@ -61,7 +61,7 @@ class NewNotificationManager {
   static int _timeoutEveryXSec =
       MyDebug.MyConsts.checkNewNotificationTimeoutSec;
   // model for the notification
-  final notificationModel model = notificationModel();
+  final NotificationModel model = NotificationModel();
   late MyTimer _timer;
   NewNotificationManager() {
     // This istance is the new

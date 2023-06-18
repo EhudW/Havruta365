@@ -6,7 +6,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
-import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/QQQglobals.dart';
 import 'package:havruta_project/data_base/data_representations/chat_message.dart';
 import 'package:havruta_project/chat/chat_stream_model.dart';
 import 'package:havruta_project/users/screens/user_screen/user_details_page.dart';

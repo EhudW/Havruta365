@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:havruta_project/chat/screens/chats_feed_screen.dart';
 import 'package:havruta_project/chat/screens/single_chat_screen.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
-import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/QQQglobals.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:havruta_project/event/screens/event_page/event_screen.dart';

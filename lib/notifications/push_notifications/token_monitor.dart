@@ -6,7 +6,7 @@
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
-import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/QQQglobals.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 /// Manages & returns the users FCM token.

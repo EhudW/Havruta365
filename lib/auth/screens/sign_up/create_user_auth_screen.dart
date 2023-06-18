@@ -8,7 +8,7 @@ import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
 
-import '../../../Globals.dart';
+import '../../../QQQglobals.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 

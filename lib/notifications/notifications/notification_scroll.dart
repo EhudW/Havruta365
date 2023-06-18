@@ -3,17 +3,17 @@ import 'package:havruta_project/main.dart';
 import 'package:havruta_project/notifications/notifications/notification_view.dart';
 
 // ignore: must_be_immutable, camel_case_types
-class notificationsScroll extends StatefulWidget {
+class NotificationsScroll extends StatefulWidget {
   NewNotificationManager nnim;
 
-  notificationsScroll(this.nnim);
+  NotificationsScroll(this.nnim);
 
   @override
-  _notificationsScrollState createState() => _notificationsScrollState();
+  _NotificationsScrollState createState() => _NotificationsScrollState();
 }
 
 // ignore: camel_case_types
-class _notificationsScrollState extends State<notificationsScroll> {
+class _NotificationsScrollState extends State<NotificationsScroll> {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(

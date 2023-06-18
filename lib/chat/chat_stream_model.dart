@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/QQQglobals.dart';
 import 'package:havruta_project/data_base/data_representations/chat_message.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;

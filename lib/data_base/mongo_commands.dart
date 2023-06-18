@@ -7,14 +7,14 @@ import 'package:havruta_project/data_base/data_representations/notification.dart
 import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/data_base/data_representations/topic.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
-import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/QQQglobals.dart';
 import 'package:havruta_project/data_base/data_representations/chat_message.dart';
 import 'package:havruta_project/users/screens/user_screen/user_screen.dart';
 import 'package:havruta_project/event/screens/event_page/event_screen.dart';
 import 'package:havruta_project/notifications/push_notifications/fcm.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import '../mydebug.dart' as MyDebug;
-import 'auto_reconect_mongo.dart' as Db2;
+import 'auto_reconnect_mongo.dart' as Db2;
 //import 'package:mongo_dart_query/mongo_dart_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
@@ -42,7 +42,7 @@ class MongoCommands {
   // useDb2 to try auto reconnect when connection lost, see mongo2.dart
   Future<void> connect({bool useDb2 = false}) async {
     if (useDb2) {
-      this.db = await Db2.MongoDbImpl.create(CONNECT_TO_DB);
+      this.db = await Db2.AutoReconnectMongo.create(CONNECT_TO_DB);
     } else {
       this.db = await Db.create(CONNECT_TO_DB);
     }
