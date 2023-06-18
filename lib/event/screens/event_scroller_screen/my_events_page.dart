@@ -3,7 +3,7 @@
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/event/screens/event_scroller_screen/events.dart';
-import 'package:havruta_project/event/widgets/events_model.dart';
+import 'package:havruta_project/event/model/events_model.dart';
 
 import '../../../globals.dart';
 import 'package:flutter/material.dart';

@@ -6,7 +6,7 @@ import 'package:havruta_project/event/screens/event_scroller_screen/events.dart'
 //import 'package:havruta_project/data_base_auth/User.dart';
 import 'package:havruta_project/globals.dart';
 import 'package:havruta_project/event/screens/event_page/event_screen.dart';
-import 'package:havruta_project/event/widgets/events_model.dart';
+import 'package:havruta_project/event/model/events_model.dart';
 import 'package:havruta_project/mydebug.dart';
 //import 'package:havruta_project/Screens/EventScreen/Event_api.dart';
 //import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';

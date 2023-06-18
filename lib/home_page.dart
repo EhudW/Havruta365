@@ -7,7 +7,7 @@ import 'package:havruta_project/globals.dart';
 import 'package:havruta_project/notifications/notifications/notifications_side_screen.dart';
 import 'package:havruta_project/users/screens/profile_screen/profile_screen.dart';
 import 'package:havruta_project/chat/screens/chats_feed_screen.dart';
-import 'package:havruta_project/event/widgets/events_model.dart';
+import 'package:havruta_project/event/model/events_model.dart';
 import 'package:havruta_project/main.dart';
 import 'event/screens/event_scroller_screen/events.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
