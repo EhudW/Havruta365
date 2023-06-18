@@ -1,5 +1,6 @@
 import 'package:havruta_project/data_base/mongo_commands.dart';
 import 'package:havruta_project/data_base/data_representations/event.dart';
+import 'package:havruta_project/event/recommendation_system/rec_system.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/QQQevent/recommendation_system/rec_system.dart';
 import 'package:mongo_dart/mongo_dart.dart';
