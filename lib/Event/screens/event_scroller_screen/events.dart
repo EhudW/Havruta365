@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:havruta_project/event/recommendation_system/rec_system.dart';
 import 'package:havruta_project/event/screens/event_scroller_screen/event_view_feed.dart';
 import 'package:havruta_project/data_base/events_selector_builder.dart';
 import 'package:havruta_project/event/widgets/models_home_pages.dart';
 import 'package:havruta_project/mydebug.dart';
-import 'package:havruta_project/rec_system.dart';
 //import 'package:flutter/cupertino.dart';
 import 'event_online_feed.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

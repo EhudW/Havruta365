@@ -3,9 +3,9 @@ import 'package:havruta_project/data_base/data_representations/chat_message.dart
 import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
+import 'package:havruta_project/event/recommendation_system/rec_system.dart';
 import 'package:havruta_project/main.dart';
 import 'package:havruta_project/notifications/push_notifications/fcm.dart';
-import 'package:havruta_project/rec_system.dart';
 
 import 'mytimer.dart';
 import 'package:flutter/material.dart';
