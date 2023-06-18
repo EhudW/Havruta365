@@ -1,10 +1,10 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:havruta_project/DataBase/DataRepresentations/ChatMessage.dart';
-import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
-import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
-import 'package:havruta_project/DataBase/MongoCommands.dart';
-import 'package:havruta_project/Notifications/PushNotifications/Fcm.dart';
+import 'package:havruta_project/data_base/data_representations/chat_message.dart';
+import 'package:havruta_project/data_base/data_representations/event.dart';
+import 'package:havruta_project/data_base/data_representations/user.dart';
+import 'package:havruta_project/data_base/mongo_commands.dart';
 import 'package:havruta_project/main.dart';
+import 'package:havruta_project/notifications/push_notifications/fcm.dart';
 import 'package:havruta_project/rec_system.dart';
 
 import 'mytimer.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:havruta_project/DataBase/DataRepresentations/Event.dart';
-import 'package:havruta_project/Globals.dart';
-import 'package:havruta_project/Chat/Screens/SingleChatScreen.dart';
-import 'package:havruta_project/Chat/Screens/SendScreen.dart';
-import 'package:havruta_project/Users/Screens/UserScreen/UserScreen.dart';
-import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
+import 'package:havruta_project/chat/screens/single_chat_screen.dart';
+import 'package:havruta_project/data_base/data_representations/event.dart';
+import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/chat/screens/send_screen.dart';
+import 'package:havruta_project/users/screens/user_screen/user_screen.dart';
+import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 import 'dart:ui' as ui;

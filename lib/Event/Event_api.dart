@@ -1,5 +1,5 @@
-//import 'package:havruta_project/DataBase_auth/Event.dart';
-import 'package:havruta_project/DataBase/DataRepresentations/User.dart';
+//import 'package:havruta_project/data_base_auth/Event.dart';
+import 'package:havruta_project/data_base/data_representations/user.dart';
 
 // final Event testEvent = Event(
 //     eventImage: 'https://moreshet-maran.com/wp-content/uploads/2020/04/%D7%94%D7%93%D7%A3-%D7%94%D7%99%D7%95%D7%9E%D7%99.jpg',
