@@ -65,7 +65,7 @@ class _EventScreenState extends State<EventScreen> {
                       .contains(Globals.currentUser!.email!);
                   if (targetProblem != null) {
                     return NoEventScreen(
-                        eventname: event.typeAsStr,
+                        eventname: event.longStr(),
                         lbl: "אינך בקהל היעד המתאים - בגלל ה" + targetProblem);
                   }
                   if (rejectProblem) {
@@ -74,7 +74,7 @@ class _EventScreenState extends State<EventScreen> {
                           'רישומך נדחה ע"י היוזמ/ת. ניתן לשלוח בקשה בהודעה אישית',
                       otheruser: event.creatorUser,
                       otherusername: event.creatorName,
-                      eventname: event.typeAsStr,
+                      eventname: event.longStr(),
                     );
                   }
                   return EventPage(event, data[1] as List<Event>?);
