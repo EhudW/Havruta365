@@ -97,7 +97,8 @@ class _MainDetailsState extends State<MainDetails> {
       time = DateFormat('HH:mm')
           .format((widget.event!.dates![0] as DateTime).toLocal());
     }
-    String duration = widget.event!.duration.toString() + " שעות";
+    String duration = widget.event!.duration.toString();
+    duration += " דקות";
 
     var times = FormatTimes(time, nextEvent);
 
