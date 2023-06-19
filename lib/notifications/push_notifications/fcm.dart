@@ -24,6 +24,13 @@ Future<void> _emptyFunction(RemoteMessage message) async {}
 
 ///class to store / load data from local phone storage
 class SPManager {
+  static Future reset(String topic) async {
+    var spm = SPManager(topic);
+    await spm.load();
+    spm.data = {};
+    await spm.save();
+  }
+
   late String _topic;
   SPManager(String topic) {
     _topic = "SPManager_$topic";
@@ -58,6 +65,7 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
   String body = message.data["body"] ?? "";
   String mgt = message.data["msgGroupType"] ?? "";
   String sender = message.data["sender"] ?? "";
+  String MY_FCM_ID = message.data["MY_FCM_ID"];
   sender = sender == "" ? "NONE" : sender;
   // FCM.init(); //DEBUG
   // FCM._showFCM(1222, title + "|" + sender, body, ""); //DEBUG
@@ -66,8 +74,8 @@ Future<void> _firebaseMessagingHandler(RemoteMessage message) async {
   if (!{"events", "msgs", "notis"}.contains(mgt)) return;
   var spm = SPManager("preventDoubleFcmGms");
   await spm.load();
-  if (spm[message.messageId] == true) return;
-  spm[message.messageId] = true;
+  if (spm[MY_FCM_ID] == true) return;
+  spm[MY_FCM_ID] = true;
   await spm.save();
 
   var func = () async {
@@ -258,10 +266,7 @@ class FCM {
 
   static Future onLogout() async {
     await unsub();
-    var spm = SPManager("firebaseMsg");
-    await spm.load();
-    spm['email'] = null;
-    await spm.save();
+    SPManager.reset("firebaseMsg");
     _clearAll();
   }
 

@@ -83,6 +83,10 @@ class IconSwitchState extends State<IconSwitch> {
 class SingleChatScreen extends StatefulWidget {
   // sub/unsub to forum is only via join/leave event
   static bool hideSubUnsubButton = true;
+  String get _draftKey => "DRAFT~${Globals.currentUser!.email}~TO~$otherPerson";
+  String? getDraft() => Globals.prefsReadyOrNull?.getString(_draftKey);
+  Future<bool>? setDraft(String val) =>
+      Globals.prefsReadyOrNull?.setString(_draftKey, val);
   final String otherPerson;
   final String otherPersonName;
   final String? forumName;
@@ -108,8 +112,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   @override
   void initState() {
     super.initState();
-    tce_init_string =
-        Globals.prefsReadyOrNull?.getString("DRAFT" + widget.otherPerson);
+    tce_init_string = widget.getDraft();
     model = ChatModel(
         myMail: Globals.currentUser!.email!,
         otherPerson: widget.otherPerson,
@@ -137,7 +140,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   }
 
   void onSend(types.PartialText pt) {
-    Globals.prefsReadyOrNull?.setString("DRAFT" + widget.otherPerson, "");
+    widget.setDraft("");
     model.send(ChatMessage(
         isForum: widget.forumName != null,
         avatar: Globals.currentUser!.avatar,
@@ -388,9 +391,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                                 );
                               },
                               inputOptions: InputOptions(
-                                onTextChanged: (p0) => Globals.prefsReadyOrNull
-                                    ?.setString(
-                                        "DRAFT" + widget.otherPerson, p0),
+                                onTextChanged: (p0) => widget.setDraft(p0),
                                 textEditingController: TextEditingController(
                                     text: tce_init_string),
                               ),

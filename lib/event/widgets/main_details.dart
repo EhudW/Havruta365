@@ -105,92 +105,93 @@ class _MainDetailsState extends State<MainDetails> {
     String countdown_string = FormatCountdownString(context, countdown_minutes);
 
     return Container(
+        padding: EdgeInsets.symmetric(horizontal: 40),
         child: Column(children: [
-      Text("לימוד:",
-          textDirection: ui.TextDirection.rtl,
-          style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
-      Text(study,
-          textDirection: ui.TextDirection.rtl,
-          style: GoogleFonts.secularOne(fontSize: 20.0)),
-      times[0],
-      times[1],
-      // countdown
-      Text(countdown_string,
-          textDirection: ui.TextDirection.rtl,
-          style:
-              GoogleFonts.alef(fontSize: 16.0, color: Colors.green.shade800)),
-      Text("תיאור:",
-          textDirection: ui.TextDirection.rtl,
-          style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
-      Text(widget.event!.description.toString(),
-          textDirection: ui.TextDirection.rtl,
-          style: GoogleFonts.secularOne(fontSize: 23.0)),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          //const SizedBox(width: 40.0),
-          Container(
-            decoration: new BoxDecoration(
-              color: Colors.grey.shade300,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            ),
-            width: 120,
-            height: 70,
-            child: Column(children: [
-              Text(
-                "תפוסה:",
-                textAlign: TextAlign.center,
-                textDirection: ui.TextDirection.rtl,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+          Text("לימוד:",
+              textDirection: ui.TextDirection.rtl,
+              style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
+          Text(study,
+              textDirection: ui.TextDirection.rtl,
+              style: GoogleFonts.secularOne(fontSize: 20.0)),
+          times[0],
+          times[1],
+          // countdown
+          Text(countdown_string,
+              textDirection: ui.TextDirection.rtl,
+              style: GoogleFonts.alef(
+                  fontSize: 16.0, color: Colors.green.shade800)),
+          Text("תיאור:",
+              textDirection: ui.TextDirection.rtl,
+              style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
+          Text(widget.event!.description.toString(),
+              textDirection: ui.TextDirection.rtl,
+              style: GoogleFonts.secularOne(fontSize: 23.0)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //const SizedBox(width: 40.0),
+              Container(
+                decoration: new BoxDecoration(
+                  color: Colors.grey.shade300,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
                 ),
+                width: 120,
+                height: 70,
+                child: Column(children: [
+                  Text(
+                    "תפוסה:",
+                    textAlign: TextAlign.center,
+                    textDirection: ui.TextDirection.rtl,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    capacity,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.green.shade800,
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ]),
               ),
-              Text(
-                capacity,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.green.shade800,
-                    fontSize: 27,
-                    fontWeight: FontWeight.bold),
-              ),
-            ]),
-          ),
-          const SizedBox(width: 15.0),
-          Container(
-            decoration: new BoxDecoration(
-              color: Colors.grey.shade300,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            ),
-            width: 120,
-            height: 70,
-            child: Column(children: [
-              Text(
-                "משך הלימוד:",
-                textAlign: TextAlign.center,
-                textDirection: ui.TextDirection.rtl,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(width: 15.0),
+              Container(
+                decoration: new BoxDecoration(
+                  color: Colors.grey.shade300,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
                 ),
+                width: 120,
+                height: 70,
+                child: Column(children: [
+                  Text(
+                    "משך הלימוד:",
+                    textAlign: TextAlign.center,
+                    textDirection: ui.TextDirection.rtl,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    duration,
+                    textAlign: TextAlign.center,
+                    textDirection: ui.TextDirection.rtl,
+                    style: TextStyle(
+                        color: Colors.green.shade800,
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ]),
               ),
-              Text(
-                duration,
-                textAlign: TextAlign.center,
-                textDirection: ui.TextDirection.rtl,
-                style: TextStyle(
-                    color: Colors.green.shade800,
-                    fontSize: 27,
-                    fontWeight: FontWeight.bold),
-              ),
-            ]),
+            ],
           ),
-        ],
-      ),
-    ]));
+        ]));
   }
 }
