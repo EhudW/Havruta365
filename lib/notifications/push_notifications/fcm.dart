@@ -266,7 +266,7 @@ class FCM {
 
   static Future onLogout() async {
     await unsub();
-    SPManager.reset("firebaseMsg");
+    await SPManager.reset("firebaseMsg");
     _clearAll();
   }
 
