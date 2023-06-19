@@ -418,7 +418,9 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
           ),
         ),
         list,
-        widget.is_creator ? _creatorCommands() : SizedBox.shrink(),
+        widget.is_creator && widget.usersMail.isNotEmpty
+            ? _creatorCommands()
+            : SizedBox.shrink(),
       ],
     );
   }

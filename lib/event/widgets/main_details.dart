@@ -112,6 +112,7 @@ class _MainDetailsState extends State<MainDetails> {
               textDirection: ui.TextDirection.rtl,
               style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
           Text(study,
+              textAlign: TextAlign.center,
               textDirection: ui.TextDirection.rtl,
               style: GoogleFonts.secularOne(fontSize: 20.0)),
           times[0],
@@ -125,6 +126,7 @@ class _MainDetailsState extends State<MainDetails> {
               textDirection: ui.TextDirection.rtl,
               style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
           Text(widget.event!.description.toString(),
+              textAlign: TextAlign.center,
               textDirection: ui.TextDirection.rtl,
               style: GoogleFonts.secularOne(fontSize: 23.0)),
           Row(

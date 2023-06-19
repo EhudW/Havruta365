@@ -131,7 +131,8 @@ class ChatModel {
     if (isForum == false) return;
     __counter = v;
     Map tmp = Globals.currentUser!.subs_topics;
-    tmp[otherPerson] = tmp[otherPerson] ?? {};
+    // don't make [local]sub for unsub topic
+    if (tmp[otherPerson] == null) return;
     int x = (tmp[otherPerson]['seen'] ?? 0);
     if (x >= v) return;
     tmp[otherPerson]['seen'] = v;
