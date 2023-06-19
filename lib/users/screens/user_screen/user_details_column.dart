@@ -62,7 +62,7 @@ class UserDetailsColumn extends StatelessWidget {
 
     var create_long_row = (IconData icon, String header, String field) =>
         Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-          str_to_field(shorten_str(field, 26 - header.length)),
+          Flexible(child: str_to_field(field)),
           SizedBox(width: Globals.scaler.getWidth(0.5)),
           str_to_header(header, size_header),
           SizedBox(width: Globals.scaler.getWidth(0.5)),
@@ -72,7 +72,7 @@ class UserDetailsColumn extends StatelessWidget {
     var create_short_row = (IconData icon, String field) => Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            str_to_field(split_str(field, 30)),
+            Flexible(child: str_to_field(split_str(field, 30))),
             SizedBox(width: Globals.scaler.getWidth(0.5)),
             icon_to_widget(icon),
           ],
