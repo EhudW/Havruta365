@@ -17,9 +17,9 @@ class _DeleteFromEventButtonState extends State<DeleteFromEventButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
-      onPressed: () {
+      onPressed: () async {
         var myMail = Globals.currentUser!.email;
-        widget.event?.leave(myMail!);
+        await widget.event?.leave(myMail!);
         Globals.db!
             .updateUserSubs_Topics(remove: [widget.event!.id.toString()]);
 
