@@ -16,6 +16,7 @@ import 'package:havruta_project/event/screens/event_page/event_screen.dart';
 import 'package:havruta_project/home_page.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/notifications/push_notifications/token_monitor.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -186,7 +187,7 @@ class FCM {
     spm[mgt] = {"counter": 0, "senders": {}};
     await spm.save();
     await FCM.init();
-    flutterLocalNotificationsPlugin.cancel(lastMgtFcmNotificationId[mgt] ?? 0);
+    flutterLocalNotificationsPlugin.cancel(mgt.hashCode);
   }
 
   static resetTo(
@@ -244,13 +245,10 @@ class FCM {
       default:
         return;
     }
-    flutterLocalNotificationsPlugin.cancel(lastMgtFcmNotificationId[mgt] ?? 0);
-    lastMgtFcmNotificationId[mgt] =
-        DateTime.now().millisecondsSinceEpoch.toSigned(32);
-    _showFCM(lastMgtFcmNotificationId[mgt]!, title, body, payload);
+    // [auto cancel when re-show]
+    _showFCM(mgt.hashCode, title, body, payload);
   }
 
-  static Map<String, int> lastMgtFcmNotificationId = {};
   static void _clearAll() => !_isFlutterLocalNotificationsInitialized
       ? null
       : flutterLocalNotificationsPlugin.cancelAll();
@@ -273,6 +271,7 @@ class FCM {
   // show the notification right now;
   static void _showFCM(
       int id, String? title, String? body, String payloadForTap) {
+    var ID = ObjectId().$oid;
     flutterLocalNotificationsPlugin.show(
         id,
         title,
@@ -285,7 +284,8 @@ class FCM {
             icon: '@mipmap/ic_launcher',
           ),
         ),
-        payload: payloadForTap);
+        // ID is used to avoid redo same action twice when taping on SAME push notification
+        payload: jsonEncode({"ID": ID, "payload": payloadForTap}));
   }
 
   static StreamSubscription<RemoteMessage>? _subs;
@@ -351,16 +351,17 @@ class FCM {
     }
   }
 
-  static Set<int?> ignoreNR = Set<int?>();
+  static Set ignoreNotiResponseIds = Set();
   static Future<dynamic> checkInitMsg([NotificationResponse? r]) async {
     await FCM.init();
     r = r ??
         (await flutterLocalNotificationsPlugin
                 .getNotificationAppLaunchDetails())
             ?.notificationResponse;
-    if (ignoreNR.contains(r?.id)) r = null;
-    ignoreNR.add(r?.id);
-    String? payload = r?.payload;
+    var idAndPayload = jsonDecode(r?.payload ?? "{}");
+    if (ignoreNotiResponseIds.contains(idAndPayload['ID'])) idAndPayload = {};
+    ignoreNotiResponseIds.add(idAndPayload['ID']);
+    String? payload = idAndPayload['payload'];
     payload = payload ?? Globals.launchLink;
     Globals.launchLink = null;
     //await _setupFlutterNotifications();

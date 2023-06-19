@@ -51,15 +51,20 @@ class Globals {
   static String? launchLink;
   static bool MyAppStarted = false;
   static GlobalKey<NavigatorState> navKey = GlobalKey();
-  static void onNewLogin(User user) {
+  // if using in Widget.build() then pass inbuild=true to avoid too many refresh
+  static void onNewLogin(User user, {bool inbuild = false}) {
+    bool same = user.email == currentUser?.email;
     // new login
     // Update current user
     Globals.currentUser = user;
     Globals.updateRec();
-    Globals.msgWithFriends.restart([], true);
-    FCM.onLogin();
-    NewNotificationManager();
-    NewNotificationManager.onlyLast?.start();
+    // can be with old things for build() widget: msgCheckService, fcm state, notisCheckService
+    if (!same || !inbuild) {
+      Globals.msgWithFriends.restart([], true);
+      FCM.onLogin();
+      NewNotificationManager();
+      NewNotificationManager.onlyLast?.start();
+    }
     Future.delayed(Duration(milliseconds: 300), () => FCM.checkInitMsg());
   }
 

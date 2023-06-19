@@ -273,7 +273,8 @@ class _MyAppState extends State<MyApp> {
                                       case ConnectionState.waiting:
                                         return const CircularProgressIndicator();
                                       case ConnectionState.done:
-                                        Globals.onNewLogin(snapshot.data!);
+                                        Globals.onNewLogin(snapshot.data!,
+                                            inbuild: true);
                                         return HomePage();
                                       //break;
                                       default:
