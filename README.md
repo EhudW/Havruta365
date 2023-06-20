@@ -1,5 +1,17 @@
 # Havruta
 
+## Vision
+The vision of Havruta+ is to connect people that wish to study Tora.
+In Havruta users can post their lessons and manage them, in addition people can find themselves partners for studying together.
+This platform overcomes the geographical distance between people.
+
+
+## Structure
+The directories structure is focused on the main parts/features of the app:
+- [Authentication](lib/auth)
+
+
+
 <img src="https://github.com/fe1493/Havruta365/blob/master/images/AppIcon2.png?raw=true" width="300" height="300">
 
 <img src="https://user-images.githubusercontent.com/47856585/128410434-000ad55d-dfa3-4cc7-ba26-3a589167e31b.png" width="250" height="500">
