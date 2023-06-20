@@ -1,4 +1,4 @@
-# Havruta
+# Havruta+
 
 <img src="https://github.com/fe1493/Havruta365/blob/master/images/AppIcon2.png?raw=true" width="300" height="300">
 
