@@ -1,10 +1,10 @@
 # Notifications Terminology
 * Mongodb has 5 collection:
-- Notification
-- Chats
-- Events
-- Topics
-- Users
+	- Notification
+	- Chats
+	- Events
+	- Topics
+	- Users
 * Android support push notification: notification that pop from top bar
 * [flutter_local_notification](https://pub.dev/packages/flutter_local_notifications): package that trigger anroid/ios push notification
 * fcm/gcm: service that send data to phone 
