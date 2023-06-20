@@ -1,8 +1,8 @@
 # Notifications Terminology
 * Mongodb has 5 collection:
+- Notification
 - Chats
 - Events
-- Notification
 - Topics
 - Users
 * Android support push notification: notification that pop from top bar
