@@ -3,7 +3,6 @@ import 'package:havruta_project/event/screens/event_scroller_screen/event_view_f
 import 'package:havruta_project/data_base/events_selector_builder.dart';
 import 'package:havruta_project/event/model/events_model.dart';
 import 'package:havruta_project/mydebug.dart';
-import 'package:havruta_project/event/recommendation_system/rec_system.dart';
 //import 'package:flutter/cupertino.dart';
 import 'event_online_feed.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,6 +19,15 @@ class Events extends StatefulWidget {
 
   @override
   _EventsState createState() => _EventsState();
+}
+
+enum PartOfDay {
+  hour0to4,
+  hour4to8,
+  hour8to12,
+  hour12to16,
+  hour16to20,
+  hour20to24
 }
 
 enum EventsFilter {
@@ -369,8 +377,7 @@ class _EventsState extends State<Events> {
                       if (text == "") {
                         this.widget.events.filterData['search'] = null;
                       } else {
-                        this.widget.events.filterData['search'] =
-                            text.toLowerCase();
+                        this.widget.events.filterData['search'] = text;
                       }
                       this.widget.events.refresh();
                     });
