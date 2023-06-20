@@ -19,3 +19,7 @@ The directories structure is focused on the main parts/features of the app:
 - The [homepage](lib/home_page.dart) is the first screen a connected user will see and The [login screen](lib/auth/screens/login_screen.dart) is the first screen an unlogged user will see.
 
 
+
+
+## Future developers
+Notice you have a deeper explaination in the drive.
