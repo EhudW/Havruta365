@@ -2,9 +2,7 @@
 * Mongodb has 5 collection:
 - Chats
 - Events
-'''diff
-- - Notification
-'''
+- <p style="color:red;">Notification</p>
 - Topics
 - Users
 * Android support push notification: notification that pop from top bar
