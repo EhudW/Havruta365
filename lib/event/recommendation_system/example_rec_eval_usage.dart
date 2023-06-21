@@ -45,10 +45,15 @@ class ExampleRecommendationSystem {
     return combinedTops(system.getTops());
   }
 
-  static MultiRecommendationSystem<Event> create(String myMail, [int k = 10]) {
-    var myEvents = Functions.getMyEvents(myMail, true);
+  static MultiRecommendationSystem<Event> create(String myMail,
+      {int k = 10, List<Event>? fakeAllEvents, List<Event>? fakeMyEvents}) {
+    var myEvents = fakeMyEvents != null
+        ? Future.value(fakeMyEvents)
+        : Functions.getMyEvents(myMail, true);
     // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
-    var allEvents = Functions.getAllEvents(null);
+    var allEvents = fakeAllEvents != null
+        ? Future.value(fakeAllEvents)
+        : Functions.getAllEvents(null);
     var data = {
       "compareToMe": myEvents,
       "possibleEvents": allEvents,
@@ -62,9 +67,14 @@ class ExampleRecommendationSystem {
   }
 
   static Future<List<Event>> calcAndGetTop10(String myMail,
-      {bool suppressException = true}) async {
-    MultiRecommendationSystem<Event> r =
-        ExampleRecommendationSystem.create(myMail, 10);
+      {bool suppressException = true,
+      List<Event>? fakeAllEvents,
+      List<Event>? fakeMyEvents}) async {
+    MultiRecommendationSystem<Event> r = ExampleRecommendationSystem.create(
+        myMail,
+        k: 10,
+        fakeAllEvents: fakeAllEvents,
+        fakeMyEvents: fakeMyEvents);
     var rec = await _calcAndGetTopEventsFrom(r);
 
     if (rec == null && !suppressException) {
@@ -75,53 +85,79 @@ class ExampleRecommendationSystem {
   }
 
   // it's not test excatly the same way it recommends, since there are some issues that prevent this
-  static void test(
-      [int k = 10, int? put100IfYouSure, int? maxUsersForEventsFetch]) async {
+  static Future<Map<ModelEvalutionMethod, double>?> test(
+      {int k = 10,
+      int? put100IfYouSure,
+      int? maxUsersForEventsFetch,
+      List<Event>? fakeAllEvents,
+      Map<String, List<Event>>? fakeMyEvents,
+      List<String>? fakeUsersMails,
+      List? outParamRec,
+      bool printOutput = true}) async {
     // very heavy calc & internet access
     if (put100IfYouSure != 100) {
-      return;
+      return null;
     }
     assert(k % 2 == 0);
     assert(k >= 4);
     var eval = EventModelEvaluation();
-    var mongo = Globals.db!;
-    var db = mongo.db as Db;
-    var collection = db.collection('Users');
-    var usersEmail = await collection
-        .find()
-        .map((user) => User.fromJson(user).email)
-        .toList();
+    var usersEmail = fakeUsersMails;
+    if (usersEmail == null) {
+      var mongo = Globals.db!;
+      var db = mongo.db as Db;
+      var collection = db.collection('Users');
+      usersEmail = await collection
+          .find()
+          .map((user) => User.fromJson(user).email!)
+          .toList();
+    }
     if (maxUsersForEventsFetch != null &&
         maxUsersForEventsFetch < usersEmail.length) {
       usersEmail.shuffle();
       usersEmail = usersEmail.sublist(0, maxUsersForEventsFetch);
     }
     // getAllEvents() is auto filtered by EvenesSelectorBuildder.targetForMe()
-    var __allEvents = await Functions.getAllEvents(null);
+    var __allEvents = fakeAllEvents ?? await Functions.getAllEvents(null);
     Map<String, List<Event>> user_events_validate = {};
     Map<String, List<Event>> user_events_data = {};
     Map<String, List<Event>> user_rec = {};
     List<double> alluser_distance_tbl = [];
+    final DateTime now = DateTime.now();
     for (var email in usersEmail) {
-      var allEvents = List.of(__allEvents.where((e) =>
-          !e.rejectedQueue.contains(email) && !e.leftQueue.contains(email)));
-      var list = await Functions.getMyEvents(
-          email!,
-          // see below why using here rejected\left queue = without
-          false,
-          // filterOld = true since we want the test/validate will be on same zone,
-          // it isn't just recommendation but also test
-          // and since we filter old events from getAllEvents, we need to do it here too...
-          // or else we miss old event because they aren't in the possibleEvents=getAllEvents
-          // we want:
-          // [possibleRecommendation ( validate            ]   data)
-          // [ getAllEvents          ( list.sublist(0,p+1) ]   list=getMyEvents.shuffle )
-          // we don't want empty intersection:
-          // [possibleRecommendation]     (validate              data)
-          // [ getAllEvents ]             ( list.sublist(0,p+1)  list=getMyEvents.shuffle )
-          // and also the systems won't recommend old events
-          // p=pivot index
-          filterOld: true);
+      var allEvents = List.of(__allEvents
+          .where((e) =>
+              !e.rejectedQueue.contains(email) && !e.leftQueue.contains(email))
+          // to allow the option to recommend on something in the valid set=I in queue, need to let me out of any queue
+          .map((e) => e.deepClone()..moveToQueueLocal(email, null)));
+      var list = fakeMyEvents?[email]
+              ?.where((e) =>
+                  !e.rejectedQueue.contains(email) &&
+                  !e.leftQueue.contains(email))
+              .map((event) {
+                var rslt = event.deepClone();
+                rslt.dates =
+                    rslt.dates!.where((time) => time.isAfter(now)).toList();
+                return rslt;
+              })
+              .where((event) => event.dates!.isNotEmpty)
+              .toList() ??
+          await Functions.getMyEvents(
+              email,
+              // see below why using here rejected\left queue = without
+              false,
+              // filterOld = true since we want the test/validate will be on same zone,
+              // it isn't just recommendation but also test
+              // and since we filter old events from getAllEvents, we need to do it here too...
+              // or else we miss old event because they aren't in the possibleEvents=getAllEvents
+              // we want:
+              // [possibleRecommendation ( validate            ]   data)
+              // [ getAllEvents          ( list.sublist(0,p+1) ]   list=getMyEvents.shuffle )
+              // we don't want empty intersection:
+              // [possibleRecommendation]     (validate              data)
+              // [ getAllEvents ]             ( list.sublist(0,p+1)  list=getMyEvents.shuffle )
+              // and also the systems won't recommend old events
+              // p=pivot index
+              filterOld: true);
       if (list.length < (2 * k)) {
         continue;
       }
@@ -160,6 +196,7 @@ class ExampleRecommendationSystem {
     for (var email in user_rec.keys) {
       prediction_hits.add([user_rec[email]!, user_events_validate[email]!]);
     }
+    outParamRec?.add(user_rec);
     var ranges = ModelEvalution.calcRange(k);
     var pk_range = ranges[ModelEvalutionMethod.PrecisionK];
     var rk_range = ranges[ModelEvalutionMethod.RecallK];
@@ -174,14 +211,25 @@ class ExampleRecommendationSystem {
     var arhr = eval.ARHR(prediction_hits, fixedK);
     var mae = eval.MAE(alluser_distance_tbl);
     var rmse = eval.RMSE(alluser_distance_tbl);
-    print("k=$k");
-    print("       pk=$pk       pk range=$pk_range");
-    print("       rk=$rk       rk range=$rk_range");
-    print("       mrr=$mrr     mrr range=$mrr_range");
-    print("       arhr=$arhr   arhr range=$arhr_range");
-    print(
-        "       mae=$mae     mae range=$mae_range  [only for 'MultiConsiderations']");
-    print(
-        "       rmse=$rmse   rmse range=$rmse_range  [only for 'MultiConsiderations']");
+    if (printOutput) {
+      print(
+          "k=$k  #users=${usersEmail.length}  #rec_sys=${_createSystem(k).systems.length}");
+      print("       pk=$pk       pk range=$pk_range");
+      print("       rk=$rk       rk range=$rk_range");
+      print("       mrr=$mrr     mrr range=$mrr_range");
+      print("       arhr=$arhr   arhr range=$arhr_range");
+      print(
+          "       mae=$mae     mae range=$mae_range  [only for 'MultiConsiderations']");
+      print(
+          "       rmse=$rmse   rmse range=$rmse_range  [only for 'MultiConsiderations']");
+    }
+    return {
+      ModelEvalutionMethod.PrecisionK: pk,
+      ModelEvalutionMethod.RecallK: rk,
+      ModelEvalutionMethod.MRR: mrr,
+      ModelEvalutionMethod.ARHR: arhr,
+      ModelEvalutionMethod.MAE: mae,
+      ModelEvalutionMethod.RMSE: rmse
+    };
   }
 }
