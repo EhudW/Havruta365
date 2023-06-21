@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/event/recommendation_system/evaluation/eval_interface.dart';
 import 'package:havruta_project/event/recommendation_system/example_rec_eval_usage.dart';
+import 'package:havruta_project/event/recommendation_system/rec_interface.dart';
+import 'package:havruta_project/event/recommendation_system/systems/random_sys.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 const int K = 10;
@@ -10,8 +13,8 @@ const int USERS_AMOUNT = 100;
 const int USERS_GROUPS = 4; // all users are going together, 4 'group'
 const int FREQUENCY = 7; // for making dates in 'frequency' - a day a week
 // test one time = eval & check that the recommendation include event that need to be there
-Future<MapEntry<Map<ModelEvalutionMethod, double>, int>>
-    _testOneTimeRecSys() async {
+Future<MapEntry<Map<ModelEvalutionMethod, double>, int>> _testOneTimeRecSys(
+    {bool useRandom = false}) async {
   List<String> emails = [];
   Map<String, List<Event>> userEventMap = {};
   List<Event> allEvents = [];
@@ -112,6 +115,10 @@ Future<MapEntry<Map<ModelEvalutionMethod, double>, int>>
   var rslt = await ExampleRecommendationSystem.test(
       k: K,
       printOutput: false,
+      useMeInstead: useRandom == false
+          ? null
+          : (kParam) => MultiRecommendationSystem(
+              systems: [ByRandom()], weights: [kParam], topAmount: kParam),
       put100IfYouSure: 100,
       fakeUsersMails: emails + [ourUser],
       fakeAllEvents: allEvents,
@@ -127,31 +134,79 @@ Future<MapEntry<Map<ModelEvalutionMethod, double>, int>>
       rslt ?? {}, ourUserSuccess);
 }
 
+var formattedMapStr = (m) => Map.of(m.map((key, value) => MapEntry(
+    key.toString().split('.').last,
+    value is double
+        ? value.toStringAsFixed(3)
+        : value.map((x) => x.toStringAsFixed(3)).toList()))).toString();
+
 // Verify many times the the small test succeed (not only on random run)
 testRecSys({int timesToCheck = 10}) {
+  var realRecSysRslt;
   testWidgets('Test rec system $timesToCheck times',
       (WidgetTester tester) async {
     var rslt = await Future.wait(
         List.generate(timesToCheck, (index) => _testOneTimeRecSys()));
+    realRecSysRslt = rslt;
     var avg = {};
-    var ourUserSuccess = 0;
+    var ourUserTotalSuccess = 0;
     rslt.forEach((element) {
       element.key.forEach(
           (key, value) => avg[key] = (avg[key] ?? 0) + value / rslt.length);
-      ourUserSuccess += element.value;
+      ourUserTotalSuccess += element.value;
     });
-
-    var formattedMapStr = (m) => Map.of(m.map((key, value) => MapEntry(
-        key.toString().split('.').last,
-        value is double
-            ? value.toStringAsFixed(3)
-            : value.map((x) => x.toStringAsFixed(3)).toList()))).toString();
     var ranges = ModelEvalution.calcRange(K);
-    expect(avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(0.1),
-        reason:
-            "with good train set, pk > 0.1,\navg:\n${formattedMapStr(avg)}\nranges for k=$K:\n${formattedMapStr(ranges)}");
-    expect(ourUserSuccess ~/ 2, greaterThanOrEqualTo(2),
-        reason:
-            'with good train set, avg rec need to include at least 2 similar events to ourUser\'s events.\nbut found  $ourUserSuccess out of ${K * rslt.length}');
+    const double minPk = 0.1;
+    int minOurUserSuccessPerK =
+        min(max(K ~/ 5, 2), (0.2 * USERS_AMOUNT / USERS_GROUPS).round());
+    expect(avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(minPk),
+        reason: "with good train set, avg pk should be >= $minPk,\navg:\n" +
+            "${formattedMapStr(avg)}\nranges for k=$K:\n${formattedMapStr(ranges)}");
+    expect(ourUserTotalSuccess / rslt.length,
+        greaterThanOrEqualTo(minOurUserSuccessPerK),
+        reason: 'with good train set, avg rec need to include in each k=$K events,\n' +
+            'at least $minOurUserSuccessPerK similar events to ourUser\'s events. avg of ($minOurUserSuccessPerK/$K)\n' +
+            'but found  avg ${(ourUserTotalSuccess / rslt.length).toStringAsFixed(2)}/$K  ' +
+            '=>repeat ${rslt.length} times=> total $ourUserTotalSuccess/${K * rslt.length}');
+  });
+
+  testWidgets('Test rec system vs random rec system',
+      (WidgetTester tester) async {
+    var rndSysRslt = await Future.wait(List.generate(
+        timesToCheck, (index) => _testOneTimeRecSys(useRandom: true)));
+    while (realRecSysRslt == null)
+      await Future.delayed(Duration(milliseconds: 300));
+    var realSysAvg = {};
+    var ourUserSuccessRealSys = 0;
+    Map rndSysAvg = {};
+    int ourUserSuccessRndSys = 0;
+    for (int i = 0; i < realRecSysRslt.length; i++) {
+      var evalRealSys = realRecSysRslt[i].key;
+      var evalRndSys = rndSysRslt[i].key;
+      var successRealSys = realRecSysRslt[i].value as int;
+      var successRndSys = rndSysRslt[i].value;
+      for (var j in evalRealSys.keys) {
+        var positiveOrZero = (x) => (x as double).isFinite && x >= 0;
+        if (positiveOrZero(evalRealSys[j]) == false ||
+            positiveOrZero(evalRndSys[j]) == false) continue;
+        realSysAvg[j] =
+            (realSysAvg[j] ?? 0) + evalRealSys[j]! / realRecSysRslt.length;
+        rndSysAvg[j] = (rndSysAvg[j] ?? 0) + evalRndSys[j]! / rndSysRslt.length;
+      }
+      ourUserSuccessRealSys += successRealSys;
+      ourUserSuccessRndSys += successRndSys;
+    }
+
+    // warning only when all is bad, since random might give the good events (=hits, by id),
+    // but we duplicate the event with diff ids, so the id isn't important it this test
+    expect(
+        realSysAvg.keys.map((e) => realSysAvg[e] - rndSysAvg[e]).toList() +
+            [ourUserSuccessRealSys - ourUserSuccessRndSys],
+        anyElement(greaterThanOrEqualTo(0)),
+        reason: "the model is worse than random model:\n" +
+            "current model:${formattedMapStr(realSysAvg)}\n" +
+            "$ourUserSuccessRealSys / ${K * realRecSysRslt.length}\n" +
+            "random model:\n${formattedMapStr(rndSysAvg)}\n" +
+            "$ourUserSuccessRndSys / ${K * rndSysRslt.length}");
   });
 }

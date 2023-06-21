@@ -8,6 +8,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'recommendation_sys.dart';
+// dont end file name with _test
 
 void main() {
   testRecSys();

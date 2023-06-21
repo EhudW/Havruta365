@@ -93,6 +93,7 @@ class ExampleRecommendationSystem {
       Map<String, List<Event>>? fakeMyEvents,
       List<String>? fakeUsersMails,
       List? outParamRec,
+      MultiRecommendationSystem<Event> Function(int k)? useMeInstead,
       bool printOutput = true}) async {
     // very heavy calc & internet access
     if (put100IfYouSure != 100) {
@@ -123,6 +124,7 @@ class ExampleRecommendationSystem {
     Map<String, List<Event>> user_rec = {};
     List<double> alluser_distance_tbl = [];
     final DateTime now = DateTime.now();
+    int? sysLen;
     for (var email in usersEmail) {
       var allEvents = List.of(__allEvents
           .where((e) =>
@@ -174,21 +176,29 @@ class ExampleRecommendationSystem {
         "clearCacheAfter": false,
         "saveLastRank": true,
       };
-      var system = _createSystem(k);
+      var system = useMeInstead != null ? useMeInstead(k) : _createSystem(k);
       system.setData(data);
+      sysLen = system.systems.length;
       // will auto filter thisEventIsNewForMeAndAvailable() ,
       // so no events where  EvenesSelectorBuildder.targetForMe()==false (already filtered in above)
       // OR email in any event queue(flitered in one of the step of the next line)
-      var rec = await _calcAndGetTopEventsFrom(system);
+      List<Event>? rec;
+      if (useMeInstead == null) {
+        rec = await _calcAndGetTopEventsFrom(system);
+      } else {
+        if (await system.calc(k)) rec = system.getTop(k);
+      }
       bool success = rec != null;
       if (success) {
         user_rec[email] = rec;
-        // distance tbl
-        var mcs = system.systems[0] as MultiConsiderations;
-        var A = mcs.last_rank;
-        var B = await mcs.calcTotalRank(A.keys.toList(), list);
-        alluser_distance_tbl.addAll(eval.getDiff(A, B));
-        //mcs.last_rank.clear(); because  "saveLastRank": true,
+        if (system.systems[0] is MultiConsiderations) {
+          // distance tbl
+          var mcs = system.systems[0] as MultiConsiderations;
+          var A = mcs.last_rank;
+          var B = await mcs.calcTotalRank(A.keys.toList(), list);
+          alluser_distance_tbl.addAll(eval.getDiff(A, B));
+          //mcs.last_rank.clear(); because  "saveLastRank": true,
+        }
       }
     }
     //MultiConsiderations.clear_cache(); because "clearCacheAfter": false,
@@ -212,8 +222,7 @@ class ExampleRecommendationSystem {
     var mae = eval.MAE(alluser_distance_tbl);
     var rmse = eval.RMSE(alluser_distance_tbl);
     if (printOutput) {
-      print(
-          "k=$k  #users=${usersEmail.length}  #rec_sys=${_createSystem(k).systems.length}");
+      print("k=$k  #users=${usersEmail.length}  #rec_sys=$sysLen");
       print("       pk=$pk       pk range=$pk_range");
       print("       rk=$rk       rk range=$rk_range");
       print("       mrr=$mrr     mrr range=$mrr_range");
