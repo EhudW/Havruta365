@@ -155,16 +155,17 @@ class MultiConsiderations extends RecommendationSystem<Event> {
                 double total = 0.0;
                 var thisYear = DateTime.now().year;
                 var both = (e.participants ?? []) + (e.waitingQueue ?? []);
+                if (both.length <= 1) {
+                  // only me on calc, or empty on rank
+                  return UniqueKey().toString();
+                }
                 for (String user in both) {
+                  // the bias I(myMail) do isn't significant
                   total += thisYear - _users_cache[user]!.birthDate!.year;
                 }
                 double diff = total / both.length -
                     (thisYear - Globals.currentUser!.birthDate!.year);
                 diff = diff > 0 ? diff : -diff;
-                if (both.length == 1) {
-                  // only me
-                  return UniqueKey().toString();
-                }
                 return diff > 10 ? ">10" : (diff > 5 ? "5-10" : "<5");
               },
               "weight": 1,
@@ -174,7 +175,12 @@ class MultiConsiderations extends RecommendationSystem<Event> {
               "classify": (Event e) {
                 Map<String, int> status_count = {};
                 var both = (e.participants ?? []) + (e.waitingQueue ?? []);
+                if (both.length <= 1) {
+                  // only me on calc, or empty on rank
+                  return UniqueKey().toString();
+                }
                 for (String user in both) {
+                  // the bias I(myMail) do isn't significant
                   var s = _users_cache[user]!.status!;
                   status_count[s] = (status_count[s] ?? 0) + 1;
                 }
@@ -186,10 +192,6 @@ class MultiConsiderations extends RecommendationSystem<Event> {
                             ? previousValue
                             : element)
                         : element);
-                if (both.length == 1) {
-                  // only me
-                  return UniqueKey().toString();
-                }
                 return max ?? UniqueKey().toString();
               },
               "weight": 1,
