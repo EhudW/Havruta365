@@ -96,7 +96,7 @@ class CriticMyEvents<O> {
   }
 }
 
-class MultiConsiderations extends RecommendationSystem<Event> {
+class MultiConsiderations extends RecommendationSystemWithDistanceTbl<Event> {
   MultiConsiderations({
     Future<List<Event>>? compareToMe,
     Future<List<Event>>? possibleEvents,
@@ -114,7 +114,13 @@ class MultiConsiderations extends RecommendationSystem<Event> {
   }
   static Map<String, User> _users_cache = {};
   Map<Event, double> last_rank = {};
+  Map<Event, double> getLastRank() => last_rank;
   static void clear_cache() => _users_cache.clear();
+  Future<Map<Event, double>> calcRank(
+      List<Event> possible, Map<String, dynamic> config) {
+    return calcTotalRank(possible, config['compareToMe']);
+  }
+
   Future<Map<Event, double>> calcTotalRank(
       List<Event> possibleEvents, List<Event> compareToMe) {
     ///

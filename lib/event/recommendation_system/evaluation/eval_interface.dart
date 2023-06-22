@@ -51,6 +51,8 @@ abstract class ModelEvalution<T> {
   // pos j = human index which start from 1
   double ARHR(List<List<List<T>>> prediction_hits, int? fixedK);
   dynamic getDiff(dynamic tblA, dynamic tblB);
+  // MAE RMSE not like ver 2 of p@k r@k, it means that
+  // all user-product value should be past in the table\List<double> \Map<T,double>
   double MAE(dynamic distanceTable);
   double RMSE(dynamic distanceTable);
 }

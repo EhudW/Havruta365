@@ -7,12 +7,25 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'json.dart';
 import 'recommendation_sys.dart';
 // dont end file name with _test
 
-void main() {
+void main() async {
+  // test that Event/Chats...  .fromJson .toJson works fine
+  await testAllJsons(['Events', 'Topics ', 'Users', 'Chats', 'Notifications']);
+  // test default rec system at ExampleRecommendationSystem class
   testRecSys();
-  testWidgets('Null Test', (WidgetTester tester) async => null);
+  /* 
+  // test specif rec system,
+  // in this case test the testRecSys since we give OppositeRecommendationSystem()
+  testRecSys(
+      timesToCheck: 1,
+      testThisSystem: (k) =>
+          OppositeRecommendationSystem(MultiConsiderations()));
+  */
+
+  test('Null Test', () async => null);
   /*testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());

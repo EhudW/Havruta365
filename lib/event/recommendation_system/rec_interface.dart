@@ -116,3 +116,18 @@ List<Event> combinedTops(List<List<Event>> eventsLists, [int? maxTop]) {
   // return flattened array of unique events , combined [ [1,2] [a,b,c] ] -> [1,a,2,b,c] ,
   return events;
 }
+
+abstract class RecommendationSystemWithDistanceTbl<T>
+    extends RecommendationSystem<T> {
+  // for distance tbls:
+  // should return non null if data['saveLastRank'] == true && calc() or calcRank() was called
+  //
+  // calc() of RecommendationSystem will do the following flow:
+  // 1. deal with config,
+  // 2. then calll calcRank() which will rank && save it BEFORE filter what irrelevant for the user,
+  // 3. and then sort & filter not needed rec
+  Map<T, double>? getLastRank();
+  // config can give more information to the system to rank
+  Future<Map<T, double>> calcRank(
+      List<T> possible, Map<String, dynamic> config);
+}

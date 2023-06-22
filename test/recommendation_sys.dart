@@ -14,7 +14,7 @@ const int USERS_GROUPS = 4; // all users are going together, 4 'group'
 const int FREQUENCY = 7; // for making dates in 'frequency' - a day a week
 // test one time = eval & check that the recommendation include event that need to be there
 Future<MapEntry<Map<ModelEvalutionMethod, double>, int>> _testOneTimeRecSys(
-    {bool useRandom = false}) async {
+    {RecommendationSystem<Event> Function(int k)? useSysInstead}) async {
   List<String> emails = [];
   Map<String, List<Event>> userEventMap = {};
   List<Event> allEvents = [];
@@ -115,10 +115,7 @@ Future<MapEntry<Map<ModelEvalutionMethod, double>, int>> _testOneTimeRecSys(
   var rslt = await ExampleRecommendationSystem.test(
       k: K,
       printOutput: false,
-      useMeInstead: useRandom == false
-          ? null
-          : (kParam) => MultiRecommendationSystem(
-              systems: [ByRandom()], weights: [kParam], topAmount: kParam),
+      useMeInstead: useSysInstead,
       put100IfYouSure: 100,
       fakeUsersMails: emails + [ourUser],
       fakeAllEvents: allEvents,
@@ -141,72 +138,89 @@ var formattedMapStr = (m) => Map.of(m.map((key, value) => MapEntry(
         : value.map((x) => x.toStringAsFixed(3)).toList()))).toString();
 
 // Verify many times the the small test succeed (not only on random run)
-testRecSys({int timesToCheck = 10}) {
+testRecSys(
+    {int timesToCheck = 10,
+    RecommendationSystem<Event> Function(int k)? testThisSystem}) {
   var realRecSysRslt;
-  testWidgets('Test rec system $timesToCheck times',
-      (WidgetTester tester) async {
-    var rslt = await Future.wait(
-        List.generate(timesToCheck, (index) => _testOneTimeRecSys()));
-    realRecSysRslt = rslt;
-    var avg = {};
-    var ourUserTotalSuccess = 0;
-    rslt.forEach((element) {
-      element.key.forEach(
-          (key, value) => avg[key] = (avg[key] ?? 0) + value / rslt.length);
-      ourUserTotalSuccess += element.value;
+  String sysName = testThisSystem == null
+      ? "default"
+      : testThisSystem(K).runtimeType.toString();
+  group('Test rec system [$sysName]', () {
+    test('p@k & quality hits, $timesToCheck times', () async {
+      var rslt = await Future.wait(List.generate(timesToCheck,
+          (index) => _testOneTimeRecSys(useSysInstead: testThisSystem)));
+      realRecSysRslt = rslt;
+      var avg = {};
+      var ourUserTotalSuccess = 0;
+      rslt.forEach((element) {
+        element.key.forEach(
+            (key, value) => avg[key] = (avg[key] ?? 0) + value / rslt.length);
+        ourUserTotalSuccess += element.value;
+      });
+      var ranges =
+          "ranges for k=$K:\n${formattedMapStr(ModelEvalution.calcRange(K))}";
+      const double minPk = 0.1;
+      int minOurUserSuccessPerK =
+          min(max(K ~/ 5, 2), (0.2 * USERS_AMOUNT / USERS_GROUPS).round());
+      if (avg[ModelEvalutionMethod.PrecisionK] < minPk)
+        expect(
+            avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(minPk),
+            skip: "with good train set, avg pk should be >= $minPk,\navg:\n" +
+                "${formattedMapStr(avg)}\n$ranges");
+      if (ourUserTotalSuccess / rslt.length < minOurUserSuccessPerK)
+        expect(ourUserTotalSuccess / rslt.length,
+            greaterThanOrEqualTo(minOurUserSuccessPerK),
+            skip: 'with good train set, avg rec need to include in each k=$K events,\n' +
+                'at least $minOurUserSuccessPerK similar events to ourUser\'s events. avg of ($minOurUserSuccessPerK/$K) quality event hits,\n' +
+                'but found  avg ${(ourUserTotalSuccess / rslt.length).toStringAsFixed(2)}/$K  ' +
+                '=>repeat ${rslt.length} times=> total $ourUserTotalSuccess/${K * rslt.length}');
     });
-    var ranges = ModelEvalution.calcRange(K);
-    const double minPk = 0.1;
-    int minOurUserSuccessPerK =
-        min(max(K ~/ 5, 2), (0.2 * USERS_AMOUNT / USERS_GROUPS).round());
-    expect(avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(minPk),
-        reason: "with good train set, avg pk should be >= $minPk,\navg:\n" +
-            "${formattedMapStr(avg)}\nranges for k=$K:\n${formattedMapStr(ranges)}");
-    expect(ourUserTotalSuccess / rslt.length,
-        greaterThanOrEqualTo(minOurUserSuccessPerK),
-        reason: 'with good train set, avg rec need to include in each k=$K events,\n' +
-            'at least $minOurUserSuccessPerK similar events to ourUser\'s events. avg of ($minOurUserSuccessPerK/$K)\n' +
-            'but found  avg ${(ourUserTotalSuccess / rslt.length).toStringAsFixed(2)}/$K  ' +
-            '=>repeat ${rslt.length} times=> total $ourUserTotalSuccess/${K * rslt.length}');
-  });
 
-  testWidgets('Test rec system vs random rec system',
-      (WidgetTester tester) async {
-    var rndSysRslt = await Future.wait(List.generate(
-        timesToCheck, (index) => _testOneTimeRecSys(useRandom: true)));
-    while (realRecSysRslt == null)
-      await Future.delayed(Duration(milliseconds: 300));
-    var realSysAvg = {};
-    var ourUserSuccessRealSys = 0;
-    Map rndSysAvg = {};
-    int ourUserSuccessRndSys = 0;
-    for (int i = 0; i < realRecSysRslt.length; i++) {
-      var evalRealSys = realRecSysRslt[i].key;
-      var evalRndSys = rndSysRslt[i].key;
-      var successRealSys = realRecSysRslt[i].value as int;
-      var successRndSys = rndSysRslt[i].value;
-      for (var j in evalRealSys.keys) {
-        var positiveOrZero = (x) => (x as double).isFinite && x >= 0;
-        if (positiveOrZero(evalRealSys[j]) == false ||
-            positiveOrZero(evalRndSys[j]) == false) continue;
-        realSysAvg[j] =
-            (realSysAvg[j] ?? 0) + evalRealSys[j]! / realRecSysRslt.length;
-        rndSysAvg[j] = (rndSysAvg[j] ?? 0) + evalRndSys[j]! / rndSysRslt.length;
+    test('VS random rec system', () async {
+      var rndSysRslt = await Future.wait(List.generate(timesToCheck,
+          (index) => _testOneTimeRecSys(useSysInstead: (k) => ByRandom())));
+      while (realRecSysRslt == null)
+        await Future.delayed(Duration(milliseconds: 300));
+      var realSysAvg = {};
+      var ourUserSuccessRealSys = 0;
+      Map rndSysAvg = {};
+      int ourUserSuccessRndSys = 0;
+      for (int i = 0; i < realRecSysRslt.length; i++) {
+        var evalRealSys = realRecSysRslt[i].key;
+        var evalRndSys = rndSysRslt[i].key;
+        var successRealSys = realRecSysRslt[i].value as int;
+        var successRndSys = rndSysRslt[i].value;
+        for (var j in evalRealSys.keys) {
+          var positiveOrZero = (x) => (x as double).isFinite && x >= 0;
+          if (positiveOrZero(evalRealSys[j]) == false ||
+              positiveOrZero(evalRndSys[j]) == false) continue;
+          realSysAvg[j] =
+              (realSysAvg[j] ?? 0) + evalRealSys[j]! / realRecSysRslt.length;
+          rndSysAvg[j] =
+              (rndSysAvg[j] ?? 0) + evalRndSys[j]! / rndSysRslt.length;
+        }
+        ourUserSuccessRealSys += successRealSys;
+        ourUserSuccessRndSys += successRndSys;
       }
-      ourUserSuccessRealSys += successRealSys;
-      ourUserSuccessRndSys += successRndSys;
-    }
 
-    // warning only when all is bad, since random might give the good events (=hits, by id),
-    // but we duplicate the event with diff ids, so the id isn't important it this test
-    expect(
-        realSysAvg.keys.map((e) => realSysAvg[e] - rndSysAvg[e]).toList() +
-            [ourUserSuccessRealSys - ourUserSuccessRndSys],
-        anyElement(greaterThanOrEqualTo(0)),
-        reason: "the model is worse than random model:\n" +
-            "current model:${formattedMapStr(realSysAvg)}\n" +
-            "$ourUserSuccessRealSys / ${K * realRecSysRslt.length}\n" +
-            "random model:\n${formattedMapStr(rndSysAvg)}\n" +
-            "$ourUserSuccessRndSys / ${K * rndSysRslt.length}");
+      var ranges =
+          "ranges for k=$K:\n${formattedMapStr(ModelEvalution.calcRange(K))}";
+      // warning only when all is bad, since random might give the good events (=hits, by id),
+      // but we duplicate the event with diff ids, so the id isn't important it this test
+      var allValues =
+          realSysAvg.keys.map((e) => realSysAvg[e] - rndSysAvg[e]).toList() +
+              [ourUserSuccessRealSys - ourUserSuccessRndSys];
+
+      if (allValues.fold<num>(-1, (pre, curr) => max(pre, curr)) < 0)
+        expect(allValues, anyElement(greaterThanOrEqualTo(0)),
+            skip: "the model is worse than random model:\n" +
+                " [pk is ok since the fake data is good for random model,\n" +
+                "  but the hits of quality event should be greater]\n" +
+                "current model:\n${formattedMapStr(realSysAvg)}\n" +
+                "$ourUserSuccessRealSys / ${K * realRecSysRslt.length} hits of quality event\n" +
+                "random model:\n${formattedMapStr(rndSysAvg)}\n" +
+                "$ourUserSuccessRndSys / ${K * rndSysRslt.length} hits of quality event" +
+                "\n$ranges");
+    });
   });
 }

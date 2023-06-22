@@ -36,3 +36,26 @@ class ByRandom extends RecommendationSystem<Event> {
     return success;
   }
 }
+
+// decorator for fake bad system, not deal will specific additions, like distance tbl
+class OppositeRecommendationSystem<T> implements RecommendationSystem<T> {
+  RecommendationSystem<T> inner;
+  OppositeRecommendationSystem(this.inner);
+  @override
+  Future<bool> calc([int? topAmount]) => inner.calc(topAmount).then((value) {
+        inner.top = inner.top.reversed.toList();
+        return value;
+      });
+
+  Map<String, dynamic>? get data => inner.data;
+  set data(Map<String, dynamic>? val) => inner.data = val;
+
+  List<T> get top => inner.top;
+  set top(List<T> val) => inner.top = val;
+
+  @override
+  List<T> getTop([int amount = 10]) => inner.getTop(amount);
+
+  @override
+  void setData(Map<String, dynamic> data) => inner.setData(data);
+}
