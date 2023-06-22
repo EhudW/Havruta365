@@ -23,6 +23,8 @@ import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
 import 'package:havruta_project/mydebug.dart';
 
+import 'widget_test.dart';
+
 // custom encode/decode to handle DateTime
 const String prefix = "MYENCODER123";
 Object? myEncode(Object? x) {
@@ -159,9 +161,17 @@ void testJson(
   });
 }
 
-Future testAllJsons(List allCollectionsNames) async {
+Future testAllJsons(
+    {required MongoCommands db,
+    List<String> ignoreCollections = const []}) async {
   // test data_base representation to/from json
-  var collections = {
+  // jsonForTest.keys should contain all collection names from mongodb,
+  // unless ignoreCollections.contains,
+  // but can test also other fromJson toJson classes,
+  // and should give then 'someNameButNotCollectionName':
+  //                      {'json':..., 'constructor':... ,'ignoreFields':Set}
+  // 'json' for collection in mongodb will be overriden
+  var jsonsForTest = {
     'Events': {
       'constructor': (j) => Event.fromJson(j),
       'ignoreFields': Set<String>()
@@ -192,32 +202,44 @@ Future testAllJsons(List allCollectionsNames) async {
     },
   };
 
-  dynamic problem =
-      collections.keys.toSet().difference(allCollectionsNames.toSet());
-  assert(problem.isEmpty, "you forget give collections $problem");
-  problem = allCollectionsNames.toSet().difference(collections.keys.toSet());
-  assert(problem.isEmpty,
-      "need to update the json test file to new collections $problem");
-
+  var allCollectionsNames = await (db.db as Db).getCollectionNames();
+  dynamic problem1 = allCollectionsNames
+      .where((element) => element != null)
+      .toSet()
+      .difference(jsonsForTest.keys.toSet())
+      .difference(ignoreCollections.toSet());
+  test('assert testAllJson() is updated with mongodb collections', () {
+    alert(problem1, isEmpty,
+        reason:
+            'found collections in mongo db\n$problem1\nthat aren\'t given to testAllJson(ignoreCollections)\nand not handled in testAllJson()');
+  });
+  var toBeFetched =
+      jsonsForTest.keys.toSet().intersection(allCollectionsNames.toSet());
+  var problem2 =
+      toBeFetched.where((e) => jsonsForTest[e]!['json'] != null).toSet();
+  test(
+      'check testAllJsons().jsonsForTest is configured well',
+      () => alert(problem2, isEmpty,
+          reason:
+              'given \'json\' field for\n$problem2\nbut it will override with record from mongodb'));
   // instead of making fake instances, use the last from mongodb
-  var db = MongoCommands();
-  myPrintTypes = {};
-  print('try to connect to mongodb');
-  await db.connect();
-
-  await Future.wait<Map?>(collections.keys.toList().map((name) async =>
-      collections[name]!['json'] = await db.db
+  await Future.wait<Map?>(toBeFetched.map((name) async =>
+      jsonsForTest[name]!['json'] = await db.db
           .collection(name)
           .findOne(where.sortBy('_id', descending: true))));
-  db.disconnect();
-  for (var name_info in collections.entries) {
+
+  for (var name_info in jsonsForTest.entries) {
     var name = name_info.key;
     var info = name_info.value;
     var con = info['constructor'] as dynamic Function(dynamic);
     var json = info['json'];
     var ignore = info['ignoreFields'] as Set<String>;
     if (json == null) {
-      print('failed to get one record (json) from $name');
+      test(
+          'get one record of $name collection',
+          () => alert(json, isNotNull,
+              reason:
+                  'failed,\nor it isn\'t collection and lack of \'json\' in the testAllJsons().jsonsForTest[\'$name\']'));
     } else {
       testJson(con(json), con, ignoreKeys: ignore);
     }

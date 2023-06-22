@@ -8,6 +8,8 @@ import 'package:havruta_project/event/recommendation_system/rec_interface.dart';
 import 'package:havruta_project/event/recommendation_system/systems/random_sys.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import 'widget_test.dart';
+
 const int K = 10;
 const int USERS_AMOUNT = 100;
 const int USERS_GROUPS = 4; // all users are going together, 4 'group'
@@ -138,7 +140,7 @@ var formattedMapStr = (m) => Map.of(m.map((key, value) => MapEntry(
         : value.map((x) => x.toStringAsFixed(3)).toList()))).toString();
 
 // Verify many times the the small test succeed (not only on random run)
-testRecSys(
+void testRecSys(
     {int timesToCheck = 10,
     RecommendationSystem<Event> Function(int k)? testThisSystem}) {
   var realRecSysRslt;
@@ -162,18 +164,15 @@ testRecSys(
       const double minPk = 0.1;
       int minOurUserSuccessPerK =
           min(max(K ~/ 5, 2), (0.2 * USERS_AMOUNT / USERS_GROUPS).round());
-      if (avg[ModelEvalutionMethod.PrecisionK] < minPk)
-        expect(
-            avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(minPk),
-            skip: "with good train set, avg pk should be >= $minPk,\navg:\n" +
-                "${formattedMapStr(avg)}\n$ranges");
-      if (ourUserTotalSuccess / rslt.length < minOurUserSuccessPerK)
-        expect(ourUserTotalSuccess / rslt.length,
-            greaterThanOrEqualTo(minOurUserSuccessPerK),
-            skip: 'with good train set, avg rec need to include in each k=$K events,\n' +
-                'at least $minOurUserSuccessPerK similar events to ourUser\'s events. avg of ($minOurUserSuccessPerK/$K) quality event hits,\n' +
-                'but found  avg ${(ourUserTotalSuccess / rslt.length).toStringAsFixed(2)}/$K  ' +
-                '=>repeat ${rslt.length} times=> total $ourUserTotalSuccess/${K * rslt.length}');
+      alert(avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(minPk),
+          reason: "with good train set, avg pk should be >= $minPk,\navg:\n" +
+              "${formattedMapStr(avg)}\n$ranges");
+      alert(ourUserTotalSuccess / rslt.length,
+          greaterThanOrEqualTo(minOurUserSuccessPerK),
+          reason: 'with good train set, avg rec need to include in each k=$K events,\n' +
+              'at least $minOurUserSuccessPerK similar events to ourUser\'s events. avg of ($minOurUserSuccessPerK/$K) quality event hits,\n' +
+              'but found  avg ${(ourUserTotalSuccess / rslt.length).toStringAsFixed(2)}/$K  ' +
+              '=>repeat ${rslt.length} times=> total $ourUserTotalSuccess/${K * rslt.length}');
     });
 
     test('VS random rec system', () async {
@@ -210,17 +209,15 @@ testRecSys(
       var allValues =
           realSysAvg.keys.map((e) => realSysAvg[e] - rndSysAvg[e]).toList() +
               [ourUserSuccessRealSys - ourUserSuccessRndSys];
-
-      if (allValues.fold<num>(-1, (pre, curr) => max(pre, curr)) < 0)
-        expect(allValues, anyElement(greaterThanOrEqualTo(0)),
-            skip: "the model is worse than random model:\n" +
-                " [pk is ok since the fake data is good for random model,\n" +
-                "  but the hits of quality event should be greater]\n" +
-                "current model:\n${formattedMapStr(realSysAvg)}\n" +
-                "$ourUserSuccessRealSys / ${K * realRecSysRslt.length} hits of quality event\n" +
-                "random model:\n${formattedMapStr(rndSysAvg)}\n" +
-                "$ourUserSuccessRndSys / ${K * rndSysRslt.length} hits of quality event" +
-                "\n$ranges");
+      alert(allValues, anyElement(greaterThanOrEqualTo(0)),
+          reason: "the model is worse than random model:\n" +
+              " [pk is ok since the fake data is good for random model,\n" +
+              "  but the hits of quality event should be greater]\n" +
+              "current model:\n${formattedMapStr(realSysAvg)}\n" +
+              "$ourUserSuccessRealSys / ${K * realRecSysRslt.length} hits of quality event\n" +
+              "random model:\n${formattedMapStr(rndSysAvg)}\n" +
+              "$ourUserSuccessRndSys / ${K * rndSysRslt.length} hits of quality event" +
+              "\n$ranges");
     });
   });
 }

@@ -1,19 +1,36 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter_test/flutter_test.dart';
+import 'package:havruta_project/data_base/mongo_commands.dart';
+import 'package:havruta_project/mydebug.dart';
 
 import 'json.dart';
 import 'recommendation_sys.dart';
 // dont end file name with _test
 
+// make warning if rslt not match m
+// it won't stop the test, only alert, to stop use expect instead
+//     the idea is to avoid calling 'except',
+//     which when 'reason' != null => x not match m => stop test
+//     'skip' is String / true => will skip even if x match m
+// the third param in this function HERE called 'reason'
+//     so it easy to change between alert and except
+//
+// has to be within test()
+void alert(dynamic x, Matcher m, {required dynamic reason}) =>
+    m.matches(x, {}) ? null : expect(x, m, skip: reason);
+
 void main() async {
+  // any function (assume named 'func') that use db here should be awaited,
+  //and the func should await the func with th db
+  // otherwise main() will end & db.disconnect before the func(the part with db) ends
+  // so notice when using test testWidget as you can't just do normal  await test(...) in func
+  var db = MongoCommands();
+  myPrintTypes = {};
+  print('connect to mongodb...');
+  await db.connect();
+
   // test that Event/Chats...  .fromJson .toJson works fine
-  await testAllJsons(['Events', 'Topics ', 'Users', 'Chats', 'Notifications']);
+  await testAllJsons(db: db);
+
   // test default rec system at ExampleRecommendationSystem class
   testRecSys();
   /* 
@@ -26,6 +43,7 @@ void main() async {
   */
 
   test('Null Test', () async => null);
+
   /*testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
@@ -42,4 +60,7 @@ void main() async {
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });*/
+
+  print('disconnect from mongodb...');
+  await db.disconnect();
 }
