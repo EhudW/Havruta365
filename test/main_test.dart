@@ -14,7 +14,7 @@ import 'recommendation_sys.dart';
 // the third param in this function HERE called 'reason'
 //     so it easy to change between alert and except
 //
-// has to be within test()
+// has to be within test() / testWidget()
 void alert(dynamic x, Matcher m, {required dynamic reason}) =>
     m.matches(x, {}) ? null : expect(x, m, skip: reason);
 

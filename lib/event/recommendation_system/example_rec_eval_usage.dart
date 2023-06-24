@@ -38,7 +38,7 @@ class ExampleRecommendationSystem {
 
   // control here how the calc is done
   // null on error
-  static Future<List<Event>?> _calcAndGetTopEventsFrom(
+  static Future<List<Event>?> calcAndGetTopEventsFrom(
       MultiRecommendationSystem<Event> system) async {
     var success = await system.calc();
     if (success == false) return null;
@@ -75,7 +75,7 @@ class ExampleRecommendationSystem {
         k: 10,
         fakeAllEvents: fakeAllEvents,
         fakeMyEvents: fakeMyEvents);
-    var rec = await _calcAndGetTopEventsFrom(r);
+    var rec = await calcAndGetTopEventsFrom(r);
 
     if (rec == null && !suppressException) {
       throw Exception("ExampleRecommendationSystem failed");
@@ -147,6 +147,9 @@ class ExampleRecommendationSystem {
           await Functions.getMyEvents(
               email,
               // see below why using here rejected\left queue = without
+              /* -> we cant recommend event that is ranked as 'bad' (rejected/left) 
+                    -> so we need to ignore them in list =fakeMyEvents\getMyEvents(),
+                    -> and also in allEvents */
               false,
               // filterOld = true since we want the test/validate will be on same zone,
               // it isn't just recommendation but also test
@@ -193,7 +196,7 @@ class ExampleRecommendationSystem {
       // OR email in any event queue(flitered in one of the step of the next line)
       List<Event>? rec;
       if (useMeInstead == null) {
-        rec = await _calcAndGetTopEventsFrom(sysAsMultiSystem!);
+        rec = await calcAndGetTopEventsFrom(sysAsMultiSystem!);
       } else {
         if (await system.calc(k)) rec = system.getTop(k);
       }

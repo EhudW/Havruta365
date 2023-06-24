@@ -8,9 +8,30 @@ import 'package:havruta_project/event/recommendation_system/rec_interface.dart';
 import 'package:havruta_project/event/recommendation_system/systems/random_sys.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import 'widget_test.dart';
+import 'main_test.dart';
 
+// all functions here are only warn and not expect, since it's not "error" if the rec sys is 'bad'
+// some runs might make some different results of warning, beacuse there is use of random(),shuffle()...
+
+// here, and in the lib/../recommendation_system folder
+// for now Queues  none=nuetral,  rejected\left=bad,  waiting\participants=good
+// so that it how the recommendation done,  if we add 'star' rank feature from 1(bad) to 5(good)
+// then here, in the test below, we should also add that persons rank according to their
+// rejected = 1  left = 2  none=null     waiting = 4  participant = 5
+// in the general case, it is up to you to decide if rejected it worse than -1?
+// maybe rejecte/now  doesn't matter to the USER star-rate decesion,(even after normailzation)
+// anyway, here in the test there should be connection between good rank = participant = 5 starts,
+// and vice versa, so the logic of the test['good' vs 'bad' event] will work.
+//
+// anyway the code below might need to be changed if recommend system will need more than
+// possibleEvents to rank, and myEvents to INIT the rank map,
+// (INIT is to decide the rank: Event->double   that later will rank(someevent) )
+// if allEvents will be needed to THE INIT RANK MAP, (like collaborative rank),
+// consider make it in different var than possibleEvents, since we assume the rec system will try
+// to rank it, and then filter events I already joined, so to avoid the filter we manipulate it,
+// but we couldn't have done it to data needed to INIT the rank map, like myEvents var
 const int K = 10;
+// should be USERS_AMOUN ~/ USERS_GROUP >= 2 * K
 const int USERS_AMOUNT = 100;
 const int USERS_GROUPS = 4; // all users are going together, 4 'group'
 const int FREQUENCY = 7; // for making dates in 'frequency' - a day a week
@@ -67,7 +88,7 @@ Future<MapEntry<Map<ModelEvalutionMethod, double>, int>> _testOneTimeRecSys(
           1 +
           maxParticipantsStep * groupNumber,
       minAge: ageSteps * groupNumber,
-      onlyForStatus: Event.onlyForStatus_Options[groupNumber].first, // no limit
+      onlyForStatus: Event.onlyForStatus_Options[groupNumber].first,
       participants: emailsGroup(groupNumber + 0),
       waitingQueue: emailsGroup(groupNumber + 1),
       rejectedQueue: emailsGroup(groupNumber + 2),
@@ -218,6 +239,141 @@ void testRecSys(
               "random model:\n${formattedMapStr(rndSysAvg)}\n" +
               "$ourUserSuccessRndSys / ${K * rndSysRslt.length} hits of quality event" +
               "\n$ranges");
+    });
+    // create semi-uniqeu event accroding to i, with empty queues, no id
+    var createEvent = (int i) => Event(
+          book: 'book$i',
+          creationDate: DateTime.now().subtract(Duration(days: 1 + i)),
+          dates: [DateTime.now().add(Duration(days: 1 + i))],
+          creatorName: 'name$i',
+          creatorUser: '$i@mail.com',
+          description: 'dscrp$i',
+          eventImage: 'img$i',
+          duration: 30 + 30 * i,
+          lecturer: 'lect$i',
+          link: 'link$i',
+          location: 'location$i',
+          maxAge: 40 + 10 * i,
+          minAge: 10 + 5 * i,
+          // enough place, group, and keep variety
+          maxParticipants: 10 * i + 1 + (USERS_AMOUNT / USERS_GROUPS).ceil(),
+          onlyForStatus: Event.onlyForStatus_Options[i].first,
+          participants: [],
+          waitingQueue: [],
+          rejectedQueue: [],
+          leftQueue: [],
+          targetGender: ['גברים', 'נשים'][i % 2],
+          topic: 'topic$i',
+          type: ['H', 'L'][i % 2],
+        );
+
+    // get few events, anf few users, and test, with amplification, the recommendation results
+    // not adding the userToTest, but remove, so there will be possible to rec it.
+    // not affect the original key in amplify param
+    Future<List<Event>> getAmplificationResults(
+        Map<Event, int> amplify, String userToTest) async {
+      List<Event> allEvents = [];
+      List<Event> myEvents = [];
+      // each event should be amplify
+      for (var event_int in amplify.entries) {
+        var event = event_int.key;
+        var amount = event_int.value;
+        // add to my events if I in one of the queues
+        for (var q in EventQueues.values) {
+          if (event.of(q).contains(userToTest)) {
+            myEvents += List.generate(
+                amount, (_) => event.deepClone()..id = ObjectId());
+            break;
+          }
+        }
+        // to all possible events, add as I not there, so It will count as new event for me,
+        // so the system will be able to recommend it for me, and won't filter it
+        var eventWithoutMe = event.deepClone()
+          ..moveToQueueLocal(userToTest, null);
+        // update total data with amplify
+        allEvents += List.generate(
+            amount, (_) => eventWithoutMe.deepClone()..id = ObjectId());
+      }
+      allEvents.shuffle();
+      if (testThisSystem != null) {
+        var sys = testThisSystem(K);
+        sys.setData({
+          "compareToMe": Future.value(myEvents),
+          "possibleEvents": Future.value(allEvents),
+          "myMail": userToTest,
+          "clearCacheAfter": true,
+          "saveLastRank": false,
+        });
+        await sys.calc(K);
+        return sys.getTop(K);
+      }
+      var sys = ExampleRecommendationSystem.create(userToTest,
+          k: K, fakeAllEvents: allEvents, fakeMyEvents: myEvents);
+      return (await ExampleRecommendationSystem.calcAndGetTopEventsFrom(sys))!;
+    }
+
+    test("recommend for user-custom/general-cold-start based rank", () async {
+      // 2 events
+      var goodEvent = createEvent(0)..book = 'good event';
+      // make them as similar as possible
+      var badEvent = goodEvent.deepClone()..book = 'bad event';
+      // with users / without users
+      goodEvent.participants = List.generate(
+          USERS_AMOUNT ~/ USERS_GROUPS, (index) => '$index@fakemail.com');
+      badEvent.leftQueue = List.of(goodEvent.participants!); //same people
+      int major = USERS_AMOUNT * K;
+      int minor = USERS_AMOUNT ~/ USERS_GROUPS;
+      // good event should be returned to cold start, even if the majority is 'bad'
+      String coldStartMail = 'cold@start.user';
+      var rslt = await getAmplificationResults(
+          {goodEvent: minor, badEvent: major}, coldStartMail);
+      int goodEventInColdStart =
+          rslt.where((e) => e.book == goodEvent.book).length;
+      // bad event should returned to person who love this type, even if all others people don't,
+      // even if the majority is 'good'
+      String specificUser = 'let@me.choose.my.own.events';
+      badEvent.acceptLocal(specificUser);
+      rslt = await getAmplificationResults(
+          {goodEvent: major, badEvent: minor}, specificUser);
+      int basedOnUserRec = rslt.where((e) => e.book == badEvent.book).length;
+      alert(goodEventInColdStart, greaterThanOrEqualTo(2),
+          reason:
+              "should recommend also high 'self'/'good'/'popular' ranked events,\n" +
+                  "even if it is the minorty, at least twice out of $K");
+      alert(basedOnUserRec, greaterThanOrEqualTo(2),
+          reason:
+              'should recommend also high \'custom-user-based\' ranked events,\n' +
+                  'even if it is the minorty,\n' +
+                  'and even if it is low \'self\' rank, at least twice out of $K');
+    });
+    test("recommend for collaborative based rank", () async {
+      // 2 events with same people group
+      var eventA = createEvent(0);
+      var eventB = createEvent(2);
+      int minor = USERS_AMOUNT ~/ USERS_GROUPS;
+      eventA.participants =
+          List.generate(minor, (index) => '$index@fakemail.com');
+      eventB.participants = List.of(eventA.participants!);
+      String specificUser = 'me@me.me';
+      eventA.participants!.add(specificUser);
+      // good event = with lots of people & lots of amplification
+      var eventC = createEvent(1);
+      eventC.participants =
+          List.generate(minor, (index) => '$index@another.111.fakemail.com');
+      eventC.waitingQueue =
+          List.generate(minor, (index) => '$index@another.222.fakemail.com');
+      int major = USERS_AMOUNT * K;
+      // eventB that is similar* to my events(eventA)\friends(in eventA)
+      // should be returned, even if the majority is eventC with 'good' rank by itself
+      // * similar not by its data, which is custom to me based rec, tested above
+      //           but similar means similar user like me (that has similar events)
+      //            or similar events like my events (events that has similar participants)
+      var rslt = await getAmplificationResults(
+          {eventA: minor, eventB: minor, eventC: major}, specificUser);
+      int eventBInRec = rslt.where((e) => e.book == eventB.book).length;
+      alert(eventBInRec, greaterThanOrEqualTo(2),
+          reason: 'should recommend also collaborative based events,\n' +
+              'even if it is the minorty, at least twice out of $K');
     });
   });
 }

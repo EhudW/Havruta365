@@ -21,9 +21,8 @@ import 'package:havruta_project/data_base/data_representations/notification.dart
 import 'package:havruta_project/data_base/data_representations/topic.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
-import 'package:havruta_project/mydebug.dart';
 
-import 'widget_test.dart';
+import 'main_test.dart';
 
 // custom encode/decode to handle DateTime
 const String prefix = "MYENCODER123";
