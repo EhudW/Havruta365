@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
 import 'package:havruta_project/mydebug.dart';
 
+import 'clone.dart';
 import 'json.dart';
 import 'recommendation_sys.dart';
 // dont end file name with _test
@@ -32,7 +33,7 @@ void main() async {
   await testAllJsons(db: db);
 
   // test default rec system at ExampleRecommendationSystem class
-  testRecSys();
+  testRecSys(skipCollaborativeCheck: false);
   /* 
   // test specif rec system,
   // in this case test the testRecSys since we give OppositeRecommendationSystem()
@@ -42,8 +43,10 @@ void main() async {
           OppositeRecommendationSystem(MultiConsiderations()));
   */
 
-  test('Null Test', () async => null);
+  // test .deepClone() and similar functions work well
+  await testClones(db);
 
+  test('Null Test', () async => null);
   /*testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());

@@ -161,85 +161,100 @@ var formattedMapStr = (m) => Map.of(m.map((key, value) => MapEntry(
         : value.map((x) => x.toStringAsFixed(3)).toList()))).toString();
 
 // Verify many times the the small test succeed (not only on random run)
-void testRecSys(
-    {int timesToCheck = 10,
-    RecommendationSystem<Event> Function(int k)? testThisSystem}) {
-  var realRecSysRslt;
+// check few test if succeed to pass pk, vs random , etc...
+void testRecSys({
+  int timesToCheck = 10,
+  RecommendationSystem<Event> Function(int k)? testThisSystem,
+  bool skipPkAndQualityCheck = false,
+  bool skipVsRandomCheck = false,
+  bool skipPopularBasedCheck = false,
+  bool skipCustomBasedCheck = false,
+  bool skipCollaborativeCheck = false,
+}) {
+  List<MapEntry<Map<ModelEvalutionMethod, double>, int>>? realRecSysRslt;
   String sysName = testThisSystem == null
       ? "default"
       : testThisSystem(K).runtimeType.toString();
   group('Test rec system [$sysName]', () {
-    test('p@k & quality hits, $timesToCheck times', () async {
-      var rslt = await Future.wait(List.generate(timesToCheck,
-          (index) => _testOneTimeRecSys(useSysInstead: testThisSystem)));
-      realRecSysRslt = rslt;
-      var avg = {};
-      var ourUserTotalSuccess = 0;
-      rslt.forEach((element) {
-        element.key.forEach(
-            (key, value) => avg[key] = (avg[key] ?? 0) + value / rslt.length);
-        ourUserTotalSuccess += element.value;
+    if (skipPkAndQualityCheck == false || skipVsRandomCheck == false) {
+      // !!! needed for p@k AND vs rnd checks
+      Future.wait(List.generate(timesToCheck,
+              (index) => _testOneTimeRecSys(useSysInstead: testThisSystem)))
+          .then((value) => realRecSysRslt = value);
+    }
+    if (skipPkAndQualityCheck == false)
+      test('p@k & quality hits, $timesToCheck times', () async {
+        while (realRecSysRslt == null)
+          await Future.delayed(Duration(milliseconds: 300));
+        var rslt = realRecSysRslt!;
+        var avg = {};
+        var ourUserTotalSuccess = 0;
+        rslt.forEach((element) {
+          element.key.forEach(
+              (key, value) => avg[key] = (avg[key] ?? 0) + value / rslt.length);
+          ourUserTotalSuccess += element.value;
+        });
+        var ranges =
+            "ranges for k=$K:\n${formattedMapStr(ModelEvalution.calcRange(K))}";
+        const double minPk = 0.1;
+        int minOurUserSuccessPerK =
+            min(max(K ~/ 5, 2), (0.2 * USERS_AMOUNT / USERS_GROUPS).round());
+        alert(avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(minPk),
+            reason: "with good train set, avg pk should be >= $minPk,\navg:\n" +
+                "${formattedMapStr(avg)}\n$ranges");
+        alert(ourUserTotalSuccess / rslt.length,
+            greaterThanOrEqualTo(minOurUserSuccessPerK),
+            reason: 'with good train set, avg rec need to include in each k=$K events,\n' +
+                'at least $minOurUserSuccessPerK similar events to ourUser\'s events. avg of ($minOurUserSuccessPerK/$K) quality event hits,\n' +
+                'but found  avg ${(ourUserTotalSuccess / rslt.length).toStringAsFixed(2)}/$K  ' +
+                '=>repeat ${rslt.length} times=> total $ourUserTotalSuccess/${K * rslt.length}');
       });
-      var ranges =
-          "ranges for k=$K:\n${formattedMapStr(ModelEvalution.calcRange(K))}";
-      const double minPk = 0.1;
-      int minOurUserSuccessPerK =
-          min(max(K ~/ 5, 2), (0.2 * USERS_AMOUNT / USERS_GROUPS).round());
-      alert(avg[ModelEvalutionMethod.PrecisionK], greaterThanOrEqualTo(minPk),
-          reason: "with good train set, avg pk should be >= $minPk,\navg:\n" +
-              "${formattedMapStr(avg)}\n$ranges");
-      alert(ourUserTotalSuccess / rslt.length,
-          greaterThanOrEqualTo(minOurUserSuccessPerK),
-          reason: 'with good train set, avg rec need to include in each k=$K events,\n' +
-              'at least $minOurUserSuccessPerK similar events to ourUser\'s events. avg of ($minOurUserSuccessPerK/$K) quality event hits,\n' +
-              'but found  avg ${(ourUserTotalSuccess / rslt.length).toStringAsFixed(2)}/$K  ' +
-              '=>repeat ${rslt.length} times=> total $ourUserTotalSuccess/${K * rslt.length}');
-    });
 
-    test('VS random rec system', () async {
-      var rndSysRslt = await Future.wait(List.generate(timesToCheck,
-          (index) => _testOneTimeRecSys(useSysInstead: (k) => ByRandom())));
-      while (realRecSysRslt == null)
-        await Future.delayed(Duration(milliseconds: 300));
-      var realSysAvg = {};
-      var ourUserSuccessRealSys = 0;
-      Map rndSysAvg = {};
-      int ourUserSuccessRndSys = 0;
-      for (int i = 0; i < realRecSysRslt.length; i++) {
-        var evalRealSys = realRecSysRslt[i].key;
-        var evalRndSys = rndSysRslt[i].key;
-        var successRealSys = realRecSysRslt[i].value as int;
-        var successRndSys = rndSysRslt[i].value;
-        for (var j in evalRealSys.keys) {
-          var positiveOrZero = (x) => (x as double).isFinite && x >= 0;
-          if (positiveOrZero(evalRealSys[j]) == false ||
-              positiveOrZero(evalRndSys[j]) == false) continue;
-          realSysAvg[j] =
-              (realSysAvg[j] ?? 0) + evalRealSys[j]! / realRecSysRslt.length;
-          rndSysAvg[j] =
-              (rndSysAvg[j] ?? 0) + evalRndSys[j]! / rndSysRslt.length;
+    if (skipVsRandomCheck == false)
+      test('VS random rec system', () async {
+        var rndSysRslt = await Future.wait(List.generate(timesToCheck,
+            (index) => _testOneTimeRecSys(useSysInstead: (k) => ByRandom())));
+        while (realRecSysRslt == null)
+          await Future.delayed(Duration(milliseconds: 300));
+        var realSysAvg = {};
+        var ourUserSuccessRealSys = 0;
+        Map rndSysAvg = {};
+        int ourUserSuccessRndSys = 0;
+        for (int i = 0; i < realRecSysRslt!.length; i++) {
+          var evalRealSys = realRecSysRslt![i].key;
+          var evalRndSys = rndSysRslt[i].key;
+          var successRealSys = realRecSysRslt![i].value;
+          var successRndSys = rndSysRslt[i].value;
+          for (var j in evalRealSys.keys) {
+            var positiveOrZero = (x) => (x as double).isFinite && x >= 0;
+            if (positiveOrZero(evalRealSys[j]) == false ||
+                positiveOrZero(evalRndSys[j]) == false) continue;
+            realSysAvg[j] =
+                (realSysAvg[j] ?? 0) + evalRealSys[j]! / realRecSysRslt!.length;
+            rndSysAvg[j] =
+                (rndSysAvg[j] ?? 0) + evalRndSys[j]! / rndSysRslt.length;
+          }
+          ourUserSuccessRealSys += successRealSys;
+          ourUserSuccessRndSys += successRndSys;
         }
-        ourUserSuccessRealSys += successRealSys;
-        ourUserSuccessRndSys += successRndSys;
-      }
 
-      var ranges =
-          "ranges for k=$K:\n${formattedMapStr(ModelEvalution.calcRange(K))}";
-      // warning only when all is bad, since random might give the good events (=hits, by id),
-      // but we duplicate the event with diff ids, so the id isn't important it this test
-      var allValues =
-          realSysAvg.keys.map((e) => realSysAvg[e] - rndSysAvg[e]).toList() +
-              [ourUserSuccessRealSys - ourUserSuccessRndSys];
-      alert(allValues, anyElement(greaterThanOrEqualTo(0)),
-          reason: "the model is worse than random model:\n" +
-              " [pk is ok since the fake data is good for random model,\n" +
-              "  but the hits of quality event should be greater]\n" +
-              "current model:\n${formattedMapStr(realSysAvg)}\n" +
-              "$ourUserSuccessRealSys / ${K * realRecSysRslt.length} hits of quality event\n" +
-              "random model:\n${formattedMapStr(rndSysAvg)}\n" +
-              "$ourUserSuccessRndSys / ${K * rndSysRslt.length} hits of quality event" +
-              "\n$ranges");
-    });
+        var ranges =
+            "ranges for k=$K:\n${formattedMapStr(ModelEvalution.calcRange(K))}";
+        // warning only when all is bad, since random might give the good events (=hits, by id),
+        // but we duplicate the event with diff ids, so the id isn't important it this test
+        var allValues =
+            realSysAvg.keys.map((e) => realSysAvg[e] - rndSysAvg[e]).toList() +
+                [ourUserSuccessRealSys - ourUserSuccessRndSys];
+        alert(allValues, anyElement(greaterThanOrEqualTo(0)),
+            reason: "the model is worse than random model:\n" +
+                " [pk is ok since the fake data is good for random model,\n" +
+                "  but the hits of quality event should be greater]\n" +
+                "current model:\n${formattedMapStr(realSysAvg)}\n" +
+                "$ourUserSuccessRealSys / ${K * realRecSysRslt!.length} hits of quality event\n" +
+                "random model:\n${formattedMapStr(rndSysAvg)}\n" +
+                "$ourUserSuccessRndSys / ${K * rndSysRslt.length} hits of quality event" +
+                "\n$ranges");
+      });
     // create semi-uniqeu event accroding to i, with empty queues, no id
     var createEvent = (int i) => Event(
           book: 'book$i',
@@ -312,68 +327,72 @@ void testRecSys(
       return (await ExampleRecommendationSystem.calcAndGetTopEventsFrom(sys))!;
     }
 
-    test("recommend for user-custom/general-cold-start based rank", () async {
-      // 2 events
-      var goodEvent = createEvent(0)..book = 'good event';
-      // make them as similar as possible
-      var badEvent = goodEvent.deepClone()..book = 'bad event';
-      // with users / without users
-      goodEvent.participants = List.generate(
-          USERS_AMOUNT ~/ USERS_GROUPS, (index) => '$index@fakemail.com');
-      badEvent.leftQueue = List.of(goodEvent.participants!); //same people
-      int major = USERS_AMOUNT * K;
-      int minor = USERS_AMOUNT ~/ USERS_GROUPS;
-      // good event should be returned to cold start, even if the majority is 'bad'
-      String coldStartMail = 'cold@start.user';
-      var rslt = await getAmplificationResults(
-          {goodEvent: minor, badEvent: major}, coldStartMail);
-      int goodEventInColdStart =
-          rslt.where((e) => e.book == goodEvent.book).length;
-      // bad event should returned to person who love this type, even if all others people don't,
-      // even if the majority is 'good'
-      String specificUser = 'let@me.choose.my.own.events';
-      badEvent.acceptLocal(specificUser);
-      rslt = await getAmplificationResults(
-          {goodEvent: major, badEvent: minor}, specificUser);
-      int basedOnUserRec = rslt.where((e) => e.book == badEvent.book).length;
-      alert(goodEventInColdStart, greaterThanOrEqualTo(2),
-          reason:
-              "should recommend also high 'self'/'good'/'popular' ranked events,\n" +
-                  "even if it is the minorty, at least twice out of $K");
-      alert(basedOnUserRec, greaterThanOrEqualTo(2),
-          reason:
-              'should recommend also high \'custom-user-based\' ranked events,\n' +
+    if (skipCustomBasedCheck == false || skipPopularBasedCheck == false)
+      test("recommend for user-custom/general-cold-start based rank", () async {
+        // 2 events
+        var goodEvent = createEvent(0)..book = 'good event';
+        // make them as similar as possible
+        var badEvent = goodEvent.deepClone()..book = 'bad event';
+        // with users / without users
+        goodEvent.participants = List.generate(
+            USERS_AMOUNT ~/ USERS_GROUPS, (index) => '$index@fakemail.com');
+        badEvent.leftQueue = List.of(goodEvent.participants!); //same people
+        int major = USERS_AMOUNT * K;
+        int minor = USERS_AMOUNT ~/ USERS_GROUPS;
+        // good event should be returned to cold start, even if the majority is 'bad'
+        String coldStartMail = 'cold@start.user';
+        var rslt = await getAmplificationResults(
+            {goodEvent: minor, badEvent: major}, coldStartMail);
+        int goodEventInColdStart =
+            rslt.where((e) => e.book == goodEvent.book).length;
+        // bad event should returned to person who love this type, even if all others people don't,
+        // even if the majority is 'good'
+        String specificUser = 'let@me.choose.my.own.events';
+        badEvent.acceptLocal(specificUser);
+        rslt = await getAmplificationResults(
+            {goodEvent: major, badEvent: minor}, specificUser);
+        int basedOnUserRec = rslt.where((e) => e.book == badEvent.book).length;
+        if (skipPopularBasedCheck == false)
+          alert(goodEventInColdStart, greaterThanOrEqualTo(2),
+              reason:
+                  "should recommend also high 'self'/'good'/'popular' ranked events,\n" +
+                      "even if it is the minorty, at least twice out of $K");
+        if (skipCustomBasedCheck == false)
+          alert(basedOnUserRec, greaterThanOrEqualTo(2),
+              reason: 'should recommend also high \'custom-user-based\' ranked events,\n' +
                   'even if it is the minorty,\n' +
                   'and even if it is low \'self\' rank, at least twice out of $K');
-    });
-    test("recommend for collaborative based rank", () async {
-      // 2 events with same people group
-      var eventA = createEvent(0);
-      var eventB = createEvent(2);
-      int minor = USERS_AMOUNT ~/ USERS_GROUPS;
-      eventA.participants =
-          List.generate(minor, (index) => '$index@fakemail.com');
-      eventB.participants = List.of(eventA.participants!);
-      String specificUser = 'me@me.me';
-      eventA.participants!.add(specificUser);
-      // good event = with lots of people & lots of amplification
-      var eventC = createEvent(1);
-      eventC.participants =
-          List.generate(minor, (index) => '$index@another.111.fakemail.com');
-      eventC.waitingQueue =
-          List.generate(minor, (index) => '$index@another.222.fakemail.com');
-      int major = USERS_AMOUNT * K;
-      // eventB that is similar* to my events(eventA)\friends(in eventA)
-      // should be returned, even if the majority is eventC with 'good' rank by itself
-      // * similar not by its data, which is custom to me based rec, tested above
-      //           but similar means similar user like me (that has similar events)
-      //            or similar events like my events (events that has similar participants)
-      var rslt = await getAmplificationResults(
-          {eventA: minor, eventB: minor, eventC: major}, specificUser);
-      int eventBInRec = rslt.where((e) => e.book == eventB.book).length;
-      alert(eventBInRec, greaterThanOrEqualTo(2),
-          reason: 'should recommend also collaborative based events,\n' +
-              'even if it is the minorty, at least twice out of $K');
-    });
+      });
+
+    if (skipCollaborativeCheck == false)
+      test("recommend for collaborative based rank", () async {
+        // 2 events with same people group
+        var eventA = createEvent(0);
+        var eventB = createEvent(2);
+        int minor = USERS_AMOUNT ~/ USERS_GROUPS;
+        eventA.participants =
+            List.generate(minor, (index) => '$index@fakemail.com');
+        eventB.participants = List.of(eventA.participants!);
+        String specificUser = 'me@me.me';
+        eventA.participants!.add(specificUser);
+        // good event = with lots of people & lots of amplification
+        var eventC = createEvent(1);
+        eventC.participants =
+            List.generate(minor, (index) => '$index@another.111.fakemail.com');
+        eventC.waitingQueue =
+            List.generate(minor, (index) => '$index@another.222.fakemail.com');
+        int major = USERS_AMOUNT * K;
+        // eventB that is similar* to my events(eventA)\friends(in eventA)
+        // should be returned, even if the majority is eventC with 'good' rank by itself
+        // * similar not by its data, which is custom to me based rec, tested above
+        //           but similar means similar user like me (that has similar events)
+        //            or similar events like my events (events that has similar participants)
+        var rslt = await getAmplificationResults(
+            {eventA: minor, eventB: minor, eventC: major}, specificUser);
+        int eventBInRec = rslt.where((e) => e.book == eventB.book).length;
+        alert(eventBInRec, greaterThanOrEqualTo(2),
+            reason: 'should recommend also collaborative based events,\n' +
+                'even if it is the minorty, at least twice out of $K');
+      });
   });
 }
