@@ -694,7 +694,7 @@ class MongoCommands {
     return !result.hasWriteErrors;
   }
 
-  void disconnect() async {
+  Future disconnect() async {
     await db.close();
   }
 }
