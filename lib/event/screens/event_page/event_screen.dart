@@ -4,7 +4,7 @@ import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/globals.dart';
 import 'package:havruta_project/event/screens/event_page/event_page.dart';
 import 'package:havruta_project/data_base/events_selector_builder.dart';
-import 'package:loading_animations/loading_animations.dart';
+import 'package:havruta_project/widgets/my_future_builder.dart';
 import 'package:mongo_dart/mongo_dart.dart' as m;
 
 String onlyHex(String s) =>
@@ -36,52 +36,36 @@ class _EventScreenState extends State<EventScreen> {
             filterOldEvents: true,
             startFrom: null,
             maxEvents: null);
+
+    var screenContent = (dynamic snapshot) {
+      List<dynamic> data = snapshot.data! as List<dynamic>;
+      if (data[0] == null) {
+        return NoEventScreen(lbl: "האירוע לא נמצא\nככל הנראה נמחק");
+      }
+      var event = data[0] as Event?;
+      String? targetProblem =
+          Globals.currentUser!.whyIsNotTargetedForMe(event!);
+      bool rejectProblem =
+          event!.rejectedQueue.contains(Globals.currentUser!.email!);
+      if (targetProblem != null) {
+        return NoEventScreen(
+            eventname: event.longStr(),
+            lbl: "אינך בקהל היעד המתאים - בגלל ה" + targetProblem);
+      }
+      if (rejectProblem) {
+        return NoEventScreen(
+          lbl: 'רישומך נדחה ע"י היוזמ/ת. ניתן לשלוח בקשה בהודעה אישית',
+          otheruser: event.creatorUser,
+          otherusername: event.creatorName,
+          eventname: event.longStr(),
+        );
+      }
+      return EventPage(event, data[1] as List<Event>?);
+    };
     f = Future.wait([eventUpdate, allUserEvents]);
     return Scaffold(
-        body: FutureBuilder(
-            future: f,
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Text('none');
-                case ConnectionState.active:
-                case ConnectionState.waiting:
-                  return Center(
-                    child: LoadingBouncingGrid.square(
-                      borderColor: Colors.teal[400]!,
-                      backgroundColor: Colors.teal[400]!,
-                      size: 80.0,
-                    ),
-                  );
-                case ConnectionState.done:
-                  List<dynamic> data = snapshot.data! as List<dynamic>;
-                  if (data[0] == null) {
-                    return NoEventScreen(lbl: "האירוע לא נמצא\nככל הנראה נמחק");
-                  }
-                  var event = data[0] as Event?;
-                  String? targetProblem =
-                      Globals.currentUser!.whyIsNotTargetedForMe(event!);
-                  bool rejectProblem = event!.rejectedQueue
-                      .contains(Globals.currentUser!.email!);
-                  if (targetProblem != null) {
-                    return NoEventScreen(
-                        eventname: event.longStr(),
-                        lbl: "אינך בקהל היעד המתאים - בגלל ה" + targetProblem);
-                  }
-                  if (rejectProblem) {
-                    return NoEventScreen(
-                      lbl:
-                          'רישומך נדחה ע"י היוזמ/ת. ניתן לשלוח בקשה בהודעה אישית',
-                      otheruser: event.creatorUser,
-                      otherusername: event.creatorName,
-                      eventname: event.longStr(),
-                    );
-                  }
-                  return EventPage(event, data[1] as List<Event>?);
-                default:
-                  return Text('default');
-              }
-            }));
+      body: myFutureBuilder(f, screenContent, isCostumise: false),
+    );
   }
 }
 

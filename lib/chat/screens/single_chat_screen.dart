@@ -13,6 +13,7 @@ import 'package:havruta_project/users/screens/user_screen/user_details_page.dart
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/mytimer.dart';
 import 'package:havruta_project/notifications/push_notifications/fcm.dart';
+import 'package:havruta_project/widgets/my_future_builder.dart';
 import 'package:loading_animations/loading_animations.dart';
 
 import '../../event/buttons/next_button.dart';
@@ -311,143 +312,118 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
     Future<List<ChatMessage>> first =
         model.streamAsEntryKey.first.then((value) => firstData = value);
     model.refresh();
-    return Scaffold(
-      body: FutureBuilder(
-          future: first,
-          builder: (context, AsyncSnapshot<List<ChatMessage>> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return Text('none');
-              case ConnectionState.active:
-              case ConnectionState.waiting:
-                return Center(
-                  child: LoadingBouncingGrid.square(
-                    borderColor: Colors.teal[400]!,
-                    backgroundColor: Colors.teal[400]!,
-                    size: 20.0,
-                  ),
-                );
-              case ConnectionState.done:
-                return Scaffold(
-                    appBar: appBar(context),
-                    resizeToAvoidBottomInset: true,
-                    body: StreamBuilder<List<ChatMessage>>(
-                        initialData: firstData,
-                        stream: model.streamAsEntryKey,
-                        builder: (context, snapshot) {
-                          return Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: Chat(
-                              dateHeaderThreshold:
-                                  60 * 60 * 1000, //min*sec*mill
-                              bubbleBuilder: (child,
-                                  {required message,
-                                  required nextMessageInGroup}) {
-                                bool currentUserIsAuthor = message.author.id ==
-                                    Globals.currentUser!.email;
-                                var w = isConsistsOfEmojis(
-                                  EmojiEnlargementBehavior.multi,
-                                  message as types.TextMessage,
-                                )
-                                    ? child
-                                    : Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                    30)
-                                                .copyWith(
-                                                    bottomRight:
-                                                        !currentUserIsAuthor // || nextMessageInGroup
-                                                            ? null
-                                                            : Radius.zero,
-                                                    bottomLeft:
-                                                        currentUserIsAuthor // || nextMessageInGroup
-                                                            ? null
-                                                            : Radius.zero),
-                                            color: !currentUserIsAuthor ||
-                                                    message.type ==
-                                                        types.MessageType.image
-                                                ? Colors.white70
-                                                : Colors.teal),
-                                        child: ClipRRect(
-                                          //borderRadius: 0.0,
-                                          child: child,
-                                        ),
-                                      );
 
-                                var time = DateTimeFormat.format(
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                            message.createdAt!)
-                                        .toLocal(),
-                                    format: "H:i");
-
-                                var t = Text(
-                                  time,
-                                  style: TextStyle(color: Colors.grey
-                                      // fontWeight: FontWeight.bold,
-                                      ),
-                                );
-                                return Column(
-                                  children: [w, t],
-                                );
-                              },
-                              inputOptions: InputOptions(
-                                onTextChanged: (p0) => widget.setDraft(p0),
-                                textEditingController: TextEditingController(
-                                    text: tce_init_string),
-                              ),
-                              onMessageVisibilityChanged: (p0, visible) =>
-                                  !visible //|| (widget.forumName != null)
-                                      ? null
-                                      : model
-                                          .msgWasSeen(p0 as types.TextMessage),
-                              theme: DefaultChatTheme(
-                                backgroundColor: Colors.cyan[50]!,
-                                primaryColor: Colors.teal,
-                                secondaryColor: Colors.white70,
-                                inputTextColor: Colors.black,
-                                userAvatarNameColors: [Colors.indigoAccent],
-                                //inputTextCursorColor: Colors.yellow,
-                                inputBackgroundColor: Colors.white54,
-                              ),
-                              onMessageLongPress: (context, p1) {
-                                if (p1.author.id != _myUser.id ||
-                                    p1.id == "NULL" ||
-                                    ChatMessage.isOnMongo(p1.status) == false)
-                                  return;
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: ((builder) => NextButton.bottomSheet(
-                                        context,
-                                        "ההודעה תימחק גם לצד השני,\nולא ניתן לשחזרה.",
-                                        () {
-                                          Navigator.pop(context);
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                          model.deleteOne(p1);
-                                        },
-                                        () {
-                                          Navigator.pop(context);
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                        },
-                                      )),
-                                );
-                              },
-                              bubbleRtlAlignment: BubbleRtlAlignment.right,
-                              messages: snapshot.data!.reversed
-                                  .map((e) => e.toTypesTextMsg())
-                                  .toList(),
-                              onAvatarTap: onAvatarClick,
-                              l10n: ChatL10nHe(),
-                              onSendPressed: onSend,
-                              showUserAvatars: true,
-                              showUserNames: true,
-                              user: _myUser,
+    var chatScreenContent = (dynamic snapshot) => Scaffold(
+        appBar: appBar(context),
+        resizeToAvoidBottomInset: true,
+        body: StreamBuilder<List<ChatMessage>>(
+            initialData: firstData,
+            stream: model.streamAsEntryKey,
+            builder: (context, snapshot) {
+              return Directionality(
+                textDirection: TextDirection.rtl,
+                child: Chat(
+                  dateHeaderThreshold: 60 * 60 * 1000, //min*sec*mill
+                  bubbleBuilder: (child,
+                      {required message, required nextMessageInGroup}) {
+                    bool currentUserIsAuthor =
+                        message.author.id == Globals.currentUser!.email;
+                    var w = isConsistsOfEmojis(
+                      EmojiEnlargementBehavior.multi,
+                      message as types.TextMessage,
+                    )
+                        ? child
+                        : Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30)
+                                    .copyWith(
+                                        bottomRight:
+                                            !currentUserIsAuthor // || nextMessageInGroup
+                                                ? null
+                                                : Radius.zero,
+                                        bottomLeft:
+                                            currentUserIsAuthor // || nextMessageInGroup
+                                                ? null
+                                                : Radius.zero),
+                                color: !currentUserIsAuthor ||
+                                        message.type == types.MessageType.image
+                                    ? Colors.white70
+                                    : Colors.teal),
+                            child: ClipRRect(
+                              //borderRadius: 0.0,
+                              child: child,
                             ),
                           );
-                        }));
-            }
-          }),
+
+                    var time = DateTimeFormat.format(
+                        DateTime.fromMillisecondsSinceEpoch(message.createdAt!)
+                            .toLocal(),
+                        format: "H:i");
+
+                    var t = Text(
+                      time,
+                      style: TextStyle(color: Colors.grey
+                          // fontWeight: FontWeight.bold,
+                          ),
+                    );
+                    return Column(
+                      children: [w, t],
+                    );
+                  },
+                  inputOptions: InputOptions(
+                    onTextChanged: (p0) => widget.setDraft(p0),
+                    textEditingController:
+                        TextEditingController(text: tce_init_string),
+                  ),
+                  onMessageVisibilityChanged: (p0, visible) =>
+                      !visible //|| (widget.forumName != null)
+                          ? null
+                          : model.msgWasSeen(p0 as types.TextMessage),
+                  theme: DefaultChatTheme(
+                    backgroundColor: Colors.cyan[50]!,
+                    primaryColor: Colors.teal,
+                    secondaryColor: Colors.white70,
+                    inputTextColor: Colors.black,
+                    userAvatarNameColors: [Colors.indigoAccent],
+                    //inputTextCursorColor: Colors.yellow,
+                    inputBackgroundColor: Colors.white54,
+                  ),
+                  onMessageLongPress: (context, p1) {
+                    if (p1.author.id != _myUser.id ||
+                        p1.id == "NULL" ||
+                        ChatMessage.isOnMongo(p1.status) == false) return;
+                    showModalBottomSheet(
+                      context: context,
+                      builder: ((builder) => NextButton.bottomSheet(
+                            context,
+                            "ההודעה תימחק גם לצד השני,\nולא ניתן לשחזרה.",
+                            () {
+                              Navigator.pop(context);
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              model.deleteOne(p1);
+                            },
+                            () {
+                              Navigator.pop(context);
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                          )),
+                    );
+                  },
+                  bubbleRtlAlignment: BubbleRtlAlignment.right,
+                  messages: snapshot.data!.reversed
+                      .map((e) => e.toTypesTextMsg())
+                      .toList(),
+                  onAvatarTap: onAvatarClick,
+                  l10n: ChatL10nHe(),
+                  onSendPressed: onSend,
+                  showUserAvatars: true,
+                  showUserNames: true,
+                  user: _myUser,
+                ),
+              );
+            }));
+    return Scaffold(
+      body: myFutureBuilder(first, chatScreenContent),
     );
   }
 }

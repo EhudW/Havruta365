@@ -7,6 +7,7 @@ import 'package:havruta_project/globals.dart';
 import 'package:havruta_project/chat/screens/send_screen.dart';
 import 'package:havruta_project/users/screens/user_screen/user_screen.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
+import 'package:havruta_project/widgets/my_future_builder.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 import 'dart:ui' as ui;
@@ -22,16 +23,16 @@ class ParticipentsScroller extends StatefulWidget {
       required this.initPubMsgText,
       this.event,
       required this.notifyParent}) {
-    var current_user = Globals.currentUser!.email;
-    this.is_creator = event!.creatorUser == current_user;
+    var currentUser = Globals.currentUser!.email;
+    this.isCreator = event!.creatorUser == currentUser;
     //this.usersMail = usersMail ?? [];
-    this.selected_users = [];
+    this.selectedUsers = [];
     this.userColl = Globals.db!.db.collection('Users');
   }
   String title;
-  var is_creator;
+  var isCreator;
   Set<dynamic> usersMail = {};
-  var selected_users;
+  var selectedUsers;
   var userColl;
   Event? event;
   void Function(String)? accept;
@@ -39,6 +40,32 @@ class ParticipentsScroller extends StatefulWidget {
 
   @override
   State<ParticipentsScroller> createState() => _ParticipentsScrollerState();
+}
+
+Icon createIcon(event, userMail, double iconSize) {
+  bool isRejected = event.rejectedQueue!.contains(userMail);
+  bool isLeaver = event.leftQueue!.contains(userMail);
+  bool isParticipant = event.participants!.contains(userMail);
+
+  if (!isRejected && !isLeaver && !isParticipant) iconSize = 0;
+
+  Color color = isRejected || isLeaver ? Colors.red : Colors.green;
+
+  dynamic iconShape = FontAwesomeIcons.solidCircleCheck;
+  if (isRejected) iconShape = FontAwesomeIcons.solidCircleXmark;
+  if (isLeaver) iconShape = FontAwesomeIcons.circle;
+  if (isParticipant) iconShape = FontAwesomeIcons.solidCircleCheck;
+
+  return Icon(
+    iconShape,
+    size: Globals.scaler.getTextSize(iconSize),
+    color: color,
+  );
+}
+
+String shortStr(String str, int newLength) {
+  if (str.length <= newLength) return str;
+  return str.substring(0, newLength - 3) + "...";
 }
 
 class _ParticipentsScrollerState extends State<ParticipentsScroller> {
@@ -52,26 +79,26 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
   }
 
   void _rejectList() {
-    for (var user in widget.selected_users) {
+    for (var user in widget.selectedUsers) {
       bool didSomething = widget.event!
           .rejectLocal(user); // so we wont need to await to mongodb
       if (!didSomething)
         continue; // to avoid notify fcm someone that already rejected
       widget.reject!(user);
     }
-    widget.selected_users.clear();
+    widget.selectedUsers.clear();
     widget.notifyParent(); // we didnt waited for fcm/mongo db
   }
 
   void _acceptList() {
-    for (var user in widget.selected_users) {
+    for (var user in widget.selectedUsers) {
       bool didSomething = widget.event!
           .acceptLocal(user); // so we wont need to await to mongodb
       if (!didSomething)
         continue; // to avoid notify fcm someone that already joined
       widget.accept!(user);
     }
-    widget.selected_users.clear();
+    widget.selectedUsers.clear();
     widget.notifyParent(); // we didnt wait for mongodb or fcm
   }
 
@@ -101,6 +128,119 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
     ]);
   }
 
+  Widget createCheckbox(checkBoxValue, userMail) {
+    return Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(width: 3.0, color: Colors.blue),
+            left: BorderSide(width: 3.0, color: Colors.blue),
+            right: BorderSide(width: 3.0, color: Colors.blue),
+            bottom: BorderSide(width: 3.0, color: Colors.blue),
+          ),
+          shape: BoxShape.circle,
+        ),
+        width: 20,
+        height: 20,
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Checkbox(
+              value: checkBoxValue,
+              side: BorderSide(
+                color: Colors.blue,
+                width: 0.0,
+              ),
+              checkColor: Colors.blue,
+              // fillColor: Colors.blue,
+              activeColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+              ),
+              splashRadius: 100.0,
+              onChanged: (bool? value_) {
+                setState(() {
+                  checkBoxValue = value_!;
+                });
+                if (value_!)
+                  widget.selectedUsers.add(userMail);
+                else
+                  widget.selectedUsers.remove(userMail);
+              },
+            );
+          },
+        ));
+  }
+
+  Widget createProfile(snapshot, userMail, multiSelectBox) {
+    bool isLeft = widget.event!.leftQueue.contains(userMail);
+    var sizedBox = (double width) => SizedBox(width: width);
+    List<Widget> profile = [
+      widget.isCreator && !isLeft ? multiSelectBox : sizedBox(20),
+      widget.isCreator ? sizedBox(8) : Container(),
+      CircleAvatar(
+        backgroundImage: NetworkImage(snapshot.data['avatar']),
+        radius: 20.0,
+        child: IconButton(
+            icon: Icon(FontAwesomeIcons.houseUser),
+            iconSize: 20.0,
+            color: Colors.white.withOpacity(0),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserScreen(snapshot.data['email'])),
+              );
+            }),
+      ),
+      sizedBox(8),
+      Padding(
+        padding:
+            EdgeInsets.only(top: hasButton ? 0 : 8.0, left: hasButton ? 16 : 0),
+        child: Text(shortStr(snapshot.data['name'], 18),
+            textDirection: ui.TextDirection.rtl),
+      ),
+    ];
+    return InkWell(
+      child: Row(children: profile.reversed.toList()),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(snapshot.data['email'])),
+        );
+      },
+    );
+  }
+
+  List<Widget> createUserRow(snapshot, profileInk, icon, double iconSize) {
+    return [
+      profileInk,
+      Row(children: [
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SingleChatScreen(
+                          otherPerson: snapshot.data['email'],
+                          otherPersonName: snapshot.data['name'],
+                        )));
+          },
+          child: Icon(
+            FontAwesomeIcons.solidMessage,
+            size: Globals.scaler.getTextSize(iconSize),
+            color: Colors.blue,
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        widget.isCreator
+            ? icon //X
+            : SizedBox.shrink()
+      ])
+    ];
+  }
+
   Widget _buildActor(BuildContext ctx, int index) {
     var userMail = widget.usersMail.elementAt(index);
     // TODO find user via mail and get it from the mongo
@@ -108,225 +248,40 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
     //Future<User> user = Globals.db.getUser(userMail);
     // var user = await collection.findOne(where.eq('email', '$mail'));
     Future user = getUser(userMail);
-    return FutureBuilder(
-      future: user,
-      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return Text('none');
-          case ConnectionState.active:
-          case ConnectionState.waiting:
-            return Center(
-              child: LoadingBouncingGrid.square(
-                borderColor: Colors.teal[400]!,
-                backgroundColor: Colors.teal[400]!,
-                size: 20.0,
-              ),
-            );
-          case ConnectionState.done:
 
-            /// Add mark box to allow the user select and mark a few users.
-            bool check_box_value = widget.selected_users.contains(userMail);
-            var multi_select_box = Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    top: BorderSide(width: 3.0, color: Colors.blue),
-                    left: BorderSide(width: 3.0, color: Colors.blue),
-                    right: BorderSide(width: 3.0, color: Colors.blue),
-                    bottom: BorderSide(width: 3.0, color: Colors.blue),
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                width: 20,
-                height: 20,
-                child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Checkbox(
-                      value: check_box_value,
-                      side: BorderSide(
-                        color: Colors.blue,
-                        width: 0.0,
-                      ),
-                      checkColor: Colors.blue,
-                      // fillColor: Colors.blue,
-                      activeColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      splashRadius: 100.0,
-                      onChanged: (bool? value_) {
-                        setState(() {
-                          check_box_value = value_!;
-                        });
-                        if (value_!)
-                          widget.selected_users.add(userMail);
-                        else
-                          widget.selected_users.remove(userMail);
-                      },
-                    );
-                  },
-                ));
+    var content = (snapshot) {
+      bool checkBoxValue = widget.selectedUsers.contains(userMail);
+      var multiSelectBox = createCheckbox(checkBoxValue, userMail);
+      var profileInk = createProfile(snapshot, userMail, multiSelectBox);
 
-            var profile = [
-              widget.is_creator && !widget.event!.leftQueue.contains(userMail)
-                  ? multi_select_box
-                  : SizedBox(
-                      width: 20,
-                    ),
-              widget.is_creator
-                  ? SizedBox(
-                      width: 8,
-                    )
-                  : Container(),
-              CircleAvatar(
-                backgroundImage: NetworkImage(snapshot.data['avatar']),
-                radius: 20.0,
-                child: IconButton(
-                    icon: Icon(FontAwesomeIcons.houseUser),
-                    iconSize: 20.0,
-                    color: Colors.white.withOpacity(0),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                UserScreen(snapshot.data['email'])),
-                      );
-                    }),
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Padding(
+      double iconSize = 10;
+      Icon icon = createIcon(widget.event!, userMail, iconSize);
+
+      List<Widget> userRow =
+          createUserRow(snapshot, profileInk, icon, iconSize);
+
+      // Add padding and margin for each widget in the row.
+      userRow = userRow.reversed
+          .toList()
+          .map((e) => Container(
                 padding: EdgeInsets.only(
-                    top: hasButton ? 0 : 8.0, left: hasButton ? 16 : 0),
-                child: Text(
-                    snapshot.data['name'].length > 15
-                        ? snapshot.data['name'].substring(0, 15) + '...'
-                        : snapshot.data['name'],
-                    textDirection: ui.TextDirection.rtl),
-              ),
-            ];
-            var profileInk = InkWell(
-              child: hasButton
-                  ? Row(children: profile.reversed.toList())
-                  : Column(children: profile),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UserScreen(snapshot.data['email'])),
-                );
-              },
-            );
-            double iconSize = 10;
+                    top: hasButton ? 16 : 0, left: hasButton ? 0 : 16),
+                margin: hasButton ? EdgeInsets.only(left: 16) : null,
+                child: e,
+              ))
+          .toList();
 
-            Icon icons = Icon(
-              FontAwesomeIcons.solidCircleCheck,
-              size: Globals.scaler.getTextSize(0),
-              color: Colors.green,
-            );
-            ;
-            if (widget.event!.rejectedQueue!.contains(userMail))
-              icons = Icon(
-                FontAwesomeIcons.solidCircleXmark,
-                size: Globals.scaler.getTextSize(iconSize),
-                color: Colors.red,
-              );
-            if (widget.event!.leftQueue!.contains(userMail)) {
-              icons = Icon(
-                FontAwesomeIcons.circle,
-                size: Globals.scaler.getTextSize(iconSize),
-                color: Colors.red,
-              );
-            }
-            if (widget.event!.participants!.contains(userMail))
-              icons = Icon(
-                FontAwesomeIcons.solidCircleCheck,
-                size: Globals.scaler.getTextSize(iconSize),
-                color: Colors.green,
-              ); // V
-            if (widget.event!.waitingQueue!.contains(userMail)) {
-              icons = Icon(
-                FontAwesomeIcons.solidCircleCheck,
-                size: Globals.scaler.getTextSize(0),
-                color: Colors.green,
-              );
-            }
-
-            List<Widget> _inner = [
-              //Padding(
-              //  padding: EdgeInsets.only(right:0),// hasButton?0:16,top:hasButton?16:0), //was 16.0
-              //  child:
-              profileInk,
-              //),
-              Row(children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SingleChatScreen(
-                                  otherPerson: snapshot.data['email'],
-                                  otherPersonName: snapshot.data['name'],
-                                )));
-                  },
-                  child: Icon(
-                    FontAwesomeIcons.solidMessage,
-                    size: Globals.scaler.getTextSize(iconSize),
-                    color: Colors.blue,
-                  ),
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                widget.is_creator
-                    ? icons //X
-                    : SizedBox.shrink()
-              ])
-            ];
-            Map<Widget, bool> _inner_map = {};
-            _inner = _inner.reversed.toList();
-            widget.is_creator
-                ? _inner = _inner
-                    .map((e) => Container(
-                          padding: EdgeInsets.only(
-                              top: hasButton ? 16 : 0,
-                              left: hasButton ? 0 : 16),
-                          margin: hasButton ? EdgeInsets.only(left: 16) : null,
-                          child: e,
-                        ))
-                    .toList()
-                : _inner_map = {
-                    for (var v in _inner
-                        .toList()
-                        .map((e) => Container(
-                              padding: EdgeInsets.only(
-                                  top: hasButton ? 16 : 0,
-                                  left: hasButton ? 0 : 16),
-                              margin:
-                                  hasButton ? EdgeInsets.only(left: 16) : null,
-                              child: e,
-                            ))
-                        .toList())
-                      v: false
-                  };
-            //return widget.is_creator
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: _inner,
-            );
-
-          default:
-            return Text('default');
-        }
-      },
-    );
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: userRow,
+      );
+    };
+    return myFutureBuilder(user, content, isCostumise: false);
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.usersMail = widget.is_creator
+    widget.usersMail = widget.isCreator
         ? {
             widget.event!.participants!,
             widget.event!.waitingQueue!,
@@ -334,54 +289,46 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
             widget.event!.leftQueue
           }.expand((x) => x).toList().toSet()
         : widget.event!.participants!.toSet();
-    //widget.selected_users_ =   List.generate(widget.usersMail.length, (index) => false);
+
     // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
-    //double extraHeight = 0;
-    //extraHeight += accept != null ? ScreenScaler().getHeight(3) : 0;
-    //extraHeight += reject != null ? ScreenScaler().getHeight(3) : 0;
-    double totalscrollheight = hasButton ? 120 : 150;
-    if (hasButton && widget.usersMail.length > 0) {
+
+    String noParticipants = "- אין משתתפים -";
+    if (widget.usersMail.isEmpty) return Center(child: Text(noParticipants));
+
+    ElevatedButton sendMsgToAllParticipants = ElevatedButton.icon(
+      onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SendScreen(
+                widget.usersMail.toList(), this.widget.initPubMsgText),
+          )),
+      icon: Icon(FontAwesomeIcons.envelope, size: 18),
+      label: Text("שליחת הודעה לרשימה זו"),
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.red[700])),
+    );
+
+    // Set the height of the scorllable list.
+    double totalscrollheight = 120;
+    if (widget.usersMail.length > 0) {
       totalscrollheight = totalscrollheight *
           (widget.usersMail.length <= 2 ? widget.usersMail.length : 2);
-    }
-    totalscrollheight = widget.usersMail.length > 0 ? totalscrollheight : 50;
-    dynamic list = ListView.builder(
-      itemCount: widget.usersMail.length,
-      scrollDirection: hasButton ? Axis.vertical : Axis.horizontal,
-      padding: EdgeInsets.only(
-          top: 0,
-          left: hasButton ? 16 : 0,
-          right: 16,
-          bottom: hasButton ? 16 : 0),
-      itemBuilder: _buildActor,
-    );
-    list = SizedBox.fromSize(
-      size: Size.fromHeight(totalscrollheight),
-      child: Padding(
-          child: widget.usersMail.length == 0
-              ? Center(child: Text("- אין -"))
-              : list,
-          padding: EdgeInsets.only(top: 16)),
-    );
-    if (hasButton) {
-      list = Column(
-          children: List.generate(
-              widget.usersMail.length,
-              (index) => Padding(
-                    padding: EdgeInsets.only(
-                        top: 0,
-                        left: hasButton ? 8 : 0,
-                        right: 16,
-                        bottom: hasButton ? 16 : 0),
-                    child: _buildActor(context, index),
-                  )));
-      list = Padding(
-          child: widget.usersMail.length == 0
-              ? Center(child: Text("- אין -"))
-              : list,
-          padding: EdgeInsets.only(top: 16));
-    }
+    } else
+      totalscrollheight = 50;
+
+    // Build the list of actors while adding paddings.
+    dynamic list = Column(
+        children: List.generate(
+            widget.usersMail.length,
+            (index) => Padding(
+                  padding:
+                      EdgeInsets.only(top: 0, left: 8, right: 16, bottom: 16),
+                  child: _buildActor(context, index),
+                )));
+
+    list = Padding(child: list, padding: EdgeInsets.only(top: 16));
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -392,22 +339,7 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                widget.usersMail.isNotEmpty
-                    ? ElevatedButton.icon(
-                        onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SendScreen(
-                                  widget.usersMail.toList(),
-                                  this.widget.initPubMsgText),
-                            )),
-                        icon: Icon(FontAwesomeIcons.envelope, size: 18),
-                        label: Text("שליחת הודעה לרשימה זו"),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.red[700])),
-                      )
-                    : Container(),
+                widget.isCreator ? sendMsgToAllParticipants : SizedBox.shrink(),
                 Text(
                   widget.title,
                   textDirection: ui.TextDirection.rtl,
@@ -418,7 +350,7 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
           ),
         ),
         list,
-        widget.is_creator && widget.usersMail.isNotEmpty
+        widget.isCreator && widget.usersMail.isNotEmpty
             ? _creatorCommands()
             : SizedBox.shrink(),
       ],
