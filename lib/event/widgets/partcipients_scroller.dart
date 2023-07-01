@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screen_scaler/flutter_screen_scaler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:havruta_project/chat/screens/single_chat_screen.dart';
 import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/globals.dart';
 import 'package:havruta_project/chat/screens/send_screen.dart';
 import 'package:havruta_project/users/screens/user_screen/user_screen.dart';
-import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:havruta_project/widgets/my_future_builder.dart';
-import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 import 'dart:ui' as ui;
 
@@ -42,7 +39,7 @@ class ParticipentsScroller extends StatefulWidget {
   State<ParticipentsScroller> createState() => _ParticipentsScrollerState();
 }
 
-Icon createIcon(event, userMail, double iconSize) {
+Icon selectIcon(event, userMail, double iconSize) {
   bool isRejected = event.rejectedQueue!.contains(userMail);
   bool isLeaver = event.leftQueue!.contains(userMail);
   bool isParticipant = event.participants!.contains(userMail);
@@ -66,6 +63,16 @@ Icon createIcon(event, userMail, double iconSize) {
 String shortStr(String str, int newLength) {
   if (str.length <= newLength) return str;
   return str.substring(0, newLength - 3) + "...";
+}
+
+double calcDesiredHeight(usersAmount) {
+  double totalscrollheight = 120;
+  if (usersAmount > 0) {
+    totalscrollheight =
+        totalscrollheight * (usersAmount <= 2 ? usersAmount : 2);
+  } else
+    totalscrollheight = 50;
+  return totalscrollheight;
 }
 
 class _ParticipentsScrollerState extends State<ParticipentsScroller> {
@@ -150,7 +157,6 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
                 width: 0.0,
               ),
               checkColor: Colors.blue,
-              // fillColor: Colors.blue,
               activeColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(40),
@@ -170,47 +176,43 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
         ));
   }
 
-  Widget createProfile(snapshot, userMail, multiSelectBox) {
+  Widget createProfileWidgets(snapshot, userMail, multiSelectBox) {
     bool isLeft = widget.event!.leftQueue.contains(userMail);
     var sizedBox = (double width) => SizedBox(width: width);
-    List<Widget> profile = [
+    var navigateToUserScreen = (userMail) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => UserScreen(userMail)),
+      );
+    };
+
+    List<Widget> profileWidgets = [
       widget.isCreator && !isLeft ? multiSelectBox : sizedBox(20),
       widget.isCreator ? sizedBox(8) : Container(),
       CircleAvatar(
         backgroundImage: NetworkImage(snapshot.data['avatar']),
         radius: 20.0,
         child: IconButton(
-            icon: Icon(FontAwesomeIcons.houseUser),
-            iconSize: 20.0,
-            color: Colors.white.withOpacity(0),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => UserScreen(snapshot.data['email'])),
-              );
-            }),
+          icon: Icon(FontAwesomeIcons.houseUser),
+          iconSize: 20.0,
+          color: Colors.white.withOpacity(0),
+          onPressed: navigateToUserScreen(snapshot.data['email']),
+        ),
       ),
       sizedBox(8),
       Padding(
-        padding:
-            EdgeInsets.only(top: hasButton ? 0 : 8.0, left: hasButton ? 16 : 0),
+        padding: EdgeInsets.only(top: 0, left: 16),
         child: Text(shortStr(snapshot.data['name'], 18),
             textDirection: ui.TextDirection.rtl),
       ),
     ];
     return InkWell(
-      child: Row(children: profile.reversed.toList()),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => UserScreen(snapshot.data['email'])),
-        );
-      },
+      child: Row(children: profileWidgets.reversed.toList()),
+      onTap: navigateToUserScreen(snapshot.data['email']),
     );
   }
 
+  // Combine the different widgets of the user into a row.
   List<Widget> createUserRow(snapshot, profileInk, icon, double iconSize) {
     return [
       profileInk,
@@ -241,21 +243,19 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
     ];
   }
 
+  // Build row for each user in the lists.
   Widget _buildActor(BuildContext ctx, int index) {
     var userMail = widget.usersMail.elementAt(index);
-    // TODO find user via mail and get it from the mongo
-    // build user: avatar, name, button to the user profile
-    //Future<User> user = Globals.db.getUser(userMail);
-    // var user = await collection.findOne(where.eq('email', '$mail'));
+
     Future user = getUser(userMail);
 
-    var content = (snapshot) {
+    var userRowBuilder = (snapshot) {
       bool checkBoxValue = widget.selectedUsers.contains(userMail);
       var multiSelectBox = createCheckbox(checkBoxValue, userMail);
-      var profileInk = createProfile(snapshot, userMail, multiSelectBox);
+      var profileInk = createProfileWidgets(snapshot, userMail, multiSelectBox);
 
       double iconSize = 10;
-      Icon icon = createIcon(widget.event!, userMail, iconSize);
+      Icon icon = selectIcon(widget.event!, userMail, iconSize);
 
       List<Widget> userRow =
           createUserRow(snapshot, profileInk, icon, iconSize);
@@ -276,7 +276,7 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
         children: userRow,
       );
     };
-    return myFutureBuilder(user, content, isCostumise: false);
+    return myFutureBuilder(user, userRowBuilder, isCostumise: false);
   }
 
   @override
@@ -289,9 +289,6 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
             widget.event!.leftQueue
           }.expand((x) => x).toList().toSet()
         : widget.event!.participants!.toSet();
-
-    // ignore: unused_local_variable
-    var textTheme = Theme.of(context).textTheme;
 
     String noParticipants = "- אין משתתפים -";
     if (widget.usersMail.isEmpty) return Center(child: Text(noParticipants));
@@ -309,47 +306,41 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
           backgroundColor: MaterialStateProperty.all(Colors.red[700])),
     );
 
-    // Set the height of the scorllable list.
-    double totalscrollheight = 120;
-    if (widget.usersMail.length > 0) {
-      totalscrollheight = totalscrollheight *
-          (widget.usersMail.length <= 2 ? widget.usersMail.length : 2);
-    } else
-      totalscrollheight = 50;
+    Widget headerRow = Align(
+      alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            widget.isCreator ? sendMsgToAllParticipants : SizedBox.shrink(),
+            Text(
+              widget.title,
+              textDirection: ui.TextDirection.rtl,
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    );
 
     // Build the list of actors while adding paddings.
-    dynamic list = Column(
-        children: List.generate(
-            widget.usersMail.length,
-            (index) => Padding(
-                  padding:
-                      EdgeInsets.only(top: 0, left: 8, right: 16, bottom: 16),
-                  child: _buildActor(context, index),
-                )));
-
-    list = Padding(child: list, padding: EdgeInsets.only(top: 16));
+    dynamic participantsViewList = Padding(
+        child: Column(
+            children: List.generate(
+                widget.usersMail.length,
+                (index) => Padding(
+                      padding: EdgeInsets.only(
+                          top: 0, left: 8, right: 16, bottom: 16),
+                      child: _buildActor(context, index),
+                    ))),
+        padding: EdgeInsets.only(top: 16));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                widget.isCreator ? sendMsgToAllParticipants : SizedBox.shrink(),
-                Text(
-                  widget.title,
-                  textDirection: ui.TextDirection.rtl,
-                  style: TextStyle(fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-        ),
-        list,
+        headerRow,
+        participantsViewList,
         widget.isCreator && widget.usersMail.isNotEmpty
             ? _creatorCommands()
             : SizedBox.shrink(),
