@@ -256,25 +256,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ],
-      // title: Container(
-      //   width: scaler.getWidth(28),
-      // child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       Text(
-      //         "חברותא",
-      //         textAlign: TextAlign.center,
-      //         style: GoogleFonts.alef(
-      //             fontWeight: FontWeight.bold,
-      //             fontSize: Globals.scaler.getTextSize(9),
-      //             color: Colors.teal[400],
-      //         letterSpacing: 8),
-      //       ),
-      //       SizedBox(width: Globals.scaler.getWidth(1),),
-      //       Icon(FontAwesomeIcons.book,
-      //           size: Globals.scaler.getTextSize(8),
-      //           color: Colors.teal[400])
-      //     ]),
     );
   }
 

@@ -18,10 +18,11 @@ class CreateEventTimeScreen extends StatefulWidget {
   CreateEventTimeScreen({this.event});
 
   @override
-  _FindMeAChavruta2CreateState createState() => _FindMeAChavruta2CreateState();
+  _CreateEventTimeScreenCreateState createState() =>
+      _CreateEventTimeScreenCreateState();
 }
 
-class _FindMeAChavruta2CreateState extends State<CreateEventTimeScreen> {
+class _CreateEventTimeScreenCreateState extends State<CreateEventTimeScreen> {
   var db = Globals.db;
   double? spaceBetween;
   List<String?> dateTimes = [];

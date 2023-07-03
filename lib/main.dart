@@ -9,6 +9,7 @@ import 'package:havruta_project/data_base/auto_reconnect_mongo.dart';
 import 'package:havruta_project/notifications/notifications/notification_model.dart';
 import 'package:havruta_project/home_page.dart';
 import 'package:havruta_project/notifications/push_notifications/fcm.dart';
+import 'package:havruta_project/widgets/my_future_builder.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -227,74 +228,60 @@ class _MyAppState extends State<MyApp> {
         Future.delayed(Duration(milliseconds: 100), () => rconfig.replace("/"));
       });
     }
+    var connectionDoneContent = (dynamic snapshot) {
+      _id = _prefs.then((prefs) {
+        return (prefs.getString('id') ?? "");
+      });
+      return FutureBuilder(
+          future: _id,
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return const CircularProgressIndicator();
+              case ConnectionState.done:
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  // Not connected - go to Login
+                  if (snapshot.data == "") {
+                    return LoginScreen();
+                  }
+                  // Connected - update current_user and go to home page
+                  else {
+                    // ignore: non_constant_identifier_names
+                    var current_user =
+                        Globals.db!.getUserByID(snapshot.data!, true);
+                    return FutureBuilder(
+                        future: current_user,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<User> snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return const CircularProgressIndicator();
+                            case ConnectionState.done:
+                              Globals.onNewLogin(snapshot.data!, inbuild: true);
+                              return HomePage();
+                            //break;
+                            default:
+                              return Text('default');
+                          }
+                        });
+                  }
+                }
+              //break;
+              default:
+                return Text('default');
+            }
+          });
+    };
     return MaterialApp(
       navigatorKey: Globals.navKey,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           body: Container(
-        child: FutureBuilder(
-          future: mongoConnectFuture,
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return Text('none');
-              case ConnectionState.active:
-              case ConnectionState.waiting:
-                return SplashScreen();
-              case ConnectionState.done:
-                _id = _prefs.then((prefs) {
-                  return (prefs.getString('id') ?? "");
-                });
-                return FutureBuilder(
-                    future: _id,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const CircularProgressIndicator();
-                        case ConnectionState.done:
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            // Not connected - go to Login
-                            if (snapshot.data == "") {
-                              return LoginScreen();
-                            }
-                            // Connected - update current_user and go to home page
-                            else {
-                              // ignore: non_constant_identifier_names
-                              var current_user =
-                                  Globals.db!.getUserByID(snapshot.data!, true);
-                              return FutureBuilder(
-                                  future: current_user,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<User> snapshot) {
-                                    switch (snapshot.connectionState) {
-                                      case ConnectionState.waiting:
-                                        return const CircularProgressIndicator();
-                                      case ConnectionState.done:
-                                        Globals.onNewLogin(snapshot.data!,
-                                            inbuild: true);
-                                        return HomePage();
-                                      //break;
-                                      default:
-                                        return Text('default');
-                                    }
-                                  });
-                            }
-                          }
-                        //break;
-                        default:
-                          return Text('default');
-                      }
-                    });
-              //break;
-              default:
-                return Text('default');
-            }
-          },
-        ),
-      )),
+              child: myFutureBuilder(mongoConnectFuture, connectionDoneContent,
+                  isCostumise: true,
+                  connectionWaitActiveWidget: SplashScreen()))),
     );
   }
 }

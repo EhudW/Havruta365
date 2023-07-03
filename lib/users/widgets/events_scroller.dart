@@ -8,6 +8,7 @@ import 'package:havruta_project/globals.dart';
 import 'package:havruta_project/event/screens/event_page/event_screen.dart';
 import 'package:havruta_project/event/model/events_model.dart';
 import 'package:havruta_project/mydebug.dart';
+import 'package:havruta_project/widgets/my_future_builder.dart';
 //import 'package:havruta_project/Screens/EventScreen/Event_api.dart';
 //import 'package:havruta_project/Screens/UserScreen/UserScreen.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -117,40 +118,24 @@ class _EventsScrollerState extends State<EventsScroller> {
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
     var textTheme = Theme.of(context).textTheme;
-    return FutureBuilder(
-        future: eventsList,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Text('none');
-            case ConnectionState.active:
-            case ConnectionState.waiting:
-              return Center(
-                child: LoadingBouncingGrid.circle(
-                  borderColor: Colors.teal[400]!,
-                  backgroundColor: Colors.teal[400]!,
-                  size: 40.0,
-                ),
-              );
-            case ConnectionState.done:
-              events = snapshot.data as List<Event>?;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox.fromSize(
-                    size: Size.fromHeight(Globals.scaler.getHeight(5)),
-                    child: ListView.builder(
-                      itemCount: events!.length,
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.only(top: 0, left: 20.0),
-                      itemBuilder: _buildEvent,
-                    ),
-                  ),
-                ],
-              );
-            default:
-              return Text('default');
-          }
-        });
+    var eventScrollerContent = (dynamic snapshot) {
+      events = snapshot.data as List<Event>?;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox.fromSize(
+            size: Size.fromHeight(Globals.scaler.getHeight(5)),
+            child: ListView.builder(
+              itemCount: events!.length,
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(top: 0, left: 20.0),
+              itemBuilder: _buildEvent,
+            ),
+          ),
+        ],
+      );
+    };
+    return myFutureBuilder(eventsList, eventScrollerContent,
+        isCostumise: false);
   }
 }

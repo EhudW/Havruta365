@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/src/intl/date_format.dart';
 import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/event/buttons/my_progress_button.dart';
-import 'dart:ui' as ui;
+import 'package:havruta_project/widgets/Texts.dart';
 
 class MainDetails extends StatefulWidget {
   Event? event;
@@ -14,64 +14,83 @@ class MainDetails extends StatefulWidget {
   _MainDetailsState createState() => _MainDetailsState();
 }
 
-String FormatCountdownString(BuildContext context, int total_minutes) {
-  String countdown_string = "";
-  var countdown_minutes = total_minutes;
-  int minutes_in_day = 1440;
-  if (countdown_minutes > 0) {
-    countdown_string = "האירוע יתחיל בעוד ";
-    if (countdown_minutes >= 1440) {
-      countdown_string += (countdown_minutes / 1440).floor().toString();
-      countdown_string += " ימים";
-      countdown_string +=
-          countdown_minutes % 60 == 0 || total_minutes > 3 * minutes_in_day
+Widget createBox(String header, String content) {
+  var boxHeaderStyle = TextStyle(
+    color: Colors.black,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
+  var boxContentStyle = TextStyle(
+      color: Colors.green.shade800, fontSize: 27, fontWeight: FontWeight.bold);
+
+  return Container(
+    decoration: new BoxDecoration(
+      color: Colors.grey.shade300,
+      shape: BoxShape.rectangle,
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    ),
+    width: 120,
+    height: 70,
+    child: Column(children: [
+      strToText(header, style: boxHeaderStyle),
+      strToText(content, style: boxContentStyle),
+    ]),
+  );
+}
+
+String createCountdownString(int totalMinutes) {
+  String countdownString = "";
+  var countdownMinutes = totalMinutes;
+  const int minutesInDay = 1440;
+  if (countdownMinutes > 0) {
+    countdownString = "האירוע יתחיל בעוד ";
+    if (countdownMinutes >= 1440) {
+      countdownString += (countdownMinutes / 1440).floor().toString();
+      countdownString += " ימים";
+      countdownString +=
+          countdownMinutes % 60 == 0 || totalMinutes > 3 * minutesInDay
               ? "."
               : " ו";
-      countdown_minutes = countdown_minutes % minutes_in_day;
+      countdownMinutes = countdownMinutes % minutesInDay;
     }
-    if (countdown_minutes >= 60 && total_minutes < 3 * minutes_in_day) {
-      countdown_string +=
-          (countdown_minutes / 60).floor().toString() + " שעות.";
+    if (countdownMinutes >= 60 && totalMinutes < 3 * minutesInDay) {
+      countdownString += (countdownMinutes / 60).floor().toString() + " שעות.";
     }
-    if (total_minutes >= 60 &&
-        countdown_minutes % 60 != 0 &&
-        total_minutes < 120) {
-      countdown_string += " ו";
-      countdown_string += (countdown_minutes % 60).toString() + " דקות.";
+    if (totalMinutes >= 60 &&
+        countdownMinutes % 60 != 0 &&
+        totalMinutes < 120) {
+      countdownString += " ו";
+      countdownString += (countdownMinutes % 60).toString() + " דקות.";
     }
-    if (total_minutes % 60 != 0 && total_minutes < 60) {
-      countdown_string += countdown_minutes.toString() + " דקות.";
+    if (totalMinutes % 60 != 0 && totalMinutes < 60) {
+      countdownString += countdownMinutes.toString() + " דקות.";
     }
-    //countdown_string += countdown_minutes.toString() + " דקות";
-  } else if (countdown_minutes == 0) {
-    countdown_string = "האירוע מתקיים כעת!";
+  } else if (countdownMinutes == 0) {
+    countdownString = "האירוע מתקיים כעת!";
   } else {
-    countdown_string = "האירוע נגמר ";
+    countdownString = "האירוע נגמר ";
   }
-  return countdown_string;
+  return countdownString;
 }
 
 class _MainDetailsState extends State<MainDetails> {
-  List<Widget> FormatTimes(time, nextEvent) {
+  List<Widget> formatTimes(time, nextEvent) {
+    List<dynamic> dates = widget.event!.dates!;
+    int duration = widget.event!.duration ?? 0;
+    String eventTimePrefix = (dates.isNotEmpty && isNow(dates[0], duration))
+        ? "   האירוע מתקיים כעת ב:    "
+        : "   האירוע מתקיים ב:    ";
+
+    String eventTimeSuffix = time == ""
+        ? ""
+        : (isNow(dates[0], duration)
+            ? nextEvent + "    בשעה  " + time
+            : nextEvent + "   בשעה  " + time);
     return [
-      Text(
-        (widget.event!.dates!.isNotEmpty &&
-                isNow(widget.event!.dates![0], widget.event!.duration ?? 0))
-            ? "   האירוע מתקיים כעת ב:    "
-            : "   האירוע מתקיים ב:    ",
-        style: GoogleFonts.secularOne(fontSize: 14.0),
-        //textAlign: TextAlign.end,
-        textDirection: ui.TextDirection.rtl,
-      ),
-      Text(
-        time == ""
-            ? ""
-            : (isNow(widget.event!.dates![0], widget.event!.duration ?? 0)
-                ? nextEvent + "    בשעה  " + time
-                : nextEvent + "   בשעה  " + time),
+      strToText(eventTimePrefix, style: GoogleFonts.secularOne(fontSize: 14.0)),
+      strToText(
+        eventTimeSuffix,
         style: GoogleFonts.secularOne(fontSize: 20.0),
-        textAlign: TextAlign.center,
-        textDirection: ui.TextDirection.rtl,
       )
     ];
   }
@@ -100,99 +119,34 @@ class _MainDetailsState extends State<MainDetails> {
     String duration = widget.event!.duration.toString();
     duration += " דקות";
 
-    var times = FormatTimes(time, nextEvent);
+    var times = formatTimes(time, nextEvent);
 
-    int countdown_minutes = widget.event!.startIn;
-    String countdown_string = FormatCountdownString(context, countdown_minutes);
+    int countdownMinutes = widget.event!.startIn;
+    String countdownString = createCountdownString(countdownMinutes);
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 40),
         child: Column(children: [
-          Text("לימוד:",
-              textDirection: ui.TextDirection.rtl,
-              style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
-          Text(study,
-              textAlign: TextAlign.center,
-              textDirection: ui.TextDirection.rtl,
-              style: GoogleFonts.secularOne(fontSize: 20.0)),
+          strToText("לימוד:", fontSize: 16.0),
+          strToText(study,
+              fontSize: 20.0, style: GoogleFonts.secularOne(fontSize: 20.0)),
           times[0],
           times[1],
           // countdown
-          Text(countdown_string,
-              textDirection: ui.TextDirection.rtl,
+          strToText(countdownString,
+              fontSize: 16.0,
               style: GoogleFonts.alef(
                   fontSize: 16.0, color: Colors.green.shade800)),
-          Text("תיאור:",
-              textDirection: ui.TextDirection.rtl,
-              style: GoogleFonts.alef(fontSize: 16.0, color: Colors.grey[700])),
-          Text(widget.event!.description.toString(),
-              textAlign: TextAlign.center,
-              textDirection: ui.TextDirection.rtl,
-              style: GoogleFonts.secularOne(fontSize: 23.0)),
+          strToText("תיאור:", fontSize: 16.0),
+          strToText(widget.event!.description.toString(),
+              fontSize: 23, style: GoogleFonts.secularOne(fontSize: 23.0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //const SizedBox(width: 40.0),
-              Container(
-                decoration: new BoxDecoration(
-                  color: Colors.grey.shade300,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                ),
-                width: 120,
-                height: 70,
-                child: Column(children: [
-                  Text(
-                    "תפוסה:",
-                    textAlign: TextAlign.center,
-                    textDirection: ui.TextDirection.rtl,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    capacity,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.green.shade800,
-                        fontSize: 27,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ]),
-              ),
+              createBox("תפוסה:", capacity),
               const SizedBox(width: 15.0),
-              Container(
-                decoration: new BoxDecoration(
-                  color: Colors.grey.shade300,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                ),
-                width: 120,
-                height: 70,
-                child: Column(children: [
-                  Text(
-                    "משך הלימוד:",
-                    textAlign: TextAlign.center,
-                    textDirection: ui.TextDirection.rtl,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    duration,
-                    textAlign: TextAlign.center,
-                    textDirection: ui.TextDirection.rtl,
-                    style: TextStyle(
-                        color: Colors.green.shade800,
-                        fontSize: 27,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ]),
-              ),
+              createBox("משך הלימוד:", duration),
             ],
           ),
         ]));
