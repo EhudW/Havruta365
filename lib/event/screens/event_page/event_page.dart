@@ -42,7 +42,7 @@ class _EventPageState extends State<EventPage> {
     bool notMyTarget = !Globals.currentUser!.isTargetedForMe(widget.event!);
     var amIParticipant = widget.event!.participants!.contains(myMail);
     var amICreator = widget.event!.creatorUser == myMail;
-    var canUserJoinTheEvent = widget.event!.dates!.isEmpty || notMyTarget;
+    var canUserJoinTheEvent = widget.event!.dates!.isNotEmpty && !notMyTarget;
 
     String type = widget.event?.type == "H" ? "חברותא" : "שיעור";
     String topic = widget.event?.topic?.trim() ?? "";
