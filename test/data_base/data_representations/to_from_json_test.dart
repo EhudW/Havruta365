@@ -22,8 +22,8 @@ import 'package:havruta_project/data_base/data_representations/topic.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
 
-import 'my_json_encoder.dart';
-import 'functions.dart';
+import '../../my_json_encoder.dart';
+import '../../functions.dart';
 
 void main() async {
   // test that Event/Chats...  .fromJson .toJson works fine

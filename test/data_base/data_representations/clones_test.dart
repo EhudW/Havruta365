@@ -6,32 +6,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:havruta_project/data_base/data_representations/chat_message.dart';
 import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 
-import 'my_json_encoder.dart';
-import 'functions.dart';
+import '../../my_json_encoder.dart';
+import '../../functions.dart';
 
 void main() async {
   // test .deepClone() and similar functions work well
   await withMongoCommands((db) => testClones(db));
 }
-
-String _firstMismatch(String json1Str, String json2Str) {
-  dynamic json1 = jsonDecode(json1Str, reviver: myDecode);
-  dynamic json2 = jsonDecode(json2Str, reviver: myDecode);
-  for (var json in [json1, json2])
-    for (var key in json.keys) {
-      String one = jsonEncode(json1[key], toEncodable: myEncode);
-      String two = jsonEncode(json2[key], toEncodable: myEncode);
-      if (one != two)
-        return 'key=$key\n$one\n$two'; // ignore {'a':1, 'x':null} <-> {'a':1}
-    }
-  return '- NO diffrence was found -';
-}
-
-Future<dynamic> _getOneOf(String collectionName, MongoCommands db) => db.db
-    .collection(collectionName)
-    .findOne(where.sortBy('_id', descending: true));
 
 void _testClones<T>(
   String testTitle,
@@ -75,7 +57,7 @@ void _testClones<T>(
               "to:\n" +
               "$originalAsStrAfterChange\n" +
               "first diffrence:\n" +
-              _firstMismatch(originalAsStrInit, originalAsStrAfterChange));
+              firstMismatch(originalAsStrInit, originalAsStrAfterChange));
     }
 
     // the clone had to be like the original init state
@@ -84,12 +66,12 @@ void _testClones<T>(
         reason:
             "original and clone (before any changes) should give same jsons\n" +
                 "first diffrence:\n" +
-                _firstMismatch(originalAsStrInit, cloneAsStr));
+                firstMismatch(originalAsStrInit, cloneAsStr));
   });
 }
 
 Future<void> _testEventClone(MongoCommands db) async {
-  Event event = Event.fromJson(await _getOneOf('Events', db));
+  Event event = Event.fromJson(await getOneDocumentOf('Events', db));
   _testClones<Event>(
     'Event().deepClone() test',
     event,
@@ -99,7 +81,7 @@ Future<void> _testEventClone(MongoCommands db) async {
 }
 
 Future<void> _testChatMessageClone1(MongoCommands db) async {
-  ChatMessage msg = ChatMessage.fromJson(await _getOneOf('Chats', db));
+  ChatMessage msg = ChatMessage.fromJson(await getOneDocumentOf('Chats', db));
   _testClones<ChatMessage>(
     'ChatMessaage.fromTypesTextMsg() ChatMessage().toTypesTextMsg() test',
     msg,
@@ -110,7 +92,7 @@ Future<void> _testChatMessageClone1(MongoCommands db) async {
 }
 
 Future<void> _testChatMessageClone2(MongoCommands db) async {
-  ChatMessage msg = ChatMessage.fromJson(await _getOneOf('Chats', db));
+  ChatMessage msg = ChatMessage.fromJson(await getOneDocumentOf('Chats', db));
   _testClones<ChatMessage>(
     'ChatMessage.cloneWith(ChatMessage()) test',
     msg,

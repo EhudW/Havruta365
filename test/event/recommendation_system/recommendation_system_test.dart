@@ -8,7 +8,7 @@ import 'package:havruta_project/event/recommendation_system/rec_interface.dart';
 import 'package:havruta_project/event/recommendation_system/systems/random_sys.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import 'functions.dart';
+import '../../functions.dart';
 
 // all functions here are only warn and not expect, since it's not "error" if the rec sys is 'bad'
 // some runs might make some different results of warning, beacuse there is use of random(),shuffle()...

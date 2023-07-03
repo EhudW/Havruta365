@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:mongo_dart/mongo_dart.dart';
 
 // custom encode/decode to handle DateTime
@@ -90,4 +91,17 @@ void changeLittle(dynamic json) {
   for (var key in json.keys) {
     json[key] = _changeByType(json[key]);
   }
+}
+
+String firstMismatch(String json1Str, String json2Str) {
+  dynamic json1 = jsonDecode(json1Str, reviver: myDecode);
+  dynamic json2 = jsonDecode(json2Str, reviver: myDecode);
+  for (var json in [json1, json2])
+    for (var key in json.keys) {
+      String one = jsonEncode(json1[key], toEncodable: myEncode);
+      String two = jsonEncode(json2[key], toEncodable: myEncode);
+      if (one != two)
+        return 'key=$key\n$one\n$two'; // ignore {'a':1, 'x':null} <-> {'a':1}
+    }
+  return '- NO diffrence was found -';
 }

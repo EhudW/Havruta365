@@ -1,6 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:havruta_project/data_base/mongo_commands.dart';
 import 'package:havruta_project/mydebug.dart';
+import 'package:mongo_dart/mongo_dart.dart';
+
+/// functions for general test env, or shortcut for fetch data from mongodb
 
 // make warning if rslt not match m
 // it won't stop the test, only alert, to stop use expect instead
@@ -29,3 +32,8 @@ Future<void> withMongoCommands(
   await db.disconnect();
   if (verbose) print('disconnected from mongodb.');
 }
+
+Future<dynamic> getOneDocumentOf(String collectionName, MongoCommands db) =>
+    db.db
+        .collection(collectionName)
+        .findOne(where.sortBy('_id', descending: true));
