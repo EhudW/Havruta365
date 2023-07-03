@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:havruta_project/event/buttons/my_progress_button.dart';
 import 'package:havruta_project/event/screens/event_scroller_screen/event_view_feed.dart';
+import 'package:havruta_project/widgets/texts.dart';
 import 'package:intl/intl.dart';
 import '../../../globals.dart';
 import 'package:flutter/material.dart';
@@ -97,51 +98,20 @@ class _HomePageState extends State<EventDatesList> {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          DateFormat('d-M-yyyy').format(time),
-                          // textDirection: TextDirection.RTL,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: scaler.getTextSize(7.5),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "   יום ${asHebrewDay(time)}",
-                          // textDirection: TextDirection.RTL,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: scaler.getTextSize(7.5),
-                              fontWeight: FontWeight.bold),
-                        ),
+                        strToScalerText(
+                            DateFormat('d-M-yyyy').format(time), scaler),
+                        strToScalerText("   יום ${asHebrewDay(time)}", scaler),
                       ]),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          DateFormat('HH:mm').format(time.add(
-                              Duration(minutes: widget.event.duration ?? 30))),
-                          // textDirection: TextDirection.RTL,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: scaler.getTextSize(7.5),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "עד",
-                          // textDirection: TextDirection.RTL,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: scaler.getTextSize(7.5),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          DateFormat('HH:mm').format(time),
-                          // textDirection: TextDirection.RTL,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: scaler.getTextSize(7.5),
-                              fontWeight: FontWeight.bold),
-                        ),
+                        strToScalerText(
+                            DateFormat('HH:mm').format(time.add(Duration(
+                                minutes: widget.event.duration ?? 30))),
+                            scaler),
+                        strToScalerText("עד", scaler),
+                        strToScalerText(
+                            DateFormat('HH:mm').format(time), scaler),
                       ]),
                   specificOverlaps.isEmpty
                       ? Container()

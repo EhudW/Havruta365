@@ -8,10 +8,7 @@ import 'package:havruta_project/event/create_event/third_dot_row.dart';
 import 'package:havruta_project/event/create_event/wavy_header.dart';
 import 'package:havruta_project/data_base/events_selector_builder.dart';
 import 'package:havruta_project/mydebug.dart';
-//import 'MyData.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-//import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "dart:async";
 import '../../buttons/next_button.dart';
@@ -24,7 +21,8 @@ class CreateEventScreen extends StatefulWidget {
   CreateEventScreen({Event? initEvent, this.barTitle})
       : this.initEvent = initEvent?.deepClone();
   @override
-  _FindMeAChavruta1CreateState createState() => _FindMeAChavruta1CreateState();
+  _CreateEventScreenCreateState createState() =>
+      _CreateEventScreenCreateState();
 }
 
 List<String> topics = [];
@@ -40,7 +38,7 @@ List<String> otherBooks = [];
 
 List<String> booksDrop = [];
 
-class _FindMeAChavruta1CreateState extends State<CreateEventScreen> {
+class _CreateEventScreenCreateState extends State<CreateEventScreen> {
   var db = Globals.db;
   final format = DateFormat("yyyy-MM-dd");
   DateTime? val;

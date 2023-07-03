@@ -179,26 +179,24 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
   Widget createProfileWidgets(snapshot, userMail, multiSelectBox) {
     bool isLeft = widget.event!.leftQueue.contains(userMail);
     var sizedBox = (double width) => SizedBox(width: width);
-    var navigateToUserScreen = (userMail) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => UserScreen(userMail)),
-      );
-    };
 
     List<Widget> profileWidgets = [
       widget.isCreator && !isLeft ? multiSelectBox : sizedBox(20),
       widget.isCreator ? sizedBox(8) : Container(),
       CircleAvatar(
-        backgroundImage: NetworkImage(snapshot.data['avatar']),
-        radius: 20.0,
-        child: IconButton(
-          icon: Icon(FontAwesomeIcons.houseUser),
-          iconSize: 20.0,
-          color: Colors.white.withOpacity(0),
-          onPressed: navigateToUserScreen(snapshot.data['email']),
-        ),
-      ),
+          backgroundImage: NetworkImage(snapshot.data['avatar']),
+          radius: 20.0,
+          child: IconButton(
+              icon: Icon(FontAwesomeIcons.houseUser),
+              iconSize: 20.0,
+              color: Colors.white.withOpacity(0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserScreen(snapshot.data['email'])),
+                );
+              })),
       sizedBox(8),
       Padding(
         padding: EdgeInsets.only(top: 0, left: 16),
@@ -207,9 +205,14 @@ class _ParticipentsScrollerState extends State<ParticipentsScroller> {
       ),
     ];
     return InkWell(
-      child: Row(children: profileWidgets.reversed.toList()),
-      onTap: navigateToUserScreen(snapshot.data['email']),
-    );
+        child: Row(children: profileWidgets.reversed.toList()),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => UserScreen(snapshot.data['email'])),
+          );
+        });
   }
 
   // Combine the different widgets of the user into a row.

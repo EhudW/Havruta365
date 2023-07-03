@@ -15,7 +15,6 @@ import 'package:havruta_project/event/widgets/arc_banner_image.dart';
 import 'package:havruta_project/globals.dart';
 import 'dart:ui' as ui;
 
-import 'package:havruta_project/home_page.dart';
 import 'package:havruta_project/mydebug.dart';
 import 'package:havruta_project/users/screens/user_screen/user_screen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -116,7 +115,6 @@ void deleteEvent(
   });
 }
 
-// TODO more like widget...
 Widget eventPageBottomSheet(
     BuildContext context, Function ok, Function ignore) {
   return Container(
@@ -192,23 +190,22 @@ void emptyFunction() {}
 
 Drawer eventPageDrawer(
     type, amICreator, event, snapshot, context, allUserEvents,
-    {setStateOnDeleteEventFunc: emptyFunction}) {
+    {setStateOnDeleteEventFunc = emptyFunction}) {
   String topic = event.topic?.trim() ?? "";
   String book = event.book?.trim() ?? "";
   String t_topic = topic != "" ? " ב" + topic : "";
   String t_book = book != "" ? " ב" + book : "";
-  String study = book == "" ? topic : "";
-  Future<String> Function() share_link =
+  Future<String> Function() shareLink =
       () => Globals.ServerDynamicEventLink(event);
-  String share_string = "אשמח להזמין אותך ל" +
+  String shareString = "אשמח להזמין אותך ל" +
       event.longStr(
           snapshot.data == null ? null : User.fromJson(snapshot.data)) +
       ".\n";
-  var drawer_navigation_line = (line_title, navigation_func) {
+  var drawerNavigationLine = (lineTitle, navigationFunc) {
     return ListTile(
-      title: Text(line_title),
+      title: Text(lineTitle),
       onTap: () async {
-        Navigator.push(context, MaterialPageRoute(builder: navigation_func));
+        Navigator.push(context, MaterialPageRoute(builder: navigationFunc));
       },
     );
   };
@@ -227,7 +224,7 @@ Drawer eventPageDrawer(
             color: Colors.blue,
           ),
         ),
-        drawer_navigation_line(
+        drawerNavigationLine(
             'פורום',
             (context) => SingleChatScreen(
                   otherPerson: event.id.toString(),
@@ -245,18 +242,18 @@ Drawer eventPageDrawer(
             );
           },
         ),
-        drawer_navigation_line(
+        drawerNavigationLine(
             'לוח זמנים מלא',
             (context) => //Add further details page
                 EventDatesList(event, allUserEvents ?? [])),
-        drawer_navigation_line(
+        drawerNavigationLine(
             'פרטים נוספים',
             (context) => //Add further details page
                 FurtherDetailsScreen(event: event)),
         ListTile(
           title: Text('המלץ לחבר'),
           onTap: () async {
-            Share.share(share_string + "\n" + await share_link(),
+            Share.share(shareString + "\n" + await shareLink(),
                 subject:
                     "כדאי לך להירשם ל${event.typeAsStr} באפליקציית חברותא פלוס");
           },

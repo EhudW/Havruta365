@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/src/intl/date_format.dart';
 import 'package:havruta_project/data_base/data_representations/event.dart';
 import 'package:havruta_project/event/buttons/my_progress_button.dart';
-import 'dart:ui' as ui;
+import 'package:havruta_project/widgets/Texts.dart';
 
 class MainDetails extends StatefulWidget {
   Event? event;
@@ -12,18 +12,6 @@ class MainDetails extends StatefulWidget {
 
   @override
   _MainDetailsState createState() => _MainDetailsState();
-}
-
-Text strToText(String str, double fontSize, {style = GoogleFonts.secularOne}) {
-  if (style == GoogleFonts.secularOne)
-    style = GoogleFonts.alef(fontSize: fontSize, color: Colors.grey[700]);
-
-  return Text(
-    str,
-    style: style,
-    textAlign: TextAlign.center,
-    textDirection: ui.TextDirection.rtl,
-  );
 }
 
 Widget createBox(String header, String content) {
@@ -44,8 +32,8 @@ Widget createBox(String header, String content) {
     width: 120,
     height: 70,
     child: Column(children: [
-      strToText(header, 0, style: boxHeaderStyle),
-      strToText(content, 0, style: boxContentStyle),
+      strToText(header, style: boxHeaderStyle),
+      strToText(content, style: boxContentStyle),
     ]),
   );
 }
@@ -87,25 +75,22 @@ String createCountdownString(int totalMinutes) {
 
 class _MainDetailsState extends State<MainDetails> {
   List<Widget> formatTimes(time, nextEvent) {
+    List<dynamic> dates = widget.event!.dates!;
+    int duration = widget.event!.duration ?? 0;
+    String eventTimePrefix = (dates.isNotEmpty && isNow(dates[0], duration))
+        ? "   האירוע מתקיים כעת ב:    "
+        : "   האירוע מתקיים ב:    ";
+
+    String eventTimeSuffix = time == ""
+        ? ""
+        : (isNow(dates[0], duration)
+            ? nextEvent + "    בשעה  " + time
+            : nextEvent + "   בשעה  " + time);
     return [
-      Text(
-        (widget.event!.dates!.isNotEmpty &&
-                isNow(widget.event!.dates![0], widget.event!.duration ?? 0))
-            ? "   האירוע מתקיים כעת ב:    "
-            : "   האירוע מתקיים ב:    ",
-        style: GoogleFonts.secularOne(fontSize: 14.0),
-        //textAlign: TextAlign.end,
-        textDirection: ui.TextDirection.rtl,
-      ),
-      Text(
-        time == ""
-            ? ""
-            : (isNow(widget.event!.dates![0], widget.event!.duration ?? 0)
-                ? nextEvent + "    בשעה  " + time
-                : nextEvent + "   בשעה  " + time),
+      strToText(eventTimePrefix, style: GoogleFonts.secularOne(fontSize: 14.0)),
+      strToText(
+        eventTimeSuffix,
         style: GoogleFonts.secularOne(fontSize: 20.0),
-        textAlign: TextAlign.center,
-        textDirection: ui.TextDirection.rtl,
       )
     ];
   }
@@ -142,17 +127,19 @@ class _MainDetailsState extends State<MainDetails> {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 40),
         child: Column(children: [
-          strToText("לימוד:", 16.0),
-          strToText(study, 20.0, style: GoogleFonts.secularOne(fontSize: 20.0)),
+          strToText("לימוד:", fontSize: 16.0),
+          strToText(study,
+              fontSize: 20.0, style: GoogleFonts.secularOne(fontSize: 20.0)),
           times[0],
           times[1],
           // countdown
-          strToText(countdownString, 16.0,
+          strToText(countdownString,
+              fontSize: 16.0,
               style: GoogleFonts.alef(
                   fontSize: 16.0, color: Colors.green.shade800)),
-          strToText("תיאור:", 16.0),
-          strToText(widget.event!.description.toString(), 23,
-              style: GoogleFonts.secularOne(fontSize: 23.0)),
+          strToText("תיאור:", fontSize: 16.0),
+          strToText(widget.event!.description.toString(),
+              fontSize: 23, style: GoogleFonts.secularOne(fontSize: 23.0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

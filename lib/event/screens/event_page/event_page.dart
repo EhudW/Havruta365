@@ -2,7 +2,7 @@
 
 //import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:havruta_project/event/libraries/event_functions.dart' as f;
+import 'package:havruta_project/event/libraries/event_page_widgets.dart' as f;
 import 'package:havruta_project/home_page.dart';
 import 'package:havruta_project/widgets/my_future_builder.dart';
 import 'package:havruta_project/data_base/data_representations/event.dart';
