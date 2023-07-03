@@ -24,7 +24,6 @@ class ProfileDetailsColumn extends StatefulWidget {
 }
 
 class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
-  bool _lesson_expanded = false;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -67,245 +66,91 @@ class _ProfileDetailsColumnState extends State<ProfileDetailsColumn> {
     );
   }
 
+  Widget create_button_container(Text text, IconData icon) {
+    var icon_size = Globals.scaler.getTextSize(11);
+    return Container(
+      height: Globals.scaler.getHeight(3),
+      width: Globals.scaler.getWidth(26),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(0),
+          border: Border.all(
+              width: Globals.scaler.getWidth(0.1), color: Colors.grey[350]!),
+          color: Colors.white),
+      child:
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+        Padding(padding: EdgeInsets.only(left: Globals.scaler.getWidth(0))),
+        text,
+        SizedBox(width: Globals.scaler.getWidth(1.5)),
+        Icon(
+          icon,
+          size: icon_size,
+          color: Colors.brown[400],
+        ),
+      ]),
+    );
+  }
+
+  Widget createGestureButton(String text, icon, onTap,
+      {shouldHaveSpaces = true}) {
+    var size_header = Globals.scaler.getTextSize(8.5);
+    return GestureDetector(
+      onTap: onTap,
+      child: create_button_container(
+          Text(text,
+              style: GoogleFonts.secularOne(
+                  fontSize: size_header,
+                  fontWeight: FontWeight.bold,
+                  textStyle: shouldHaveSpaces
+                      ? TextStyle(
+                          color: Colors.black,
+                          letterSpacing: Globals.scaler.getWidth(.5))
+                      : TextStyle()),
+              textDirection: TextDirection.rtl),
+          icon),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    var size_header = Globals.scaler.getTextSize(8.5);
-    var icon_size = Globals.scaler.getTextSize(11);
-
-    var create_button_container = (Text text, IconData icon) => Container(
-          height: Globals.scaler.getHeight(3),
-          width: Globals.scaler.getWidth(26),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(0),
-              border: Border.all(
-                  width: Globals.scaler.getWidth(0.1),
-                  color: Colors.grey[350]!),
-              color: Colors.white),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.only(left: Globals.scaler.getWidth(0))),
-                text,
-                SizedBox(width: Globals.scaler.getWidth(1.5)),
-                Icon(
-                  icon,
-                  size: icon_size,
-                  color: Colors.brown[400],
-                ),
-              ]),
-        );
     return Expanded(
       child: SingleChildScrollView(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          /*GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MyEventsPage(
-                            title: "נרשמתי/בהמתנה ל",
-                            logic: PullingLogic(
-                                withParticipant: Globals.currentUser!.email,
-                                createdBy: null),
-                            icon: FontAwesomeIcons.handshake, //bookBookmark,
-                          )));
-            },
-            child: Container(
-              height: Globals.scaler.getHeight(3),
-              width: Globals.scaler.getWidth(26),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(0),
-                  border: Border.all(
-                      width: Globals.scaler.getWidth(0.1),
-                      color: Colors.grey[350]!),
-                  color: Colors.white),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: Globals.scaler.getWidth(0))),
-                    Text("נרשמתי ל...",
-                        style: GoogleFonts.secularOne(
-                            fontSize: size_header,
-                            fontWeight: FontWeight.bold,
-                            textStyle: TextStyle(
-                                color: Colors.black,
-                                letterSpacing: Globals.scaler.getWidth(.5))),
-                        textDirection: TextDirection.rtl),
-                    SizedBox(width: Globals.scaler.getWidth(1.5)),
-                    Icon(
-                      FontAwesomeIcons.handshake, //bookBookmark,
-                      size: icon_size,
-                      color: Colors.brown[400],
-                    ),
-                  ]),
-            ),
-          ),
+          createGestureButton("עדכון פרטים", FontAwesomeIcons.userPen, () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ChangesDetails()));
+          }),
           SizedBox(
             height: Globals.scaler.getHeight(0.8),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MyEventsPage(
-                            title: "יזמתי את",
-                            logic: PullingLogic(
-                              withParticipant: null,
-                              createdBy: Globals.currentUser!.email,
-                            ),
-                            icon: FontAwesomeIcons.personChalkboard,
-                          )));
-            },
-            child: Container(
-              height: Globals.scaler.getHeight(3),
-              width: Globals.scaler.getWidth(26),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(0),
-                  border: Border.all(
-                      width: Globals.scaler.getWidth(0.1),
-                      color: Colors.grey[350]!),
-                  color: Colors.white),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: Globals.scaler.getWidth(0))),
-                    Text("יזמתי את...",
-                        style: GoogleFonts.secularOne(
-                            fontSize: size_header,
-                            fontWeight: FontWeight.bold,
-                            textStyle: TextStyle(
-                                color: Colors.black,
-                                letterSpacing: Globals.scaler.getWidth(.5))),
-                        textDirection: TextDirection.rtl),
-                    SizedBox(width: Globals.scaler.getWidth(1.5)),
-                    Icon(
-                      FontAwesomeIcons.personChalkboard,
-                      size: icon_size,
-                      color: Colors.brown[400],
-                    ),
-                  ]),
-            ),
-          ),
-          SizedBox(
-            height: Globals.scaler.getHeight(0.8),
-          ),*/
-          /*Container(
-            margin: EdgeInsets.fromLTRB(
-                Globals.scaler.getWidth(2.5),
-                Globals.scaler.getHeight(0),
-                Globals.scaler.getWidth(2.5),
-                Globals.scaler.getHeight(0.8)),
-            child: ExpansionPanelList(
-              animationDuration: Duration(milliseconds: 500),
-              children: [
-                ExpansionPanel(
-                  headerBuilder: (context, isExpanded) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: Globals.scaler.getWidth(2.5))),
-                        Text("השיעורים שלי",
-                            style: GoogleFonts.secularOne(
-                                textStyle: TextStyle(
-                                    color: Colors.black, letterSpacing: .5),
-                                fontSize: size_header,
-                                fontWeight: FontWeight.bold),
-                            textDirection: TextDirection.rtl),
-                        SizedBox(width: Globals.scaler.getWidth(1)),
-                        Icon(
-                          FontAwesomeIcons.graduationCap,
-                          size: icon_size,
-                          color: Colors.brown[400],
-                        )
-                      ],
-                    );
-                  },
-                  body: EventsScroller(Globals.currentUser!.email),
-                  isExpanded: _lesson_expanded,
-                  canTapOnHeader: true,
-                ),
-              ],
-              expansionCallback: (panelIndex, isExpanded) {
-                _lesson_expanded = !_lesson_expanded;
-                setState(() {});
-              },
-            ),
-          ),*/
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ChangesDetails()));
-            },
-            child: create_button_container(
-                Text("עדכון פרטים",
-                    style: GoogleFonts.secularOne(
-                        fontSize: size_header,
-                        fontWeight: FontWeight.bold,
-                        textStyle: TextStyle(
-                            color: Colors.black,
-                            letterSpacing: Globals.scaler.getWidth(.5))),
-                    textDirection: TextDirection.rtl),
-                FontAwesomeIcons.userPen),
-          ),
+          createGestureButton("המלץ לחבר", FontAwesomeIcons.shareNodes, () {
+            Share.share(
+                "היי! הייתי רוצה להמליץ לך על האפליקציה חברותא+" +
+                    "\n${Globals.ServerManuallyDynamicCampaign}",
+                //   "\n https://play.google.com/store/apps/details?id=not.exist.yet.main",
+                subject: "כדאי לך לנסות את חברותא פלוס");
+          }),
           SizedBox(
             height: Globals.scaler.getHeight(0.8),
           ),
-          GestureDetector(
-            onTap: () {
-              Share.share(
-                  "היי! הייתי רוצה להמליץ לך על האפליקציה חברותא+" +
-                      "\n${Globals.ServerManuallyDynamicCampaign}",
-                  //   "\n https://play.google.com/store/apps/details?id=not.exist.yet.main",
-                  subject: "כדאי לך לנסות את חברותא פלוס");
-            },
-            child: create_button_container(
-                Text("המלץ לחבר",
-                    style: GoogleFonts.secularOne(
-                        fontSize: size_header,
-                        fontWeight: FontWeight.bold,
-                        textStyle: TextStyle(
-                            color: Colors.black,
-                            letterSpacing: Globals.scaler.getWidth(.5))),
-                    textDirection: TextDirection.rtl),
-                FontAwesomeIcons.shareNodes),
-          ),
-          SizedBox(
-            height: Globals.scaler.getHeight(0.8),
-          ),
-          GestureDetector(
-            onTap: () async {
-              // ignore: unused_local_variable
-              var currentUser;
-              // new logout
-              Globals.currentUser = null;
-              Globals.rec.cancel([]);
-              Globals.msgWithFriends.cancel([]);
-              NewNotificationManager.onlyLast?.cancel();
-              await FCM.onLogout();
-              if (await (GoogleSignInApi.isSignedIn())) {
-                currentUser = GoogleSignInApi.currentUser();
-                await GoogleSignInApi.logout();
-              }
-              final SharedPreferences prefs = await _prefs;
-              await prefs.setString('id', "");
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
-            },
-            child: create_button_container(
-                Text("התנתק",
-                    style: GoogleFonts.secularOne(
-                        fontSize: size_header, fontWeight: FontWeight.bold),
-                    textDirection: TextDirection.rtl),
-                FontAwesomeIcons.rightFromBracket),
-          )
+          createGestureButton("התנתק", FontAwesomeIcons.rightFromBracket,
+              () async {
+            // ignore: unused_local_variable
+            var currentUser;
+            // new logout
+            Globals.currentUser = null;
+            Globals.rec.cancel([]);
+            Globals.msgWithFriends.cancel([]);
+            NewNotificationManager.onlyLast?.cancel();
+            await FCM.onLogout();
+            if (await (GoogleSignInApi.isSignedIn())) {
+              currentUser = GoogleSignInApi.currentUser();
+              await GoogleSignInApi.logout();
+            }
+            final SharedPreferences prefs = await _prefs;
+            await prefs.setString('id', "");
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => LoginScreen()));
+          }, shouldHaveSpaces: false),
         ]),
       ),
     );

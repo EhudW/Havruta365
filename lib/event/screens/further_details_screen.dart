@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:havruta_project/widgets/texts.dart';
 import '../../data_base/data_representations/event.dart';
 import '../../globals.dart';
-import 'dart:ui' as ui;
-
 import '../widgets/main_details.dart';
 
 class FurtherDetailsScreen extends StatelessWidget {
@@ -14,6 +12,43 @@ class FurtherDetailsScreen extends StatelessWidget {
         super(key: key);
 
   final String str = "";
+
+  @override
+  Widget build(BuildContext context) {
+    String location = event_!.location?.trim() ?? '';
+    String link = event_!.link?.trim() ?? '';
+    String lecturer = event_!.lecturer?.trim() ?? '';
+    String creatorName = event_!.creatorName?.trim() ?? '';
+    String targetGender = event_!.targetGender?.trim() ?? '';
+    String minAge = event_!.minAge.toString();
+    String maxAge = event_!.maxAge.toString();
+
+    var myMail = Globals.currentUser!.email;
+    var amIParticipant = event_!.participants!.contains(myMail);
+    var amICreator = event_!.creatorUser == myMail;
+    var isHavruta = event_?.type == "H";
+
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      backgroundColor: Colors.teal[100],
+      appBar: appBar(context),
+      body: SingleChildScrollView(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        MainDetails(event_),
+        //create_field()
+        conditionalTwoLinesFieldCreation("מרצה:", lecturer),
+        conditionalTwoLinesFieldCreation("יוצר:", creatorName),
+        conditionalTwoLinesFieldCreation("מיקום:", location),
+        !isHavruta || amICreator || amIParticipant
+            ? conditionalTwoLinesFieldCreation("קישור:", link)
+            : Container(),
+        conditionalTwoLinesFieldCreation("גיל מינימלי:", minAge),
+        conditionalTwoLinesFieldCreation("גיל מקסימלי:", maxAge),
+        //conditional_field_creation("יוצר:", creator_user),
+        conditionalTwoLinesFieldCreation("מין יעד:", targetGender),
+      ])),
+    );
+  }
 
   appBar(BuildContext context) {
     return AppBar(
@@ -33,82 +68,6 @@ class FurtherDetailsScreen extends StatelessWidget {
           Navigator.pop(context);
         },
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String teacher =
-        event_!.type == 'L' ? event_!.lecturer! : event_!.creatorName!;
-
-    // should we add extra text to differ between teacher and creator?
-    String location = event_!.location?.trim() ?? '';
-    String link = event_!.link?.trim() ?? '';
-    String lecturer = event_!.lecturer?.trim() ?? '';
-    String creator_name = event_!.creatorName?.trim() ?? '';
-    //String creator_user = event_!.creatorUser?.trim() ?? '';
-    String target_gender = event_!.targetGender?.trim() ?? '';
-    String min_age = event_!.minAge?.toString() ?? '';
-    String max_age = event_!.maxAge?.toString() ?? '';
-    //String creation_date = event_!.creationDate?.toString() ?? '';
-    //String first_init_date = event_!.firstInitDates?.toString() ?? '';
-
-    var myMail = Globals.currentUser!.email;
-    var amIParticipant = event_!.participants!.contains(myMail);
-    var amICreator = event_!.creatorUser == myMail;
-    var isHavruta = event_?.type == "H";
-
-    var asBasic = (String str) => str.toLowerCase().trim();
-    var myCmp = (a, b) => asBasic(a) == asBasic(b);
-    final String creatorDescription =
-        myCmp(teacher, event_!.creatorName!) ? "" : event_!.creatorName!;
-
-    var str_to_header = (String str) => Padding(
-        padding: EdgeInsets.only(right: 10),
-        child: Text(str,
-            textDirection: ui.TextDirection.rtl,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.alef(fontSize: 15.0, color: Colors.grey[700])));
-
-    var str_to_text = (String str) => Padding(
-        padding: EdgeInsets.only(right: 10),
-        child: Text(
-          str,
-          style: GoogleFonts.secularOne(fontSize: 18.0),
-          textAlign: TextAlign.right,
-          textDirection: ui.TextDirection.rtl,
-        ));
-
-    var create_field = (String header, String text) => Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            str_to_header(header),
-            str_to_text(text),
-          ],
-        );
-
-    var conditional_field_creation = (String header, String text) =>
-        text == '' ? Container() : create_field(header, text);
-
-    return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      backgroundColor: Colors.teal[100],
-      appBar: appBar(context),
-      body: SingleChildScrollView(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        MainDetails(event_),
-        //create_field()
-        conditional_field_creation("מרצה:", lecturer),
-        conditional_field_creation("יוצר:", creator_name),
-        conditional_field_creation("מיקום:", location),
-        !isHavruta || amICreator || amIParticipant
-            ? conditional_field_creation("קישור:", link)
-            : Container(),
-        conditional_field_creation("גיל מינימלי:", min_age),
-        conditional_field_creation("גיל מקסימלי:", max_age),
-        //conditional_field_creation("יוצר:", creator_user),
-        conditional_field_creation("מין יעד:", target_gender),
-      ])),
     );
   }
 }

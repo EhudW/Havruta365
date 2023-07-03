@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 //import 'package:havruta_project/data_base_auth/Event.dart';
 import 'package:havruta_project/data_base/data_representations/user.dart';
 import 'package:havruta_project/globals.dart';
+import 'package:havruta_project/widgets/my_future_builder.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mongo_dart_query/mongo_dart_query.dart' hide Center;
 import 'user_details_page.dart';
@@ -22,28 +23,9 @@ class UserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var user = getUser(user_mail);
-    return FutureBuilder(
-        future: user,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Text('none');
-            case ConnectionState.active:
-            case ConnectionState.waiting:
-              return Center(
-                child: LoadingBouncingGrid.square(
-                  borderColor: Colors.teal[400]!,
-                  backgroundColor: Colors.teal[400]!,
-                  size: 80.0,
-                ),
-              );
-            case ConnectionState.done:
-              return Scaffold(
-                body: UserDetailsPage(snapshot.data as User),
-              );
-            default:
-              return Text('default');
-          }
-        });
+    var screenContent = (dynamic snapshot) => Scaffold(
+          body: UserDetailsPage(snapshot.data as User),
+        );
+    return myFutureBuilder(user, screenContent, isCostumise: false);
   }
 }

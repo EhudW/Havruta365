@@ -24,10 +24,11 @@ class CreateEventAdministrationDetails extends StatefulWidget {
       : super(key: key);
 
   @override
-  _FindMeAChavruta3CreateState createState() => _FindMeAChavruta3CreateState();
+  _CreateEventAdministrationDetailsCreateState createState() =>
+      _CreateEventAdministrationDetailsCreateState();
 }
 
-class _FindMeAChavruta3CreateState
+class _CreateEventAdministrationDetailsCreateState
     extends State<CreateEventAdministrationDetails> {
   final AuthService authenticate = AuthService();
   var mongoDB = Globals.db;
