@@ -8,10 +8,23 @@ import 'package:havruta_project/event/recommendation_system/rec_interface.dart';
 import 'package:havruta_project/event/recommendation_system/systems/random_sys.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import 'main_test.dart';
+import 'functions.dart';
 
 // all functions here are only warn and not expect, since it's not "error" if the rec sys is 'bad'
 // some runs might make some different results of warning, beacuse there is use of random(),shuffle()...
+
+void main() {
+// test default rec system at ExampleRecommendationSystem class
+  testRecSys(skipCollaborativeCheck: false);
+  /* 
+  // test specif rec system,
+  // in this case test the testRecSys since we give OppositeRecommendationSystem()
+  testRecSys(
+      timesToCheck: 1,
+      testThisSystem: (k) =>
+          OppositeRecommendationSystem(MultiConsiderations()));
+  */
+}
 
 // here, and in the lib/../recommendation_system folder
 // for now Queues  none=nuetral,  rejected\left=bad,  waiting\participants=good
