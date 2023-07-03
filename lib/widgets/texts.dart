@@ -47,7 +47,6 @@ Text strToText(String str,
 Widget strToScalerText(String str, ScreenScaler scaler, {double scale = 7.5}) {
   return Text(
     str,
-    // textDirection: TextDirection.RTL,
     textAlign: TextAlign.center,
     style: TextStyle(
         fontSize: scaler.getTextSize(scale), fontWeight: FontWeight.bold),
