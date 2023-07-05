@@ -82,7 +82,7 @@ class IconSwitchState extends State<IconSwitch> {
 
 // also for forums, the chat itself, preview is in ChatsFeedScreen
 class SingleChatScreen extends StatefulWidget {
-  // sub/unsub to forum is only via join/leave event
+  // sub/unsub to forum is only via join/leave event, or create/delete (for creator)
   static bool hideSubUnsubButton = true;
   String get _draftKey => "DRAFT~${Globals.currentUser!.email}~TO~$otherPerson";
   String? getDraft() => Globals.prefsReadyOrNull?.getString(_draftKey);

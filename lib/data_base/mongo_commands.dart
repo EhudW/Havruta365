@@ -51,7 +51,9 @@ class MongoCommands {
     Globals.isDbConnect = true;
   }
 
-  Future<void> insertEvent(Event event) async {
+  // insert new event, and return the NEW id of it,
+  // event.id event.toJson()['_id'] is overwritten!
+  Future<ObjectId> insertEvent(Event event) async {
     /* MondoDB decrease to hour from the time, because he using UTC. here we fix it.
     for (DateTime date in event.dates as Iterable<DateTime>) {
       // TODO: check if to utc function prefered
@@ -59,7 +61,10 @@ class MongoCommands {
     }*/
     var collection = db.collection('Events');
     var e = event.toJson();
+    // overwritten any old id;  created here(client) so id can be returned
+    e['_id'] = ObjectId();
     await collection.insertOne(e);
+    return e['_id'];
   }
 
   Future<User?> getUser(String userMail) async {

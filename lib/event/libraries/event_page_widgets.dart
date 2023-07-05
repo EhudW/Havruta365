@@ -88,6 +88,8 @@ void deleteEvent(
         'name': Globals.currentUser!.name,
       }));
     }
+    // unsub me (the creator) from the lesson
+    Globals.db!.updateUserSubs_Topics(remove: [event.id.toString()]);
   }
   // show flushbar to the creator
   if (!succeed) {

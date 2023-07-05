@@ -257,12 +257,18 @@ class _CreateEventAdministrationDetailsCreateState
                                   widget.event!.waitingQueue = [];
                                   widget.event!.rejectedQueue = [];
                                   widget.event!.leftQueue = [];
-                                  mongoDB!.insertEvent(widget.event!).then(
-                                      (value) => Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  HomePage())));
+                                  mongoDB!
+                                      .insertEvent(widget.event!)
+                                      .then((newEventId) {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomePage()));
+                                    // sub me (the creator) to the lesson
+                                    Globals.db!.updateUserSubs_Topics(add: {
+                                      newEventId.toString(): {"seen": 0}
+                                    });
+                                  });
                                 } else {
                                   /// update event:
                                   // notify all that the event was updated, or they rejected
