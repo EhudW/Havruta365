@@ -150,7 +150,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<String>? _id;
   Future? mongoConnectFuture;
 
   void initFirebase() async {
@@ -229,12 +228,15 @@ class _MyAppState extends State<MyApp> {
       });
     }
     var connectionDoneContent = (dynamic snapshot) {
-      _id = _prefs.then((prefs) {
-        return (prefs.getString('id') ?? "");
-      });
+      Future<User?> localUser = _prefs
+          // await for shared preferences
+          .then((prefs) => prefs.getString('id') ?? "")
+          // await for User from mongodb
+          .then((id) => id == "" ? null : Globals.db!.getUserByID(id, true));
+
       return FutureBuilder(
-          future: _id,
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          future: localUser,
+          builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
                 return const CircularProgressIndicator();
@@ -242,30 +244,19 @@ class _MyAppState extends State<MyApp> {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  // Not connected - go to Login
-                  if (snapshot.data == "") {
-                    return LoginScreen();
+                  int minVer = Globals.db!.configMap['minAppVersionForce'];
+                  int currVer = MyDebug.MyConsts.APP_VERSION;
+                  if (minVer > currVer) {
+                    return MustUpgradeScreen(
+                        minVer: '$minVer', currVer: '$currVer');
                   }
-                  // Connected - update current_user and go to home page
-                  else {
-                    // ignore: non_constant_identifier_names
-                    var current_user =
-                        Globals.db!.getUserByID(snapshot.data!, true);
-                    return FutureBuilder(
-                        future: current_user,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<User> snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const CircularProgressIndicator();
-                            case ConnectionState.done:
-                              Globals.onNewLogin(snapshot.data!, inbuild: true);
-                              return HomePage();
-                            //break;
-                            default:
-                              return Text('default');
-                          }
-                        });
+                  // Not connected - go to Login
+                  if (snapshot.data == null) {
+                    return LoginScreen();
+                    // Connected - update current_user and go to home page
+                  } else {
+                    Globals.onNewLogin(snapshot.data!, inbuild: true);
+                    return HomePage();
                   }
                 }
               //break;
@@ -282,6 +273,40 @@ class _MyAppState extends State<MyApp> {
               child: myFutureBuilder(mongoConnectFuture, connectionDoneContent,
                   isCostumise: true,
                   connectionWaitActiveWidget: SplashScreen()))),
+    );
+  }
+}
+
+class MustUpgradeScreen extends StatelessWidget {
+  final String minVer;
+  final String currVer;
+  const MustUpgradeScreen(
+      {Key? key, required this.minVer, required this.currVer})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var CenteredText = (
+            [String txt = "",
+            bool alignToCenter = true,
+            bool newLine = true]) =>
+        Center(
+            child: Text(
+          txt + (newLine ? "\n" : ""),
+          textAlign: alignToCenter ? TextAlign.center : TextAlign.right,
+        ));
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(child: Icon(Icons.update)),
+          CenteredText(),
+          CenteredText("יש לעדכן את גרסת חברותא+ מהגרסא הנוכחית", false),
+          CenteredText(currVer),
+          CenteredText("לכל הפחות לגרסא", false),
+          CenteredText(minVer),
+        ],
+      ),
     );
   }
 }

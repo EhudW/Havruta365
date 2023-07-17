@@ -78,7 +78,7 @@ void _testJson(
 
 Future testAllJsons(
     {required MongoCommands db,
-    List<String> ignoreCollections = const []}) async {
+    List<String> ignoreCollections = const ['Config']}) async {
   // test data_base representation to/from json
   // jsonForTest.keys should contain all collection names from mongodb,
   // unless ignoreCollections.contains,

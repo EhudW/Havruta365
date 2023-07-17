@@ -46,6 +46,7 @@ myPrint(Object? obj, MyPrintType type) {
 }
 
 class MyConsts {
+  static const int APP_VERSION = 2;
   static const String DEFAULT_EVENT_IMG =
       'https://breastfeedinglaw.com/wp-content/uploads/2020/06/book.jpeg';
   static const String LOGIN_SCREEN_IMG = DEFAULT_EVENT_IMG;

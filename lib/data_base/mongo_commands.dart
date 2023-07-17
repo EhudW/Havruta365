@@ -37,10 +37,9 @@ String CONNECT_TO_DB =
  */
 class MongoCommands {
   late var db;
-
   // Connect to the DB.
   // useDb2 to try auto reconnect when connection lost, see mongo2.dart
-  Future<void> connect({bool useDb2 = false}) async {
+  Future<void> connect({bool useDb2 = false, bool loadConfigMap = true}) async {
     if (useDb2) {
       this.db = await Db2.AutoReconnectMongo.create(CONNECT_TO_DB);
     } else {
@@ -48,7 +47,16 @@ class MongoCommands {
     }
     await this.db.open();
     MyDebug.myPrint('Connected to database', MyDebug.MyPrintType.None);
+    if (loadConfigMap) await refreshConfigMap();
     Globals.isDbConnect = true;
+  }
+
+  Map<String, dynamic> configMap = {};
+  Future<void> refreshConfigMap() async {
+    var collection = db.collection('Config');
+    var configs = collection.find().toList();
+    configMap = Map.fromIterable(await configs,
+        key: (m) => m['key'], value: (m) => m['value']);
   }
 
   // insert new event, and return the NEW id of it,
